@@ -1,0 +1,262 @@
+package com.spring6microservices.common.core.collection.tuple;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.function.Supplier;
+
+import static java.util.Optional.ofNullable;
+
+/**
+ * A {@link Tuple} of no elements.
+ */
+public final class Tuple0 implements Tuple, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 5791060796518852381L;
+
+    /**
+     * The singleton instance of {@link Tuple0}.
+     */
+    private static final Tuple0 INSTANCE = new Tuple0();
+
+    /**
+     * The singleton Tuple0 comparator.
+     */
+    private static final Comparator<Tuple0> COMPARATOR = (t1, t2) -> 0;
+
+    /**
+     * Returns the singleton instance of {@link Tuple0}.
+     *
+     * @return The singleton instance of {@link Tuple0}
+     */
+    public static Tuple0 instance() {
+        return INSTANCE;
+    }
+
+
+    public static Comparator<Tuple0> comparator() {
+        return COMPARATOR;
+    }
+
+
+    @Override
+    public int arity() {
+        return 0;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return 1;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Tuple0 ()";
+    }
+
+
+    /**
+     * Transforms this {@link Tuple0} to an object of type U.
+     *
+     * @param f
+     *    Transformation {@link Supplier} which creates a new object of type U based on this tuple's contents.
+     *
+     * @return An object of type U
+     *
+     * @throws NullPointerException if {@code f} is {@code null}
+     */
+    public <U> U apply(final Supplier<? extends U> f) {
+        return f.get();
+    }
+
+
+    /**
+     * Prepend a value to this {@link Tuple0}.
+     *
+     * @param t
+     *    The value to prepend
+     *
+     * @return a new {@link Tuple1} with the value prepended
+     */
+    public <T> Tuple1<T> prepend(final T t) {
+        return Tuple.of(t);
+    }
+
+
+    /**
+     * Append a value to this {@link Tuple0}.
+     *
+     * @param t
+     *    The value to append
+     *
+     * @return a new {@link Tuple1} with the value appended
+     */
+    public <T> Tuple1<T> append(final T t) {
+        return Tuple.of(t);
+    }
+
+
+    /**
+     * Concat a {@link Tuple1}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *    The {@link Tuple1} to concat
+     *
+     * @return a new {@link Tuple1} with the tuple values appended
+     *
+     * @throws IllegalArgumentException if {@code tuple} is {@code null}
+     */
+    public <T1> Tuple1<T1> concat(final Tuple1<T1> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1)
+                )
+                .orElseGet(Tuple1::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple2}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *    The {@link Tuple2} to concat
+     *
+     * @return a new {@link Tuple2} with the tuple values appended
+     */
+    public <T1, T2> Tuple2<T1, T2> concat(final Tuple2<T1, T2> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2)
+                )
+                .orElseGet(Tuple2::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple3}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple3} to concat
+     *
+     * @return a new {@link Tuple3} with the tuple values appended
+     */
+    public <T1, T2, T3> Tuple3<T1, T2, T3> concat(final Tuple3<T1, T2, T3> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3)
+                )
+                .orElseGet(Tuple3::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple4}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple4} to concat
+     *
+     * @return a new {@link Tuple4} with the tuple values appended
+     */
+    public <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> concat(final Tuple4<T1, T2, T3, T4> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4)
+                )
+                .orElseGet(Tuple4::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple5}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple5} to concat
+     *
+     * @return a new {@link Tuple5} with the tuple values appended
+     */
+    public <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> concat(final Tuple5<T1, T2, T3, T4, T5> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4, t._5)
+                )
+                .orElseGet(Tuple5::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple6}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple6} to concat
+     *
+     * @return a new {@link Tuple6} with the tuple values appended
+     */
+    public <T1, T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> concat(final Tuple6<T1, T2, T3, T4, T5, T6> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4, t._5, t._6)
+                )
+                .orElseGet(Tuple6::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple7}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple7} to concat
+     *
+     * @return a new {@link Tuple7} with the tuple values appended
+     */
+    public <T1, T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(final Tuple7<T1, T2, T3, T4, T5, T6, T7> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
+                )
+                .orElseGet(Tuple7::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple8}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple8} to concat
+     *
+     * @return a new {@link Tuple8} with the tuple values appended
+     */
+    public <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> concat(final Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
+                )
+                .orElseGet(Tuple8::empty);
+    }
+
+
+    /**
+     * Concat a {@link Tuple9}'s values to this {@link Tuple0}.
+     *
+     * @param tuple
+     *   The {@link Tuple9} to concat
+     *
+     * @return a new {@link Tuple9} with the tuple values appended
+     */
+    public <T1, T2, T3, T4, T5, T6, T7, T8, T9> Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> concat(final Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> tuple) {
+        return ofNullable(tuple)
+                .map(t ->
+                        Tuple.of(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)
+                )
+                .orElseGet(Tuple9::empty);
+    }
+
+}
