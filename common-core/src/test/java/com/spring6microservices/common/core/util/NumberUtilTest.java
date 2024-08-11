@@ -138,6 +138,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   expectedResult
                 Arguments.of( null,              right(empty()) ),
+                Arguments.of( "",                right(empty()) ),
+                Arguments.of( "  ",              right(empty()) ),
                 Arguments.of( "aa",              left(errorMessageNoNumber) ),
                 Arguments.of( "12.1",            left(errorMessageNoInteger) ),
                 Arguments.of( "12",              right(of(12)) )
@@ -165,6 +167,11 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   clazzReturnedInstance,   expectedResult
                 Arguments.of( null,              null,                    right(empty()) ),
+                Arguments.of( null,              Integer.class,           right(empty()) ),
+                Arguments.of( "",                null,                    right(empty()) ),
+                Arguments.of( "",                Long.class,              right(empty()) ),
+                Arguments.of( "  ",              null,                    right(empty()) ),
+                Arguments.of( "  ",              Double.class,            right(empty()) ),
                 Arguments.of( "aa",              null,                    left(errorMessageNoNumber) ),
                 Arguments.of( "aa",              Integer.class,           left(errorMessageNoNumber) ),
                 Arguments.of( "12",              null,                    right(of(12)) ),
@@ -190,12 +197,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toByteWithoutDefaultValueTestCases() {
-        Byte expectedIfError = (byte) 0;
+        Byte expectedIfNoConversion = (byte) 0;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "21",              (byte) 21 )
         ); //@formatter:on
     }
@@ -218,6 +227,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50",              defaultValue,   (byte) 50 )
         ); //@formatter:on
@@ -237,12 +248,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toDoubleWithoutDefaultValueTestCases() {
-        Double expectedIfError = 0.0d;
+        Double expectedIfNoConversion = 0.0d;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "321.3",           321.3d )
         ); //@formatter:on
     }
@@ -265,6 +278,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50.2",            defaultValue,   50.2d )
         ); //@formatter:on
@@ -284,12 +299,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toFloatWithoutDefaultValueTestCases() {
-        Float expectedIfError = 0.0f;
+        Float expectedIfNoConversion = 0.0f;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "321.9",           321.9f )
         ); //@formatter:on
     }
@@ -312,6 +329,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50.4",            defaultValue,   50.4f )
         ); //@formatter:on
@@ -331,12 +350,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toIntegerWithoutDefaultValueTestCases() {
-        Integer expectedIfError = 0;
+        Integer expectedIfNoConversion = 0;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "321",             321 )
         ); //@formatter:on
     }
@@ -359,6 +380,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50",              defaultValue,   50 )
         ); //@formatter:on
@@ -378,12 +401,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toLongWithoutDefaultValueTestCases() {
-        Long expectedIfError = 0L;
+        Long expectedIfNoConversion = 0L;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "321",             321L )
         ); //@formatter:on
     }
@@ -406,6 +431,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50",              defaultValue,   50L )
         ); //@formatter:on
@@ -425,12 +452,14 @@ public class NumberUtilTest {
 
 
     static Stream<Arguments> toShortWithoutDefaultValueTestCases() {
-        Short expectedIfError = (short) 0;
+        Short expectedIfNoConversion = (short) 0;
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
-                Arguments.of( null,              expectedIfError ),
-                Arguments.of( "aa",              expectedIfError ),
+                Arguments.of( null,              expectedIfNoConversion ),
+                Arguments.of( "",                expectedIfNoConversion ),
+                Arguments.of( "  ",              expectedIfNoConversion ),
+                Arguments.of( "aa",              expectedIfNoConversion ),
                 Arguments.of( "88",              (short) 88 )
         ); //@formatter:on
     }
@@ -453,6 +482,8 @@ public class NumberUtilTest {
                 //@formatter:off
                 //            potentialNumber,   defaultValue,   expectedResult
                 Arguments.of( null,              defaultValue,   defaultValue ),
+                Arguments.of( "",                defaultValue,   defaultValue ),
+                Arguments.of( "  ",              defaultValue,   defaultValue ),
                 Arguments.of( "aa",              defaultValue,   defaultValue ),
                 Arguments.of( "50",              defaultValue,   (short) 50 )
         ); //@formatter:on
