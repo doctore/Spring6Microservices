@@ -5,6 +5,23 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AssertUtil {
 
+    /**
+     * Assert a boolean expression, throwing an {@link IllegalArgumentException} if the expression evaluates to {@code true}.
+     *
+     * @param expression
+     *    A boolean expression
+     * @param errorMessage
+     *    If {@code expression} is {@code true}, the message added in the launched {@link IllegalArgumentException}
+     *
+     * @throws IllegalArgumentException if {@code expression} is {@code true}
+     */
+    public static void isFalse(final boolean expression,
+                               final String errorMessage) {
+        if (expression) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
 
     /**
      * Assert a boolean expression, throwing an {@link IllegalArgumentException} if the expression evaluates to {@code false}.
@@ -40,6 +57,5 @@ public class AssertUtil {
             throw new IllegalArgumentException(errorMessage);
         }
     }
-
 
 }

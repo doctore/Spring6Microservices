@@ -7,12 +7,47 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.AssertUtil.isFalse;
 import static com.spring6microservices.common.core.util.AssertUtil.isTrue;
 import static com.spring6microservices.common.core.util.AssertUtil.notNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AssertUtilTest {
+
+    static Stream<Arguments> isFalseTestCases() {
+        String errorMessage = "There was an error";
+        return Stream.of(
+                //@formatter:off
+                //            expression,   errorMessage,   expectedException
+                Arguments.of( true,         null,           IllegalArgumentException.class ),
+                Arguments.of( true,         errorMessage,   IllegalArgumentException.class ),
+                Arguments.of( false,        null,           null ),
+                Arguments.of( false,        errorMessage,   null )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("isFalseTestCases")
+    @DisplayName("isFalse: test cases")
+    public void isFalse_testCases(boolean expression,
+                                  String errorMessage,
+                                  Class<? extends Exception> expectedException) {
+        if (null != expectedException) {
+            Exception thrown = assertThrows(
+                    expectedException,
+                    () -> isFalse(expression, errorMessage)
+            );
+            assertEquals(
+                    errorMessage,
+                    thrown.getMessage()
+            );
+        } else {
+            // This method will not throw any exception
+            isFalse(expression, errorMessage);
+        }
+    }
+
 
     static Stream<Arguments> isTrueTestCases() {
         String errorMessage = "There was an error";
