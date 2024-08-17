@@ -24,6 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring6-microservices-common-core.version>1.0.0</spring6-microservices-common-core.version>
+        <springdoc.version>1.8.0</springdoc.version>
     </properties>
 
     <dependencies>
@@ -42,22 +43,29 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Spring5 microservices common -->
+        <!-- Spring6 microservices common -->
         <dependency>
             <groupId>com.spring6microservices.common</groupId>
             <artifactId>common-core</artifactId>
             <version>${spring6-microservices-common-core.version}</version>
         </dependency>
-        <!-- Bean converters and code generators -->
+        <!-- Documentation -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
