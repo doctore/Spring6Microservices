@@ -110,7 +110,7 @@ public class ObjectUtilTest {
         Predicate<Double> higherThan10Predicate = d -> 10 < d;
         return Stream.of(
                 //@formatter:off
-                //            sourceInstance,   predicateToMatch,          defaultValue,     expectedResult
+                //            sourceInstance,   filterPredicate,           defaultValue,     expectedResult
                 Arguments.of( null,             null,                      null,             null ),
                 Arguments.of( null,             null,                      notEmptyString,   notEmptyString ),
                 Arguments.of( null,             notEmptyStringPredicate,   null,             null ),
@@ -128,12 +128,12 @@ public class ObjectUtilTest {
     @MethodSource("getOrElseGenericDefaultValueSourcePredicateDefaultParametersTestCases")
     @DisplayName("getOrElse: with source, predicate and default value parameters test cases")
     public <T> void getOrElse_GenericDefaultValue_SourcePredicateDefaultParameters_testCases(T sourceInstance,
-                                                                                             Predicate<? super T> predicateToMatch,
+                                                                                             Predicate<? super T> filterPredicate,
                                                                                              T defaultValue,
                                                                                              T expectedResult) {
         assertEquals(
                 expectedResult,
-                getOrElse(sourceInstance, predicateToMatch, defaultValue)
+                getOrElse(sourceInstance, filterPredicate, defaultValue)
         );
     }
 

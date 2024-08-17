@@ -25,13 +25,13 @@ public class EnumHasInternalStringValueValidator implements ConstraintValidator<
 
 	@Override
 	@SuppressWarnings("unchecked")
-    public void initialize(final EnumHasInternalStringValue hasInternalStringValue) {
+	public void initialize(final EnumHasInternalStringValue hasInternalStringValue) {
 		enumValidValues = Arrays.stream(hasInternalStringValue.enumClass().getEnumConstants())
-				                .map(e -> ((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue())
-				                .collect(Collectors.toList());
+				.map(e -> ((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue())
+				.collect(Collectors.toList());
 		constraintTemplate = hasInternalStringValue.message();
 		isNullAccepted = hasInternalStringValue.isNullAccepted();
-    }
+	}
 
 
 	@Override

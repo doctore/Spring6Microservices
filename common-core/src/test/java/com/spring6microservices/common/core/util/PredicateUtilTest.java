@@ -1966,7 +1966,7 @@ public class PredicateUtilTest {
         BiPredicate<Integer, String> isIntegerGreaterThanTenAndStringLongerThan2 = (i, s) -> (10 < i) && (2 < s.length());
         return Stream.of(
                 //@formatter:off
-                //            predicate,                                     t,      e,       expectedResult
+                //            predicate,                                     t1,     t2,      expectedResult
                 Arguments.of( null,                                          null,   null,    false ),
                 Arguments.of( null,                                          11,     null,    false ),
                 Arguments.of( null,                                          null,   "ab",    false ),
@@ -1980,17 +1980,17 @@ public class PredicateUtilTest {
     @ParameterizedTest
     @MethodSource("getOrAlwaysFalseBiPredicateTestCases")
     @DisplayName("getOrAlwaysFalse: with BiPredicate test cases")
-    public <T, E> void getOrAlwaysFalseBiPredicate_testCases(BiPredicate<? super T, ? super E> predicate,
-                                                             T t,
-                                                             E e,
-                                                             boolean expectedResult) {
-        BiPredicate<T, E> predicateToApply = getOrAlwaysFalse(
+    public <T1, T2> void getOrAlwaysFalseBiPredicate_testCases(BiPredicate<? super T1, ? super T2> predicate,
+                                                               T1 t1,
+                                                               T2 t2,
+                                                               boolean expectedResult) {
+        BiPredicate<T1, T2> predicateToApply = getOrAlwaysFalse(
                 predicate
         );
         assertNotNull(predicateToApply);
         assertEquals(
                 expectedResult,
-                predicateToApply.test(t, e)
+                predicateToApply.test(t1, t2)
         );
     }
 
@@ -2028,7 +2028,7 @@ public class PredicateUtilTest {
         BiPredicate<Integer, String> isIntegerGreaterThanTenAndStringLongerThan2 = (i, s) -> (10 < i) && (2 < s.length());
         return Stream.of(
                 //@formatter:off
-                //            predicate,                                     t,      e,       expectedResult
+                //            predicate,                                     t1,     t2,      expectedResult
                 Arguments.of( null,                                          null,   null,    true ),
                 Arguments.of( null,                                          11,     null,    true ),
                 Arguments.of( null,                                          null,   "ab",    true ),
@@ -2042,17 +2042,17 @@ public class PredicateUtilTest {
     @ParameterizedTest
     @MethodSource("getOrAlwaysTrueBiPredicateTestCases")
     @DisplayName("getOrAlwaysTrue: with BiPredicate test cases")
-    public <T, E> void getOrAlwaysTrueBiPredicate_testCases(BiPredicate<? super T, ? super E> predicate,
-                                                            T t,
-                                                            E e,
-                                                            boolean expectedResult) {
-        BiPredicate<T, E> predicateToApply = getOrAlwaysTrue(
+    public <T1, T2> void getOrAlwaysTrueBiPredicate_testCases(BiPredicate<? super T1, ? super T2> predicate,
+                                                              T1 t1,
+                                                              T2 t2,
+                                                              boolean expectedResult) {
+        BiPredicate<T1, T2> predicateToApply = getOrAlwaysTrue(
                 predicate
         );
         assertNotNull(predicateToApply);
         assertEquals(
                 expectedResult,
-                predicateToApply.test(t, e)
+                predicateToApply.test(t1, t2)
         );
     }
 

@@ -22,9 +22,9 @@ public class HttpUtil {
      * Build the required Basic Authentication header value.
      *
      * @param username
-     *    User's identifier
+     *    User's identifier. {@link StringUtil#EMPTY_STRING} will be used if it has no value
      * @param password
-     *    User's password
+     *    User's password. {@link StringUtil#EMPTY_STRING} will be used if it has no value
      *
      * @return {@link String}
      *
@@ -64,7 +64,7 @@ public class HttpUtil {
      * Decode provided encoded Basic Authentication header value.
      *
      * @param encodeBasicAuth
-     *    {@link String} with an encoded Basic Authentication header value
+     *    {@link String} with an encoded Basic Authentication header value. {@link StringUtil#EMPTY_STRING} will be used if it has no value
      *
      * @return {@link Tuple2} with username as first value and password as second one
      *

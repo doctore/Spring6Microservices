@@ -685,6 +685,9 @@ public class StringUtil {
      *    Return the given {@code sourceCS} if is not {@code null} and verifies {@code filterPredicate}.
      * Otherwise, returns {@code defaultValue}.
      *
+     * @apiNote
+     *   If {@code filterPredicate} is {@code null} then no filter will be applied.
+     *
      * <pre>
      *    getOrElse(                             Result:
      *       "   ",                               "other"

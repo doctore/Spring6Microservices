@@ -1197,8 +1197,8 @@ public class PredicateUtil {
      *         {@link PredicateUtil#biAlwaysFalse()} otherwise.
      */
     @SuppressWarnings("unchecked")
-    public static <T, E> BiPredicate<T, E> getOrAlwaysFalse(final BiPredicate<? super T, ? super E> predicate) {
-        return (BiPredicate<T, E>) getOrElse(
+    public static <T1, T2> BiPredicate<T1, T2> getOrAlwaysFalse(final BiPredicate<? super T1, ? super T2> predicate) {
+        return (BiPredicate<T1, T2>) getOrElse(
                 predicate,
                 biAlwaysFalse()
         );
@@ -1233,8 +1233,8 @@ public class PredicateUtil {
      *         {@link PredicateUtil#biAlwaysTrue()} otherwise.
      */
     @SuppressWarnings("unchecked")
-    public static <T, E> BiPredicate<T, E> getOrAlwaysTrue(final BiPredicate<? super T, ? super E> predicate) {
-        return (BiPredicate<T, E>) getOrElse(
+    public static <T1, T2> BiPredicate<T1, T2> getOrAlwaysTrue(final BiPredicate<? super T1, ? super T2> predicate) {
+        return (BiPredicate<T1, T2>) getOrElse(
                 predicate,
                 biAlwaysTrue()
         );

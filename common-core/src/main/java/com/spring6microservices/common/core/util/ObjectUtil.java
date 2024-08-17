@@ -75,12 +75,15 @@ public class ObjectUtil {
 
 
     /**
-     *    Return the given {@code sourceInstance} if is not {@code null} and verifies {@code predicateToMatch}.
+     *    Return the given {@code sourceInstance} if is not {@code null} and verifies {@code filterPredicate}.
      * Otherwise, returns {@code defaultValue}.
      *
+     * @apiNote
+     *   If {@code filterPredicate} is {@code null} then no filter will be applied.
+     *
      * <pre>
-     *    getOrElse(                                  Result:
-     *       "   ",                                    "other"
+     *    getOrElse(                               Result:
+     *       "   ",                                 "other"
      *       s -> s.trim().size() > 0,
      *       "other"
      *    )
@@ -88,19 +91,19 @@ public class ObjectUtil {
      *
      * @param sourceInstance
      *    Object returned only if is not {@code null}
-     * @param predicateToMatch
+     * @param filterPredicate
      *    {@link Predicate} to apply if {@code sourceInstance} is not {@code null}
      * @param defaultValue
      *    Alternative value to return
      *
-     * @return {@code sourceInstance} if is not {@code null} and verifies {@code predicateToMatch},
+     * @return {@code sourceInstance} if is not {@code null} and verifies {@code filterPredicate},
      *         {@code defaultValue} otherwise
      */
     public static <T> T getOrElse(final T sourceInstance,
-                                  final Predicate<? super T> predicateToMatch,
+                                  final Predicate<? super T> filterPredicate,
                                   final T defaultValue) {
         final Predicate<? super T> finalPredicateToMatch = getOrElse(
-                predicateToMatch,
+                filterPredicate,
                 alwaysTrue()
         );
         return ofNullable(sourceInstance)
