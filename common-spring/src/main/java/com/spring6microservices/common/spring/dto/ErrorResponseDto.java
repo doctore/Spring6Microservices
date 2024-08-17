@@ -36,7 +36,9 @@ public class ErrorResponseDto {
     public ErrorResponseDto(final RestApiErrorCode code,
                             final Collection<String> errors) {
         this.code = code;
-        this.errors = new ArrayList<>(errors);
+        this.errors = null == errors
+                ? new ArrayList<>()
+                : new ArrayList<>(errors);
     }
 
 }
