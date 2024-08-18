@@ -1,4 +1,4 @@
-package com.spring6microservices.common.spring.enums;
+package com.spring6microservices.common.spring.validator.enums;
 
 import com.spring6microservices.common.spring.PizzaDto;
 import com.spring6microservices.common.spring.PizzaEnum;
