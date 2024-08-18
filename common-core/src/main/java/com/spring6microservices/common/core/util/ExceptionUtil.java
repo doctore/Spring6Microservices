@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
@@ -17,6 +18,29 @@ import static java.util.Optional.ofNullable;
  */
 @UtilityClass
 public class ExceptionUtil {
+
+    /**
+     *    Introspects the {@link Throwable} to obtain the root cause, returning a formatted message including
+     * the class name of the root cause and the original error message.
+     *
+     * @param sourceThrowable
+     *    {@link Throwable} to get the root cause for
+     *
+     * @return {@link String} including the class name of the root cause and the original error message,
+     *         {@link StringUtil#EMPTY_STRING} if {@code sourceThrowable} is {@code null}
+     */
+    public static String getFormattedRootError(final Throwable sourceThrowable) {
+        return ofNullable(sourceThrowable)
+                .map(t -> {
+                    Throwable rootT = getRootCause(t).orElse(t);
+                    return format("The root cause was an exception of class: %s with error message: %s",
+                            rootT.getClass().getName(),
+                            rootT.getMessage()
+                    );
+                })
+                .orElse(StringUtil.EMPTY_STRING);
+    }
+
 
     /**
      *    Introspects the {@link Throwable} to obtain the root cause, walking through the exception chain to the last element,

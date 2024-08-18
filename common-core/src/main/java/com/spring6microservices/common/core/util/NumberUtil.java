@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static com.spring6microservices.common.core.functional.either.Either.left;
 import static com.spring6microservices.common.core.functional.either.Either.right;
-import static com.spring6microservices.common.core.util.ExceptionUtil.getRootCause;
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.lang.String.format;
 import static java.util.Optional.empty;
@@ -148,16 +148,12 @@ public class NumberUtil {
             );
         }
         catch (Exception e) {
-            String mainErrorMessage = format(
-                    "There was an error trying to convert the string: %s to an instance of: %s",
-                    potentialNumber,
-                    finalClazzReturnedInstance.getName()
-            );
-            Throwable rootCauseOrProvided = getRootCause(e).orElse(e);
             return left(
-                    format(mainErrorMessage + ". The cause was: %s with message: %s",
-                            rootCauseOrProvided.getClass().getName(),
-                            rootCauseOrProvided.getMessage()
+                    format(
+                            "There was an error trying to convert the string: %s to an instance of: %s. %s",
+                            potentialNumber,
+                            finalClazzReturnedInstance.getName(),
+                            getFormattedRootError(e)
                     )
             );
         }

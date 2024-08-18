@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -83,9 +84,10 @@ public class JsonUtil {
                         );
                     } catch (Exception e) {
                         throw new JsonException(
-                                format("There was an error trying to convert the given JSON-formatted string: %s into an instance of the class: %s",
+                                format("There was an error trying to convert the given JSON-formatted string: %s into an instance of the class: %s. %s",
                                         sourceJson,
-                                        ofNullable(clazzToConvert).map(Class::getName).orElse("null")
+                                        ofNullable(clazzToConvert).map(Class::getName).orElse("null"),
+                                        getFormattedRootError(e)
                                 ),
                                 e
                         );
@@ -196,10 +198,11 @@ public class JsonUtil {
                     } catch (Exception e) {
                         throw new JsonException(
                                 format("There was an error trying to convert the given JSON-formatted string: %s into a "
-                                     + "collection class: %s filled with instances of the class: %s",
+                                     + "collection class: %s filled with instances of the class: %s. %s",
                                         sourceJson,
                                         ofNullable(finalClazzOfCollection).map(Class::getName).orElse("null"),
-                                        ofNullable(clazzOfElements).map(Class::getName).orElse("null")
+                                        ofNullable(clazzOfElements).map(Class::getName).orElse("null"),
+                                        getFormattedRootError(e)
                                 ),
                                 e
                         );
@@ -211,10 +214,11 @@ public class JsonUtil {
 
                     } catch (Exception e) {
                         throw new JsonException(
-                                format("Due to the given JSON-formatted string: %s is null or empty, it was required to create "
-                                     + "an empty instance of the class: %s. However, there was an error trying to do it",
+                                format("Due to the given JSON-formatted string: %s is null or empty, it was required to create an "
+                                     + "empty instance of the class: %s. However, there was an error trying to do it. %s",
                                         sourceJson,
-                                        ofNullable(finalClazzOfCollection).map(Class::getName).orElse("null")
+                                        ofNullable(finalClazzOfCollection).map(Class::getName).orElse("null"),
+                                        getFormattedRootError(e)
                                 ),
                                 e
                         );
@@ -268,8 +272,11 @@ public class JsonUtil {
 
                     } catch (Exception e) {
                         throw new JsonException(
-                                format("There was an error trying to convert an object of the class: %s into a JSON-formatted string",
-                                        sourceObject.getClass().getName()),
+                                format("There was an error trying to convert an object of the class: %s into a JSON-formatted "
+                                     + "string. %s",
+                                        sourceObject.getClass().getName(),
+                                        getFormattedRootError(e)
+                                ),
                                 e
                         );
                     }

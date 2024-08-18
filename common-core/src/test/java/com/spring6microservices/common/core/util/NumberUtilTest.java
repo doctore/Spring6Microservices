@@ -131,9 +131,9 @@ public class NumberUtilTest {
 
     static Stream<Arguments> fromStringWithoutClassInstanceTestCases() {
         String errorMessageNoNumber = "There was an error trying to convert the string: aa to an instance of: java.lang.Integer. "
-                + "The cause was: java.lang.NumberFormatException with message: For input string: \"aa\"";
+                + "The root cause was an exception of class: java.lang.NumberFormatException with error message: For input string: \"aa\"";
         String errorMessageNoInteger = "There was an error trying to convert the string: 12.1 to an instance of: java.lang.Integer. "
-                + "The cause was: java.lang.NumberFormatException with message: For input string: \"12.1\"";
+                + "The root cause was an exception of class: java.lang.NumberFormatException with error message: For input string: \"12.1\"";
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   expectedResult
@@ -160,9 +160,9 @@ public class NumberUtilTest {
 
     static Stream<Arguments> fromStringAllParametersTestCases() {
         String errorMessageNoNumber = "There was an error trying to convert the string: aa to an instance of: java.lang.Integer. "
-                + "The cause was: java.lang.NumberFormatException with message: For input string: \"aa\"";
+                + "The root cause was an exception of class: java.lang.NumberFormatException with error message: For input string: \"aa\"";
         String errorMessageNoInteger = "There was an error trying to convert the string: 12.1 to an instance of: java.lang.Integer. "
-                + "The cause was: java.lang.NumberFormatException with message: For input string: \"12.1\"";
+                + "The root cause was an exception of class: java.lang.NumberFormatException with error message: For input string: \"12.1\"";
         return Stream.of(
                 //@formatter:off
                 //            potentialNumber,   clazzReturnedInstance,   expectedResult

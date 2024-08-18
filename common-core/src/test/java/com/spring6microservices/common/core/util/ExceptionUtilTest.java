@@ -11,14 +11,59 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getRootCause;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getThrowableList;
 import static com.spring6microservices.common.core.util.ExceptionUtil.throwableOfType;
+import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExceptionUtilTest {
+
+    static Stream<Arguments> getFormattedRootErrorTestCases() {
+        ConnectException connectException = new ConnectException("Connection refused");
+        IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Argument not valid", connectException);
+        SecurityException securityException = new SecurityException("Operation not allowed", illegalArgumentException);
+
+        // Recursive cause hierarchy use case
+        ExceptionWithCause exception1 = new ExceptionWithCause(null);
+        ExceptionWithCause exception2 = new ExceptionWithCause(exception1);
+        exception1.setCause(exception2);
+        ExceptionWithCause cyclicExceptionHierarchy = new ExceptionWithCause(exception1);
+
+        String errorMessageFormat = "The root cause was an exception of class: %s with error message: %s";
+        String errorMessageRootConnectionException = format(errorMessageFormat,
+                connectException.getClass().getName(),
+                connectException.getMessage()
+        );
+        String errorMessageRootExceptionWithCause = format(errorMessageFormat,
+                exception1.getClass().getName(),
+                exception1.getMessage()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceThrowable,            expectedResult
+                Arguments.of( null,                       StringUtil.EMPTY_STRING ),
+                Arguments.of( connectException,           errorMessageRootConnectionException ),
+                Arguments.of( illegalArgumentException,   errorMessageRootConnectionException ),
+                Arguments.of( securityException,          errorMessageRootConnectionException ),
+                Arguments.of( cyclicExceptionHierarchy,   errorMessageRootExceptionWithCause )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getFormattedRootErrorTestCases")
+    @DisplayName("getFormattedRootError: test cases")
+    public void getFormattedRootError_testCases(Throwable sourceThrowable,
+                                                String expectedResult) {
+        assertEquals(
+                expectedResult,
+                getFormattedRootError(sourceThrowable)
+        );
+    }
+
 
     static Stream<Arguments> getRootCauseTestCases() {
         ConnectException connectException = new ConnectException("Connection refused");
@@ -32,7 +77,7 @@ public class ExceptionUtilTest {
         ExceptionWithCause cyclicExceptionHierarchy = new ExceptionWithCause(exception1);
         return Stream.of(
                 //@formatter:off
-                //            sourceThrowable,   expectedResult
+                //            sourceThrowable,            expectedResult
                 Arguments.of( null,                       empty() ),
                 Arguments.of( connectException,           of(connectException) ),
                 Arguments.of( illegalArgumentException,   of(connectException) ),
