@@ -80,7 +80,9 @@ public class HttpUtil {
         AssertUtil.isTrue(
                 finalEncodeBasicAuth.startsWith(BASIC_AUTHORIZATION_HEADER),
                 format("Given encode basic authentication: %s must start with: '%s'",
-                        encodeBasicAuth, BASIC_AUTHORIZATION_HEADER)
+                        encodeBasicAuth,
+                        BASIC_AUTHORIZATION_HEADER
+                )
         );
         final String base64Credentials = finalEncodeBasicAuth.substring(
                 BASIC_AUTHORIZATION_HEADER.length()
