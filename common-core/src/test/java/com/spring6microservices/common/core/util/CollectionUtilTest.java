@@ -165,16 +165,12 @@ public class CollectionUtilTest {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () ->
-                            andThen(
-                                    sourceCollection, firstMapper, secondMapper, collectionFactory
-                            )
+                    () -> andThen(sourceCollection, firstMapper, secondMapper, collectionFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    andThen(
-                            sourceCollection, firstMapper, secondMapper, collectionFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    andThen(sourceCollection, firstMapper, secondMapper, collectionFactory)
             );
         }
     }
@@ -219,17 +215,12 @@ public class CollectionUtilTest {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceCollection, filterPredicate, defaultMapper, orElseMapper
-                            )
+                    () -> applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper)
             );
         } else {
             assertEquals(
                     expectedResult,
-                    applyOrElse(
-                            sourceCollection, filterPredicate, defaultMapper, orElseMapper
-                    )
+                    applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper)
             );
         }
     }
@@ -289,16 +280,12 @@ public class CollectionUtilTest {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () -> applyOrElse(
-                            sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory
-                    )
+                    () -> applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory)
             );
         } else {
             assertEquals(
                     expectedResult,
-                    applyOrElse(
-                            sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory
-                    )
+                    applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory)
             );
         }
     }
@@ -334,17 +321,12 @@ public class CollectionUtilTest {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceCollection, partialFunction, orElseMapper
-                            )
+                    () -> applyOrElse(sourceCollection, partialFunction, orElseMapper)
             );
         } else {
             assertEquals(
                     expectedResult,
-                    applyOrElse(
-                            sourceCollection, partialFunction, orElseMapper
-                    )
+                    applyOrElse(sourceCollection, partialFunction, orElseMapper)
             );
         }
     }
@@ -392,17 +374,12 @@ public class CollectionUtilTest {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceCollection, partialFunction, orElseMapper, collectionFactory
-                            )
+                    () -> applyOrElse(sourceCollection, partialFunction, orElseMapper, collectionFactory)
             );
         } else {
             assertEquals(
                     expectedResult,
-                    applyOrElse(
-                            sourceCollection, partialFunction, orElseMapper, collectionFactory
-                    )
+                    applyOrElse(sourceCollection, partialFunction, orElseMapper, collectionFactory)
             );
         }
     }

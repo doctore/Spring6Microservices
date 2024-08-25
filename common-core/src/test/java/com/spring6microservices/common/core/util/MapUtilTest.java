@@ -172,17 +172,14 @@ public class MapUtilTest {
                                                                       Class<? extends Exception> expectedException,
                                                                       Map<T, T> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () ->
-                            andThen(
-                                    sourceMap, firstMapper, secondMapper, mapFactory
-                            )
+            assertThrows(
+                    expectedException,
+                    () -> andThen(sourceMap, firstMapper, secondMapper, mapFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    andThen(
-                            sourceMap, firstMapper, secondMapper, mapFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    andThen(sourceMap, firstMapper, secondMapper, mapFactory)
             );
         }
     }
@@ -252,17 +249,14 @@ public class MapUtilTest {
                                                                                     Class<? extends Exception> expectedException,
                                                                                     Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceMap, filterPredicate, defaultMapper, orElseMapper
-                            )
+            assertThrows(
+                    expectedException,
+                    () -> applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper)
             );
         } else {
-            assertEquals(expectedResult,
-                    applyOrElse(
-                            sourceMap, filterPredicate, defaultMapper, orElseMapper
-                    )
+            assertEquals(
+                    expectedResult,
+                    applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper)
             );
         }
     }
@@ -349,18 +343,14 @@ public class MapUtilTest {
                                                                                             Class<? extends Exception> expectedException,
                                                                                             Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory
-
-                            )
+            assertThrows(
+                    expectedException,
+                    () -> applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    applyOrElse(
-                            sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory)
             );
         }
     }
@@ -418,17 +408,14 @@ public class MapUtilTest {
                                                                                        Class<? extends Exception> expectedException,
                                                                                        Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceMap, partialFunction, orElseMapper
-                            )
+            assertThrows(
+                    expectedException,
+                    () -> applyOrElse(sourceMap, partialFunction, orElseMapper)
             );
         } else {
-            assertEquals(expectedResult,
-                    applyOrElse(
-                            sourceMap, partialFunction, orElseMapper
-                    )
+            assertEquals(
+                    expectedResult,
+                    applyOrElse(sourceMap, partialFunction, orElseMapper)
             );
         }
     }
@@ -499,17 +486,14 @@ public class MapUtilTest {
                                                                                                Class<? extends Exception> expectedException,
                                                                                                Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () ->
-                            applyOrElse(
-                                    sourceMap, partialFunction, orElseMapper, mapFactory
-                            )
+            assertThrows(
+                    expectedException,
+                    () -> applyOrElse(sourceMap, partialFunction, orElseMapper, mapFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    applyOrElse(
-                            sourceMap, partialFunction, orElseMapper, mapFactory
-                    )
+            assertEquals
+                    (expectedResult,
+                    applyOrElse(sourceMap, partialFunction, orElseMapper, mapFactory)
             );
         }
     }
@@ -631,9 +615,15 @@ public class MapUtilTest {
                                                                                    Class<? extends Exception> expectedException,
                                                                                    Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> collect(sourceMap, filterPredicate, mapFunction, mapFactory));
+            assertThrows(
+                    expectedException,
+                    () -> collect(sourceMap, filterPredicate, mapFunction, mapFactory)
+            );
         } else {
-            assertEquals(expectedResult, collect(sourceMap, filterPredicate, mapFunction, mapFactory));
+            assertEquals(
+                    expectedResult,
+                    collect(sourceMap, filterPredicate, mapFunction, mapFactory)
+            );
         }
     }
 
@@ -681,9 +671,15 @@ public class MapUtilTest {
                                                                       Class<? extends Exception> expectedException,
                                                                       Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> collect(sourceMap, partialFunction));
+            assertThrows(
+                    expectedException,
+                    () -> collect(sourceMap, partialFunction)
+            );
         } else {
-            assertEquals(expectedResult, collect(sourceMap, partialFunction));
+            assertEquals(
+                    expectedResult,
+                    collect(sourceMap, partialFunction)
+            );
         }
     }
 
@@ -738,9 +734,15 @@ public class MapUtilTest {
                                                                                  Class<? extends Exception> expectedException,
                                                                                  Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> collect(sourceMap, partialFunction, mapFactory));
+            assertThrows(
+                    expectedException,
+                    () -> collect(sourceMap, partialFunction, mapFactory)
+            );
         } else {
-            assertEquals(expectedResult, collect(sourceMap, partialFunction, mapFactory));
+            assertEquals(
+                    expectedResult,
+                    collect(sourceMap, partialFunction, mapFactory)
+            );
         }
     }
 
@@ -786,9 +788,15 @@ public class MapUtilTest {
                                                                       Class<? extends Exception> expectedException,
                                                                       Optional<Map<K2, V2>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> collectFirst(sourceMap, partialFunction));
+            assertThrows(
+                    expectedException,
+                    () -> collectFirst(sourceMap, partialFunction)
+            );
         } else {
-            assertEquals(expectedResult, collectFirst(sourceMap, partialFunction));
+            assertEquals(
+                    expectedResult,
+                    collectFirst(sourceMap, partialFunction)
+            );
         }
     }
 
@@ -840,7 +848,10 @@ public class MapUtilTest {
                                                 Map<? extends T, ? extends E> mapToConcat2,
                                                 Map<? extends T, ? extends E> mapToConcat3,
                                                 Map<T, E> expectedResult) {
-        assertEquals(expectedResult, concat(mapToConcat1, mapToConcat2, mapToConcat3));
+        assertEquals(
+                expectedResult,
+                concat(mapToConcat1, mapToConcat2, mapToConcat3)
+        );
     }
 
 
@@ -901,7 +912,10 @@ public class MapUtilTest {
                                                          Map<? extends T, ? extends E> mapToConcat3,
                                                          Supplier<Map<T, E>> mapFactory,
                                                          Map<T, E> expectedResult) {
-        assertEquals(expectedResult, concat(mapFactory, mapToConcat1, mapToConcat2, mapToConcat3));
+        assertEquals(
+                expectedResult,
+                concat(mapFactory, mapToConcat1, mapToConcat2, mapToConcat3)
+        );
     }
 
 
@@ -988,7 +1002,10 @@ public class MapUtilTest {
                                                      Supplier<Map<T, E>> mapFactory,
                                                      BinaryOperator<E> mergeValueFunction,
                                                      Map<T, E> expectedResult) {
-        assertEquals(expectedResult, concat(mapFactory, mergeValueFunction, mapToConcat1, mapToConcat2, mapToConcat3));
+        assertEquals(
+                expectedResult,
+                concat(mapFactory, mergeValueFunction, mapToConcat1, mapToConcat2, mapToConcat3)
+        );
     }
 
 
@@ -1128,7 +1145,10 @@ public class MapUtilTest {
     public <T, E> void dropWhileNoMapFactory_testCases(Map<? extends T, ? extends E> sourceMap,
                                                        BiPredicate<? super T, ? super E> filterPredicate,
                                                        Map<T, E> expectedResult) {
-        assertEquals(expectedResult, dropWhile(sourceMap, filterPredicate));
+        assertEquals(
+                expectedResult,
+                dropWhile(sourceMap, filterPredicate)
+        );
     }
 
 
@@ -1165,7 +1185,10 @@ public class MapUtilTest {
                                                         BiPredicate<? super T, ? super E> filterPredicate,
                                                         Supplier<Map<T, E>> mapFactory,
                                                         Map<T, E> expectedResult) {
-        assertEquals(expectedResult, dropWhile(sourceMap, filterPredicate, mapFactory));
+        assertEquals(
+                expectedResult,
+                dropWhile(sourceMap, filterPredicate, mapFactory)
+        );
     }
 
 
@@ -1196,7 +1219,10 @@ public class MapUtilTest {
     public <T, E> void filterNoMapFactory_testCases(Map<? extends T, ? extends E> sourceMap,
                                                     BiPredicate<? super T, ? super E> filterPredicate,
                                                     Map<T, E> expectedResult) {
-        assertEquals(expectedResult, filter(sourceMap, filterPredicate));
+        assertEquals(
+                expectedResult,
+                filter(sourceMap, filterPredicate)
+        );
     }
 
 
@@ -1238,7 +1264,10 @@ public class MapUtilTest {
                                                      BiPredicate<? super T, ? super E> filterPredicate,
                                                      Supplier<Map<T, E>> mapFactory,
                                                      Map<T, E> expectedResult) {
-        assertEquals(expectedResult, filter(sourceMap, filterPredicate, mapFactory));
+        assertEquals(
+                expectedResult,
+                filter(sourceMap, filterPredicate, mapFactory)
+        );
     }
 
 
@@ -1270,7 +1299,10 @@ public class MapUtilTest {
     public <T, E> void filterNotNoMapFactory_testCases(Map<? extends T, ? extends E> sourceMap,
                                                        BiPredicate<? super T, ? super E> filterPredicate,
                                                        Map<T, E> expectedResult) {
-        assertEquals(expectedResult, filterNot(sourceMap, filterPredicate));
+        assertEquals(
+                expectedResult,
+                filterNot(sourceMap, filterPredicate)
+        );
     }
 
 
@@ -1305,7 +1337,10 @@ public class MapUtilTest {
                                                         BiPredicate<? super T, ? super E> filterPredicate,
                                                         Supplier<Map<T, E>> mapFactory,
                                                         Map<T, E> expectedResult) {
-        assertEquals(expectedResult, filterNot(sourceMap, filterPredicate, mapFactory));
+        assertEquals(
+                expectedResult,
+                filterNot(sourceMap, filterPredicate, mapFactory)
+        );
     }
 
 
@@ -1349,7 +1384,10 @@ public class MapUtilTest {
     public <T, E> void find_testCases(Map<? extends T, ? extends E> sourceMap,
                                       BiPredicate<? super T, ? super E> filterPredicate,
                                       Optional<Map.Entry<T, E>> expectedResult) {
-        assertEquals(expectedResult, find(sourceMap, filterPredicate));
+        assertEquals(
+                expectedResult,
+                find(sourceMap, filterPredicate)
+        );
     }
 
 
@@ -1395,9 +1433,15 @@ public class MapUtilTest {
                                                                   Class<? extends Exception> expectedException,
                                                                   List<U> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> flatten(sourceMap, flattener));
+            assertThrows(
+                    expectedException,
+                    () -> flatten(sourceMap, flattener)
+            );
         } else {
-            assertEquals(expectedResult, flatten(sourceMap, flattener));
+            assertEquals(
+                    expectedResult,
+                    flatten(sourceMap, flattener)
+            );
         }
     }
 
@@ -1450,9 +1494,15 @@ public class MapUtilTest {
                                                             Class<? extends Exception> expectedException,
                                                             Collection<U> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> flatten(sourceMap, flattener, collectionFactory));
+            assertThrows(
+                    expectedException,
+                    () -> flatten(sourceMap, flattener, collectionFactory)
+            );
         } else {
-            assertEquals(expectedResult, flatten(sourceMap, flattener, collectionFactory));
+            assertEquals(
+                    expectedResult,
+                    flatten(sourceMap, flattener, collectionFactory)
+            );
         }
     }
 
@@ -1490,7 +1540,10 @@ public class MapUtilTest {
                                                                            R initialValue,
                                                                            TriFunction<R, ? super T, ?super E, R> accumulator,
                                                                            R expectedResult) {
-        assertEquals(expectedResult, foldLeft(sourceMap, initialValue, accumulator));
+        assertEquals(
+                expectedResult,
+                foldLeft(sourceMap, initialValue, accumulator)
+        );
     }
 
 
@@ -1540,7 +1593,10 @@ public class MapUtilTest {
                                                           R initialValue,
                                                           TriFunction<R, ? super T, ?super E, R> accumulator,
                                                           R expectedResult) {
-        assertEquals(expectedResult, foldLeft(sourceMap, filterPredicate, initialValue, accumulator));
+        assertEquals(
+                expectedResult,
+                foldLeft(sourceMap, filterPredicate, initialValue, accumulator)
+        );
     }
 
 
@@ -1576,7 +1632,10 @@ public class MapUtilTest {
                                                                T key,
                                                                E defaultValue,
                                                                E expectedResult) {
-        assertEquals(expectedResult, getOrElse(sourceMap, key, defaultValue));
+        assertEquals(
+                expectedResult,
+                getOrElse(sourceMap, key, defaultValue)
+        );
     }
 
 
@@ -1610,9 +1669,15 @@ public class MapUtilTest {
                                                                  Class<? extends Exception> expectedException,
                                                                  E expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> getOrElse(sourceMap, key, defaultValue));
+            assertThrows(
+                    expectedException,
+                    () -> getOrElse(sourceMap, key, defaultValue)
+            );
         } else {
-            assertEquals(expectedResult, getOrElse(sourceMap, key, defaultValue));
+            assertEquals(
+                    expectedResult,
+                    getOrElse(sourceMap, key, defaultValue)
+            );
         }
     }
 
@@ -1681,9 +1746,15 @@ public class MapUtilTest {
                                                         Class<? extends Exception> expectedException,
                                                         Map<R, Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupBy(sourceMap, discriminatorKey));
+            assertThrows(
+                    expectedException,
+                    () -> groupBy(sourceMap, discriminatorKey)
+            );
         } else {
-            assertEquals(expectedResult, groupBy(sourceMap, discriminatorKey));
+            assertEquals(
+                    expectedResult,
+                    groupBy(sourceMap, discriminatorKey)
+            );
         }
     }
 
@@ -1753,9 +1824,15 @@ public class MapUtilTest {
                                                          Class<? extends Exception> expectedException,
                                                          Map<R, Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory));
+            assertThrows(
+                    expectedException,
+                    () -> groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
+            );
         } else {
-            assertEquals(expectedResult, groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory));
+            assertEquals(
+                    expectedResult,
+                    groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
+            );
         }
     }
 
@@ -1811,9 +1888,15 @@ public class MapUtilTest {
                                                                 Class<? extends Exception> expectedException,
                                                                 Map<R, Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupByMultiKey(sourceMap, discriminatorKey));
+            assertThrows(
+                    expectedException,
+                    () -> groupByMultiKey(sourceMap, discriminatorKey)
+            );
         } else {
-            assertEquals(expectedResult, groupByMultiKey(sourceMap, discriminatorKey));
+            assertEquals(
+                    expectedResult,
+                    groupByMultiKey(sourceMap, discriminatorKey)
+            );
         }
     }
 
@@ -1906,44 +1989,16 @@ public class MapUtilTest {
                                                                  Class<? extends Exception> expectedException,
                                                                  Map<R, Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory));
+            assertThrows(
+                    expectedException,
+                    () -> groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
+            );
         } else {
-            assertEquals(expectedResult, groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory));
+            assertEquals(
+                    expectedResult,
+                    groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
+            );
         }
-    }
-
-
-    static Stream<Arguments> groupMapWithPartialFunctionTestCases() {
-        Map<String, Integer> stringsAndIntegers = new LinkedHashMap<>() {{
-            put("A", 10);
-            put("BY", 20);
-            put("C", 30);
-            put("DH", 40);
-            put("GHT", 55);
-        }};
-        PartialFunction<Map.Entry<String, Integer>, Map.Entry<Integer, Integer>> partialFunction = PartialFunction.of(
-                e -> null != e &&
-                        3 > e.getKey().length() &&
-                        50 > e.getValue(),
-                e -> new AbstractMap.SimpleEntry<>(
-                        e.getKey().length(),
-                        e.getValue() + 5
-                     )
-        );
-        Map<Integer, List<Integer>> expectedResult = new HashMap<>() {{
-            put(1, List.of(15, 35));
-            put(2, List.of(25, 45));
-        }};
-        return Stream.of(
-                //@formatter:off
-                //            sourceMap,            partialFunction,   expectedException,                expectedResult
-                Arguments.of( null,                 null,              null,                             Map.of() ),
-                Arguments.of( Map.of(),             null,              null,                             Map.of() ),
-                Arguments.of( stringsAndIntegers,   null,              IllegalArgumentException.class,   null ),
-                Arguments.of( null,                 partialFunction,   null,                             Map.of() ),
-                Arguments.of( Map.of(),             partialFunction,   null,                             Map.of() ),
-                Arguments.of( stringsAndIntegers,   partialFunction,   null,                             expectedResult )
-        ); //@formatter:on
     }
 
 
@@ -1984,9 +2039,15 @@ public class MapUtilTest {
                                                              Class<? extends Exception> expectedException,
                                                              Map<R, List<V>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMap(sourceMap, discriminatorKey, valueMapper));
+            assertThrows(
+                    expectedException,
+                    () -> groupMap(sourceMap, discriminatorKey, valueMapper)
+            );
         } else {
-            assertEquals(expectedResult, groupMap(sourceMap, discriminatorKey, valueMapper));
+            assertEquals(
+                    expectedResult,
+                    groupMap(sourceMap, discriminatorKey, valueMapper)
+            );
         }
     }
 
@@ -2040,9 +2101,15 @@ public class MapUtilTest {
                                                                              Class<? extends Exception> expectedException,
                                                                              Map<K2, Collection<V2>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper));
+            assertThrows(
+                    expectedException,
+                    () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper)
+            );
         } else {
-            assertEquals(expectedResult, groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper));
+            assertEquals(
+                    expectedResult,
+                    groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper)
+            );
         }
     }
 
@@ -2111,12 +2178,51 @@ public class MapUtilTest {
                                                                                      Class<? extends Exception> expectedException,
                                                                                      Map<K2, Collection<V2>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory));
+            assertThrows(
+                    expectedException,
+                    () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
+            );
         } else {
-            assertEquals(expectedResult, groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory));
+            assertEquals(
+                    expectedResult,
+                    groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
+            );
         }
     }
 
+
+    static Stream<Arguments> groupMapWithPartialFunctionTestCases() {
+        Map<String, Integer> stringsAndIntegers = new LinkedHashMap<>() {{
+            put("A", 10);
+            put("BY", 20);
+            put("C", 30);
+            put("DH", 40);
+            put("GHT", 55);
+        }};
+        PartialFunction<Map.Entry<String, Integer>, Map.Entry<Integer, Integer>> partialFunction = PartialFunction.of(
+                e -> null != e &&
+                        3 > e.getKey().length() &&
+                        50 > e.getValue(),
+                e -> new AbstractMap.SimpleEntry<>(
+                        e.getKey().length(),
+                        e.getValue() + 5
+                )
+        );
+        Map<Integer, List<Integer>> expectedResult = new HashMap<>() {{
+            put(1, List.of(15, 35));
+            put(2, List.of(25, 45));
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            sourceMap,            partialFunction,   expectedException,                expectedResult
+                Arguments.of( null,                 null,              null,                             Map.of() ),
+                Arguments.of( Map.of(),             null,              null,                             Map.of() ),
+                Arguments.of( stringsAndIntegers,   null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                 partialFunction,   null,                             Map.of() ),
+                Arguments.of( Map.of(),             partialFunction,   null,                             Map.of() ),
+                Arguments.of( stringsAndIntegers,   partialFunction,   null,                             expectedResult )
+        ); //@formatter:on
+    }
 
     @ParameterizedTest
     @MethodSource("groupMapWithPartialFunctionTestCases")
@@ -2126,9 +2232,15 @@ public class MapUtilTest {
                                                                        Class<? extends Exception> expectedException,
                                                                        Map<K2, Collection<V2>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMap(sourceMap, partialFunction));
+            assertThrows(
+                    expectedException,
+                    () -> groupMap(sourceMap, partialFunction)
+            );
         } else {
-            assertEquals(expectedResult, groupMap(sourceMap, partialFunction));
+            assertEquals(
+                    expectedResult,
+                    groupMap(sourceMap, partialFunction)
+            );
         }
     }
 
@@ -2187,9 +2299,15 @@ public class MapUtilTest {
                                                                                   Class<? extends Exception> expectedException,
                                                                                   Map<K2, Collection<V2>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMap(sourceMap, partialFunction, collectionFactory));
+            assertThrows(
+                    expectedException,
+                    () -> groupMap(sourceMap, partialFunction, collectionFactory)
+            );
         } else {
-            assertEquals(expectedResult, groupMap(sourceMap, partialFunction, collectionFactory));
+            assertEquals(
+                    expectedResult,
+                    groupMap(sourceMap, partialFunction, collectionFactory)
+            );
         }
     }
 
@@ -2235,9 +2353,15 @@ public class MapUtilTest {
                                                                                           Class<? extends Exception> expectedException,
                                                                                           Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues));
+            assertThrows(
+                    expectedException,
+                    () -> groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues)
+            );
         } else {
-            assertEquals(expectedResult, groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues));
+            assertEquals(
+                    expectedResult,
+                    groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues)
+            );
         }
     }
 
@@ -2293,9 +2417,15 @@ public class MapUtilTest {
                                                                                               Class<? extends Exception> expectedException,
                                                                                               Map<K2, V2> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> groupMapReduce(sourceMap, partialFunction, reduceValues));
+            assertThrows(
+                    expectedException,
+                    () -> groupMapReduce(sourceMap, partialFunction, reduceValues)
+            );
         } else {
-            assertEquals(expectedResult, groupMapReduce(sourceMap, partialFunction, reduceValues));
+            assertEquals(
+                    expectedResult,
+                    groupMapReduce(sourceMap, partialFunction, reduceValues)
+            );
         }
     }
 
@@ -2363,9 +2493,15 @@ public class MapUtilTest {
                                                        Class<? extends Exception> expectedException,
                                                        Map<R, V> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> map(sourceMap, mapFunction));
+            assertThrows(
+                    expectedException,
+                    () -> map(sourceMap, mapFunction)
+            );
         } else {
-            assertEquals(expectedResult, map(sourceMap, mapFunction));
+            assertEquals(
+                    expectedResult,
+                    map(sourceMap, mapFunction)
+            );
         }
     }
 
@@ -2415,9 +2551,15 @@ public class MapUtilTest {
                                                         Class<? extends Exception> expectedException,
                                                         Map<R, V> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> map(sourceMap, mapFunction, mapFactory));
+            assertThrows(
+                    expectedException,
+                    () -> map(sourceMap, mapFunction, mapFactory)
+            );
         } else {
-            assertEquals(expectedResult, map(sourceMap, mapFunction, mapFactory));
+            assertEquals(
+                    expectedResult,
+                    map(sourceMap, mapFunction, mapFactory)
+            );
         }
     }
 
@@ -2454,9 +2596,15 @@ public class MapUtilTest {
                                                           Class<? extends Exception> expectedException,
                                                           Map<T, R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> mapValues(sourceMap, mapFunction));
+            assertThrows(
+                    expectedException,
+                    () -> mapValues(sourceMap, mapFunction)
+            );
         } else {
-            assertEquals(expectedResult, mapValues(sourceMap, mapFunction));
+            assertEquals(
+                    expectedResult,
+                    mapValues(sourceMap, mapFunction)
+            );
         }
     }
 
@@ -2502,9 +2650,15 @@ public class MapUtilTest {
                                                            Class<? extends Exception> expectedException,
                                                            Map<T, R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> mapValues(sourceMap, mapFunction, mapFactory));
+            assertThrows(
+                    expectedException,
+                    () -> mapValues(sourceMap, mapFunction, mapFactory)
+            );
         } else {
-            assertEquals(expectedResult, mapValues(sourceMap, mapFunction, mapFactory));
+            assertEquals(
+                    expectedResult,
+                    mapValues(sourceMap, mapFunction, mapFactory)
+            );
         }
     }
 
@@ -2546,9 +2700,15 @@ public class MapUtilTest {
                                      Class<? extends Exception> expectedException,
                                      Optional<Map.Entry<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> max(sourceMap, comparator));
+            assertThrows(
+                    expectedException,
+                    () -> max(sourceMap, comparator)
+            );
         } else {
-            assertEquals(expectedResult, max(sourceMap, comparator));
+            assertEquals(
+                    expectedResult,
+                    max(sourceMap, comparator)
+            );
         }
     }
 
@@ -2579,7 +2739,10 @@ public class MapUtilTest {
     @DisplayName("maxValue: without comparator test cases")
     public <T, E extends Comparable<? super E>> void maxValueNoComparator_testCases(Map<? extends T, ? extends E> sourceMap,
                                                                                     Optional<E> expectedResult) {
-        assertEquals(expectedResult, maxValue(sourceMap));
+        assertEquals(
+                expectedResult,
+                maxValue(sourceMap)
+        );
     }
 
 
@@ -2612,9 +2775,15 @@ public class MapUtilTest {
                                                        Class<? extends Exception> expectedException,
                                                        Optional<Tuple2<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> maxValue(sourceMap, comparator));
+            assertThrows(
+                    expectedException,
+                    () -> maxValue(sourceMap, comparator)
+            );
         } else {
-            assertEquals(expectedResult, maxValue(sourceMap, comparator));
+            assertEquals(
+                    expectedResult,
+                    maxValue(sourceMap, comparator)
+            );
         }
     }
 
@@ -2656,9 +2825,15 @@ public class MapUtilTest {
                                      Class<? extends Exception> expectedException,
                                      Optional<Map.Entry<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> min(sourceMap, comparator));
+            assertThrows(
+                    expectedException,
+                    () -> min(sourceMap, comparator)
+            );
         } else {
-            assertEquals(expectedResult, min(sourceMap, comparator));
+            assertEquals(
+                    expectedResult,
+                    min(sourceMap, comparator)
+            );
         }
     }
 
@@ -2689,7 +2864,10 @@ public class MapUtilTest {
     @DisplayName("minValue: without comparator test cases")
     public <T, E extends Comparable<? super E>> void minValueNoComparator_testCases(Map<? extends T, ? extends E> sourceMap,
                                                                                     Optional<E> expectedResult) {
-        assertEquals(expectedResult, minValue(sourceMap));
+        assertEquals(
+                expectedResult,
+                minValue(sourceMap)
+        );
     }
 
 
@@ -2722,9 +2900,15 @@ public class MapUtilTest {
                                                        Class<? extends Exception> expectedException,
                                                        Optional<Tuple2<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> minValue(sourceMap, comparator));
+            assertThrows(
+                    expectedException,
+                    () -> minValue(sourceMap, comparator)
+            );
         } else {
-            assertEquals(expectedResult, minValue(sourceMap, comparator));
+            assertEquals(
+                    expectedResult,
+                    minValue(sourceMap, comparator)
+            );
         }
     }
 
@@ -2790,7 +2974,10 @@ public class MapUtilTest {
     public <T, E> void partitionNoMapFactory_testCases(Map<? extends T, ? extends E> sourceMap,
                                                        BiPredicate<? super T, ? super E> discriminator,
                                                        Map<Boolean, Map<T, E>> expectedResult) {
-        assertEquals(expectedResult, partition(sourceMap, discriminator));
+        assertEquals(
+                expectedResult,
+                partition(sourceMap, discriminator)
+        );
     }
 
 
@@ -2860,7 +3047,10 @@ public class MapUtilTest {
                                                         BiPredicate<? super T, ? super E> discriminator,
                                                         Supplier<Map<T, E>> mapFactory,
                                                         Map<Boolean, Map<T, E>> expectedResult) {
-        assertEquals(expectedResult, partition(sourceMap, discriminator, mapFactory));
+        assertEquals(
+                expectedResult,
+                partition(sourceMap, discriminator, mapFactory)
+        );
     }
 
 
@@ -2902,9 +3092,15 @@ public class MapUtilTest {
                                         Class<? extends Exception> expectedException,
                                         Optional<Map.Entry<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> reduce(sourceMap, accumulator));
+            assertThrows(
+                    expectedException,
+                    () -> reduce(sourceMap, accumulator)
+            );
         } else {
-            assertEquals(expectedResult, reduce(sourceMap, accumulator));
+            assertEquals(
+                    expectedResult,
+                    reduce(sourceMap, accumulator)
+            );
         }
     }
 
@@ -2942,9 +3138,15 @@ public class MapUtilTest {
                                        Class<? extends Exception> expectedException,
                                        Map<T, E> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> slice(sourceMap, from, until));
+            assertThrows(
+                    expectedException,
+                    () -> slice(sourceMap, from, until)
+            );
         } else {
-            assertEquals(expectedResult, slice(sourceMap, from, until));
+            assertEquals(
+                    expectedResult,
+                    slice(sourceMap, from, until)
+            );
         }
     }
 
@@ -3036,10 +3238,16 @@ public class MapUtilTest {
                                          Class<? extends Exception> expectedException,
                                          List<Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> sliding(sourceMap, size));
+            assertThrows(
+                    expectedException,
+                    () -> sliding(sourceMap, size)
+            );
         }
         else {
-            assertEquals(expectedResult, sliding(sourceMap, size));
+            assertEquals(
+                    expectedResult,
+                    sliding(sourceMap, size)
+            );
         }
     }
 
@@ -3115,10 +3323,16 @@ public class MapUtilTest {
                                                            Class<? extends Exception> expectedException,
                                                            Map<T, E> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> sort(comparator, mapToSort1, mapToSort2, mapToSort3));
+            assertThrows(
+                    expectedException,
+                    () -> sort(comparator, mapToSort1, mapToSort2, mapToSort3)
+            );
         }
         else {
-            assertEquals(expectedResult, sort(comparator, mapToSort1, mapToSort2, mapToSort3));
+            assertEquals(
+                    expectedResult,
+                    sort(comparator, mapToSort1, mapToSort2, mapToSort3)
+            );
         }
     }
 
@@ -3220,10 +3434,16 @@ public class MapUtilTest {
                                                    Class<? extends Exception> expectedException,
                                                    Map<T, E> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> sort(comparator, mergeValueFunction, mapToSort1, mapToSort2, mapToSort3));
+            assertThrows(
+                    expectedException,
+                    () -> sort(comparator, mergeValueFunction, mapToSort1, mapToSort2, mapToSort3)
+            );
         }
         else {
-            assertEquals(expectedResult, sort(comparator, mergeValueFunction, mapToSort1, mapToSort2, mapToSort3));
+            assertEquals(
+                    expectedResult,
+                    sort(comparator, mergeValueFunction, mapToSort1, mapToSort2, mapToSort3)
+            );
         }
     }
 
@@ -3276,10 +3496,16 @@ public class MapUtilTest {
                                        Class<? extends Exception> expectedException,
                                        List<Map<T, E>> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> split(sourceMap, size));
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceMap, size)
+            );
         }
         else {
-            assertEquals(expectedResult, split(sourceMap, size));
+            assertEquals(
+                    expectedResult,
+                    split(sourceMap, size)
+            );
         }
     }
 
@@ -3312,7 +3538,10 @@ public class MapUtilTest {
     public <T, E> void takeWhileNoMapFactory_testCases(Map<? extends T, ? extends E> sourceMap,
                                                        BiPredicate<? super T, ? super E> filterPredicate,
                                                        Map<T, E> expectedResult) {
-        assertEquals(expectedResult, takeWhile(sourceMap, filterPredicate));
+        assertEquals(
+                expectedResult,
+                takeWhile(sourceMap, filterPredicate)
+        );
     }
 
 
@@ -3348,7 +3577,10 @@ public class MapUtilTest {
                                                         BiPredicate<? super T, ? super E> filterPredicate,
                                                         Supplier<Map<T, E>> mapFactory,
                                                         Map<T, E> expectedResult) {
-        assertEquals(expectedResult, takeWhile(sourceMap, filterPredicate, mapFactory));
+        assertEquals(
+                expectedResult,
+                takeWhile(sourceMap, filterPredicate, mapFactory)
+        );
     }
 
 
@@ -3386,16 +3618,14 @@ public class MapUtilTest {
                                                                    Class<? extends Exception> expectedException,
                                                                    List<R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () -> toCollection(
-                            sourceMap, keyValueMapper
-                    )
+            assertThrows(
+                    expectedException,
+                    () -> toCollection(sourceMap, keyValueMapper)
             );
         } else {
-            assertEquals(expectedResult,
-                    toCollection(
-                            sourceMap, keyValueMapper
-                    )
+            assertEquals(
+                    expectedResult,
+                    toCollection(sourceMap, keyValueMapper)
             );
         }
     }
@@ -3444,16 +3674,14 @@ public class MapUtilTest {
                                                                               Class<? extends Exception> expectedException,
                                                                               Collection<R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () -> toCollection(
-                            sourceMap, keyValueMapper, collectionFactory
-                    )
+            assertThrows(
+                    expectedException,
+                    () -> toCollection(sourceMap, keyValueMapper, collectionFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    toCollection(
-                            sourceMap, keyValueMapper, collectionFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    toCollection(sourceMap, keyValueMapper, collectionFactory)
             );
         }
     }
@@ -3513,16 +3741,14 @@ public class MapUtilTest {
                                                                                          Class<? extends Exception> expectedException,
                                                                                          Collection<R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () -> toCollection(
-                            sourceMap, keyValueMapper, filterPredicate, collectionFactory
-                    )
+            assertThrows(
+                    expectedException,
+                    () -> toCollection(sourceMap, keyValueMapper, filterPredicate, collectionFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    toCollection(
-                            sourceMap, keyValueMapper, filterPredicate, collectionFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    toCollection(sourceMap, keyValueMapper, filterPredicate, collectionFactory)
             );
         }
     }
@@ -3581,16 +3807,14 @@ public class MapUtilTest {
                                                                                Class<? extends Exception> expectedException,
                                                                                Collection<R> expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException,
-                    () -> toCollection(
-                            sourceMap, partialFunction, collectionFactory
-                    )
+            assertThrows(
+                    expectedException,
+                    () -> toCollection(sourceMap, partialFunction, collectionFactory)
             );
         } else {
-            assertEquals(expectedResult,
-                    toCollection(
-                            sourceMap, partialFunction, collectionFactory
-                    )
+            assertEquals(
+                    expectedResult,
+                    toCollection(sourceMap, partialFunction, collectionFactory)
             );
         }
     }
