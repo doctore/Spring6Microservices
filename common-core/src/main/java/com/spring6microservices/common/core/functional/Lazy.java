@@ -67,8 +67,8 @@ public final class Lazy<T> implements Supplier<T> {
      * Returns {@code true} if the argument is a {@link Lazy} object and its internal lazy value is equal to this one.
      *
      * @apiNote
-     *    This method will not invoke the provided {@link Supplier} creating the instance, if the internal lazy value
-     * was not previously calculated.
+     *    If the internal lazy value was not previously calculated, this method will not invoke the provided {@link Supplier}
+     * creating the instance.
      *
      * @param o
      *    The reference {@link Object} with which to compare.
@@ -98,8 +98,8 @@ public final class Lazy<T> implements Supplier<T> {
      * Returns the hash code of internal lazy value if it was previously calculated or 0 if it does not.
      *
      * @apiNote
-     *    This method will not invoke the provided {@link Supplier} creating the instance, if the internal lazy value
-     * was not previously calculated.
+     *    If the internal lazy value was not previously calculated, this method will not invoke the provided {@link Supplier}
+     * creating the instance.
      *
      * @return the hash code of internal lazy value if it was previously calculated, 0 otherwise
      */
@@ -135,8 +135,8 @@ public final class Lazy<T> implements Supplier<T> {
      * {@code predicate} or given {@link Predicate} is {@code null}. {@link Optional#empty()} otherwise.
      *
      * @apiNote
-     *    This method will invoke the provided {@link Supplier} creating the instance, if the internal lazy value was not
-     * previously calculated.
+     *    If the internal lazy value was not previously calculated, this method will invoke the provided {@link Supplier}
+     * creating the instance.
      *
      * @param predicate
      *    {@link Predicate} to filter the internal lazy value
@@ -189,7 +189,7 @@ public final class Lazy<T> implements Supplier<T> {
      *
      * @apiNote
      *    If given {@code code action} is not {@code null}, this method will invoke the provided {@link Supplier}
-     * creating the instance, if the internal lazy value was not previously calculated.
+     * creating the instance.
      *
      * @param action
      *    {@link Consumer} invoked for the internal lazy value of the current {@link Lazy} instance.
@@ -210,8 +210,8 @@ public final class Lazy<T> implements Supplier<T> {
      * Wrap the internal lazy value into an {@link Optional}.
      *
      * @apiNote
-     *    This method will invoke the provided {@link Supplier} creating the instance, if the internal lazy value was not
-     * previously calculated.
+     *    If the internal lazy value was not previously calculated, this method will invoke the provided {@link Supplier}
+     * creating the instance.
      *
      * @return {@link Optional}
      */

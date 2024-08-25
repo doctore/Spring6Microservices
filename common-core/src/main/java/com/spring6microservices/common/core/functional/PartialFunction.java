@@ -467,7 +467,6 @@ public interface PartialFunction<T, R> extends Function<T, R> {
      *         where this is defined, and to {@code defaultPartialFunction(x)} where it is not.
      */
     default PartialFunction<T, R> orElse(final PartialFunction<? super T, ? extends R> defaultPartialFunction) {
-
         return new PartialFunction<>() {
 
             @Override

@@ -1,5 +1,7 @@
 package com.spring6microservices.common.core.converter.enums;
 
+import static java.lang.String.format;
+
 /**
  * Parent interface of the all converters that allow ONLY from value to {@link Enum} conversion.
  *
@@ -10,12 +12,15 @@ package com.spring6microservices.common.core.converter.enums;
  */
 public interface BaseFromValueToEnumConverter<E extends Enum<?>, V> extends BaseEnumConverter<E, V> {
 
-    String errorMessage = "Operation not allowed in a BaseFromValueToEnumConverter converter";
+    String ERROR_MESSAGE = format(
+            "Operation not allowed in a %s converter",
+            BaseFromValueToEnumConverter.class.getName()
+    );
 
 
     @Override
     default V fromEnumToValue(final E enumValue) {
-        throw new UnsupportedOperationException(errorMessage);
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
 }
