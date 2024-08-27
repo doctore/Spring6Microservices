@@ -43,7 +43,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * Utility class used to manage signed JWT tokens.
+ * Utility class used to manage signed JWT tokens (JWS).
  * <p>
  *    In the <strong>methods used to generate the tokens</strong>, depending on selected {@link TokenSignatureAlgorithm},
  * the expected value of signature secrets will be different:
