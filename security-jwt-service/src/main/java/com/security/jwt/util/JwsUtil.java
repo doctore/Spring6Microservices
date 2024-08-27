@@ -332,7 +332,8 @@ public class JwsUtil {
                     parts[0].decodeToString()
             );
             Algorithm alg = Header.parseAlgorithm(jsonObjectProperties);
-            return (alg instanceof JWSAlgorithm);
+            return (alg instanceof JWSAlgorithm) &&
+                    TokenSignatureAlgorithm.getByAlgorithm((JWSAlgorithm) alg).isPresent();
 
         } catch (Exception e) {
             log.debug(

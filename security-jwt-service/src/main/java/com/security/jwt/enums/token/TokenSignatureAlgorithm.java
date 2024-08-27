@@ -18,10 +18,10 @@ public enum TokenSignatureAlgorithm {
     HS256(JWSAlgorithm.HS256),
     HS384(JWSAlgorithm.HS384),
     HS512(JWSAlgorithm.HS512),
-
     RS256(JWSAlgorithm.RS256),
     RS384(JWSAlgorithm.RS384),
     RS512(JWSAlgorithm.RS512);
+
 
     // TODO: Pending to add
     /*
