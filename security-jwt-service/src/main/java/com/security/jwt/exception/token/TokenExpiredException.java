@@ -1,11 +1,11 @@
-package com.security.jwt.exception;
+package com.security.jwt.exception.token;
 
 import java.io.Serial;
 
 /**
  * Thrown when a valid {@code token} has expired.
  */
-public class TokenExpiredException extends RuntimeException {
+public class TokenExpiredException extends TokenException {
 
     @Serial
     private static final long serialVersionUID = 7918212504449433874L;

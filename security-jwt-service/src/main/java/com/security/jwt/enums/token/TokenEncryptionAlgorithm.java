@@ -24,6 +24,13 @@ public enum TokenEncryptionAlgorithm {
     RSA_OAEP_384(JWEAlgorithm.RSA_OAEP_384),
     RSA_OAEP_512(JWEAlgorithm.RSA_OAEP_512);
 
+
+    // TODO: Pending to add
+    /*
+
+     */
+
+
     private final JWEAlgorithm algorithm;
 
 

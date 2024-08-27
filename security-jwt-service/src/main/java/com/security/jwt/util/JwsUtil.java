@@ -2,7 +2,6 @@ package com.security.jwt.util;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.Header;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -18,24 +17,32 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.security.jwt.enums.token.TokenSignatureAlgorithm;
-import com.security.jwt.exception.TokenExpiredException;
-import com.security.jwt.exception.TokenInvalidException;
-import com.spring6microservices.common.core.util.CollectionUtil;
+import com.security.jwt.exception.token.TokenException;
+import com.security.jwt.exception.token.TokenExpiredException;
+import com.security.jwt.exception.token.TokenInvalidException;
+import com.spring6microservices.common.core.functional.either.Either;
+import com.spring6microservices.common.core.functional.either.Left;
+import com.spring6microservices.common.core.functional.either.Right;
+import com.spring6microservices.common.core.util.DateTimeUtil;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.util.Assert;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.spring6microservices.common.core.functional.either.Either.left;
+import static com.spring6microservices.common.core.functional.either.Either.right;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
+@Log4j2
 @UtilityClass
 public class JwsUtil {
 
@@ -44,22 +51,24 @@ public class JwsUtil {
      * {@link TokenSignatureAlgorithm} and {@code signatureSecret}.
      *
      * @apiNote
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be different:
-     *    <p>
-     *    <ul>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}: an {@link String}
-     *      </li>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}: an {@link String}
-     *          with a format similar to:
-     *          <pre>
-     *              -----BEGIN PRIVATE KEY-----
-     *              ...
-     *              -----END PRIVATE KEY-----
-     *          </pre>
-     *      </li>
-     *    </ul>
+     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
+     * different:
+     * <p>
+     * <ul>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+     *      an {@link String}
+     *   </li>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+     *      an {@link String} with a format similar to:
+     *      <pre>
+     *        -----BEGIN PRIVATE KEY-----
+     *        ...
+     *        -----END PRIVATE KEY-----
+     *      </pre>
+     *   </li>
+     * </ul>
      *
      * @param informationToInclude
      *    {@link Map} with the information to include in the returned JWS token
@@ -73,6 +82,7 @@ public class JwsUtil {
      * @return {@link String} with the JWS
      *
      * @throws IllegalArgumentException if {@code signatureAlgorithm} or {@code signatureSecret} are {@code null}
+     * @throws TokenException if there was a problem generating the JWS token
      */
     public static String generateToken(final Map<String, Object> informationToInclude,
                                        final TokenSignatureAlgorithm signatureAlgorithm,
@@ -94,27 +104,175 @@ public class JwsUtil {
 
 
     /**
-     * Get the information included in the given JWS {@code token} that match with the given {@code keysToInclude}.
+     * Extract from the given {@code jwsToken} all the information included in the payload.
+     *
+     * @apiNote
+     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
+     * different:
+     * <p>
+     * <ul>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+     *      an {@link String}
+     *   </li>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+     *      an {@link String} with a format similar to:
+     *      <pre>
+     *        -----BEGIN PUBLIC KEY-----
+     *        ...
+     *        -----END PUBLIC KEY-----
+     *      </pre>
+     *   </li>
+     * </ul>
+     *
+     * @param jwsToken
+     *    JWS token to extract the required information
+     * @param signatureSecret
+     *    {@link String} used to sign the JWS token
+     *
+     * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken}
+     *
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
+     * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
+     * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
+     * @throws TokenException if there was a problem getting claims of {@code jwsToken}
+     */
+    public static Map<String, Object> getAllClaimsFromToken(final String jwsToken,
+                                                            final String signatureSecret) {
+        Assert.hasText(jwsToken, "jwsToken cannot be null or empty");
+        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
+        try {
+            if (!isJwsToken(jwsToken)) {
+                throw new TokenInvalidException(
+                        format("The token: %s is not a JWS one",
+                                jwsToken
+                        )
+                );
+            }
+            SignedJWT signedJWT = SignedJWT.parse(jwsToken);
+            JWSVerifier verifier = getSuitableVerifier(
+                    signedJWT,
+                    signatureSecret
+            );
+            if (!signedJWT.verify(verifier)) {
+                throw new TokenInvalidException(
+                        format("The JWS token: %s does not match with the provided signatureSecret",
+                                jwsToken
+                        )
+                );
+            }
+            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+            if (null == expirationTime || expirationTime.before(new Date())) {
+                throw new TokenExpiredException(
+                        format("The JWT token: %s has expired at %s",
+                                jwsToken,
+                                expirationTime
+                        )
+                );
+            }
+            return signedJWT.getJWTClaimsSet().getClaims();
+
+        } catch (TokenException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new TokenException(
+                    format("The was an error getting information included in JWS token: %s. %s",
+                            jwsToken,
+                            getFormattedRootError(e)
+                    ),
+                    e
+            );
+        }
+    }
+
+
+    /**
+     *    Returns an {@link Right} with all the information included in the payload of {@code jwsToken}. {@link Left}
+     * with the {@link Exception} if there was an error trying to extract such payload.
+     *
+     * @apiNote
+     *    The difference between this method and {@link JwsUtil#getAllClaimsFromToken(String, String)} is: this method
+     * does not throw any exception, if there is a problem extracting the payload the {@link Exception} will be added
+     * in the {@link Left} element of returned {@link Either}.
+     * <p>
+     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
+     * different:
+     * <p>
+     * <ul>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+     *      an {@link String}
+     *   </li>
+     *   <li>
+     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+     *     an {@link String} with a format similar to:
+     *     <pre>
+     *       -----BEGIN PUBLIC KEY-----
+     *       ...
+     *       -----END PUBLIC KEY-----
+     *     </pre>
+     *   </li>
+     * </ul>
+     *
+     * @param jwsToken
+     *    JWS token to extract the required information
+     * @param signatureSecret
+     *    {@link String} used to sign the JWS token
+     *
+     * @return {@link Right} with {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken}.
+     *         {@link Left} with the {@link Exception} is there was an error during the process.
+     */
+    public static Either<Exception, Map<String, Object>> getSafeAllClaimsFromToken(final String jwsToken,
+                                                                                   final String signatureSecret) {
+        try {
+            return right(
+                    getAllClaimsFromToken(
+                            jwsToken,
+                            signatureSecret
+                    )
+            );
+
+        } catch (Exception e) {
+            log.debug(
+                    format("The was an error getting information included in JWS token: %s. %s",
+                            jwsToken,
+                            getFormattedRootError(e)
+                    ),
+                    e
+            );
+            return left(
+              e
+            );
+        }
+    }
+
+
+    /**
+     * Get the information included in the given JWS {@code jwsToken} that match with the given {@code keysToInclude}.
      *
      * @apiNote
      *    If {@code keysToInclude} is {@code null} or empty, then an empty {@link Map} is returned.
-     *    <p>
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be different:
-     *    <p>
-     *    <ul>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}: an {@link String}
-     *      </li>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}: an {@link String}
-     *          with a format similar to:
-     *          <pre>
-     *              -----BEGIN PUBLIC KEY-----
-     *              ...
-     *              -----END PUBLIC KEY-----
-     *          </pre>
-     *      </li>
-     *    </ul>
+     * <p>
+     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
+     * different:
+     * <p>
+     * <ul>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+     *      an {@link String}
+     *   </li>
+     *   <li>
+     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+     *     an {@link String} with a format similar to:
+     *     <pre>
+     *       -----BEGIN PUBLIC KEY-----
+     *       ...
+     *       -----END PUBLIC KEY-----
+     *     </pre>
+     *   </li>
+     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -123,22 +281,25 @@ public class JwsUtil {
      * @param keysToInclude
      *    {@link Set} of {@link String} with the {@code key}s to extract from Jwt token
      *
-     * @return {@link Map} of {@link String} - {@link Object} with the requested information
+     * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken} that matches
+     *         with requested {@code keysToInclude}
      *
-     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null} or empty
-     * @throws TokenInvalidException if {@code token} is not a JWS one or was not signed using {@code signatureSecret}
-     * @throws TokenExpiredException if {@code token} has expired
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
+     * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
+     * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
+     * @throws TokenException if there was a problem getting claims of {@code jwsToken}
      */
     public static Map<String, Object> getPayloadKeys(final String jwsToken,
                                                      final String signatureSecret,
                                                      final Set<String> keysToInclude) {
-        if (CollectionUtil.isEmpty(keysToInclude)) {
-            return new HashMap<>();
-        }
+        final Set<String> finalKeysToInclude = getOrElse(
+                keysToInclude,
+                new HashSet<>()
+        );
         return getAllClaimsFromToken(jwsToken, signatureSecret)
                 .entrySet().stream()
                 .filter(e ->
-                        keysToInclude.contains(e.getKey())
+                        finalKeysToInclude.contains(e.getKey())
                 )
                 .collect(
                         toMap(
@@ -150,28 +311,30 @@ public class JwsUtil {
 
 
     /**
-     * Get the information included in the given JWS {@code token} except the given {@code keysToExclude}.
+     * Get the information included in the given JWS {@code jwsToken} except the given {@code keysToExclude}.
      *
      * @apiNote
      *    If {@code keysToExclude} is {@code null} or empty, then a {@link Map} containing all data of given {@code jwsToken}
      * is returned.
-     *    <p>
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be different:
-     *    <p>
-     *    <ul>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}: an {@link String}
-     *      </li>
-     *      <li>
-     *          {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}: an {@link String}
-     *          with a format similar to:
-     *          <pre>
-     *              -----BEGIN PUBLIC KEY-----
-     *              ...
-     *              -----END PUBLIC KEY-----
-     *          </pre>
-     *      </li>
-     *    </ul>
+     * <p>
+     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
+     * different:
+     * <p>
+     * <ul>
+     *   <li>
+     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+     *      an {@link String}
+     *   </li>
+     *   <li>
+     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+     *     an {@link String} with a format similar to:
+     *     <pre>
+     *       -----BEGIN PUBLIC KEY-----
+     *       ...
+     *       -----END PUBLIC KEY-----
+     *     </pre>
+     *   </li>
+     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -180,11 +343,13 @@ public class JwsUtil {
      * @param keysToExclude
      *    {@link Set} of {@link String} with the {@code key}s to exclude from JWS token
      *
-     * @return {@link Map} of {@link String} - {@link Object} with the remaining information
+     * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken} that does not
+     *         match with {@code keysToExclude}
      *
-     * @throws IllegalArgumentException if {@code token} or {@code signatureSecret} are {@code null} or empty
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
      * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
-     * @throws TokenExpiredException if {@code jwsToken} has expired
+     * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
+     * @throws TokenException if there was a problem getting claims of {@code jwsToken}
      */
     public static Map<String, Object> getPayloadExceptKeys(final String jwsToken,
                                                            final String signatureSecret,
@@ -214,12 +379,10 @@ public class JwsUtil {
      *    {@link String} with the {@code token} to check
      *
      * @return {@code true} if the {@code token} is an JWS one, {@code false} otherwise
-     *
-     * @throws IllegalArgumentException if {@code token} is {@code null} or empty or there was a problem checking it
      */
     public static boolean isJwsToken(final String token) {
-        Assert.hasText(token, "token cannot be null or empty");
         try {
+            Assert.hasText(token, "token cannot be null or empty");
             Base64URL[] parts = JOSEObject.split(token);
             Map<String, Object> jsonObjectProperties = JSONObjectUtils.parse(
                     parts[0].decodeToString()
@@ -228,13 +391,14 @@ public class JwsUtil {
             return (alg instanceof JWSAlgorithm);
 
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            log.debug(
                     format("The was a problem trying to figure out the type of token: %s. %s",
                             token,
                             getFormattedRootError(e)
                     ),
                     e
             );
+            return false;
         }
     }
 
@@ -256,7 +420,11 @@ public class JwsUtil {
             informationToInclude.forEach(claimsSet::claim);
         }
         Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + (expirationTimeInSeconds * 1000));
+        Date expirationDate = DateTimeUtil.plus(
+                now,
+                expirationTimeInSeconds,
+                ChronoUnit.SECONDS
+        );
         return claimsSet
                 .issueTime(now)
                 .expirationTime(expirationDate)
@@ -276,7 +444,7 @@ public class JwsUtil {
      *
      * @return {@link SignedJWT}
      *
-     * @throws IllegalArgumentException it there was a problem creating the JWS token
+     * @throws TokenException it there was a problem creating the JWS token
      */
     private static SignedJWT getSignedJWT(final TokenSignatureAlgorithm signatureAlgorithm,
                                           final String signatureSecret,
@@ -295,74 +463,9 @@ public class JwsUtil {
             return signedJWT;
 
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            throw new TokenException(
                     format("The was a problem trying to create a new JWS token using the algorithm: %s. %s",
                             signatureAlgorithm.name(),
-                            getFormattedRootError(e)
-                    ),
-                    e
-            );
-        }
-    }
-
-
-    /**
-     * Extract from the given token all the information included in the payload.
-     *
-     * @param jwsToken
-     *    JWS token to extract the required information
-     * @param signatureSecret
-     *    {@link String} used to sign the JWS token
-     *
-     * @return {@link Map} of {@link String}-{@link Object}
-     *
-     * @throws IllegalArgumentException if {@code signatureAlgorithm} or {@code signatureSecret} are {@code null}
-     * @throws TokenInvalidException when {@code verifyToken} is {@code true} => if {@code token} is not a JWS one or
-     *                               was not signed using {@code signatureSecret}
-     * @throws TokenExpiredException when {@code verifyToken} is {@code true} => if {@code token} has expired
-     */
-    private static Map<String, Object> getAllClaimsFromToken(final String jwsToken,
-                                                             final String signatureSecret) {
-        Assert.hasText(jwsToken, "jwsToken cannot be null or empty");
-        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
-        if (!isJwsToken(jwsToken)) {
-            throw new TokenInvalidException(
-                    format("The token: %s is not a JWS one",
-                            jwsToken
-                    )
-            );
-        }
-        try {
-            SignedJWT signedJWT = SignedJWT.parse(jwsToken);
-            JWSVerifier verifier = getSuitableVerifier(
-                    signedJWT,
-                    signatureSecret
-            );
-            if (!signedJWT.verify(verifier)) {
-                throw new TokenInvalidException(
-                        format("The JWS token: %s does not match with the provided signatureSecret",
-                                jwsToken
-                        )
-                );
-            }
-            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-            if (null == expirationTime || expirationTime.before(new Date())) {
-                throw new TokenExpiredException(
-                        format("The JWT token: %s has expired at %s",
-                                jwsToken,
-                                expirationTime
-                        )
-                );
-            }
-            return signedJWT.getJWTClaimsSet().getClaims();
-
-        } catch (TokenInvalidException | TokenExpiredException e) {
-            throw e;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    format("The was an error getting information included in JWS token: %s. %s",
-                            jwsToken,
                             getFormattedRootError(e)
                     ),
                     e
@@ -381,28 +484,42 @@ public class JwsUtil {
      *
      * @return {@link JWSSigner}
      *
-     * @throws JOSEException if there was an error creating the {@link JWSSigner}
      * @throws IllegalArgumentException if it was not possible to find a suitable {@link JWSSigner}
+     * @throws TokenException if there was an error creating the {@link JWSSigner}
      */
     private static JWSSigner getSuitableSigner(final TokenSignatureAlgorithm signatureAlgorithm,
-                                               final String signatureSecret) throws JOSEException {
-        return switch (signatureAlgorithm) {
-            case HS256, HS384, HS512 ->
-                    new MACSigner(signatureSecret);
+                                               final String signatureSecret) {
+        try {
+            return switch (signatureAlgorithm) {
+                case HS256, HS384, HS512 ->
+                        new MACSigner(signatureSecret);
 
-            case RS256, RS384, RS512 ->
-                    new RSASSASigner(
-                            RSAKey.parseFromPEMEncodedObjects(signatureSecret)
-                                    .toRSAKey()
-                    );
+                case RS256, RS384, RS512 ->
+                        new RSASSASigner(
+                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                        .toRSAKey()
+                        );
 
-            case null, default ->
-                    throw new IllegalArgumentException(
-                            format("It was not possible to find a suitable signer for the signature algorithm: %s",
-                                    ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
-                            )
-                    );
-        };
+                case null, default ->
+                        throw new IllegalArgumentException(
+                                format("It was not possible to find a suitable signer for the signature algorithm: %s",
+                                        ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                                )
+                        );
+            };
+
+        } catch (IllegalArgumentException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new TokenException(
+                    format("The was a problem trying to create the suitable signer for the signature algorithm: %s. %s",
+                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null"),
+                            getFormattedRootError(e)
+                    ),
+                    e
+            );
+        }
     }
 
 
@@ -416,32 +533,46 @@ public class JwsUtil {
      *
      * @return {@link JWSVerifier}
      *
-     * @throws JOSEException if there was an error creating the {@link JWSVerifier}
      * @throws IllegalArgumentException if it was not possible to find a suitable {@link JWSVerifier}
+     * @throws TokenException if there was an error creating the {@link JWSVerifier}
      */
     private static JWSVerifier getSuitableVerifier(final SignedJWT signedJWT,
-                                                   final String signatureSecret) throws JOSEException {
+                                                   final String signatureSecret) {
         TokenSignatureAlgorithm signatureAlgorithm = TokenSignatureAlgorithm.getByAlgorithm(
                 signedJWT.getHeader().getAlgorithm()
         ).orElse(null);
 
-        return switch (signatureAlgorithm) {
-            case HS256, HS384, HS512 ->
-                    new MACVerifier(signatureSecret);
+        try {
+            return switch (signatureAlgorithm) {
+                case HS256, HS384, HS512 ->
+                        new MACVerifier(signatureSecret);
 
-            case RS256, RS384, RS512 ->
-                    new RSASSAVerifier(
-                            RSAKey.parseFromPEMEncodedObjects(signatureSecret)
-                                    .toRSAKey()
-                    );
+                case RS256, RS384, RS512 ->
+                        new RSASSAVerifier(
+                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                        .toRSAKey()
+                        );
 
-            case null, default ->
-                    throw new IllegalArgumentException(
-                            format("It was not possible to find a suitable verifier for the signature algorithm: %s",
-                                    ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
-                            )
-                    );
-        };
+                case null, default ->
+                        throw new IllegalArgumentException(
+                                format("It was not possible to find a suitable verifier for the signature algorithm: %s",
+                                        ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                                )
+                        );
+            };
+
+        } catch (IllegalArgumentException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new TokenException(
+                    format("The was a problem trying to create the suitable verifier for the signature algorithm: %s. %s",
+                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null"),
+                            getFormattedRootError(e)
+                    ),
+                    e
+            );
+        }
     }
 
 }

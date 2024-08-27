@@ -1,9 +1,9 @@
-package com.security.jwt.exception;
+package com.security.jwt.exception.token;
 
 /**
  * Thrown when the {@code token} is not a valid one.
  */
-public class TokenInvalidException extends RuntimeException {
+public class TokenInvalidException extends TokenException {
 
     private static final long serialVersionUID = -7862642265730188024L;
 

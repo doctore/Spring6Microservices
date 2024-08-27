@@ -15,6 +15,16 @@ import static java.util.Optional.ofNullable;
 @Getter
 public enum TokenSignatureAlgorithm {
 
+    HS256(JWSAlgorithm.HS256),
+    HS384(JWSAlgorithm.HS384),
+    HS512(JWSAlgorithm.HS512),
+
+    RS256(JWSAlgorithm.RS256),
+    RS384(JWSAlgorithm.RS384),
+    RS512(JWSAlgorithm.RS512);
+
+    // TODO: Pending to add
+    /*
     Ed25519(JWSAlgorithm.Ed25519),
     Ed448(JWSAlgorithm.Ed448),
     EdDSA(JWSAlgorithm.EdDSA),
@@ -22,15 +32,11 @@ public enum TokenSignatureAlgorithm {
     ES256K(JWSAlgorithm.ES256K),
     ES384(JWSAlgorithm.ES384),
     ES512(JWSAlgorithm.ES512),
-    HS256(JWSAlgorithm.HS256),
-    HS384(JWSAlgorithm.HS384),
-    HS512(JWSAlgorithm.HS512),
     PS256(JWSAlgorithm.PS256),
     PS384(JWSAlgorithm.PS384),
     PS512(JWSAlgorithm.PS512),
-    RS256(JWSAlgorithm.RS256),
-    RS384(JWSAlgorithm.RS384),
-    RS512(JWSAlgorithm.RS512);
+     */
+
 
     private final JWSAlgorithm algorithm;
 

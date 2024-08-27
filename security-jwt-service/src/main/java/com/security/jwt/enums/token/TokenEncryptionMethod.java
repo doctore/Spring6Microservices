@@ -14,6 +14,13 @@ public enum TokenEncryptionMethod {
     A256GCM(EncryptionMethod.A256GCM),
     XC20P(EncryptionMethod.XC20P);
 
+
+    // TODO: Pending to add
+    /*
+
+     */
+
+
     private final EncryptionMethod method;
 
 
