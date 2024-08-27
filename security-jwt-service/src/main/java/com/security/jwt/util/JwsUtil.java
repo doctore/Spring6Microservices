@@ -42,6 +42,47 @@ import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Utility class used to manage signed JWT tokens.
+ * <p>
+ *    In the <strong>methods used to generate the tokens</strong>, depending on selected {@link TokenSignatureAlgorithm},
+ * the expected value of signature secrets will be different:
+ * <p>
+ * <ul>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+ *      a <i>raw</i> {@link String} with the secret value.
+ *   </li>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PRIVATE KEY-----
+ *        ...
+ *        -----END PRIVATE KEY-----
+ *      </pre>
+ *   </li>
+ * </ul>
+ * <p>
+ *    In the <strong>methods used to verify tokens and extract their content</strong>, depending on selected
+ * {@link TokenSignatureAlgorithm}, the expected value of signature secrets will be different:
+ * <p>
+ * <ul>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
+ *      a <i>raw</i> {@link String} with the secret value.
+ *   </li>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *      </pre>
+ *   </li>
+ * </ul>
+ */
 @Log4j2
 @UtilityClass
 public class JwsUtil {
@@ -49,26 +90,6 @@ public class JwsUtil {
     /**
      *    Using the given {@code informationToInclude} generates a valid JWS token (signed JWT) signed with the selected
      * {@link TokenSignatureAlgorithm} and {@code signatureSecret}.
-     *
-     * @apiNote
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
-     * different:
-     * <p>
-     * <ul>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
-     *      an {@link String}
-     *   </li>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
-     *      an {@link String} with a format similar to:
-     *      <pre>
-     *        -----BEGIN PRIVATE KEY-----
-     *        ...
-     *        -----END PRIVATE KEY-----
-     *      </pre>
-     *   </li>
-     * </ul>
      *
      * @param informationToInclude
      *    {@link Map} with the information to include in the returned JWS token
@@ -105,26 +126,6 @@ public class JwsUtil {
 
     /**
      * Extract from the given {@code jwsToken} all the information included in the payload.
-     *
-     * @apiNote
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
-     * different:
-     * <p>
-     * <ul>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
-     *      an {@link String}
-     *   </li>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
-     *      an {@link String} with a format similar to:
-     *      <pre>
-     *        -----BEGIN PUBLIC KEY-----
-     *        ...
-     *        -----END PUBLIC KEY-----
-     *      </pre>
-     *   </li>
-     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -196,25 +197,6 @@ public class JwsUtil {
      *    The difference between this method and {@link JwsUtil#getAllClaimsFromToken(String, String)} is: this method
      * does not throw any exception, if there is a problem extracting the payload the {@link Exception} will be added
      * in the {@link Left} element of returned {@link Either}.
-     * <p>
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
-     * different:
-     * <p>
-     * <ul>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
-     *      an {@link String}
-     *   </li>
-     *   <li>
-     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
-     *     an {@link String} with a format similar to:
-     *     <pre>
-     *       -----BEGIN PUBLIC KEY-----
-     *       ...
-     *       -----END PUBLIC KEY-----
-     *     </pre>
-     *   </li>
-     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -254,25 +236,6 @@ public class JwsUtil {
      *
      * @apiNote
      *    If {@code keysToInclude} is {@code null} or empty, then an empty {@link Map} is returned.
-     * <p>
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
-     * different:
-     * <p>
-     * <ul>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
-     *      an {@link String}
-     *   </li>
-     *   <li>
-     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
-     *     an {@link String} with a format similar to:
-     *     <pre>
-     *       -----BEGIN PUBLIC KEY-----
-     *       ...
-     *       -----END PUBLIC KEY-----
-     *     </pre>
-     *   </li>
-     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -316,25 +279,6 @@ public class JwsUtil {
      * @apiNote
      *    If {@code keysToExclude} is {@code null} or empty, then a {@link Map} containing all data of given {@code jwsToken}
      * is returned.
-     * <p>
-     *    Depending on selected {@link TokenSignatureAlgorithm}, the expected value of {@code signatureSecret} will be
-     * different:
-     * <p>
-     * <ul>
-     *   <li>
-     *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
-     *      an {@link String}
-     *   </li>
-     *   <li>
-     *     {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
-     *     an {@link String} with a format similar to:
-     *     <pre>
-     *       -----BEGIN PUBLIC KEY-----
-     *       ...
-     *       -----END PUBLIC KEY-----
-     *     </pre>
-     *   </li>
-     * </ul>
      *
      * @param jwsToken
      *    JWS token to extract the required information
