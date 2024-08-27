@@ -224,9 +224,7 @@ public class JwsUtil {
                     ),
                     e
             );
-            return left(
-              e
-            );
+            return left(e);
         }
     }
 
