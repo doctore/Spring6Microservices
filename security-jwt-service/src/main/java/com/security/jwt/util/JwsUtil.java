@@ -45,8 +45,12 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Utility class used to manage signed JWT tokens (JWS).
  * <p>
- *    In the <strong>methods used to generate the tokens</strong>, depending on selected {@link TokenSignatureAlgorithm},
- * the expected value of signature secrets will be different:
+ * In <strong>methods used to generate the tokens</strong>:
+ * <ul>
+ *   <li>{@link JwsUtil#generateToken(Map, TokenSignatureAlgorithm, String, long)}</li>
+ * </ul>
+ * <p>
+ * Depending on selected {@link TokenSignatureAlgorithm}, the expected value of signature secrets will be different:
  * <p>
  * <ul>
  *   <li>
@@ -64,8 +68,15 @@ import static java.util.stream.Collectors.toMap;
  *   </li>
  * </ul>
  * <p>
- *    In the <strong>methods used to verify tokens and extract their content</strong>, depending on selected
- * {@link TokenSignatureAlgorithm}, the expected value of signature secrets will be different:
+ * In the <strong>methods used to verify tokens and extract their content</strong>:
+ * <ul>
+ *   <li>{@link JwsUtil#getAllClaimsFromToken(String, String)}</li>
+ *   <li>{@link JwsUtil#getSafeAllClaimsFromToken(String, String)}</li>
+ *   <li>{@link JwsUtil#getPayloadKeys(String, String, Set)}</li>
+ *   <li>{@link JwsUtil#getPayloadExceptKeys(String, String, Set)}</li>
+ * </ul>
+ * <p>
+ * Depending on selected {@link TokenSignatureAlgorithm}, the expected value of signature secrets will be different:
  * <p>
  * <ul>
  *   <li>
@@ -98,11 +109,12 @@ public class JwsUtil {
      * @param signatureSecret
      *    {@link String} used to sign the JWS token
      * @param expirationTimeInSeconds
-     *    How many seconds the JWS toke will be valid
+     *    How many seconds the JWS token will be valid
      *
      * @return {@link String} with the JWS
      *
-     * @throws IllegalArgumentException if {@code signatureAlgorithm} or {@code signatureSecret} are {@code null}
+     * @throws IllegalArgumentException if {@code signatureAlgorithm} is  {@code null}.
+     *                                  if {@code signatureSecret} is {@code null} or empty
      * @throws TokenException if there was a problem generating the JWS token
      */
     public static String generateToken(final Map<String, Object> informationToInclude,
@@ -134,7 +146,7 @@ public class JwsUtil {
      *
      * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken}
      *
-     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null} or empty
      * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
      * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
      * @throws TokenException if there was a problem getting claims of {@code jwsToken}
@@ -174,16 +186,12 @@ public class JwsUtil {
             }
             return signedJWT.getJWTClaimsSet().getClaims();
 
-        } catch (TokenException e) {
-            throw e;
-
         } catch (Exception e) {
-            throw new TokenException(
-                    format("The was an error getting information included in JWS token: %s. %s",
-                            jwsToken,
-                            getFormattedRootError(e)
-                    ),
-                    e
+            throw handleMultipleExceptions(
+                    e,
+                    format("The was an error getting information included in JWS token: %s",
+                            jwsToken
+                    )
             );
         }
     }
@@ -245,7 +253,7 @@ public class JwsUtil {
      * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken} that matches
      *         with requested {@code keysToInclude}
      *
-     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null} or empty
      * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
      * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
      * @throws TokenException if there was a problem getting claims of {@code jwsToken}
@@ -257,17 +265,22 @@ public class JwsUtil {
                 keysToInclude,
                 new HashSet<>()
         );
-        return getAllClaimsFromToken(jwsToken, signatureSecret)
-                .entrySet().stream()
-                .filter(e ->
-                        finalKeysToInclude.contains(e.getKey())
+        return getAllClaimsFromToken(
+                jwsToken,
+                signatureSecret
+        )
+        .entrySet().stream()
+        .filter(e ->
+                finalKeysToInclude.contains(
+                        e.getKey()
                 )
-                .collect(
-                        toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue
-                        )
-                );
+        )
+        .collect(
+                toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                )
+        );
     }
 
 
@@ -288,7 +301,7 @@ public class JwsUtil {
      * @return {@link Map} of {@link String}-{@link Object} with contain of the payload in {@code jwsToken} that does not
      *         match with {@code keysToExclude}
      *
-     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null}
+     * @throws IllegalArgumentException if {@code jwsToken} or {@code signatureSecret} are {@code null} or empty
      * @throws TokenInvalidException if {@code jwsToken} is not a JWS one or was not signed using {@code signatureSecret}
      * @throws TokenExpiredException if {@code jwsToken} is valid but has expired
      * @throws TokenException if there was a problem getting claims of {@code jwsToken}
@@ -300,17 +313,22 @@ public class JwsUtil {
                 keysToExclude,
                 new HashSet<>()
         );
-        return getAllClaimsFromToken(jwsToken, signatureSecret)
-                .entrySet().stream()
-                .filter(e ->
-                        !finalKeysToExclude.contains(e.getKey())
+        return getAllClaimsFromToken(
+                jwsToken,
+                signatureSecret
+        )
+        .entrySet().stream()
+        .filter(e ->
+                !finalKeysToExclude.contains(
+                        e.getKey()
                 )
-                .collect(
-                        toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue
-                        )
-                );
+        )
+        .collect(
+                toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                )
+        );
     }
 
 
@@ -406,19 +424,18 @@ public class JwsUtil {
             return signedJWT;
 
         } catch (Exception e) {
-            throw new TokenException(
-                    format("The was a problem trying to create a new JWS token using the algorithm: %s. %s",
-                            signatureAlgorithm.name(),
-                            getFormattedRootError(e)
-                    ),
-                    e
+            throw handleMultipleExceptions(
+                    e,
+                    format("The was a problem trying to create a new JWS token using the algorithm: %s",
+                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                    )
             );
         }
     }
 
 
     /**
-     * Return the suitable {@link JWSSigner} taking into account the {@link TokenSignatureAlgorithm} used to sing the given JWS token.
+     * Return the suitable {@link JWSSigner} taking into account the provided {@link TokenSignatureAlgorithm}.
      *
      * @param signatureAlgorithm
      *    {@link TokenSignatureAlgorithm} used to sign the JWS token
@@ -427,8 +444,8 @@ public class JwsUtil {
      *
      * @return {@link JWSSigner}
      *
-     * @throws IllegalArgumentException if it was not possible to find a suitable {@link JWSSigner}
-     * @throws TokenException if there was an error creating the {@link JWSSigner}
+     * @throws TokenException if it was not possible to find a suitable {@link JWSSigner} or there was an error
+     *                        creating it
      */
     private static JWSSigner getSuitableSigner(final TokenSignatureAlgorithm signatureAlgorithm,
                                                final String signatureSecret) {
@@ -444,30 +461,27 @@ public class JwsUtil {
                         );
 
                 case null, default ->
-                        throw new IllegalArgumentException(
+                        throw new TokenException(
                                 format("It was not possible to find a suitable signer for the signature algorithm: %s",
                                         ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
                                 )
                         );
             };
 
-        } catch (IllegalArgumentException e) {
-            throw e;
-
         } catch (Exception e) {
-            throw new TokenException(
-                    format("The was a problem trying to create the suitable signer for the signature algorithm: %s. %s",
-                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null"),
-                            getFormattedRootError(e)
-                    ),
-                    e
+            throw handleMultipleExceptions(
+                    e,
+                    format("The was a problem trying to create the suitable signer for the signature algorithm: %s",
+                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                    )
             );
         }
     }
 
 
     /**
-     * Return the suitable {@link JWSVerifier} taking into account the {@link JWSAlgorithm} used to sing the given JWS token.
+     *    Return the suitable {@link JWSVerifier} taking into account the {@link TokenSignatureAlgorithm} used to sing
+     * the given JWS token {@code signedJWT}.
      *
      * @param signedJWT
      *    {@link SignedJWT} with JWS token
@@ -476,8 +490,8 @@ public class JwsUtil {
      *
      * @return {@link JWSVerifier}
      *
-     * @throws IllegalArgumentException if it was not possible to find a suitable {@link JWSVerifier}
-     * @throws TokenException if there was an error creating the {@link JWSVerifier}
+     * @throws TokenException if it was not possible to find a suitable {@link JWSVerifier} or there was an error
+     *                        creating it
      */
     private static JWSVerifier getSuitableVerifier(final SignedJWT signedJWT,
                                                    final String signatureSecret) {
@@ -487,35 +501,54 @@ public class JwsUtil {
 
         try {
             return switch (signatureAlgorithm) {
-                case HS256, HS384, HS512 ->
-                        new MACVerifier(signatureSecret);
+                case HS256, HS384, HS512 -> new MACVerifier(signatureSecret);
 
-                case RS256, RS384, RS512 ->
-                        new RSASSAVerifier(
-                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
-                                        .toRSAKey()
-                        );
+                case RS256, RS384, RS512 -> new RSASSAVerifier(
+                        RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                .toRSAKey()
+                );
 
-                case null, default ->
-                        throw new IllegalArgumentException(
-                                format("It was not possible to find a suitable verifier for the signature algorithm: %s",
-                                        ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
-                                )
-                        );
+                case null, default -> throw new TokenException(
+                        format("It was not possible to find a suitable verifier for the signature algorithm: %s",
+                                ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                        )
+                );
             };
 
-        } catch (IllegalArgumentException e) {
-            throw e;
-
         } catch (Exception e) {
-            throw new TokenException(
-                    format("The was a problem trying to create the suitable verifier for the signature algorithm: %s. %s",
-                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null"),
-                            getFormattedRootError(e)
-                    ),
-                    e
+            throw handleMultipleExceptions(
+                    e,
+                    format("The was a problem trying to create the suitable verifier for the signature algorithm: %s",
+                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                    )
             );
         }
+    }
+
+
+    /**
+     * Method used to avoid nested {@link TokenException}s with very similar error messages.
+     *
+     * @param sourceException
+     *    Original {@link Exception} to check
+     * @param errorMessageIfNoTokenException
+     *    {@link String} with the error message to include in the returned {@link Exception} if {@code sourceException}
+     *    is not a {@link TokenException} one
+     *
+     * @return {@link TokenException}
+     */
+    private static TokenException handleMultipleExceptions(final Exception sourceException,
+                                                           final String errorMessageIfNoTokenException) {
+        if (sourceException instanceof TokenException) {
+            return (TokenException) sourceException;
+        }
+        return new TokenException(
+                format("%s. %s",
+                        errorMessageIfNoTokenException,
+                        getFormattedRootError(sourceException)
+                ),
+                sourceException
+        );
     }
 
 }

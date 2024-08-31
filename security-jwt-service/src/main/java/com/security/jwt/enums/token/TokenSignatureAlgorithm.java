@@ -24,6 +24,12 @@ public enum TokenSignatureAlgorithm {
 
 
     // TODO: Pending to add
+    // https://connect2id.com/products/nimbus-jose-jwt/algorithm-selection-guide
+    // https://connect2id.com/products/nimbus-jose-jwt/examples
+    // https://medium.com/@michael.avoyan/mastering-jwt-with-nimbus-jose-library-981b98747e36
+    //
+    // https://bitbucket.org/connect2id/nimbus-jose-jwt/src/master/
+    // https://bitbucket.org/connect2id/nimbus-jose-jwt/src/master/src/test/java/com/nimbusds/jose/crypto/
     /*
     Ed25519(JWSAlgorithm.Ed25519),
     Ed448(JWSAlgorithm.Ed448),
