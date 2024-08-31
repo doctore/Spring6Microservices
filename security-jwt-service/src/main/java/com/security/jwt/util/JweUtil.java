@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.toMap;
  * <p>
  * In <strong>methods used to generate encrypted tokens</strong>:
  * <ul>
+ *   <li>{@link JweUtil#generateToken(String, TokenEncryptionAlgorithm, TokenEncryptionMethod, String)}</li>
  *   <li>{@link JweUtil#generateToken(Map, TokenEncryptionAlgorithm, TokenEncryptionMethod, String, TokenSignatureAlgorithm, String, long)}</li>
  * </ul>
  * <p>
@@ -69,10 +70,10 @@ import static java.util.stream.Collectors.toMap;
  * <p>
  * In the <strong>methods used to decrypt tokens and extract their content</strong>:
  * <ul>
- *   <li>{@link JweUtil#getAllClaimsFromToken(String, TokenEncryptionAlgorithm, String, String)}</li>
- *   <li>{@link JweUtil#getSafeAllClaimsFromToken(String, TokenEncryptionAlgorithm, String, String)}</li>
- *   <li>{@link JweUtil#getPayloadKeys(String, TokenEncryptionAlgorithm, String, String, Set)}</li>
- *   <li>{@link JweUtil#getPayloadExceptKeys(String, TokenEncryptionAlgorithm, String, String, Set)}</li>
+ *   <li>{@link JweUtil#getAllClaimsFromToken(String, String, String)}</li>
+ *   <li>{@link JweUtil#getSafeAllClaimsFromToken(String, String, String)}</li>
+ *   <li>{@link JweUtil#getPayloadKeys(String, String, String, Set)}</li>
+ *   <li>{@link JweUtil#getPayloadExceptKeys(String, String, String, Set)}</li>
  * </ul>
  * <p>
  * Depending on selected {@link TokenEncryptionAlgorithm}, the expected value of encryption secrets will be different:
@@ -191,8 +192,6 @@ public class JweUtil {
      *
      * @param jweToken
      *    JWE token to extract the required information
-     * @param encryptionAlgorithm
-     *    {@link TokenEncryptionAlgorithm} used to decrypt the JWE token
      * @param encryptionSecret
      *    {@link String} used to decrypt the JWE token
      * @param signatureSecret
@@ -200,23 +199,19 @@ public class JweUtil {
      *
      * @return {@link Map} of {@link String}-{@link Object} with contain of the payload of the nested JWS token inside {@code jweToken}
      *
-     * @throws IllegalArgumentException if {@code jweToken}, {@code encryptionSecret} or {@code signatureSecret} are {@code null} or empty.
-     *                                  if {@code encryptionAlgorithm} is {@code null}
+     * @throws IllegalArgumentException if {@code jweToken}, {@code encryptionSecret} or {@code signatureSecret} are {@code null} or empty
      * @throws TokenInvalidException if {@code jweToken} is not a JWE or the nested JWS is not a signed token one or such
      *                               JWS was not signed using {@code signatureSecret}
      * @throws TokenExpiredException if {@code jweToken} is valid but its nested JWS has expired
      * @throws TokenException if there was a problem getting claims of {@code jweToken}
      */
     public static Map<String, Object> getAllClaimsFromToken(final String jweToken,
-                                                            final TokenEncryptionAlgorithm encryptionAlgorithm,
                                                             final String encryptionSecret,
                                                             final String signatureSecret) {
         Assert.hasText(jweToken, "jweToken cannot be null or empty");
-        Assert.notNull(encryptionAlgorithm, "encryptionAlgorithm cannot be null");
         Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
         String jwsToken = decryptJweToken(
                 jweToken,
-                encryptionAlgorithm,
                 encryptionSecret
         );
         return JwsUtil.getAllClaimsFromToken(
@@ -231,14 +226,12 @@ public class JweUtil {
      * {@code jwsToken}. {@link Left} with the {@link Exception} if there was an error trying to extract such payload.
      *
      * @apiNote
-     *    The difference between this method and {@link JweUtil#getAllClaimsFromToken(String, TokenEncryptionAlgorithm, String, String)}
+     *    The difference between this method and {@link JweUtil#getAllClaimsFromToken(String, String, String)}
      * is: this method does not throw any exception, if there is a problem extracting the payload the {@link Exception}
      * will be added in the {@link Left} element of returned {@link Either}.
      *
      * @param jweToken
      *    JWE token to extract the required information
-     * @param encryptionAlgorithm
-     *    {@link TokenEncryptionAlgorithm} used to decrypt the JWE token
      * @param encryptionSecret
      *    {@link String} used to decrypt the JWE token
      * @param signatureSecret
@@ -249,14 +242,12 @@ public class JweUtil {
      *         {@link Left} with the {@link Exception} is there was an error during the process.
      */
     public static Either<Exception, Map<String, Object>> getSafeAllClaimsFromToken(final String jweToken,
-                                                                                   final TokenEncryptionAlgorithm encryptionAlgorithm,
                                                                                    final String encryptionSecret,
                                                                                    final String signatureSecret) {
         try {
             return right(
                     getAllClaimsFromToken(
                             jweToken,
-                            encryptionAlgorithm,
                             encryptionSecret,
                             signatureSecret
                     )
@@ -264,9 +255,8 @@ public class JweUtil {
 
         } catch (Exception e) {
             log.debug(
-                    format("The was an error getting information included in JWE token: %s using the algorithm: %s. %s",
+                    format("The was an error getting information included in JWE token: %s. %s",
                             jweToken,
-                            ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null"),
                             getFormattedRootError(e)
                     ),
                     e
@@ -302,7 +292,6 @@ public class JweUtil {
      * @throws TokenException if there was a problem getting claims of {@code jweToken}
      */
     public Map<String, Object> getPayloadKeys(final String jweToken,
-                                              final TokenEncryptionAlgorithm encryptionAlgorithm,
                                               final String encryptionSecret,
                                               final String signatureSecret,
                                               final Set<String> keysToInclude) {
@@ -312,7 +301,6 @@ public class JweUtil {
         );
         return getAllClaimsFromToken(
                 jweToken,
-                encryptionAlgorithm,
                 encryptionSecret,
                 signatureSecret
         )
@@ -358,7 +346,6 @@ public class JweUtil {
      * @throws TokenException if there was a problem getting claims of {@code jweToken}
      */
     public Map<String, Object> getPayloadExceptKeys(final String jweToken,
-                                                    final TokenEncryptionAlgorithm encryptionAlgorithm,
                                                     final String encryptionSecret,
                                                     final String signatureSecret,
                                                     final Set<String> keysToExclude) {
@@ -368,7 +355,6 @@ public class JweUtil {
         );
         return getAllClaimsFromToken(
                 jweToken,
-                encryptionAlgorithm,
                 encryptionSecret,
                 signatureSecret
         )
@@ -478,12 +464,10 @@ public class JweUtil {
 
 
     /**
-     * Decrypt the given JWE token using provided {@link TokenEncryptionAlgorithm} and returning the nested JWS token.
+     * Decrypt the given JWE token using provided {@code encryptionSecret} and returning the nested JWS token.
      *
      * @param jweToken
      *    {@link String} with the JWE token to decrypt
-     * @param encryptionAlgorithm
-     *    {@link TokenEncryptionAlgorithm} used to decrypt the JWE token
      * @param encryptionSecret
      *    {@link String} used to decrypt the JWE token
      *
@@ -493,7 +477,6 @@ public class JweUtil {
      * @throws TokenException it there was a problem decrypting {@code jweToken}
      */
     private String decryptJweToken(final String jweToken,
-                                   final TokenEncryptionAlgorithm encryptionAlgorithm,
                                    final String encryptionSecret) {
         try {
             if (!isJweToken(jweToken)) {
@@ -505,7 +488,7 @@ public class JweUtil {
             JWEObject jweObject = JWEObject.parse(jweToken);
             jweObject.decrypt(
                     getSuitableDecrypter(
-                            encryptionAlgorithm,
+                            jweObject,
                             encryptionSecret
                     )
             );
@@ -516,9 +499,8 @@ public class JweUtil {
         } catch (Exception e) {
             throw handleMultipleExceptions(
                     e,
-                    format("The was a problem trying to decrypt the JWE token: %s using the algorithm: %s",
-                            jweToken,
-                            ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null")
+                    format("The was a problem trying to decrypt the JWE token: %s",
+                            jweToken
                     )
             );
         }
@@ -571,10 +553,11 @@ public class JweUtil {
 
 
     /**
-     * Return the suitable {@link JWEDecrypter} taking into account the provided {@link TokenEncryptionAlgorithm}.
+     *    Return the suitable {@link JWEDecrypter} taking into account the {@link TokenEncryptionAlgorithm} used to
+     * encrypt the given JWE token {@code jweObject}.
      *
-     * @param encryptionAlgorithm
-     *    {@link TokenEncryptionAlgorithm} used to encrypt the JWE token
+     * @param jweObject
+     *    {@link JWEObject} with JWE token
      * @param encryptionSecret
      *    {@link String} used to encrypt the JWE token
      *
@@ -583,8 +566,12 @@ public class JweUtil {
      * @throws TokenException if it was not possible to find a suitable {@link JWEDecrypter} or there was an error
      *                        creating it
      */
-    private static JWEDecrypter getSuitableDecrypter(final TokenEncryptionAlgorithm encryptionAlgorithm,
+    private static JWEDecrypter getSuitableDecrypter(final JWEObject jweObject,
                                                      final String encryptionSecret) {
+        TokenEncryptionAlgorithm encryptionAlgorithm = TokenEncryptionAlgorithm.getByAlgorithm(
+                jweObject.getHeader().getAlgorithm()
+        ).orElse(null);
+
         try {
             return switch (encryptionAlgorithm) {
                 case DIR ->
