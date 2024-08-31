@@ -4,6 +4,7 @@ import com.security.jwt.enums.token.TokenEncryptionAlgorithm;
 import com.security.jwt.enums.token.TokenEncryptionMethod;
 import com.security.jwt.enums.token.TokenSignatureAlgorithm;
 import com.security.jwt.exception.token.TokenException;
+import com.security.jwt.exception.token.TokenInvalidException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -98,8 +99,70 @@ public class JweUtilTest {
     */
 
 
+    static Stream<Arguments> generateTokenEncryptTestCases() {
+        Map<String, Object> informationToInclude = new HashMap<>();
+        String doesNotCareSecret = "ItDoesNotCare";
+        return Stream.of(
+                //@formatter:off
+                //            jwsToken,          encryptionAlgorithm,                 encryptionMethod,                  encryptionSecret,            expectedException
+                Arguments.of( null,              null,                                null,                              null,                        IllegalArgumentException.class ),
+                Arguments.of( null,              DIR_ENCRYPTION_ALGORITHM,            null,                              null,                        IllegalArgumentException.class ),
+                Arguments.of( null,              DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   null,                        IllegalArgumentException.class ),
+                Arguments.of( null,              DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   "",                          IllegalArgumentException.class ),
+                Arguments.of( "",                null,                                null,                              null,                        IllegalArgumentException.class ),
+                Arguments.of( "",                DIR_ENCRYPTION_ALGORITHM,            null,                              null,                        IllegalArgumentException.class ),
+                Arguments.of( "",                DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   null,                        IllegalArgumentException.class ),
+                Arguments.of( "",                DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   "",                          IllegalArgumentException.class ),
+                // encryptionMethod and encryptionSecret does not match
+                Arguments.of( null,              DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           TokenException.class ),
+                Arguments.of( "",                DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           TokenException.class ),
+                Arguments.of( NOT_JWS_TOKEN,     DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           TokenException.class ),
+                Arguments.of( VALID_JWS_TOKEN,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           TokenException.class ),
+                // Not valid JWS
+                Arguments.of( NOT_JWS_TOKEN,     DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_256,   TokenInvalidException.class ),
+                Arguments.of( NOT_JWS_TOKEN,     RSA_OAEP_256_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    TokenInvalidException.class ),
+                Arguments.of( NOT_JWS_TOKEN,     RSA_OAEP_384_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    TokenInvalidException.class ),
+                Arguments.of( NOT_JWS_TOKEN,     RSA_OAEP_512_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    TokenInvalidException.class ),
+                // DIR valid generated tokens
+                Arguments.of( VALID_JWS_TOKEN,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_256,   null ),
+                Arguments.of( VALID_JWS_TOKEN,   DIR_ENCRYPTION_ALGORITHM,            A192CBC_HS384_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_384,   null ),
+                Arguments.of( VALID_JWS_TOKEN,   DIR_ENCRYPTION_ALGORITHM,            A256CBC_HS512_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_512,   null ),
+                // RSA valid generated tokens
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_256_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_256_ENCRYPTION_ALGORITHM,   A192CBC_HS384_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_256_ENCRYPTION_ALGORITHM,   A256CBC_HS512_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_384_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_384_ENCRYPTION_ALGORITHM,   A192CBC_HS384_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_384_ENCRYPTION_ALGORITHM,   A256CBC_HS512_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_512_ENCRYPTION_ALGORITHM,   A128CBC_HS256_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_512_ENCRYPTION_ALGORITHM,   A192CBC_HS384_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null ),
+                Arguments.of( VALID_JWS_TOKEN,   RSA_OAEP_512_ENCRYPTION_ALGORITHM,   A256CBC_HS512_ENCRYPTION_METHOD,   RS_ENCRYPTION_PUBLIC_KEY,    null )
+        ); //@formatter:on
+    }
 
-    static Stream<Arguments> generateTokenTestCases() {
+    @ParameterizedTest
+    @MethodSource("generateTokenEncryptTestCases")
+    @DisplayName("generateToken: encrypt provided token test cases")
+    public void generateTokenEncrypt_testCases(String jwsToken,
+                                               TokenEncryptionAlgorithm encryptionAlgorithm,
+                                               TokenEncryptionMethod encryptionMethod,
+                                               String encryptionSecret,
+                                               Class<? extends Exception> expectedException) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> JweUtil.generateToken(jwsToken, encryptionAlgorithm, encryptionMethod, encryptionSecret)
+            );
+        }
+        else {
+            assertNotNull(
+                    JweUtil.generateToken(jwsToken, encryptionAlgorithm, encryptionMethod, encryptionSecret)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> generateTokenSignAndEncryptTestCases() {
         Map<String, Object> informationToInclude = new HashMap<>();
         String doesNotCareSecret = "ItDoesNotCare";
         return Stream.of(
@@ -153,16 +216,16 @@ public class JweUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("generateTokenTestCases")
-    @DisplayName("generateToken: test cases")
-    public void generateToken_testCases(Map<String, Object> informationToInclude,
-                                        TokenEncryptionAlgorithm encryptionAlgorithm,
-                                        TokenEncryptionMethod encryptionMethod,
-                                        String encryptionSecret,
-                                        TokenSignatureAlgorithm signatureAlgorithm,
-                                        String signatureSecret,
-                                        long expirationTimeInSeconds,
-                                        Class<? extends Exception> expectedException) {
+    @MethodSource("generateTokenSignAndEncryptTestCases")
+    @DisplayName("generateToken: sign and encrypt provided data test cases")
+    public void generateTokenSignAndEncrypt_testCases(Map<String, Object> informationToInclude,
+                                                      TokenEncryptionAlgorithm encryptionAlgorithm,
+                                                      TokenEncryptionMethod encryptionMethod,
+                                                      String encryptionSecret,
+                                                      TokenSignatureAlgorithm signatureAlgorithm,
+                                                      String signatureSecret,
+                                                      long expirationTimeInSeconds,
+                                                      Class<? extends Exception> expectedException) {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -175,10 +238,6 @@ public class JweUtilTest {
             );
         }
     }
-
-
-
-
 
 
 
@@ -249,9 +308,15 @@ public class JweUtilTest {
                     lQIDAQAB
                     -----END PUBLIC KEY-----""";
 
+    private static final String NOT_JWS_TOKEN = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..B5boNIFOF9N3QKNEX8CPDA.Xd3_abfHI-5CWvQy9AiGI"
+            + "B6-1tZ_EUp5ZhrldrZrj49mX9IU7S09FXbPXTCW6r_E_DrhE1fVXoKBTbjEG2F-s-UcpGvpPOBJmQoK0qtAfuo8YlonXGHNDs8f-TtQG0E4lO"
+            + "EU3ZPGofPNxa1E-HJvs7rsYbjCsgzw5sHaLuIZDIgpES_pVYntdUHK4RlY3jHCqsu8_asM7Gxsmo-RVGPuvg._FJDglnteTQWNFbunQ0aYg";
+
+    private static final String VALID_JWS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI0NjY1OTU3LCJpYXQiOjE3MjQ2NjU5NTcsImFnZSI"
+            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.IPhRr7D68LHqWOkK763CLmtdvpDSV_b93GA5aWNHMqI";
+
     private static final String NOT_JWE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
             + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.xhFgeEc5bGDJ_EOhxcefDQ4olqViOzPCxjjFH2NIGhk";
-
 
     private static final String EXPIRED_JWE_TOKEN_DIR = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..q6ShzxgjvhRmqApkYZgU2w.RDP2BYn9PD-qox"
             + "BoeCv24C2WKPyreNA_WSjFY-zHH3b6_oB-NiUSJtr1YJ1lPXJhIqB7svWKTe28KxIGEWbjud9P0NPhzN3j-rnQkJztHETHd_RHnn3PCHb0oHdisCocx7lDg5d_kTHrlgTtecvYXkXd3HGtjC"

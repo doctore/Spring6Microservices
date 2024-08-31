@@ -102,6 +102,41 @@ public class JweUtil {
 
 
     /**
+     * Using the given {@code jwsToken} generates a valid JWE token (encrypted JWS).
+     *
+     * @param jwsToken
+     *    JWS token to encrypt
+     * @param encryptionAlgorithm
+     *    {@link TokenEncryptionAlgorithm} used to encrypt the JWS token
+     * @param encryptionMethod
+     *    {@link TokenEncryptionMethod} used to encrypt the JWS token
+     * @param encryptionSecret
+     *    {@link String} used to encrypt the JWS token
+     *
+     * @return {@link String} with the JWE with {@code jwsToken} as nested one
+     *
+     * @throws IllegalArgumentException if {@code encryptionAlgorithm}, {@code encryptionMethod} are {@code null}
+     *                                  if {@code encryptionSecret} is {@code null} or empty.
+     * @throws TokenInvalidException it the given {@code jwsToken} is not a JWS one
+     * @throws TokenException if there was a problem generating the JWE token
+     */
+    public String generateToken(final String jwsToken,
+                                final TokenEncryptionAlgorithm encryptionAlgorithm,
+                                final TokenEncryptionMethod encryptionMethod,
+                                final String encryptionSecret) {
+        Assert.notNull(encryptionAlgorithm, "encryptionAlgorithm cannot be null");
+        Assert.notNull(encryptionMethod, "encryptionMethod cannot be null");
+        Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
+        return encryptJwsToken(
+                jwsToken,
+                encryptionAlgorithm,
+                encryptionMethod,
+                encryptionSecret
+        );
+    }
+
+
+    /**
      * Using the given {@code informationToInclude} generates a valid nested JWS inside JWE token (signed + encrypted JWT):
      * <ul>
      *   <li><strong>1.</strong> JWS token using provided: {@link TokenSignatureAlgorithm} and {@code signatureSecret}</li>
@@ -125,8 +160,8 @@ public class JweUtil {
      *
      * @return {@link String} with the JWE
      *
-     * @throws IllegalArgumentException if {@code encryptionSecret} or {@code signatureSecret} are {@code null} or empty.
-     *                                  if {@code encryptionAlgorithm}, {@code encryptionMethod} or {@code signatureAlgorithm} are {@code null}
+     * @throws IllegalArgumentException if {@code encryptionAlgorithm}, {@code encryptionMethod} or {@code signatureAlgorithm} are {@code null}
+     *                                  if {@code encryptionSecret} or {@code signatureSecret} are {@code null} or empty.
      * @throws TokenException if there was a problem generating the JWE token
      */
     public String generateToken(final Map<String, Object> informationToInclude,
@@ -136,20 +171,17 @@ public class JweUtil {
                                 final TokenSignatureAlgorithm signatureAlgorithm,
                                 final String signatureSecret,
                                 final long expirationTimeInSeconds) {
-        Assert.notNull(encryptionAlgorithm, "encryptionAlgorithm cannot be null");
-        Assert.notNull(encryptionMethod, "encryptionMethod cannot be null");
-        Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
         String jwsToken = JwsUtil.generateToken(
                 informationToInclude,
                 signatureAlgorithm,
                 signatureSecret,
                 expirationTimeInSeconds
         );
-        return encryptJwsToken(
-                jwsToken,
-                encryptionAlgorithm,
-                encryptionMethod,
-                encryptionSecret
+        return generateToken(
+          jwsToken,
+          encryptionAlgorithm,
+          encryptionMethod,
+          encryptionSecret
         );
     }
 
