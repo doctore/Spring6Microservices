@@ -4,21 +4,30 @@ import com.security.jwt.enums.token.TokenEncryptionAlgorithm;
 import com.security.jwt.enums.token.TokenEncryptionMethod;
 import com.security.jwt.enums.token.TokenSignatureAlgorithm;
 import com.security.jwt.exception.token.TokenException;
+import com.security.jwt.exception.token.TokenExpiredException;
 import com.security.jwt.exception.token.TokenInvalidException;
+import com.spring6microservices.common.core.functional.either.Either;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JweUtilTest {
-
 
     /*
     // TODO: PENDING TO REMOVE after adding more options to sign the token
@@ -101,7 +110,6 @@ public class JweUtilTest {
 
 
     static Stream<Arguments> generateTokenEncryptTestCases() {
-        Map<String, Object> informationToInclude = new HashMap<>();
         String doesNotCareSecret = "ItDoesNotCare";
         return Stream.of(
                 //@formatter:off
@@ -181,12 +189,12 @@ public class JweUtilTest {
                 Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   "",                          null,                        null,                     90,                        IllegalArgumentException.class ),
                 Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   "",                          HS256_SIGNATURE_ALGORITHM,   null,                     90,                        IllegalArgumentException.class ),
                 Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   "",                          HS256_SIGNATURE_ALGORITHM,   "",                       90,                        IllegalArgumentException.class ),
-                // signatureAlgorithm and signatureSecret does not match
-                Arguments.of( null,                   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   doesNotCareSecret,        90,                        TokenException.class ),
-                Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   doesNotCareSecret,        90,                        TokenException.class ),
                 // encryptionMethod and encryptionSecret does not match
                 Arguments.of( null,                   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   HS256_SIGNATURE_SECRET,   90,                        TokenException.class ),
                 Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   HS256_SIGNATURE_SECRET,   90,                        TokenException.class ),
+                // signatureAlgorithm and signatureSecret does not match
+                Arguments.of( null,                   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   doesNotCareSecret,        90,                        TokenException.class ),
+                Arguments.of( informationToInclude,   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   doesNotCareSecret,           HS256_SIGNATURE_ALGORITHM,   doesNotCareSecret,        90,                        TokenException.class ),
                 // DIR valid generated tokens
                 Arguments.of( null,                   DIR_ENCRYPTION_ALGORITHM,            A128CBC_HS256_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_ALGORITHM,   HS256_SIGNATURE_SECRET,   90,                        null ),
                 Arguments.of( null,                   DIR_ENCRYPTION_ALGORITHM,            A192CBC_HS384_ENCRYPTION_METHOD,   DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_ALGORITHM,   HS256_SIGNATURE_SECRET,   90,                        null ),
@@ -241,6 +249,551 @@ public class JweUtilTest {
     }
 
 
+    static Stream<Arguments> getAllClaimsFromTokenTestCases() {
+        String doesNotCareValue = "ItDoesNotCare";
+        String notValidtoken = "NotValidToken";
+
+        Map<String, Object> expectedResultEmptyToken = new LinkedHashMap<>() {{
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("jti", "8cbccfe1-8d89-4f4f-84f1-20f90a268986");
+        }};
+        Map<String, Object> expectedResultNotEmptyToken = new LinkedHashMap<>() {{
+            put("name", "name value");
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("age", 23L);
+            put("roles", List.of("admin", "user"));
+            put("username", "username value");
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            jweToken,                                                  encryptionSecret,            signatureSecret,                expectedException,                expectedResult
+                Arguments.of( null,                                                      null,                        null,                           IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             IllegalArgumentException.class,   null ),
+                // Not valid tokens
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         TokenInvalidException.class,      null ),
+                // Token and encryptionSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               TokenException.class,             null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               TokenException.class,             null ),
+                // Token and signatureSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   TokenInvalidException.class,      null ),
+                // Expired DIR
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         TokenExpiredException.class,      null ),
+                // Expired RSA
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         TokenExpiredException.class,      null ),
+                // Valid DIR
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                // Valid RSA
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,                             expectedResultNotEmptyToken )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getAllClaimsFromTokenTestCases")
+    @DisplayName("getAllClaimsFromToken: test cases")
+    public void getAllClaimsFromToken_testCases(String jwsToken,
+                                                String encryptionSecret,
+                                                String signatureSecret,
+                                                Class<? extends Exception> expectedException,
+                                                Map<String, Object> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> JweUtil.getAllClaimsFromToken(jwsToken, encryptionSecret, signatureSecret)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    JweUtil.getAllClaimsFromToken(jwsToken, encryptionSecret, signatureSecret)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> getSafeAllClaimsFromTokenTestCases() {
+        String doesNotCareValue = "ItDoesNotCare";
+        String notValidtoken = "NotValidToken";
+
+        Either<Exception, Map<String, Object>> expectedResultEmptyToken = Either.left(
+                new IllegalArgumentException(
+                        "jweToken cannot be null or empty"
+                )
+        );
+        Either<Exception, Map<String, Object>> expectedResultEmptyEncryptionSecret = Either.left(
+                new IllegalArgumentException(
+                        "encryptionSecret cannot be null or empty"
+                )
+        );
+        Either<Exception, Map<String, Object>> expectedResultEmptySignatureSecret = Either.left(
+                new IllegalArgumentException(
+                        "signatureSecret cannot be null or empty"
+                )
+        );
+        Either<Exception, Map<String, Object>> expectedResultInvalidToken = Either.left(
+                new TokenInvalidException()
+        );
+        Either<Exception, Map<String, Object>> expectedResultExpiredToken = Either.left(
+                new TokenExpiredException()
+        );
+        Either<Exception, Map<String, Object>> expectedResultTokenException = Either.left(
+                new TokenException()
+        );
+        Either<Exception, Map<String, Object>> expectedResultValidEmptyToken = Either.right(
+                new LinkedHashMap<>() {{
+                    put("exp", new Date(5000000000L * 1000));
+                    put("iat", new Date(1700000000L * 1000));
+                    put("jti", "8cbccfe1-8d89-4f4f-84f1-20f90a268986");
+                }}
+        );
+        Either<Exception, Map<String, Object>> expectedResultValidNotEmptyToken = Either.right(
+                new LinkedHashMap<>() {{
+                    put("name", "name value");
+                    put("exp", new Date(5000000000L * 1000));
+                    put("iat", new Date(1700000000L * 1000));
+                    put("age", 23L);
+                    put("roles", List.of("admin", "user"));
+                    put("username", "username value");
+                }}
+        );
+        return Stream.of(
+                //@formatter:off
+                //            jweToken,                                                  encryptionSecret,            signatureSecret,                expectedResult
+                Arguments.of( null,                                                      null,                        null,                           expectedResultEmptyToken ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               expectedResultEmptyToken ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               expectedResultEmptyToken ),
+                Arguments.of( "",                                                        null,                        null,                           expectedResultEmptyToken ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               expectedResultEmptyToken ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               expectedResultEmptyToken ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               expectedResultEmptyEncryptionSecret ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           expectedResultEmptySignatureSecret ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           expectedResultEmptyEncryptionSecret ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             expectedResultEmptyEncryptionSecret ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               expectedResultEmptyEncryptionSecret ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             expectedResultEmptySignatureSecret ),
+                // Not valid tokens
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               expectedResultInvalidToken ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               expectedResultInvalidToken ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         expectedResultInvalidToken ),
+                // Token and encryptionSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               expectedResultTokenException ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               expectedResultTokenException ),
+                // Token and signatureSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   expectedResultInvalidToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   expectedResultInvalidToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   expectedResultInvalidToken ),
+                // Expired DIR
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         expectedResultExpiredToken ),
+                // Expired RSA
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultExpiredToken ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultExpiredToken ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultExpiredToken ),
+                // Valid DIR
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         expectedResultValidEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                // Valid RSA
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         expectedResultValidNotEmptyToken )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSafeAllClaimsFromTokenTestCases")
+    @DisplayName("getSafeAllClaimsFromToken: test cases")
+    public void getSafeAllClaimsFromToken_testCases(String jwsToken,
+                                                    String encryptionSecret,
+                                                    String signatureSecret,
+                                                    Either<Exception, Map<String, Object>> expectedResult) {
+        if (expectedResult.isRight()) {
+            assertEquals(
+                    expectedResult,
+                    JweUtil.getSafeAllClaimsFromToken(jwsToken, encryptionSecret, signatureSecret)
+            );
+        }
+        else {
+            Either<Exception, Map<String, Object>> result = JweUtil.getSafeAllClaimsFromToken(jwsToken, encryptionSecret, signatureSecret);
+            assertFalse(result.isRight());
+            assertEquals(
+                    expectedResult.getLeft().getClass(),
+                    result.getLeft().getClass()
+            );
+            if (!(result.getLeft() instanceof TokenException)) {
+                assertEquals(
+                        expectedResult.getLeft().getMessage(),
+                        result.getLeft().getMessage()
+                );
+            }
+        }
+    }
+
+
+    static Stream<Arguments> getPayloadKeysTestCases() {
+        String doesNotCareValue = "ItDoesNotCare";
+        String notValidtoken = "NotValidToken";
+
+        Set<String> keysToInclude = new HashSet<>(asList("username", "roles", "age"));
+        Map<String, Object> expectedResult = new LinkedHashMap<>() {{
+            put("username", "username value");
+            put("roles", List.of("admin", "user"));
+            put("age", 23L);
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            jweToken,                                                  encryptionSecret,            signatureSecret,                keysToInclude,     expectedException,                expectedResult
+                Arguments.of( null,                                                      null,                        null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        null,                           new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        null,                           keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             keysToInclude,     IllegalArgumentException.class,   null ),
+                // Not valid tokens
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               null,              TokenInvalidException.class,      null ),
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToInclude,     TokenInvalidException.class,      null ),
+                // Token and encryptionSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               null,              TokenException.class,             null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               keysToInclude,     TokenException.class,             null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               null,              TokenException.class,             null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               keysToInclude,     TokenException.class,             null ),
+                // Token and signatureSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   keysToInclude,     TokenInvalidException.class,      null ),
+                // Expired DIR
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToInclude,     TokenExpiredException.class,      null ),
+                // Expired RSA
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     TokenExpiredException.class,      null ),
+                // Valid DIR
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                // Valid RSA
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToInclude,     null,                             expectedResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPayloadKeysTestCases")
+    @DisplayName("getPayloadKeys: test cases")
+    public void getPayloadKeys_testCases(String jwsToken,
+                                         String encryptionSecret,
+                                         String signatureSecret,
+                                         Set<String> keysToInclude,
+                                         Class<? extends Exception> expectedException,
+                                         Map<String, Object> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> JweUtil.getPayloadKeys(jwsToken, encryptionSecret, signatureSecret, keysToInclude)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    JweUtil.getPayloadKeys(jwsToken, encryptionSecret, signatureSecret, keysToInclude)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> getPayloadExceptKeysTestCases() {
+        String doesNotCareValue = "ItDoesNotCare";
+        String notValidtoken = "NotValidToken";
+
+        Set<String> keysToExclude = new HashSet<>(asList("username", "roles", "age"));
+        Map<String, Object> expectedResultEmptyToken = new LinkedHashMap<>() {{
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("jti", "8cbccfe1-8d89-4f4f-84f1-20f90a268986");
+        }};
+        Map<String, Object> expectedResultNotEmptyTokenWithKeysToExclude = new LinkedHashMap<>() {{
+            put("name", "name value");
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+        }};
+        Map<String, Object> expectedResultNotEmptyTokenWithoutKeysToExclude = new LinkedHashMap<>() {{
+            put("name", "name value");
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("age", 23L);
+            put("roles", List.of("admin", "user"));
+            put("username", "username value");
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            jweToken,                                                  encryptionSecret,            signatureSecret,                keysToExclude,     expectedException,                expectedResult
+                Arguments.of( null,                                                      null,                        null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        null,                           new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        null,                           keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      null,                        doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                                      doesNotCareValue,            doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        null,                           keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        null,                        doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                                        doesNotCareValue,            doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            null,                           keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          null,                           keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          null,                        "",                             keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          "",                          doesNotCareValue,               keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                                          doesNotCareValue,            "",                             keysToExclude,     IllegalArgumentException.class,   null ),
+                // Not valid tokens
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               null,              TokenInvalidException.class,      null ),
+                Arguments.of( notValidtoken,                                             doesNotCareValue,            doesNotCareValue,               keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             doesNotCareValue,            doesNotCareValue,               keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWE_TOKEN,                                             DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToExclude,     TokenInvalidException.class,      null ),
+                // Token and encryptionSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               null,              TokenException.class,             null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            DIR_ENCRYPTION_SECRET_512,   doesNotCareValue,               keysToExclude,     TokenException.class,             null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               null,              TokenException.class,             null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_384,   doesNotCareValue,               keysToExclude,     TokenException.class,             null ),
+                // Token and signatureSecret does not match
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_WRONG_SIGNATURE_SECRET,   keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_WRONG_SIGNATURE_SECRET,   keysToExclude,     TokenInvalidException.class,      null ),
+                // Expired DIR
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToExclude,     TokenExpiredException.class,      null ),
+                // Expired RSA
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     TokenExpiredException.class,      null ),
+                // Valid DIR
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  DIR_ENCRYPTION_SECRET_256,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  DIR_ENCRYPTION_SECRET_384,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  DIR_ENCRYPTION_SECRET_512,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                // Valid RSA
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         RS_ENCRYPTION_PRIVATE_KEY,   HS256_SIGNATURE_SECRET,         keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPayloadExceptKeysTestCases")
+    @DisplayName("getPayloadExceptKeys: test cases")
+    public void getPayloadExceptKeys_testCases(String jwsToken,
+                                               String encryptionSecret,
+                                               String signatureSecret,
+                                               Set<String> keysToExclude,
+                                               Class<? extends Exception> expectedException,
+                                               Map<String, Object> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> JweUtil.getPayloadExceptKeys(jwsToken, encryptionSecret, signatureSecret, keysToExclude)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    JweUtil.getPayloadExceptKeys(jwsToken, encryptionSecret, signatureSecret, keysToExclude)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> isJweTokenTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            jwsToken,                                                  expectedResult
+                Arguments.of( null,                                                      false ),
+                Arguments.of( "",                                                        false ),
+                Arguments.of( "NotValidToken",                                           false ),
+                Arguments.of( NOT_JWE_TOKEN,                                             false ),
+                // Expired tokens
+                Arguments.of( EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                      true ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_256,                            true ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_384,                            true ),
+                Arguments.of( EXPIRED_JWE_TOKEN_RSA_OAEP_512,                            true ),
+                // Not expired empty tokens
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256,            true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,   true ),
+                // Not expired and not empty tokens
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,                  true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A192CBC_HS384,                  true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_DIR__A256CBC_HS512,                  true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A128CBC_HS256,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A192CBC_HS384,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_256__A256CBC_HS512,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A128CBC_HS256,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A192CBC_HS384,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_384__A256CBC_HS512,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A128CBC_HS256,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A192CBC_HS384,         true ),
+                Arguments.of( NOT_EXPIRED_JWE_TOKEN_RSA_OAEP_512__A256CBC_HS512,         true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("isJweTokenTestCases")
+    @DisplayName("isJweToken: test cases")
+    public void isJweToken_testCases(String jweToken,
+                                     boolean expectedResult) {
+        assertEquals(
+                expectedResult,
+                JweUtil.isJweToken(jweToken)
+        );
+    }
+
 
     private static final TokenEncryptionAlgorithm DIR_ENCRYPTION_ALGORITHM = TokenEncryptionAlgorithm.DIR;
 
@@ -259,6 +812,8 @@ public class JweUtilTest {
     private static final TokenSignatureAlgorithm HS256_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.HS256;
 
     private static final String HS256_SIGNATURE_SECRET = "hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k";
+
+    private static final String HS256_WRONG_SIGNATURE_SECRET = "111111111111111111111111111111111111111111111111111111111111111";
 
     private static final String DIR_ENCRYPTION_SECRET_256 = "dirEncryptionSecret##9991a2(jwe)";
 
@@ -319,10 +874,10 @@ public class JweUtilTest {
     private static final String NOT_JWE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
             + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.xhFgeEc5bGDJ_EOhxcefDQ4olqViOzPCxjjFH2NIGhk";
 
-    private static final String EXPIRED_JWE_TOKEN_DIR = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..q6ShzxgjvhRmqApkYZgU2w.RDP2BYn9PD-qox"
-            + "BoeCv24C2WKPyreNA_WSjFY-zHH3b6_oB-NiUSJtr1YJ1lPXJhIqB7svWKTe28KxIGEWbjud9P0NPhzN3j-rnQkJztHETHd_RHnn3PCHb0oHdisCocx7lDg5d_kTHrlgTtecvYXkXd3HGtjC"
-            + "hqK7HyEYKUgk_LD6Jdyh7K9hMLbD6gmE9JYPue1FLW6oHC8QycPblbb9G5Dl9Z9oUJlLC_i8UAgSAkll1Cox5qCaLHGkuH5oODf8ZI3NGYuuId7ZFqdxgWwhebd2wpo9cK9pkHoY2otoo.rD"
-            + "V2sPBllhY3PZtlq44b5Q";
+    private static final String EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256 = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..q6ShzxgjvhRmqApkYZgU2w"
+            + ".RDP2BYn9PD-qoxBoeCv24C2WKPyreNA_WSjFY-zHH3b6_oB-NiUSJtr1YJ1lPXJhIqB7svWKTe28KxIGEWbjud9P0NPhzN3j-rnQkJztHETHd_RHnn3PCHb0oHdisCocx7lDg5d_kTHrlgT"
+            + "tecvYXkXd3HGtjChqK7HyEYKUgk_LD6Jdyh7K9hMLbD6gmE9JYPue1FLW6oHC8QycPblbb9G5Dl9Z9oUJlLC_i8UAgSAkll1Cox5qCaLHGkuH5oODf8ZI3NGYuuId7ZFqdxgWwhebd2wpo9c"
+            + "K9pkHoY2otoo.rDV2sPBllhY3PZtlq44b5Q";
 
     private static final String NOT_EXPIRED_EMPTY_JWE_TOKEN_DIR__A128CBC_HS256 = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..oVii7DvRHR_2"
             + "X9pB_UxLpg.iBAplXL0bbyXQAsMkIsT98e9_eiqQ4W-p1p6qKaNLeUAyX6FFVFpBfNldC7tN4FQ_COwpfY84SF_WmT9KW8MelPQlx_uqM1v_5JSVM5UPU9fdxtUha4_ICmbAC4sZM4ZYCiEb"

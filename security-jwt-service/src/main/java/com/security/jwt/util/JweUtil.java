@@ -16,6 +16,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jwt.EncryptedJWT;
 import com.security.jwt.enums.token.TokenEncryptionAlgorithm;
 import com.security.jwt.enums.token.TokenEncryptionMethod;
 import com.security.jwt.enums.token.TokenSignatureAlgorithm;
@@ -210,6 +211,7 @@ public class JweUtil {
                                                             final String signatureSecret) {
         Assert.hasText(jweToken, "jweToken cannot be null or empty");
         Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
+        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
         String jwsToken = decryptJweToken(
                 jweToken,
                 encryptionSecret
@@ -485,14 +487,14 @@ public class JweUtil {
                                 jweToken)
                 );
             }
-            JWEObject jweObject = JWEObject.parse(jweToken);
-            jweObject.decrypt(
+            EncryptedJWT encryptedJWT = EncryptedJWT.parse(jweToken);
+            encryptedJWT.decrypt(
                     getSuitableDecrypter(
-                            jweObject,
+                            encryptedJWT,
                             encryptionSecret
                     )
             );
-            return jweObject.getPayload()
+            return encryptedJWT.getPayload()
                     .toSignedJWT()
                     .serialize();
 
@@ -556,8 +558,8 @@ public class JweUtil {
      *    Return the suitable {@link JWEDecrypter} taking into account the {@link TokenEncryptionAlgorithm} used to
      * encrypt the given JWE token {@code jweObject}.
      *
-     * @param jweObject
-     *    {@link JWEObject} with JWE token
+     * @param encryptedJWT
+     *    {@link EncryptedJWT} with JWE token
      * @param encryptionSecret
      *    {@link String} used to encrypt the JWE token
      *
@@ -566,10 +568,10 @@ public class JweUtil {
      * @throws TokenException if it was not possible to find a suitable {@link JWEDecrypter} or there was an error
      *                        creating it
      */
-    private static JWEDecrypter getSuitableDecrypter(final JWEObject jweObject,
+    private static JWEDecrypter getSuitableDecrypter(final EncryptedJWT encryptedJWT,
                                                      final String encryptionSecret) {
         TokenEncryptionAlgorithm encryptionAlgorithm = TokenEncryptionAlgorithm.getByAlgorithm(
-                jweObject.getHeader().getAlgorithm()
+                encryptedJWT.getHeader().getAlgorithm()
         ).orElse(null);
 
         try {

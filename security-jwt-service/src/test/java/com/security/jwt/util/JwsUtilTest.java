@@ -29,7 +29,6 @@ public class JwsUtilTest {
 
     /*
     // TODO: PENDING TO REMOVE after adding more options to sign the token
-
     public static void main(String[] args) {
         Map<String, Object> informationToInclude = new LinkedHashMap<>();
         informationToInclude.put("username", "username value");
@@ -131,7 +130,9 @@ public class JwsUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            jwsToken,                            signatureSecret,           expectedException,                expectedResult
+                Arguments.of( null,                                null,                      IllegalArgumentException.class,   null ),
                 Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  null,                      IllegalArgumentException.class,   null ),
                 Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   null ),
                 Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   null ),
                 Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   null ),
@@ -140,7 +141,8 @@ public class JwsUtilTest {
                 Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    TokenInvalidException.class,      null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS512_SIGNATURE_SECRET,    TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS512_SIGNATURE_SECRET,    TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,    TokenException.class,             null ),
                 // Expired HS
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    TokenExpiredException.class,      null ),
                 Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    TokenExpiredException.class,      null ),
@@ -208,6 +210,9 @@ public class JwsUtilTest {
         Either<Exception, Map<String, Object>> expectedResultExpiredToken = Either.left(
                 new TokenExpiredException()
         );
+        Either<Exception, Map<String, Object>> expectedResultTokenException = Either.left(
+                new TokenException()
+        );
         Either<Exception, Map<String, Object>> expectedResultValidEmptyToken = Either.right(
                 new LinkedHashMap<>() {{
                     put("exp", new Date(5000000000L * 1000));
@@ -228,7 +233,9 @@ public class JwsUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            jwsToken,                            signatureSecret,           expectedResult
+                Arguments.of( null,                                null,                      expectedResultEmptyToken ),
                 Arguments.of( null,                                doesNotCareValue,          expectedResultEmptyToken ),
+                Arguments.of( "",                                  null,                      expectedResultEmptyToken ),
                 Arguments.of( "",                                  doesNotCareValue,          expectedResultEmptyToken ),
                 Arguments.of( doesNotCareValue,                    null,                      expectedResultEmptySecret ),
                 Arguments.of( doesNotCareValue,                    "",                        expectedResultEmptySecret ),
@@ -237,7 +244,8 @@ public class JwsUtilTest {
                 Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    expectedResultInvalidToken ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    expectedResultInvalidToken ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS512_SIGNATURE_SECRET,    expectedResultInvalidToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS512_SIGNATURE_SECRET,    expectedResultInvalidToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,    expectedResultTokenException ),
                 // Expired HS
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    expectedResultExpiredToken ),
                 Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    expectedResultExpiredToken ),
@@ -304,67 +312,68 @@ public class JwsUtilTest {
         }};
         return Stream.of(
                 //@formatter:off
-                //            jwsToken,                            signatureSecret,           expectedException,                keysToInclude,     expectedResult
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   null,              null ),
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   keysToInclude,     null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   null,              null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   keysToInclude,     null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   null,              null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   keysToInclude,     null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   null,              null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   keysToInclude,     null ),
+                //            jwsToken,                            signatureSecret,           keysToInclude,     expectedException,                expectedResult
+                Arguments.of( null,                                doesNotCareValue,          null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                doesNotCareValue,          new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                doesNotCareValue,          keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      keysToInclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        keysToInclude,     IllegalArgumentException.class,   null ),
                 // Not valid tokens
-                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToInclude,     null ),
-                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToInclude,     null ),
+                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    keysToInclude,     TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToInclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS384_SIGNATURE_SECRET,    keysToInclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,    keysToInclude,     TokenException.class,             null ),
                 // Expired HS
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToInclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToInclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToInclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    keysToInclude,     TokenExpiredException.class,      null ),
                 // Expired RS
-                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToInclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToInclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToInclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     TokenExpiredException.class,      null ),
                 // Valid HS
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,                             keysToInclude,     expectedResult ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,                             keysToInclude,     expectedResult ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,                             keysToInclude,     expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    keysToInclude,     null,                             expectedResult ),
                 // Valid RS
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     expectedResult ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     expectedResult ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              new HashMap<>() ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToInclude,     expectedResult )
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             expectedResult ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             new HashMap<>() ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   keysToInclude,     null,                             expectedResult )
         ); //@formatter:on
     }
 
@@ -373,8 +382,8 @@ public class JwsUtilTest {
     @DisplayName("getPayloadKeys: test cases")
     public void getPayloadKeys_testCases(String jwsToken,
                                          String signatureSecret,
-                                         Class<? extends Exception> expectedException,
                                          Set<String> keysToInclude,
+                                         Class<? extends Exception> expectedException,
                                          Map<String, Object> expectedResult) {
         if (null != expectedException) {
             assertThrows(
@@ -416,67 +425,68 @@ public class JwsUtilTest {
         }};
         return Stream.of(
                 //@formatter:off
-                //            jwsToken,                            signatureSecret,           expectedException,                keysToExclude,     expectedResult
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   null,              null ),
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( null,                                doesNotCareValue,          IllegalArgumentException.class,   keysToExclude,     null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   null,              null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( "",                                  doesNotCareValue,          IllegalArgumentException.class,   keysToExclude,     null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   null,              null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( doesNotCareValue,                    null,                      IllegalArgumentException.class,   keysToExclude,     null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   null,              null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   new HashSet<>(),   null ),
-                Arguments.of( doesNotCareValue,                    "",                        IllegalArgumentException.class,   keysToExclude,     null ),
+                //            jwsToken,                            signatureSecret,           keysToExclude,     expectedException,                expectedResult
+                Arguments.of( null,                                doesNotCareValue,          null,              IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                doesNotCareValue,          new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                doesNotCareValue,          keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          null,              IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( "",                                  doesNotCareValue,          keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    null,                      keysToExclude,     IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        null,              IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        new HashSet<>(),   IllegalArgumentException.class,   null ),
+                Arguments.of( doesNotCareValue,                    "",                        keysToExclude,     IllegalArgumentException.class,   null ),
                 // Not valid tokens
-                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToExclude,     null ),
-                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToExclude,     null ),
+                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,    keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,    keysToExclude,     TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    TokenInvalidException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    TokenInvalidException.class,      keysToExclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,    null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS384_SIGNATURE_SECRET,    keysToExclude,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,    keysToExclude,     TokenException.class,             null ),
                 // Expired HS
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToExclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToExclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    TokenExpiredException.class,      keysToExclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS256_SIGNATURE_SECRET,    keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             HS384_SIGNATURE_SECRET,    keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             HS512_SIGNATURE_SECRET,    keysToExclude,     TokenExpiredException.class,      null ),
                 // Expired RS
-                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToExclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToExclude,     null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      null,              null ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   TokenExpiredException.class,      keysToExclude,     null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   null,              TokenExpiredException.class,      null ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     TokenExpiredException.class,      null ),
                 // Valid HS
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   HS256_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS256_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   HS384_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         HS384_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   HS512_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         HS512_SIGNATURE_SECRET,    keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
                 // Valid RS
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultEmptyToken),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultEmptyToken ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,                             null,              expectedResultNotEmptyTokenWithoutKeysToExclude ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,                             keysToExclude,     expectedResultNotEmptyTokenWithKeysToExclude )
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultEmptyToken),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultEmptyToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   null,              null,                             expectedResultNotEmptyTokenWithoutKeysToExclude ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         RS_SIGNATURE_PUBLIC_KEY,   keysToExclude,     null,                             expectedResultNotEmptyTokenWithKeysToExclude )
         ); //@formatter:on
     }
 
@@ -485,8 +495,8 @@ public class JwsUtilTest {
     @DisplayName("getPayloadExceptKeys: test cases")
     public void getPayloadExceptKeys_testCases(String jwsToken,
                                                String signatureSecret,
-                                               Class<? extends Exception> expectedException,
                                                Set<String> keysToExclude,
+                                               Class<? extends Exception> expectedException,
                                                Map<String, Object> expectedResult) {
         if (null != expectedException) {
             assertThrows(
@@ -506,25 +516,32 @@ public class JwsUtilTest {
     static Stream<Arguments> isJwsTokenTestCases() {
         return Stream.of(
                 //@formatter:off
-                //            jwsToken,                      expectedResult
-                Arguments.of( null,                          false ),
-                Arguments.of( "",                            false ),
-                Arguments.of( "NotValidToken",               false ),
-                Arguments.of( NOT_JWS_TOKEN,                 false ),
+                //            jwsToken,                            expectedResult
+                Arguments.of( null,                                false ),
+                Arguments.of( "",                                  false ),
+                Arguments.of( "NotValidToken",                     false ),
+                Arguments.of( NOT_JWS_TOKEN,                       false ),
                 // Expired tokens
-                Arguments.of( EXPIRED_JWS_TOKEN_HS256,       true ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS384,       true ),
-                Arguments.of( EXPIRED_JWS_TOKEN_HS512,       true ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS256,       true ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS384,       true ),
-                Arguments.of( EXPIRED_JWS_TOKEN_RS512,       true ),
-                // Not expired tokens
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,   true ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,   true ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,   true ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,   true ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,   true ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,   true )
+                Arguments.of( EXPIRED_JWS_TOKEN_HS256,             true ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS384,             true ),
+                Arguments.of( EXPIRED_JWS_TOKEN_HS512,             true ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS256,             true ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS384,             true ),
+                Arguments.of( EXPIRED_JWS_TOKEN_RS512,             true ),
+                // Not expired empty tokens
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS256,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS384,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_HS512,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS256,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS384,   true ),
+                Arguments.of( NOT_EXPIRED_EMPTY_JWS_TOKEN_RS512,   true ),
+                // Not expired and not empty tokens
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         true ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS384,         true ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS512,         true ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         true ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS384,         true ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS512,         true )
         ); //@formatter:on
     }
 
