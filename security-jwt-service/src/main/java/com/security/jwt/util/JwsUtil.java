@@ -7,10 +7,13 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -66,6 +69,18 @@ import static java.util.stream.Collectors.toMap;
  *        -----END PRIVATE KEY-----
  *      </pre>
  *   </li>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#ES256}, {@link TokenSignatureAlgorithm#ES384}, {@link TokenSignatureAlgorithm#ES512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *        -----BEGIN EC PRIVATE KEY-----
+ *        ...
+ *        -----END EC PRIVATE KEY-----
+ *      </pre>
+ *   </li>
  * </ul>
  * <p>
  * In the <strong>methods used to verify tokens and extract their content</strong>:
@@ -90,6 +105,18 @@ import static java.util.stream.Collectors.toMap;
  *        -----BEGIN PUBLIC KEY-----
  *        ...
  *        -----END PUBLIC KEY-----
+ *      </pre>
+ *   </li>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#ES256}, {@link TokenSignatureAlgorithm#ES384}, {@link TokenSignatureAlgorithm#ES512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *        -----BEGIN EC PRIVATE KEY-----
+ *        ...
+ *        -----END EC PRIVATE KEY-----
  *      </pre>
  *   </li>
  * </ul>
@@ -460,6 +487,13 @@ public class JwsUtil {
                                         .toRSAKey()
                         );
 
+                case ES256, ES384, ES512 ->
+                        new ECDSASigner(
+                                ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                ).toECKey()
+                        );
+
                 case null, default ->
                         throw new TokenException(
                                 format("It was not possible to find a suitable signer for the signature algorithm: %s",
@@ -501,12 +535,21 @@ public class JwsUtil {
 
         try {
             return switch (signatureAlgorithm) {
-                case HS256, HS384, HS512 -> new MACVerifier(signatureSecret);
+                case HS256, HS384, HS512 ->
+                        new MACVerifier(signatureSecret);
 
-                case RS256, RS384, RS512 -> new RSASSAVerifier(
-                        RSAKey.parseFromPEMEncodedObjects(signatureSecret)
-                                .toRSAKey()
-                );
+                case RS256, RS384, RS512 ->
+                        new RSASSAVerifier(
+                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                        .toRSAKey()
+                        );
+
+                case ES256, ES384, ES512 ->
+                        new ECDSAVerifier(
+                                ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                ).toECKey()
+                        );
 
                 case null, default -> throw new TokenException(
                         format("It was not possible to find a suitable verifier for the signature algorithm: %s",
