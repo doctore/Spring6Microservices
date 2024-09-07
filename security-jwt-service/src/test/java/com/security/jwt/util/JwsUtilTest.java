@@ -120,11 +120,14 @@ public class JwsUtilTest {
                 // Not valid tokens
                 Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,     TokenInvalidException.class,      null ),
                 Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS384_SIGNATURE_SECRET,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       RS_SIGNATURE_PUBLIC_KEY,    TokenInvalidException.class,      null ),
+                Arguments.of( NOT_JWS_TOKEN,                       ES512_SIGNATURE_KEY_PAIR,   TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,     TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   TokenException.class,             null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS512_SIGNATURE_SECRET,     TokenInvalidException.class,      null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,     TokenException.class,             null ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   TokenException.class,             null ),
                 // Expired ES
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   TokenExpiredException.class,      null ),
                 Arguments.of( EXPIRED_JWS_TOKEN_ES384,             ES384_SIGNATURE_KEY_PAIR,   TokenExpiredException.class,      null ),
@@ -234,12 +237,14 @@ public class JwsUtilTest {
                 Arguments.of( doesNotCareValue,                    "",                         expectedResultEmptySecret ),
                 // Not valid tokens
                 Arguments.of( notValidtoken,                       HS256_SIGNATURE_SECRET,     expectedResultInvalidToken ),
-                Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,     expectedResultInvalidToken ),
+                Arguments.of( NOT_JWS_TOKEN,                       HS384_SIGNATURE_SECRET,     expectedResultInvalidToken ),
+                Arguments.of( NOT_JWS_TOKEN,                       RS_SIGNATURE_PUBLIC_KEY,    expectedResultInvalidToken ),
+                Arguments.of( NOT_JWS_TOKEN,                       ES512_SIGNATURE_KEY_PAIR,   expectedResultInvalidToken ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,     expectedResultInvalidToken ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   expectedResultTokenException ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS512_SIGNATURE_SECRET,     expectedResultInvalidToken ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,     expectedResultTokenException ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   expectedResultTokenException ),
                 // Expired ES
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   expectedResultExpiredToken ),
                 Arguments.of( EXPIRED_JWS_TOKEN_ES384,             ES384_SIGNATURE_KEY_PAIR,   expectedResultExpiredToken ),
@@ -337,9 +342,9 @@ public class JwsUtilTest {
                 Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,     keysToInclude,     TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,     null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   keysToInclude,     TokenException.class,             null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS384_SIGNATURE_SECRET,     keysToInclude,     TokenInvalidException.class,      null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,     keysToInclude,     TokenException.class,             null ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   keysToInclude,     TokenException.class,             null ),
                 // Expired ES
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   null,              TokenExpiredException.class,      null ),
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   keysToInclude,     TokenExpiredException.class,      null ),
@@ -471,9 +476,9 @@ public class JwsUtilTest {
                 Arguments.of( NOT_JWS_TOKEN,                       HS256_SIGNATURE_SECRET,     keysToExclude,     TokenInvalidException.class,      null ),
                 // Token and signatureSecret does not match
                 Arguments.of( EXPIRED_JWS_TOKEN_HS256,             HS384_SIGNATURE_SECRET,     null,              TokenInvalidException.class,      null ),
+                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   keysToExclude,     TokenException.class,             null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_HS256,         HS384_SIGNATURE_SECRET,     keysToExclude,     TokenInvalidException.class,      null ),
                 Arguments.of( NOT_EXPIRED_JWS_TOKEN_RS256,         HS256_SIGNATURE_SECRET,     keysToExclude,     TokenException.class,             null ),
-                Arguments.of( NOT_EXPIRED_JWS_TOKEN_ES256,         RS_SIGNATURE_PRIVATE_KEY,   keysToExclude,     TokenException.class,             null ),
                 // Expired ES
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   null,              TokenExpiredException.class,      null ),
                 Arguments.of( EXPIRED_JWS_TOKEN_ES256,             ES256_SIGNATURE_KEY_PAIR,   keysToExclude,     TokenExpiredException.class,      null ),
@@ -645,7 +650,7 @@ public class JwsUtilTest {
     private static final String HS512_SIGNATURE_SECRET = "hs512SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k_extra_required_512";
 
     private static final String RS_SIGNATURE_PRIVATE_KEY =
-            """
+                    """
                     -----BEGIN PRIVATE KEY-----
                     MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCXHK07oaqx8fnY
                     r3UbfUS6HRXQFRvQ0J8qqzgq+UH4ZqtgxV44ciSOwzL65E2aZrixXxB+s7Kbbw1q
@@ -676,7 +681,7 @@ public class JwsUtilTest {
                     -----END PRIVATE KEY-----""";
 
     private static final String RS_SIGNATURE_PUBLIC_KEY =
-            """
+                    """
                     -----BEGIN PUBLIC KEY-----
                     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlxytO6GqsfH52K91G31E
                     uh0V0BUb0NCfKqs4KvlB+GarYMVeOHIkjsMy+uRNmma4sV8QfrOym28NakdKFDb2
@@ -688,7 +693,8 @@ public class JwsUtilTest {
                     -----END PUBLIC KEY-----""";
 
 
-    private static final String ES256_SIGNATURE_KEY_PAIR = """
+    private static final String ES256_SIGNATURE_KEY_PAIR =
+                """
                 -----BEGIN PUBLIC KEY-----
                 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhg/0fhvKZZdMj/sZpWn4KSPLr/Cb
                 i5NklTivah7LysnELUylyJ5LBmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
@@ -699,7 +705,8 @@ public class JwsUtilTest {
                 BmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
                 -----END EC PRIVATE KEY-----""";
 
-    private static final String ES384_SIGNATURE_KEY_PAIR = """
+    private static final String ES384_SIGNATURE_KEY_PAIR =
+                """
                 -----BEGIN PUBLIC KEY-----
                 MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEOI116z1yKfH1+omNkA3z959YL+fx2wWW
                 08JfNt0ff33v35oFH7PPynK9+tldWGgjst0khk+dJfZYH3/JmDgKAgKTkvdwnBqz
@@ -712,7 +719,8 @@ public class JwsUtilTest {
                 wmeBPQwmYvPdQY/07QbXkO3fcIPAx/k=
                 -----END EC PRIVATE KEY-----""";
 
-    private static final String ES512_SIGNATURE_KEY_PAIR = """
+    private static final String ES512_SIGNATURE_KEY_PAIR =
+                """
                 -----BEGIN PUBLIC KEY-----
                 MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQANHKBULTT8JHBfYKY4MM5a0bWb5ok
                 moRwwQQeXV0yudW5nC7Mw+hv9Tr0WhXfbzDBHfTu/KVKvjoXjZm1cCiNnkgBuYYb
@@ -730,6 +738,41 @@ public class JwsUtilTest {
     private static final String NOT_JWS_TOKEN = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..B5boNIFOF9N3QKNEX8CPDA.Xd3_abfHI-5CWvQy9AiGI"
             + "B6-1tZ_EUp5ZhrldrZrj49mX9IU7S09FXbPXTCW6r_E_DrhE1fVXoKBTbjEG2F-s-UcpGvpPOBJmQoK0qtAfuo8YlonXGHNDs8f-TtQG0E4lO"
             + "EU3ZPGofPNxa1E-HJvs7rsYbjCsgzw5sHaLuIZDIgpES_pVYntdUHK4RlY3jHCqsu8_asM7Gxsmo-RVGPuvg._FJDglnteTQWNFbunQ0aYg";
+
+    private static final String EXPIRED_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAxMTkxLCJpYXQiOjE3MjU3MDExOTEsImFnZSI"
+            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.JNEAU1ZzKgFnV3Ymacu5zBC3yyvnJSHuPFPdJ_vMVPYqhRo-2kAFszbhv7yaQ-A185E"
+            + "JANLu11YP72e5uBX8Ng";
+
+    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
+            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.PKhGcOGNvJrzaTg6BDyBoNx2nt2pNb26bP_-0gn40e1gH0Wn1QWI0ZBk-1tWw14YGplSK1YSafjHyJeI6iymHg";
+
+    private static final String NOT_EXPIRED_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
+            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.BDEj77LPUOHYJU_SjolZGmWjiyVUj-vPtGOj46oP-BWcjFRt1_Xa9GjBS4RTEa"
+            + "mHbXMwQuvvtfM3Ms5Q9xDtMg";
+
+    private static final String EXPIRED_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAyNTI0LCJpYXQiOjE3MjU3MDI1MjQsImFnZSI"
+            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.3LJhh4XooMJZOJ5zdGzQF3JpVFCGm9zuTNogfhvkNm8Yd65mvXwF084fuR8hbw9gue4"
+            + "5W8XeDtxm0uPIHLp7yQVg6Z6IHxWS3blNhiz7PMHDKAuSajG67K_iDF3wNXnw";
+
+    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
+            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.m2xDTakTILCocCtASPETJVPhCOB0lJGflXBHn705RIJAz7Mi_HQXHw_FGooz1Zb6uDcBw32bDwR9SCBTtyspPXNRVKvdZJwDSa268JiGJ"
+            + "FhsT4oZscFrPbwhhHZFWPXN";
+
+    private static final String NOT_EXPIRED_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
+            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.QubDRdcYkXN1U4WC8b1zKS2AOK3YI356WGILTKEgaC-frNQ87Hm78tNWOn9MYM"
+            + "mB8-0YFVKyn0yHq17d-hYFxc6dyS73kS21jcCSTUDTpxtfV7ehLFd6guuBJTHIL5w_";
+
+    private static final String EXPIRED_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAyNzA0LCJpYXQiOjE3MjU3MDI3MDQsImFnZSI"
+            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.AUCXRGYFDqkTJYMAEtDe5cUoahdsSbb5exBGhFp5IuMjKo2ztTlPS5_NShyVONt4c0D"
+            + "Q5hMdVU4QkzjE6vbMTgaZAMg8VI0jpbG0FONLA3Ssry-6GaGBqZKgqUPmi0RiyO7p0CxCubxItWEnTvBkdsHH-gkW_QKwMVKAdQgpzvKEhvTd";
+
+    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
+            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.AOf9jljAFpyLjkEH4I_ND2hl4_06-GNTiIX0u6UAnzuWNEu2K-9l5kh3WhQekYCaaSaNnMEm10I4OIo8ERmD9Tt7AaY5QQ1j0JQ-F96IA"
+            + "GSjJxGjK4Y0FPbBEWnkhDaIgfmIUw2qPBgqDvp2FQwkZ6p5UZp73_9XKN-dAjjo4p6jKUO-";
+
+    private static final String NOT_EXPIRED_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
+            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.AOzxutSUBYMb7sNnAToMxhqZs-L1gBoATPFQlgIh6aCox86vE0M21OFZDpBt-G"
+            + "nW8AVANFWxgFIHgeoBMcdJjKNuAGjnOtMbVlLZ319Ku5VRoa5Du_awS9W90jwcF0g7Mj5aJeJBjWzGK_bqr6mKCm7MMiiKSuBwULqW_37t7IngTxsV";
 
     private static final String EXPIRED_JWS_TOKEN_HS256 = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI0NjY1OTU3LCJpYXQiOjE3MjQ2NjU5NTcsImFnZSI"
             + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.IPhRr7D68LHqWOkK763CLmtdvpDSV_b93GA5aWNHMqI";
@@ -805,40 +848,5 @@ public class JwsUtilTest {
             + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.Td5lXW2uB-taihifbt-IcyBQvMNQYM5RMqvsJwI0w9633U6_Xynl-JZJ4ZTJfH"
             + "k9fE-16nMUDAGavbpUIn8k6S5rKYG4LouCusAXl6ptVkxbLiQN51ehEnlU2el5_yXKH7wTxzq0OIL7izjm4_5D_6XxBXQ5J580ehwwHlOcqXOhws4Qe-BQxWqHZFw8_zu7Lb6KFQHdaberFq"
             + "byEkhjgAgMheGS0cqNbLjA8KCD0Y9xMDj4KK1pUsfnmGC98AzJCkfwSEZjwJCABqlCTme3t1bwWGwCkH7XsbrJHCk9dN6MrCOA6O-HExDMv7bAEX5gW-2Kq44ehaBF8c_aA69yBw";
-
-    private static final String EXPIRED_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAxMTkxLCJpYXQiOjE3MjU3MDExOTEsImFnZSI"
-            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.JNEAU1ZzKgFnV3Ymacu5zBC3yyvnJSHuPFPdJ_vMVPYqhRo-2kAFszbhv7yaQ-A185E"
-            + "JANLu11YP72e5uBX8Ng";
-
-    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
-            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.PKhGcOGNvJrzaTg6BDyBoNx2nt2pNb26bP_-0gn40e1gH0Wn1QWI0ZBk-1tWw14YGplSK1YSafjHyJeI6iymHg";
-
-    private static final String NOT_EXPIRED_JWS_TOKEN_ES256 = "eyJhbGciOiJFUzI1NiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
-            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.BDEj77LPUOHYJU_SjolZGmWjiyVUj-vPtGOj46oP-BWcjFRt1_Xa9GjBS4RTEa"
-            + "mHbXMwQuvvtfM3Ms5Q9xDtMg";
-
-    private static final String EXPIRED_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAyNTI0LCJpYXQiOjE3MjU3MDI1MjQsImFnZSI"
-            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.3LJhh4XooMJZOJ5zdGzQF3JpVFCGm9zuTNogfhvkNm8Yd65mvXwF084fuR8hbw9gue4"
-            + "5W8XeDtxm0uPIHLp7yQVg6Z6IHxWS3blNhiz7PMHDKAuSajG67K_iDF3wNXnw";
-
-    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
-            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.m2xDTakTILCocCtASPETJVPhCOB0lJGflXBHn705RIJAz7Mi_HQXHw_FGooz1Zb6uDcBw32bDwR9SCBTtyspPXNRVKvdZJwDSa268JiGJ"
-            + "FhsT4oZscFrPbwhhHZFWPXN";
-
-    private static final String NOT_EXPIRED_JWS_TOKEN_ES384 = "eyJhbGciOiJFUzM4NCJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
-            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.QubDRdcYkXN1U4WC8b1zKS2AOK3YI356WGILTKEgaC-frNQ87Hm78tNWOn9MYM"
-            + "mB8-0YFVKyn0yHq17d-hYFxc6dyS73kS21jcCSTUDTpxtfV7ehLFd6guuBJTHIL5w_";
-
-    private static final String EXPIRED_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NzI1NzAyNzA0LCJpYXQiOjE3MjU3MDI3MDQsImFnZSI"
-            + "6MjMsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIn0.AUCXRGYFDqkTJYMAEtDe5cUoahdsSbb5exBGhFp5IuMjKo2ztTlPS5_NShyVONt4c0D"
-            + "Q5hMdVU4QkzjE6vbMTgaZAMg8VI0jpbG0FONLA3Ssry-6GaGBqZKgqUPmi0RiyO7p0CxCubxItWEnTvBkdsHH-gkW_QKwMVKAdQgpzvKEhvTd";
-
-    private static final String NOT_EXPIRED_EMPTY_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJleHAiOjUwMDAwMDAwMDAsImlhdCI6MTcwMDAwMDAwMCwianRpIjoiOGNiY2NmZTEtO"
-            + "GQ4OS00ZjRmLTg0ZjEtMjBmOTBhMjY4OTg2In0.AOf9jljAFpyLjkEH4I_ND2hl4_06-GNTiIX0u6UAnzuWNEu2K-9l5kh3WhQekYCaaSaNnMEm10I4OIo8ERmD9Tt7AaY5QQ1j0JQ-F96IA"
-            + "GSjJxGjK4Y0FPbBEWnkhDaIgfmIUw2qPBgqDvp2FQwkZ6p5UZp73_9XKN-dAjjo4p6jKUO-";
-
-    private static final String NOT_EXPIRED_JWS_TOKEN_ES512 = "eyJhbGciOiJFUzUxMiJ9.eyJuYW1lIjoibmFtZSB2YWx1ZSIsImV4cCI6NTAwMDAwMDAwMCwiaWF0IjoxNzAwMDAwMDAwLCJ"
-            + "hZ2UiOjIzLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwidXNlcm5hbWUiOiJ1c2VybmFtZSB2YWx1ZSJ9.AOzxutSUBYMb7sNnAToMxhqZs-L1gBoATPFQlgIh6aCox86vE0M21OFZDpBt-G"
-            + "nW8AVANFWxgFIHgeoBMcdJjKNuAGjnOtMbVlLZ319Ku5VRoa5Du_awS9W90jwcF0g7Mj5aJeJBjWzGK_bqr6mKCm7MMiiKSuBwULqW_37t7IngTxsV";
 
 }

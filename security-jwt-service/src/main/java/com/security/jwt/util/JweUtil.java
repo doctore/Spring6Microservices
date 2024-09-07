@@ -11,8 +11,11 @@ import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.DirectEncrypter;
+import com.nimbusds.jose.crypto.ECDH1PUDecrypter;
+import com.nimbusds.jose.crypto.ECDH1PUEncrypter;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -67,6 +70,18 @@ import static java.util.stream.Collectors.toMap;
  *        -----END PUBLIC KEY-----
  *      </pre>      
  *   </li>
+ *   <li>
+ *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *        -----BEGIN EC PRIVATE KEY-----
+ *        ...
+ *        -----END EC PRIVATE KEY-----
+ *      </pre>
+ *   </li>
  * </ul>
  * <p>
  * In the <strong>methods used to decrypt tokens and extract their content</strong>:
@@ -91,6 +106,18 @@ import static java.util.stream.Collectors.toMap;
  *        -----BEGIN PRIVATE KEY-----
  *        ...
  *        -----END PRIVATE KEY-----
+ *      </pre>
+ *   </li>
+ *   <li>
+ *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *        -----BEGIN EC PRIVATE KEY-----
+ *        ...
+ *        -----END EC PRIVATE KEY-----
  *      </pre>
  *   </li>
  * </ul>
@@ -535,6 +562,18 @@ public class JweUtil {
                                         .toRSAKey()
                         );
 
+                case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
+                    ECKey ecKey = ECKey.parseFromPEMEncodedObjects(
+                                    encryptionSecret
+                            )
+                            .toECKey();
+
+                    yield new ECDH1PUEncrypter(
+                            ecKey.toECPrivateKey(),
+                            ecKey.toECPublicKey()
+                    );
+                }
+
                 case null, default ->
                         throw new TokenException(
                                 format("It was not possible to find a suitable encrypter for the encryption algorithm: %s",
@@ -584,6 +623,18 @@ public class JweUtil {
                                 RSAKey.parseFromPEMEncodedObjects(encryptionSecret)
                                         .toRSAKey()
                         );
+
+                case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
+                    ECKey ecKey = ECKey.parseFromPEMEncodedObjects(
+                            encryptionSecret
+                    )
+                    .toECKey();
+
+                    yield new ECDH1PUDecrypter(
+                            ecKey.toECPrivateKey(),
+                            ecKey.toECPublicKey()
+                    );
+                }
 
                 case null, default ->
                         throw new TokenException(

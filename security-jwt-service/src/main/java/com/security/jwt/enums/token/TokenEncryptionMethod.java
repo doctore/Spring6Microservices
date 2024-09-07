@@ -14,16 +14,9 @@ public enum TokenEncryptionMethod {
 
     A128CBC_HS256(EncryptionMethod.A128CBC_HS256),
     A192CBC_HS384(EncryptionMethod.A192CBC_HS384),
-    A256CBC_HS512(EncryptionMethod.A256CBC_HS512);
-
-
-    // TODO: Pending to add
-    /*
-    A128GCM(EncryptionMethod.A128GCM),
-    A192GCM(EncryptionMethod.A192GCM),
-    A256GCM(EncryptionMethod.A256GCM),
+    A256CBC_HS512(EncryptionMethod.A256CBC_HS512),
     XC20P(EncryptionMethod.XC20P);
-     */
+
 
     private final EncryptionMethod method;
 
