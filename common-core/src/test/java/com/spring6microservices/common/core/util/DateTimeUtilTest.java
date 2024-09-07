@@ -629,8 +629,8 @@ public class DateTimeUtilTest {
         Date d3 = new GregorianCalendar(2022, Calendar.SEPTEMBER, 11, 11, 10, 0).getTime();
         Date d4 = new GregorianCalendar(2022, Calendar.SEPTEMBER, 11, 11, 5, 0).getTime();
 
-        Date expectedResultNullSourceNegativeAmountNullUnit = fromLocalDateTimeToDate(LocalDateTime.now().minusMinutes(1));
-        Date expectedResultNullSourceNegativeAmountAndSeconds = fromLocalDateTimeToDate(LocalDateTime.now().minusSeconds(1));
+        Date expectedResultNullSourceNegativeAmountNullUnit = fromLocalDateTimeToDate(LocalDateTime.now().plusMinutes(1));
+        Date expectedResultNullSourceNegativeAmountAndSeconds = fromLocalDateTimeToDate(LocalDateTime.now().plusSeconds(1));
         Date expectedResultNullSourcePositiveAmountAndMinutes = fromLocalDateTimeToDate(LocalDateTime.now().minusMinutes(1));
         return Stream.of(
                 //@formatter:off
@@ -684,10 +684,10 @@ public class DateTimeUtilTest {
         gc2.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date gc2Date = gc2.getTime();
 
-        Date expectedResultNullSourceNegativeAmountNullUnitZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).minusMinutes(1), ZoneId.systemDefault());
-        Date expectedResultNullSourceNegativeAmountNullUnitAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).minusMinutes(1), utcZoneId);
-        Date expectedResultNullSourceNegativeAmountAndSecondsAndNullZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(1), ZoneId.systemDefault());
-        Date expectedResultNullSourceNegativeAmountAndSecondsAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).minusSeconds(1), utcZoneId);
+        Date expectedResultNullSourceNegativeAmountNullUnitZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(1), ZoneId.systemDefault());
+        Date expectedResultNullSourceNegativeAmountNullUnitAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).plusMinutes(1), utcZoneId);
+        Date expectedResultNullSourceNegativeAmountAndSecondsAndNullZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(1), ZoneId.systemDefault());
+        Date expectedResultNullSourceNegativeAmountAndSecondsAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).plusSeconds(1), utcZoneId);
         Date expectedResultNullSourcePositiveAmountAndMinutesAndNullZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).minusMinutes(1), ZoneId.systemDefault());
         Date expectedResultNullSourcePositiveAmountAndMinutesAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).minusMinutes(1), utcZoneId);
         return Stream.of(
@@ -741,7 +741,7 @@ public class DateTimeUtilTest {
         LocalDateTime ldt3 = LocalDateTime.of(2022, 9, 11, 11, 10, 0);
         LocalDateTime ldt4 = LocalDateTime.of(2022, 9, 11, 11, 5, 0);
 
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnit = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnit = LocalDateTime.now().plusMinutes(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSeconds = LocalDateTime.now().minusSeconds(1);
         LocalDateTime expectedResultNullSourcePositiveAmountAndMinutes = LocalDateTime.now().minusMinutes(1);
         return Stream.of(
@@ -794,8 +794,8 @@ public class DateTimeUtilTest {
         LocalDateTime ldtUtc = LocalDateTime.ofInstant(Instant.parse("2022-11-11T12:10:00Z"), utcZoneId);
         LocalDateTime ldtUtcPlus1 = LocalDateTime.ofInstant(Instant.parse("2022-09-11T11:10:00Z"), utcPlus1ZoneId);
 
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitZoneId = LocalDateTime.now().minusMinutes(1);
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitAndUtc = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitZoneId = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitAndUtc = LocalDateTime.now().plusMinutes(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSecondsAndNullZoneId = LocalDateTime.now().minusSeconds(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSecondsAndUtc = LocalDateTime.now().minusSeconds(1);
         LocalDateTime expectedResultNullSourcePositiveAmountAndMinutesAndNullZoneId = LocalDateTime.now().minusMinutes(1);
@@ -852,8 +852,8 @@ public class DateTimeUtilTest {
         Date d3 = new GregorianCalendar(2022, Calendar.SEPTEMBER, 11, 11, 10, 0).getTime();
         Date d4 = new GregorianCalendar(2022, Calendar.SEPTEMBER, 11, 11, 5, 0).getTime();
 
-        Date expectedResultNullSourceNegativeAmountNullUnit = fromLocalDateTimeToDate(LocalDateTime.now().plusMinutes(1));
-        Date expectedResultNullSourceNegativeAmountAndSeconds = fromLocalDateTimeToDate(LocalDateTime.now().plusSeconds(1));
+        Date expectedResultNullSourceNegativeAmountNullUnit = fromLocalDateTimeToDate(LocalDateTime.now().minusMinutes(1));
+        Date expectedResultNullSourceNegativeAmountAndSeconds = fromLocalDateTimeToDate(LocalDateTime.now().minusSeconds(1));
         Date expectedResultNullSourcePositiveAmountAndMinutes = fromLocalDateTimeToDate(LocalDateTime.now().plusMinutes(1));
         return Stream.of(
                 //@formatter:off
@@ -910,8 +910,8 @@ public class DateTimeUtilTest {
         gc2.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date gc2Date = gc2.getTime();
 
-        Date expectedResultNullSourceNegativeAmountNullUnitZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(1), ZoneId.systemDefault());
-        Date expectedResultNullSourceNegativeAmountNullUnitAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).plusMinutes(1), utcZoneId);
+        Date expectedResultNullSourceNegativeAmountNullUnitZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).minusMinutes(1), ZoneId.systemDefault());
+        Date expectedResultNullSourceNegativeAmountNullUnitAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).minusMinutes(1), utcZoneId);
         Date expectedResultNullSourceNegativeAmountAndSecondsAndNullZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(1), ZoneId.systemDefault());
         Date expectedResultNullSourceNegativeAmountAndSecondsAndUtc = fromLocalDateTimeToDate(LocalDateTime.now(utcZoneId).plusSeconds(1), utcZoneId);
         Date expectedResultNullSourcePositiveAmountAndMinutesAndNullZoneId = fromLocalDateTimeToDate(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(1), ZoneId.systemDefault());
@@ -967,7 +967,7 @@ public class DateTimeUtilTest {
         LocalDateTime ldt3 = LocalDateTime.of(2022, 9, 11, 11, 10, 0);
         LocalDateTime ldt4 = LocalDateTime.of(2022, 9, 11, 11, 5, 0);
 
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnit = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnit = LocalDateTime.now().minusMinutes(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSeconds = LocalDateTime.now().plusSeconds(1);
         LocalDateTime expectedResultNullSourcePositiveAmountAndMinutes = LocalDateTime.now().plusMinutes(1);
         return Stream.of(
@@ -1020,8 +1020,8 @@ public class DateTimeUtilTest {
         LocalDateTime ldtUtc = LocalDateTime.ofInstant(Instant.parse("2022-11-11T12:10:00Z"), utcZoneId);
         LocalDateTime ldtUtcPlus1 = LocalDateTime.ofInstant(Instant.parse("2022-09-11T11:10:00Z"), utcPlus1ZoneId);
 
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitZoneId = LocalDateTime.now().plusMinutes(1);
-        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitAndUtc = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitZoneId = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime expectedResultNullSourceNegativeAmountNullUnitAndUtc = LocalDateTime.now().minusMinutes(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSecondsAndNullZoneId = LocalDateTime.now().plusSeconds(1);
         LocalDateTime expectedResultNullSourceNegativeAmountAndSecondsAndUtc = LocalDateTime.now().plusSeconds(1);
         LocalDateTime expectedResultNullSourcePositiveAmountAndMinutesAndNullZoneId = LocalDateTime.now().plusMinutes(1);

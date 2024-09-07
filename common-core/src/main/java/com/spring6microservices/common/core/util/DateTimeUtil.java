@@ -459,14 +459,10 @@ public class DateTimeUtil {
                 timeUnit,
                 ChronoUnit.MINUTES
         );
-        final long finalAmountToSubtract = 0 <= amountToSubtract
-                ? amountToSubtract
-                : 1L;
-
         return finalSourceLocalDateTime
                 .atZone(finalZoneId)
                 .minus(
-                        finalAmountToSubtract,
+                        amountToSubtract,
                         finalTimeUnit
                 )
                 .toLocalDateTime();
@@ -585,14 +581,10 @@ public class DateTimeUtil {
                 timeUnit,
                 ChronoUnit.MINUTES
         );
-        final long finalAmountToAdd = 0 <= amountToAdd
-                ? amountToAdd
-                : 1L;
-
         return finalSourceLocalDateTime
                 .atZone(finalZoneId)
                 .plus(
-                        finalAmountToAdd,
+                        amountToAdd,
                         finalTimeUnit
                 )
                 .toLocalDateTime();
