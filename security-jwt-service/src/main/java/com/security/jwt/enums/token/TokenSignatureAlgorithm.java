@@ -27,20 +27,27 @@ import static java.util.Optional.ofNullable;
  *          3. cat public.pem key.pem > keypair.pem
  *        </pre>
  *   </li>
+ *   <li>{@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
+ *        using <a href="https://www.openssl.org/">openssl</a>
+ *        <pre>
+ *          1. openssl genrsa -out key.pem 2048
+ *          2. openssl rsa -in key.pem -pubout -out public.pem
+ *        </pre>
+ *   </li>
  * </ul>
  */
 @Getter
 public enum TokenSignatureAlgorithm {
 
+    ES256(JWSAlgorithm.ES256),
+    ES384(JWSAlgorithm.ES384),
+    ES512(JWSAlgorithm.ES512),
     HS256(JWSAlgorithm.HS256),
     HS384(JWSAlgorithm.HS384),
     HS512(JWSAlgorithm.HS512),
     RS256(JWSAlgorithm.RS256),
     RS384(JWSAlgorithm.RS384),
-    RS512(JWSAlgorithm.RS512),
-    ES256(JWSAlgorithm.ES256),
-    ES384(JWSAlgorithm.ES384),
-    ES512(JWSAlgorithm.ES512);
+    RS512(JWSAlgorithm.RS512);
 
 
     private final JWSAlgorithm algorithm;

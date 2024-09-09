@@ -27,6 +27,13 @@ import static java.util.Optional.ofNullable;
  *          3. cat public.pem key.pem > keypair.pem
  *        </pre>
  *   </li>
+ *   <li>{@link TokenEncryptionAlgorithm#RSA_OAEP_256}, {@link TokenEncryptionAlgorithm#RSA_OAEP_384}, {@link TokenEncryptionAlgorithm#RSA_OAEP_512}:
+ *        using <a href="https://www.openssl.org/">openssl</a>
+ *        <pre>
+ *          1. openssl genrsa -out key.pem 2048
+ *          2. openssl rsa -in key.pem -pubout -out public.pem
+ *        </pre>
+ *   </li>
  * </ul>
  */
 @Getter

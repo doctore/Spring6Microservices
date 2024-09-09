@@ -624,6 +624,12 @@ public class JwsUtilTest {
     }
 
 
+    private static final TokenSignatureAlgorithm ES256_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES256;
+
+    private static final TokenSignatureAlgorithm ES384_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES384;
+
+    private static final TokenSignatureAlgorithm ES512_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES512;
+
     private static final TokenSignatureAlgorithm HS256_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.HS256;
 
     private static final TokenSignatureAlgorithm HS384_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.HS384;
@@ -636,12 +642,47 @@ public class JwsUtilTest {
 
     private static final TokenSignatureAlgorithm RS512_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.RS512;
 
-    private static final TokenSignatureAlgorithm ES256_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES256;
+    private static final String ES256_SIGNATURE_KEY_PAIR =
+            """
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhg/0fhvKZZdMj/sZpWn4KSPLr/Cb
+            i5NklTivah7LysnELUylyJ5LBmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
+            -----END PUBLIC KEY-----
+            -----BEGIN EC PRIVATE KEY-----
+            MHcCAQEEIDHJEaGIz2IkvHB24ZTTvlMtPbjG+JJ+q/XzSAAJn6fxoAoGCCqGSM49
+            AwEHoUQDQgAEhg/0fhvKZZdMj/sZpWn4KSPLr/Cbi5NklTivah7LysnELUylyJ5L
+            BmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
+            -----END EC PRIVATE KEY-----""";
 
-    private static final TokenSignatureAlgorithm ES384_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES384;
+    private static final String ES384_SIGNATURE_KEY_PAIR =
+            """
+            -----BEGIN PUBLIC KEY-----
+            MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEOI116z1yKfH1+omNkA3z959YL+fx2wWW
+            08JfNt0ff33v35oFH7PPynK9+tldWGgjst0khk+dJfZYH3/JmDgKAgKTkvdwnBqz
+            LcJngT0MJmLz3UGP9O0G15Dt33CDwMf5
+            -----END PUBLIC KEY-----
+            -----BEGIN EC PRIVATE KEY-----
+            MIGkAgEBBDAm5FYwdmZyprAE965pH1Pqdq43nriaRXdgF+fBMT9E916EMvCjowW1
+            joHITiuasGegBwYFK4EEACKhZANiAAQ4jXXrPXIp8fX6iY2QDfP3n1gv5/HbBZbT
+            wl823R9/fe/fmgUfs8/Kcr362V1YaCOy3SSGT50l9lgff8mYOAoCApOS93CcGrMt
+            wmeBPQwmYvPdQY/07QbXkO3fcIPAx/k=
+            -----END EC PRIVATE KEY-----""";
 
-    private static final TokenSignatureAlgorithm ES512_SIGNATURE_ALGORITHM = TokenSignatureAlgorithm.ES512;
-
+    private static final String ES512_SIGNATURE_KEY_PAIR =
+            """
+            -----BEGIN PUBLIC KEY-----
+            MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQANHKBULTT8JHBfYKY4MM5a0bWb5ok
+            moRwwQQeXV0yudW5nC7Mw+hv9Tr0WhXfbzDBHfTu/KVKvjoXjZm1cCiNnkgBuYYb
+            mL/X83Q9CAVCNT7p/8V7xuW/p7nIoEm71fqKwV5NtOcrsSxHQ7g7bamznLaG2a1L
+            /4dy0+WtEkpyFtmaJOg=
+            -----END PUBLIC KEY-----
+            -----BEGIN EC PRIVATE KEY-----
+            MIHcAgEBBEIBmuTYjyp06kHcRWgyF09x6352bI0G38k/1iC9K3DKEeU+5JjTGvZr
+            lC3CClP0uYrqiUpQdPex6Fp5weJHJ4Ue4jegBwYFK4EEACOhgYkDgYYABAA0coFQ
+            tNPwkcF9gpjgwzlrRtZvmiSahHDBBB5dXTK51bmcLszD6G/1OvRaFd9vMMEd9O78
+            pUq+OheNmbVwKI2eSAG5hhuYv9fzdD0IBUI1Pun/xXvG5b+nucigSbvV+orBXk20
+            5yuxLEdDuDttqbOctobZrUv/h3LT5a0SSnIW2Zok6A==
+            -----END EC PRIVATE KEY-----""";
 
     private static final String HS256_SIGNATURE_SECRET = "hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k";
 
@@ -691,49 +732,6 @@ public class JwsUtilTest {
                     benwQKg0d/g5bOoXpiQPlcQjtnSgQ6dr0hnyA3NZq9ZEKMxStyahSDXFiOd+75z1
                     lQIDAQAB
                     -----END PUBLIC KEY-----""";
-
-
-    private static final String ES256_SIGNATURE_KEY_PAIR =
-                """
-                -----BEGIN PUBLIC KEY-----
-                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhg/0fhvKZZdMj/sZpWn4KSPLr/Cb
-                i5NklTivah7LysnELUylyJ5LBmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
-                -----END PUBLIC KEY-----
-                -----BEGIN EC PRIVATE KEY-----
-                MHcCAQEEIDHJEaGIz2IkvHB24ZTTvlMtPbjG+JJ+q/XzSAAJn6fxoAoGCCqGSM49
-                AwEHoUQDQgAEhg/0fhvKZZdMj/sZpWn4KSPLr/Cbi5NklTivah7LysnELUylyJ5L
-                BmyZoDOLG5coE2B5aFMxnVGxm6VxB7VZcg==
-                -----END EC PRIVATE KEY-----""";
-
-    private static final String ES384_SIGNATURE_KEY_PAIR =
-                """
-                -----BEGIN PUBLIC KEY-----
-                MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEOI116z1yKfH1+omNkA3z959YL+fx2wWW
-                08JfNt0ff33v35oFH7PPynK9+tldWGgjst0khk+dJfZYH3/JmDgKAgKTkvdwnBqz
-                LcJngT0MJmLz3UGP9O0G15Dt33CDwMf5
-                -----END PUBLIC KEY-----
-                -----BEGIN EC PRIVATE KEY-----
-                MIGkAgEBBDAm5FYwdmZyprAE965pH1Pqdq43nriaRXdgF+fBMT9E916EMvCjowW1
-                joHITiuasGegBwYFK4EEACKhZANiAAQ4jXXrPXIp8fX6iY2QDfP3n1gv5/HbBZbT
-                wl823R9/fe/fmgUfs8/Kcr362V1YaCOy3SSGT50l9lgff8mYOAoCApOS93CcGrMt
-                wmeBPQwmYvPdQY/07QbXkO3fcIPAx/k=
-                -----END EC PRIVATE KEY-----""";
-
-    private static final String ES512_SIGNATURE_KEY_PAIR =
-                """
-                -----BEGIN PUBLIC KEY-----
-                MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQANHKBULTT8JHBfYKY4MM5a0bWb5ok
-                moRwwQQeXV0yudW5nC7Mw+hv9Tr0WhXfbzDBHfTu/KVKvjoXjZm1cCiNnkgBuYYb
-                mL/X83Q9CAVCNT7p/8V7xuW/p7nIoEm71fqKwV5NtOcrsSxHQ7g7bamznLaG2a1L
-                /4dy0+WtEkpyFtmaJOg=
-                -----END PUBLIC KEY-----
-                -----BEGIN EC PRIVATE KEY-----
-                MIHcAgEBBEIBmuTYjyp06kHcRWgyF09x6352bI0G38k/1iC9K3DKEeU+5JjTGvZr
-                lC3CClP0uYrqiUpQdPex6Fp5weJHJ4Ue4jegBwYFK4EEACOhgYkDgYYABAA0coFQ
-                tNPwkcF9gpjgwzlrRtZvmiSahHDBBB5dXTK51bmcLszD6G/1OvRaFd9vMMEd9O78
-                pUq+OheNmbVwKI2eSAG5hhuYv9fzdD0IBUI1Pun/xXvG5b+nucigSbvV+orBXk20
-                5yuxLEdDuDttqbOctobZrUv/h3LT5a0SSnIW2Zok6A==
-                -----END EC PRIVATE KEY-----""";
 
     private static final String NOT_JWS_TOKEN = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..B5boNIFOF9N3QKNEX8CPDA.Xd3_abfHI-5CWvQy9AiGI"
             + "B6-1tZ_EUp5ZhrldrZrj49mX9IU7S09FXbPXTCW6r_E_DrhE1fVXoKBTbjEG2F-s-UcpGvpPOBJmQoK0qtAfuo8YlonXGHNDs8f-TtQG0E4lO"
