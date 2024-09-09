@@ -32,6 +32,7 @@ import static java.util.Optional.ofNullable;
  *        <pre>
  *          1. openssl genrsa -out key.pem 2048
  *          2. openssl rsa -in key.pem -pubout -out public.pem
+ *          3. cat public.pem key.pem > keypair.pem
  *        </pre>
  *   </li>
  * </ul>

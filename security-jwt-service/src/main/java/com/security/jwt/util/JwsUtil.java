@@ -64,6 +64,9 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
  *      an {@link String} with a format similar to:
  *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
  *        -----BEGIN PRIVATE KEY-----
  *        ...
  *        -----END PRIVATE KEY-----
@@ -105,6 +108,9 @@ import static java.util.stream.Collectors.toMap;
  *        -----BEGIN PUBLIC KEY-----
  *        ...
  *        -----END PUBLIC KEY-----
+ *        -----BEGIN PRIVATE KEY-----
+ *        ...
+ *        -----END PRIVATE KEY-----
  *      </pre>
  *   </li>
  *   <li>
@@ -483,15 +489,18 @@ public class JwsUtil {
 
                 case RS256, RS384, RS512 ->
                         new RSASSASigner(
-                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                RSAKey.parseFromPEMEncodedObjects(
+                                           signatureSecret
+                                        )
                                         .toRSAKey()
                         );
 
                 case ES256, ES384, ES512 ->
                         new ECDSASigner(
                                 ECKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                ).toECKey()
+                                           signatureSecret
+                                        )
+                                        .toECKey()
                         );
 
                 case null, default ->
@@ -540,15 +549,18 @@ public class JwsUtil {
 
                 case RS256, RS384, RS512 ->
                         new RSASSAVerifier(
-                                RSAKey.parseFromPEMEncodedObjects(signatureSecret)
+                                RSAKey.parseFromPEMEncodedObjects(
+                                           signatureSecret
+                                        )
                                         .toRSAKey()
                         );
 
                 case ES256, ES384, ES512 ->
                         new ECDSAVerifier(
                                 ECKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                ).toECKey()
+                                           signatureSecret
+                                        )
+                                        .toECKey()
                         );
 
                 case null, default -> throw new TokenException(

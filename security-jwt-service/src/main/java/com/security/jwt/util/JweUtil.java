@@ -68,6 +68,9 @@ import static java.util.stream.Collectors.toMap;
  *        -----BEGIN PUBLIC KEY-----
  *        ...
  *        -----END PUBLIC KEY-----
+ *        -----BEGIN PRIVATE KEY-----
+ *        ...
+ *        -----END PRIVATE KEY-----
  *      </pre>      
  *   </li>
  *   <li>
@@ -103,6 +106,9 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenEncryptionAlgorithm#RSA_OAEP_256}, {@link TokenEncryptionAlgorithm#RSA_OAEP_384}, {@link TokenEncryptionAlgorithm#RSA_OAEP_512}:
  *      an {@link String} with a format similar to:
  *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
  *        -----BEGIN PRIVATE KEY-----
  *        ...
  *        -----END PRIVATE KEY-----
@@ -563,14 +569,14 @@ public class JweUtil {
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
-                    ECKey ecKey = ECKey.parseFromPEMEncodedObjects(
-                                    encryptionSecret
+                    ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                   encryptionSecret
                             )
                             .toECKey();
 
                     yield new ECDH1PUEncrypter(
-                            ecKey.toECPrivateKey(),
-                            ecKey.toECPublicKey()
+                            key.toECPrivateKey(),
+                            key.toECPublicKey()
                     );
                 }
 
@@ -625,14 +631,14 @@ public class JweUtil {
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
-                    ECKey ecKey = ECKey.parseFromPEMEncodedObjects(
-                            encryptionSecret
-                    )
-                    .toECKey();
+                    ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                   encryptionSecret
+                            )
+                            .toECKey();
 
                     yield new ECDH1PUDecrypter(
-                            ecKey.toECPrivateKey(),
-                            ecKey.toECPublicKey()
+                            key.toECPrivateKey(),
+                            key.toECPublicKey()
                     );
                 }
 
