@@ -1,4 +1,4 @@
-package com.spring6microservices.common.core;
+package com.spring6microservices.common.core.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,13 +9,11 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Data
 @NoArgsConstructor
-public class UserDto {
+public class PizzaDto {
 
-    private Long id;
     private String name;
-    private String address;
-    private Integer age;
-    private String birthday;
-    private String email;
+    private Double cost;
 
 }
+
+

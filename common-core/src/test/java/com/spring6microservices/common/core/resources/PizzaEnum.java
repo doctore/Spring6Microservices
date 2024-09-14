@@ -1,4 +1,4 @@
-package com.spring6microservices.common.core;
+package com.spring6microservices.common.core.resources;
 
 public enum PizzaEnum  {
 
