@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.functional.validation;
 
-import com.spring6microservices.common.core.PizzaDto;
+import com.spring6microservices.common.core.resources.PizzaDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

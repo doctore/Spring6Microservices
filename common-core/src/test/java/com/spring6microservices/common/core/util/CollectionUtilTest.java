@@ -1,7 +1,7 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.PizzaDto;
-import com.spring6microservices.common.core.UserDto;
+import com.spring6microservices.common.core.resources.PizzaDto;
+import com.spring6microservices.common.core.resources.UserDto;
 import com.spring6microservices.common.core.collection.tuple.Tuple;
 import com.spring6microservices.common.core.collection.tuple.Tuple1;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;

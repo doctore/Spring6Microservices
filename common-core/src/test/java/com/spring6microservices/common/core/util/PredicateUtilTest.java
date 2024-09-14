@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.PizzaDto;
+import com.spring6microservices.common.core.resources.PizzaDto;
 import com.spring6microservices.common.core.predicate.HeptaPredicate;
 import com.spring6microservices.common.core.predicate.HexaPredicate;
 import com.spring6microservices.common.core.predicate.NonaPredicate;
@@ -21,8 +21,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.core.resources.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.core.resources.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.PredicateUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

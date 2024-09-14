@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.PizzaDto;
+import com.spring6microservices.common.core.resources.PizzaDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.core.resources.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.core.resources.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.ObjectUtil.coalesce;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static com.spring6microservices.common.core.util.ObjectUtil.isEmpty;
