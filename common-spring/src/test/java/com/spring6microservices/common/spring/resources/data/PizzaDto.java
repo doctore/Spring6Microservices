@@ -1,4 +1,4 @@
-package com.spring6microservices.common.spring;
+package com.spring6microservices.common.spring.resources.data;
 
 import com.spring6microservices.common.spring.validator.enums.EnumHasInternalStringValue;
 import lombok.AllArgsConstructor;
