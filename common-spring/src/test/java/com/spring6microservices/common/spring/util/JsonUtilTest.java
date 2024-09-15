@@ -1,7 +1,7 @@
 package com.spring6microservices.common.spring.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring6microservices.common.spring.PizzaDto;
+import com.spring6microservices.common.spring.resources.data.PizzaDto;
 import com.spring6microservices.common.spring.exception.JsonException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +16,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.spring.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.spring.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.spring.resources.data.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.spring.resources.data.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.spring.util.JsonUtil.fromJson;
 import static com.spring6microservices.common.spring.util.JsonUtil.fromJsonCollection;
 import static com.spring6microservices.common.spring.util.JsonUtil.toJson;
