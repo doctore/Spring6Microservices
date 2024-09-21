@@ -31,19 +31,19 @@ public class TestPersistenceConfiguration {
     public static final String ENTITY_MANAGER_FACTORY_BEAN = "entityManagerFactory";
     public static final String TRANSACTION_MANAGER_BEAN = "transactionManager";
 
-    private final String DATA_SOURCE_BEAN = "dataSource";
-    private final String DATA_SOURCE_PROPERTIES = "spring.datasource";
-    private final String DATA_SOURCE_PROPERTIES_BEAN = "dataSourceProperties";
+    private final String DATASOURCE_BEAN = "dataSource";
+    private final String DATASOURCE_PROPERTIES = "spring.datasource";
+    private final String DATASOURCE_PROPERTIES_BEAN = "dataSourceProperties";
 
 
-    @Bean(DATA_SOURCE_PROPERTIES_BEAN)
-    @ConfigurationProperties(DATA_SOURCE_PROPERTIES)
+    @Bean(DATASOURCE_PROPERTIES_BEAN)
+    @ConfigurationProperties(DATASOURCE_PROPERTIES)
     public DataSourceProperties testDataSourceProperties() {
         return new DataSourceProperties();
     }
 
 
-    @Bean(DATA_SOURCE_BEAN)
+    @Bean(DATASOURCE_BEAN)
     public DataSource testDataSource() {
         return testDataSourceProperties()
                 .initializeDataSourceBuilder()
