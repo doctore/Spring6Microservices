@@ -5,9 +5,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BinaryOperator;
@@ -15,12 +17,80 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultListSupplier;
+import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultMapSupplier;
 import static com.spring6microservices.common.core.util.CollectorsUtil.toMapNullableValues;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CollectorsUtilTest {
+
+    static Stream<Arguments> getOrDefaultListSupplierTestCases() {
+        Supplier<Collection<String>> collectionFactory = LinkedList::new;
+        Supplier<Collection<String>> defaultCollectionFactory = ArrayList::new;
+        return Stream.of(
+                //@formatter:off
+                //            collectionFactory,   expectedResult
+                Arguments.of( null,                defaultCollectionFactory ),
+                Arguments.of( collectionFactory,   collectionFactory )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOrDefaultListSupplierTestCases")
+    @DisplayName("getOrDefaultListSupplier: test cases")
+    public <T> void getOrDefaultListSupplier_testCases(Supplier<Collection<T>> collectionFactory,
+                                                       Supplier<Collection<T>> expectedResult) {
+        if (null == collectionFactory) {
+            Supplier<Collection<T>> result = getOrDefaultListSupplier(collectionFactory);
+            assertNotNull(result);
+            assertNotNull(result.get());
+            assertEquals(
+                    expectedResult.get().getClass(),
+                    result.get().getClass()
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    getOrDefaultListSupplier(collectionFactory)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> getOrDefaultMapSupplierTestCases() {
+        Supplier<Map<String, Integer>> mapFactory = LinkedHashMap::new;
+        Supplier<Map<String, Integer>> defaultCollectionFactory = HashMap::new;
+        return Stream.of(
+                //@formatter:off
+                //            mapFactory,   expectedResult
+                Arguments.of( null,         defaultCollectionFactory ),
+                Arguments.of( mapFactory,   mapFactory )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOrDefaultMapSupplierTestCases")
+    @DisplayName("getOrDefaultMapSupplier: test cases")
+    public <T, E> void getOrDefaultMapSupplier_testCases(Supplier<Map<T, E>> mapFactory,
+                                                         Supplier<Map<T, E>> expectedResult) {
+        if (null == mapFactory) {
+            Supplier<Map<T, E>> result = getOrDefaultMapSupplier(mapFactory);
+            assertNotNull(result);
+            assertNotNull(result.get());
+            assertEquals(
+                    expectedResult.get().getClass(),
+                    result.get().getClass()
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    getOrDefaultMapSupplier(mapFactory)
+            );
+        }
+    }
 
 
     static Stream<Arguments> toMapNullableValuesOnlyMappersTestCases() {

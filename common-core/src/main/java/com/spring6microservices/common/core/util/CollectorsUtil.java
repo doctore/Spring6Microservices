@@ -2,6 +2,8 @@ package com.spring6microservices.common.core.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -12,11 +14,46 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
+import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class CollectorsUtil {
+
+    /**
+     *    Returns provided {@link Supplier} of {@link Collection} {@code collectionFactory} if not {@code null},
+     * {@link Supplier} of {@link ArrayList} otherwise.
+     *
+     * @param collectionFactory
+     *    {@link Supplier} of {@link Collection}
+     *
+     * @return {@link Supplier} of {@link Collection}
+     */
+    public static <T> Supplier<Collection<T>> getOrDefaultListSupplier(final Supplier<Collection<T>> collectionFactory) {
+        return getOrElse(
+                collectionFactory,
+                ArrayList::new
+        );
+    }
+
+
+    /**
+     *    Returns provided {@link Supplier} of {@link Map} {@code mapFactory} if not {@code null},
+     * {@link Supplier} of {@link HashMap} otherwise.
+     *
+     * @param mapFactory
+     *    {@link Supplier} of {@link Map}
+     *
+     * @return {@link Supplier} of {@link Map}
+     */
+    public static <T, E> Supplier<Map<T, E>> getOrDefaultMapSupplier(final Supplier<Map<T, E>> mapFactory) {
+        return ObjectUtil.getOrElse(
+                mapFactory,
+                HashMap::new
+        );
+    }
+
 
     /**
      *    Returns a {@link Collector} that accumulates elements into a {@link Map} whose keys and values are the result
@@ -192,7 +229,7 @@ public class CollectorsUtil {
                     }
                     return result;
                 }
-      );
+        );
     }
 
 }

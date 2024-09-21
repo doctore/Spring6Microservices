@@ -108,9 +108,7 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> andThenAllParametersTestCases() {
         Set<Integer> ints = new LinkedHashSet<>(asList(1, 2, null, 6));
-
         Function<Integer, Integer> integerIdentity = Function.identity();
-
         Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
 
         List<Integer> expectedApplyPlus1AndIdentityResult = asList(2, 3, null, 7);
@@ -228,7 +226,6 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> applyOrElseWithPredicateFunctionsAndSupplierTestCases() {
         List<Integer> ints = List.of(1, 2, 3, 6);
-
         Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
 
         List<String> expectedIntsResultNoFilterList = List.of("2", "3", "4", "7");
@@ -1467,7 +1464,6 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> groupByAllParametersTestCases() {
         List<Integer> ints = new ArrayList<>(List.of(1, 3, 5, 6, 3));
-
         Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
 
         Map<Integer, List<Integer>> expectedResultDefaultCollectionFactory = new HashMap<>() {{
@@ -1564,7 +1560,6 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> groupByMultiKeyAllParametersTestCases() {
         List<Integer> ints = new ArrayList<>(List.of(1, 2, 3, 6, 11, 12, 2));
-
         Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
 
         Map<String, List<Integer>> expectedResultDefaultCollectionFactory = new HashMap<>() {{

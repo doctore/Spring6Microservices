@@ -15,15 +15,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultListSupplier;
 import static com.spring6microservices.common.core.util.PredicateUtil.alwaysTrue;
 import static com.spring6microservices.common.core.util.PredicateUtil.getOrAlwaysTrue;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
 
 @UtilityClass
 public class StringUtil {
@@ -57,13 +58,13 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    abbreviate(null, *)       = ""
-     *    abbreviate("abc", -1)     = ""
-     *    abbreviate("abc", 1)      = {@link IllegalArgumentException} (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 1)
-     *    abbreviate("abc", 3)      = "abc"
-     *    abbreviate("abcdef", 4)   = "a..."
-     *    abbreviate("abcdef", 5)   = "ab..."
-     *    abbreviate("abcdef", 10)  = "abcdef"
+     *    abbreviate(null, *)      = ""
+     *    abbreviate("abc", -1)    = ""
+     *    abbreviate("abc", 1)     = {@link IllegalArgumentException} (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 1)
+     *    abbreviate("abc", 3)     = "abc"
+     *    abbreviate("abcdef", 4)  = "a..."
+     *    abbreviate("abcdef", 5)  = "ab..."
+     *    abbreviate("abcdef", 10) = "abcdef"
      * </pre>
      *
      * @param sourceCS
@@ -176,13 +177,13 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    abbreviateMiddle(null, *)       = ""
-     *    abbreviateMiddle("abc", -1)     = ""
-     *    abbreviateMiddle("abc", 2)      = {@link IllegalArgumentException} (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 2)
-     *    abbreviateMiddle("abc", 3)      = "abc"
-     *    abbreviateMiddle("abcdef", 4)   = "ab...f"
-     *    abbreviateMiddle("abcdef", 5)   = "a...f"
-     *    abbreviateMiddle("abcdef", 10)  = "abcdef"
+     *    abbreviateMiddle(null, *)      = ""
+     *    abbreviateMiddle("abc", -1)    = ""
+     *    abbreviateMiddle("abc", 2)     = {@link IllegalArgumentException} (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 2)
+     *    abbreviateMiddle("abc", 3)     = "abc"
+     *    abbreviateMiddle("abcdef", 4)  = "ab...f"
+     *    abbreviateMiddle("abcdef", 5)  = "a...f"
+     *    abbreviateMiddle("abcdef", 10) = "abcdef"
      * </pre>
      *
      * @param sourceCS
@@ -226,13 +227,13 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    abbreviateMiddle(null, *, *)           = ""
-     *    abbreviateMiddle("abc", -1, ".")       = ""
-     *    abbreviateMiddle("abc", 2, ".")        = {@link IllegalArgumentException} (minimum {@code maxLength} must be 3)
-     *    abbreviateMiddle("abc", 3, ".")        = "abc"
-     *    abbreviateMiddle("abcdef", 4, ".")     = "ab.f"
-     *    abbreviateMiddle("abcdef", 5, "...")   = "a...f"
-     *    abbreviateMiddle("abcdef", 10, "...")  = "abcdef"
+     *    abbreviateMiddle(null, *, *)          = ""
+     *    abbreviateMiddle("abc", -1, ".")      = ""
+     *    abbreviateMiddle("abc", 2, ".")       = {@link IllegalArgumentException} (minimum {@code maxLength} must be 3)
+     *    abbreviateMiddle("abc", 3, ".")       = "abc"
+     *    abbreviateMiddle("abcdef", 4, ".")    = "ab.f"
+     *    abbreviateMiddle("abcdef", 5, "...")  = "a...f"
+     *    abbreviateMiddle("abcdef", 10, "...") = "abcdef"
      * </pre>
      *
      * @param sourceCS
@@ -384,12 +385,12 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    containsIgnoreCase(null, *)       = false
-     *    containsIgnoreCase("", "a")       = false
-     *    containsIgnoreCase("abc", "ac")   = false
-     *    containsIgnoreCase("", "")        = true
-     *    containsIgnoreCase("a", "")       = true
-     *    containsIgnoreCase("ABcD", "bC")  = true
+     *    containsIgnoreCase(null, *)      = false
+     *    containsIgnoreCase("", "a")      = false
+     *    containsIgnoreCase("abc", "ac")  = false
+     *    containsIgnoreCase("", "")       = true
+     *    containsIgnoreCase("a", "")      = true
+     *    containsIgnoreCase("ABcD", "bC") = true
      * </pre>
      *
      * @param sourceCS
@@ -418,12 +419,12 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    count(null, *)        = 0
-     *    count("", *)          = 0
-     *    count(*, null)        = 0
-     *    count("abcab", "ab")  = 2
-     *    count("abcab", "xx")  = 0
-     *    count("aaaaa", "aa")  = 2
+     *    count(null, *)       = 0
+     *    count("", *)         = 0
+     *    count(*, null)       = 0
+     *    count("abcab", "ab") = 2
+     *    count("abcab", "xx") = 0
+     *    count("aaaaa", "aa") = 2
      * </pre>
      *
      * @param sourceCS
@@ -641,10 +642,10 @@ public class StringUtil {
      * Return the given {@code sourceCS} if is neither {@code null} nor empty. Otherwise, returns {@code defaultValue}.
      *
      * <pre>
-     *    getNotEmptyOrElse(null, "other")   = "other"
-     *    getNotEmptyOrElse("", "other")     = "other"
-     *    getNotEmptyOrElse("  ", "other")   = "  "
-     *    getNotEmptyOrElse("abc", "other")  = "abc"
+     *    getNotEmptyOrElse(null, "other")  = "other"
+     *    getNotEmptyOrElse("", "other")    = "other"
+     *    getNotEmptyOrElse("  ", "other")  = "  "
+     *    getNotEmptyOrElse("abc", "other") = "abc"
      * </pre>
      *
      * @param sourceCS
@@ -844,11 +845,11 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    hideMiddle(null, *)       = ""
-     *    hideMiddle("abc", -1)     = ""
-     *    hideMiddle("abc", 3)      = (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 2)
-     *    hideMiddle("abcdef", 5)   = "a...f"
-     *    hideMiddle("abcdef", 10)  = "ab...f"
+     *    hideMiddle(null, *)      = ""
+     *    hideMiddle("abc", -1)    = ""
+     *    hideMiddle("abc", 3)     = (minimum {@code maxLength} must be {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s length + 2)
+     *    hideMiddle("abcdef", 5)  = "a...f"
+     *    hideMiddle("abcdef", 10) = "ab...f"
      * </pre>
      *
      * @param sourceCS
@@ -904,13 +905,13 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    hideMiddle(null, *, *)           = ""
-     *    hideMiddle("abc", -1, ".")       = ""
-     *    hideMiddle("abc", 2, ".")        = {@link IllegalArgumentException} (minimum {@code maxLength} must be 3)
-     *    hideMiddle("abc", 3, ".")        = "a.c"
-     *    hideMiddle("abcdef", 4, ".")     = "ab.f"
-     *    hideMiddle("abcdef", 5, "...")   = "a...f"
-     *    hideMiddle("abcdef", 10, "...")  = "ab...f"
+     *    hideMiddle(null, *, *)          = ""
+     *    hideMiddle("abc", -1, ".")      = ""
+     *    hideMiddle("abc", 2, ".")       = {@link IllegalArgumentException} (minimum {@code maxLength} must be 3)
+     *    hideMiddle("abc", 3, ".")       = "a.c"
+     *    hideMiddle("abcdef", 4, ".")    = "ab.f"
+     *    hideMiddle("abcdef", 5, "...")  = "a...f"
+     *    hideMiddle("abcdef", 10, "...") = "ab...f"
      * </pre>
      *
      * @param sourceCS
@@ -962,19 +963,22 @@ public class StringUtil {
 
 
     /**
-     * Checks if the given {@code sourceCS} is {@code null}, an empty {@link String} ('') or whitespace.
+     * Checks if the given {@code sourceCS} is {@code null}, an empty {@link String} ('') or whitespace only.
+     *
+     * @apiNote
+     *    Whitespace is defined by {@link Character#isWhitespace(char)}
      *
      * <pre>
-     *    isBlank(null)    = true
-     *    isBlank("")      = true
-     *    isBlank("   ")   = true
-     *    isBlank("  a ")  = false
+     *    isBlank(null)   = true
+     *    isBlank("")     = true
+     *    isBlank("   ")  = true
+     *    isBlank("  a ") = false
      * </pre>
      *
      * @param sourceCS
      *    {@link CharSequence} to verify
      *
-     * @return {@code true} if {@code sourceCS} is {@code null} or has no characters
+     * @return {@code true} if {@code sourceCS} is {@code null}, empty or whitespace only
      */
     public static boolean isBlank(final CharSequence sourceCS) {
         if (isEmpty(sourceCS)) {
@@ -990,13 +994,36 @@ public class StringUtil {
 
 
     /**
+     * Checks if the given {@code sourceCS} is not {@code null}, not empty {@link String} ('') and not whitespace only.
+     *
+     * @apiNote
+     *    Whitespace is defined by {@link Character#isWhitespace(char)}
+     *
+     * <pre>
+     *    isNotBlank(null)   = false
+     *    isNotBlank("")     = false
+     *    isNotBlank("   ")  = false
+     *    isNotBlank("  a ") = true
+     * </pre>
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to verify
+     *
+     * @return {@code true} if {@code sourceCS} is not {@code null}, not empty and not null and not whitespace only
+     */
+    public static boolean isNotBlank(final CharSequence sourceCS) {
+        return !isBlank(sourceCS);
+    }
+
+
+    /**
      * Checks if the given {@code sourceCS} is {@code null} or an empty {@link String} ('').
      *
      * <pre>
-     *    isEmpty(null)    = true
-     *    isEmpty("")      = true
-     *    isEmpty("   ")   = false
-     *    isEmpty("  a ")  = false
+     *    isEmpty(null)   = true
+     *    isEmpty("")     = true
+     *    isEmpty("   ")  = false
+     *    isEmpty("  a ") = false
      * </pre>
      *
      * @param sourceCS
@@ -1007,6 +1034,26 @@ public class StringUtil {
     public static boolean isEmpty(final CharSequence sourceCS) {
         return null == sourceCS ||
                 sourceCS.isEmpty();
+    }
+
+
+    /**
+     * Checks if the given {@code sourceCS} is not {@code null} and not empty {@link String} ('').
+     *
+     * <pre>
+     *    isNotEmpty(null)   = false
+     *    isNotEmpty("")     = false
+     *    isNotEmpty("   ")  = true
+     *    isNotEmpty("  a ") = true
+     * </pre>
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to verify
+     *
+     * @return {@code true} if {@code sourceCS} is not empty and not null
+     */
+    public static boolean isNotEmpty(final CharSequence sourceCS) {
+        return !isEmpty(sourceCS);
     }
 
 
@@ -1453,6 +1500,32 @@ public class StringUtil {
 
 
     /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@link StringUtil#DEFAULT_SEPARATOR_STRING}
+     * to know how to do it.
+     *
+     * @apiNote
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used to split the given {@code sourceString}.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1,2,3"                              ["1", "2", "3"]
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     *
+     * @return {@link List}
+     */
+    public static List<String> split(final String sourceString) {
+        return split(
+                sourceString,
+                PredicateUtil.alwaysTrue()
+        );
+    }
+
+
+    /**
      * Splits the given {@link String} in substrings with a size equal to the given {@code size}
      *
      * <pre>
@@ -1500,6 +1573,182 @@ public class StringUtil {
 
 
     /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@link StringUtil#DEFAULT_SEPARATOR_STRING}
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
+     *
+     * @apiNote
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. {@link StringUtil#DEFAULT_SEPARATOR_STRING}
+     * will be used to split the given {@code sourceString}.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1,2,3,,",                           ["1", "2", "3"]
+     *       StringUtils::isNotEmpty
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *
+     * @return {@link List}
+     */
+    public static List<String> split(final String sourceString,
+                                     final Predicate<String> filterPredicate) {
+        return split(
+                sourceString,
+                filterPredicate,
+                DEFAULT_SEPARATOR_STRING
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
+     * to know how to do it.
+     *
+     * @apiNote
+     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1;2;3",                             ["1", "2", "3"]
+     *       ";"
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param separator
+     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *
+     * @return {@link List}
+     */
+    public static List<String> split(final String sourceString,
+                                     final String separator) {
+        return split(
+                sourceString,
+                PredicateUtil.alwaysTrue(),
+                separator
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator} to
+     * know how to do it and {@code filterPredicate} to use only the parts that match it.
+     *
+     * @apiNote
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1;2;3;;",                           ["1", "2", "3"]
+     *       StringUtils::isNotEmpty,
+     *       ";"
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *
+     * @return {@link List}
+     */
+    public static List<String> split(final String sourceString,
+                                     final Predicate<String> filterPredicate,
+                                     final String separator) {
+        return (List<String>) split(
+                sourceString,
+                filterPredicate,
+                separator,
+                ArrayList::new
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
+     * to know how to do it.
+     *
+     * @apiNote
+     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1;2;3;3",                           ["1", "2", "3"]
+     *       ";",
+     *       HashSet::new
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param separator
+     *    {@link String} used to know how the values are split inside {@code sourceString}
+     * @param collectionFactory
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements
+     *
+     * @return {@link List}
+     */
+    public static Collection<String> split(final String sourceString,
+                                           final String separator,
+                                           final Supplier<Collection<String>> collectionFactory) {
+        return split(
+                sourceString,
+                PredicateUtil.alwaysTrue(),
+                separator,
+                collectionFactory
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
+     *
+     * @apiNote
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1;2;3;3;;",                         ["1", "2", "3"]
+     *       StringUtils::isNotEmpty,
+     *       ";",
+     *       HashSet::new
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     * @param separator
+     *    {@link String} used to know how the values are split inside {@code sourceString}
+     * @param collectionFactory
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements
+     *
+     * @return {@link List}
+     */
+    public static Collection<String> split(final String sourceString,
+                                           final Predicate<String> filterPredicate,
+                                           final String separator,
+                                           final Supplier<Collection<String>> collectionFactory) {
+        return split(
+                sourceString,
+                filterPredicate,
+                Function.identity(),
+                separator,
+                collectionFactory
+        );
+    }
+
+
+    /**
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it.
      *
@@ -1519,15 +1768,56 @@ public class StringUtil {
      *    {@link Function} used to know how to split the provided {@link String}
      *
      * @return {@link List}
+     *
+     * @throws IllegalArgumentException if {@code valueExtractor} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code valueExtractor}
      */
-    @SuppressWarnings("unchecked")
     public static <T> List<T> split(final String sourceString,
                                     final Function<String, ? extends T> valueExtractor) {
-        return (List<T>)split(
+        return split(
                 sourceString,
+                PredicateUtil.alwaysTrue(),
+                valueExtractor
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
+     *
+     * @apiNote
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used to split the given {@code sourceString}. If {@code filterPredicate}
+     * is {@code null} then no filter will be applied.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1,2,3,",                            [1, 2, 3]
+     *       StringUtils::isNotEmpty,
+     *       Integer::parseInt
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     * @param valueExtractor
+     *    {@link Function} used to know how to split the provided {@link String}
+     *
+     * @return {@link List}
+     *
+     * @throws IllegalArgumentException if {@code valueExtractor} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code valueExtractor}
+     */
+    public static <T> List<T> split(final String sourceString,
+                                    final Predicate<String> filterPredicate,
+                                    final Function<String, ? extends T> valueExtractor) {
+        return split(
+                sourceString,
+                filterPredicate,
                 valueExtractor,
-                DEFAULT_SEPARATOR_STRING,
-                ArrayList::new
+                DEFAULT_SEPARATOR_STRING
         );
     }
 
@@ -1536,9 +1826,56 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it.
      *
+     * @apiNote
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3",                             [1, 2, 3]
+     *       Integer::parseInt,
+     *       ";"
+     *    )
+     * </pre>
+     *
+     * @param sourceString
+     *    Source {@link String} with the values to extract
+     * @param valueExtractor
+     *    {@link Function} used to know how to split the provided {@link String}
+     * @param separator
+     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *
+     * @return {@link List}
+     *
+     * @throws IllegalArgumentException if {@code valueExtractor} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code valueExtractor}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> split(final String sourceString,
+                                    final Function<String, ? extends T> valueExtractor,
+                                    final String separator) {
+        return (List<T>) split(
+                sourceString,
+                PredicateUtil.alwaysTrue(),
+                valueExtractor,
+                separator,
+                ArrayList::new
+        );
+    }
+
+
+    /**
+     *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
+     *
+     * @apiNote
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *
+     * <pre>
+     *    split(                                 Result:
+     *       "1;2;3;;",                           [1, 2, 3]
+     *       StringUtils::isNotEmpty,
      *       Integer::parseInt,
      *       ";"
      *    )
@@ -1549,19 +1886,26 @@ public class StringUtil {
      *
      * @param sourceString
      *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      * @param separator
      *    {@link String} used to know how the values are split inside {@code sourceString}
      *
      * @return {@link List}
+     *
+     * @throws IllegalArgumentException if {@code valueExtractor} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code valueExtractor}
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> split(final String sourceString,
+                                    final Predicate<String> filterPredicate,
                                     final Function<String, ? extends T> valueExtractor,
                                     final String separator) {
-        return (List<T>)split(
+        return (List<T>) split(
                 sourceString,
+                filterPredicate,
                 valueExtractor,
                 separator,
                 ArrayList::new
@@ -1571,22 +1915,26 @@ public class StringUtil {
 
     /**
      *    Returns a {@link Collection} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
-     * to know how to do it.
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
      * @apiNote
-     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
      *
      * <pre>
      *    split(                                 Result:
-     *       "1;2;3",                             [1, 2, 3]
+     *       "1;2;3;3;;",                         [1, 2, 3]
+     *       StringUtils::isNotEmpty,
      *       Integer::parseInt,
      *       ";",
-     *       ArrayList::new
+     *       HashSet::new
      *    )
      * </pre>
      *
      * @param sourceString
      *    Source {@link String} with the values to extract
+     * @param filterPredicate
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      * @param separator
@@ -1595,99 +1943,92 @@ public class StringUtil {
      *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
      * @return {@link Collection}
+     *
+     * @throws IllegalArgumentException if {@code valueExtractor} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code valueExtractor}
      */
     public static <T> Collection<T> split(final String sourceString,
+                                          final Predicate<String> filterPredicate,
                                           final Function<String, ? extends T> valueExtractor,
                                           final String separator,
                                           final Supplier<Collection<T>> collectionFactory) {
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
+        if (null == sourceString) {
+            return finalCollectionFactory.get();
+        }
+        AssertUtil.notNull(valueExtractor, "valueExtractor must be not null");
         return split(
                 sourceString,
+                PartialFunction.of(
+                        getOrAlwaysTrue(filterPredicate),
+                        valueExtractor
+                ),
                 separator,
-                -1,
-                valueExtractor,
-                collectionFactory
+                finalCollectionFactory
         );
     }
 
 
     /**
-     *    Returns a {@link Collection} splitting the given {@code sourceString} in different parts, using
-     * {@code valueExtractor} to know how to do it.
+     *    Returns a {@link Collection} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
+     * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
      * @apiNote
-     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
+     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
+     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
      *
      * <pre>
      *    split(                                 Result:
-     *       "R1,  R2, R3,R3",                    ["R1", "R2", "R3"]
-     *       ",",
-     *       4,
-     *       String::trim,
-     *       ArrayList::new
+     *       "1;2;3;3;;",                         [1, 2, 3]
+     *       PartialFunction.of(
+     *          StringUtils::isNotEmpty,
+     *          Integer::parseInt
+     *       ),
+     *       ";",
+     *       HashSet::new
      *    )
      * </pre>
      *
      * @param sourceString
      *    Source {@link String} with the values to extract
+     * @param partialFunction
+     *    {@link PartialFunction} to filter and transform the split parts of {@code sourceString}
      * @param separator
      *    {@link String} used to know how the values are split inside {@code sourceString}
-     * @param chunkLimit
-     *    Maximum number of elements of which the given {@code sourceString} will be split
-     * @param valueExtractor
-     *    {@link Function} used to know how to split the provided {@link String}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
      * @return {@link Collection}
      *
-     * @throws Exception if there is a split part that cannot be extracted using {@code valueExtractor}.
-     *
-     *                   <pre>
-     *                   For example:
-     *                        source = "1,2,3"
-     *                        chunkLimit = 2
-     *                        valueExtractor = Integer::parseInt
-     *
-     *                   Split parts will be:
-     *                        ["1", "2,3"] => second one could not be converted to an {@link Integer}
-     *                   </pre>
+     * @throws IllegalArgumentException f {@code partialFunction} is {@code null} and {@code sourceString} is not {@code null}
+     * @throws Exception if there is an error applying provided {@code partialFunction}
      */
     public static <T> Collection<T> split(final String sourceString,
+                                          final PartialFunction<String, ? extends T> partialFunction,
                                           final String separator,
-                                          final int chunkLimit,
-                                          final Function<String, ? extends T> valueExtractor,
                                           final Supplier<Collection<T>> collectionFactory) {
-        final Supplier<Collection<T>> finalCollectionFactory = ObjectUtil.getOrElse(
-                collectionFactory,
-                ArrayList::new
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
+        if (null == sourceString) {
+            return finalCollectionFactory.get();
+        }
+        AssertUtil.notNull(partialFunction, "partialFunction must be not null");
+        final String finalSeparator = ObjectUtil.getOrElse(
+                separator,
+                DEFAULT_SEPARATOR_STRING
         );
-        return ofNullable(sourceString)
-                .map(s -> {
-                    if (null == valueExtractor) {
-                        return null;
-                    }
-                    final String[] splitString =
-                            0 >= chunkLimit
-                                    ? s.split(
-                                            null == separator
-                                                    ? DEFAULT_SEPARATOR_STRING
-                                                    : separator
-                                    )
-                                    : s.split(
-                                            null == separator
-                                                    ? DEFAULT_SEPARATOR_STRING
-                                                    : separator, chunkLimit
-                                    );
-                    Stream<T> valueExtractedStream = Stream.of(splitString)
-                            .map(valueExtractor);
-
-                    return valueExtractedStream
-                            .collect(
-                                    Collectors.toCollection(finalCollectionFactory)
-                            );
-                })
-                .orElseGet(finalCollectionFactory);
+        return Stream.of(
+                sourceString.split(
+                        finalSeparator,
+                        -1
+                )
+        )
+        .filter(partialFunction::isDefinedAt)
+        .map(partialFunction)
+        .collect(
+                toCollection(
+                        finalCollectionFactory
+                )
+        );
     }
 
 
@@ -1803,14 +2144,14 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    substringAfter(null, *)      = ""
-     *    substringAfter("", *)        = ""
-     *    substringAfter(*, null)      = ""
-     *    substringAfter("abc", "")    = "abc"
-     *    substringAfter("abc", "z")   = ""
-     *    substringAfter("abc", "a")   = "bd"
-     *    substringAfter("abc", "c")   = ""
-     *    substringAfter("abcb", "b")  = "cb"
+     *    substringAfter(null, *)     = ""
+     *    substringAfter("", *)       = ""
+     *    substringAfter(*, null)     = ""
+     *    substringAfter("abc", "")   = "abc"
+     *    substringAfter("abc", "z")  = ""
+     *    substringAfter("abc", "a")  = "bd"
+     *    substringAfter("abc", "c")  = ""
+     *    substringAfter("abcb", "b") = "cb"
      * </pre>
      *
      * @param sourceCS
@@ -1847,14 +2188,14 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    substringAfterLast(null, *)       = ""
-     *    substringAfterLast("", *)         = ""
-     *    substringAfterLast(*, null)       = ""
-     *    substringAfterLast(*, "")         = ""
-     *    substringAfterLast("abc", "z")    = ""
-     *    substringAfterLast("abc", "a")    = "bd"
-     *    substringAfterLast("abc", "c")    = ""
-     *    substringAfterLast("abcba", "b")  = "a"
+     *    substringAfterLast(null, *)      = ""
+     *    substringAfterLast("", *)        = ""
+     *    substringAfterLast(*, null)      = ""
+     *    substringAfterLast(*, "")        = ""
+     *    substringAfterLast("abc", "z")   = ""
+     *    substringAfterLast("abc", "a")   = "bd"
+     *    substringAfterLast("abc", "c")   = ""
+     *    substringAfterLast("abcba", "b") = "a"
      * </pre>
      *
      * @param sourceCS
@@ -1893,14 +2234,14 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    substringBefore(null, *)      = ""
-     *    substringBefore("", *)        = ""
-     *    substringBefore("abc", null)  = "abc"
-     *    substringBefore("abc", "")    = "abc"
-     *    substringBefore("a", "a")     = ""
-     *    substringBefore("a", "z")     = "a"
-     *    substringBefore("abc", "c")   = "ab"
-     *    substringBefore("abcb", "b")  = "a"
+     *    substringBefore(null, *)     = ""
+     *    substringBefore("", *)       = ""
+     *    substringBefore("abc", null) = "abc"
+     *    substringBefore("abc", "")   = "abc"
+     *    substringBefore("a", "a")    = ""
+     *    substringBefore("a", "z")    = "a"
+     *    substringBefore("abc", "c")  = "ab"
+     *    substringBefore("abcb", "b") = "a"
      * </pre>
      *
      * @param sourceCS
@@ -1941,14 +2282,14 @@ public class StringUtil {
      * <p>
      * Examples:
      * <pre>
-     *    substringBeforeLast(null, *)      = ""
-     *    substringBeforeLast("", *)        = ""
-     *    substringBeforeLast("abc", null)  = "abc"
-     *    substringBeforeLast("abc", "")    = "abc"
-     *    substringBeforeLast("a", "a")     = ""
-     *    substringBeforeLast("a", "z")     = "a"
-     *    substringBeforeLast("abc", "c")   = "ab"
-     *    substringBeforeLast("abcb", "b")  = "abc"
+     *    substringBeforeLast(null, *)     = ""
+     *    substringBeforeLast("", *)       = ""
+     *    substringBeforeLast("abc", null) = "abc"
+     *    substringBeforeLast("abc", "")   = "abc"
+     *    substringBeforeLast("a", "a")    = ""
+     *    substringBeforeLast("a", "z")    = "a"
+     *    substringBeforeLast("abc", "c")  = "ab"
+     *    substringBeforeLast("abcb", "b") = "abc"
      * </pre>
      *
      * @param sourceCS

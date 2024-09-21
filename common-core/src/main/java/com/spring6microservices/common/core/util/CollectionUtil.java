@@ -32,6 +32,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultListSupplier;
 import static com.spring6microservices.common.core.util.CollectorsUtil.toMapNullableValues;
 import static com.spring6microservices.common.core.util.ComparatorUtil.safeNaturalOrderNullFirst;
 import static com.spring6microservices.common.core.util.ComparatorUtil.safeNaturalOrderNullLast;
@@ -119,7 +120,7 @@ public class CollectionUtil {
                                                   final Function<? super T, ? extends E> firstMapper,
                                                   final Function<? super E, ? extends R> secondMapper,
                                                   final Supplier<Collection<R>> collectionFactory) {
-        final Supplier<Collection<R>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<R>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -222,7 +223,7 @@ public class CollectionUtil {
                                                    final Function<? super T, ? extends E> defaultMapper,
                                                    final Function<? super T, ? extends E> orElseMapper,
                                                    final Supplier<Collection<E>> collectionFactory) {
-        final Supplier<Collection<E>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<E>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -235,7 +236,7 @@ public class CollectionUtil {
                         defaultMapper
                 ),
                 orElseMapper,
-                collectionFactory
+                finalCollectionFactory
         );
     }
 
@@ -323,7 +324,7 @@ public class CollectionUtil {
                                                    final PartialFunction<? super T, ? extends E> partialFunction,
                                                    final Function<? super T, ? extends E> orElseMapper,
                                                    final Supplier<Collection<E>> collectionFactory) {
-        final Supplier<Collection<E>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<E>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -421,7 +422,7 @@ public class CollectionUtil {
                                                final Predicate<? super T> filterPredicate,
                                                final Function<? super T, ? extends E> mapFunction,
                                                final Supplier<Collection<E>> collectionFactory) {
-        final Supplier<Collection<E>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<E>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -432,7 +433,7 @@ public class CollectionUtil {
                         getOrAlwaysTrue(filterPredicate),
                         mapFunction
                 ),
-                collectionFactory
+                finalCollectionFactory
         );
     }
 
@@ -514,7 +515,7 @@ public class CollectionUtil {
     public static <T, E> Collection<E> collect(final Collection<? extends T> sourceCollection,
                                                final PartialFunction<? super T, ? extends E> partialFunction,
                                                final Supplier<Collection<E>> collectionFactory) {
-        final Supplier<Collection<E>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<E>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -565,7 +566,7 @@ public class CollectionUtil {
                 sourceCollection,
                 partialFunction::isDefinedAt
         )
-                .map(partialFunction);
+        .map(partialFunction);
     }
 
     /**
@@ -616,7 +617,7 @@ public class CollectionUtil {
     @SafeVarargs
     public static <T> Collection<T> concat(final Supplier<Collection<T>> collectionFactory,
                                            final Collection<? extends T> ...collections) {
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         return ofNullable(collections)
                 .map(c ->
                         Stream.of(c)
@@ -669,7 +670,7 @@ public class CollectionUtil {
      */
     public static <T> Collection<T> copy(final Collection<? extends T> sourceCollection,
                                          final Supplier<Collection<T>> collectionFactory) {
-        final Collection<T> result = getFinalCollectionFactory(collectionFactory).get();
+        final Collection<T> result = getOrDefaultListSupplier(collectionFactory).get();
         if (!isEmpty(sourceCollection)) {
             result.addAll(sourceCollection);
         }
@@ -776,7 +777,7 @@ public class CollectionUtil {
                     collectionFactory
             );
         }
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         return sourceCollection
                 .stream()
                 .dropWhile(filterPredicate)
@@ -854,7 +855,7 @@ public class CollectionUtil {
                     collectionFactory
             );
         }
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         return sourceCollection
                 .stream()
                 .filter(filterPredicate)
@@ -1046,7 +1047,7 @@ public class CollectionUtil {
     @SuppressWarnings("unchecked")
     public static <T> Collection<T> flatten(final Collection<Object> sourceCollection,
                                             final Supplier<Collection<T>> collectionFactory) {
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -1327,7 +1328,7 @@ public class CollectionUtil {
      */
     public static <T> Collection<T> fromIterator(final Iterator<? extends T> sourceIterator,
                                                  final Supplier<Collection<T>> collectionFactory) {
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (null == sourceIterator || !sourceIterator.hasNext()) {
             return finalCollectionFactory.get();
         }
@@ -1408,7 +1409,7 @@ public class CollectionUtil {
             return new HashMap<>();
         }
         AssertUtil.notNull(discriminatorKey, "discriminatorKey must be not null");
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
 
         Map<K, Collection<T>> result = new HashMap<>();
         sourceCollection
@@ -1525,7 +1526,7 @@ public class CollectionUtil {
             return new HashMap<>();
         }
         AssertUtil.notNull(discriminatorKey, "discriminatorKey must be not null");
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
 
         Map<K, Collection<T>> result = new HashMap<>();
         sourceCollection
@@ -1692,7 +1693,7 @@ public class CollectionUtil {
                         discriminatorKey,
                         valueMapper
                 ),
-                getFinalCollectionFactory(collectionFactory)
+                getOrDefaultListSupplier(collectionFactory)
         );
     }
 
@@ -1780,7 +1781,7 @@ public class CollectionUtil {
             return new HashMap<>();
         }
         AssertUtil.notNull(partialFunction, "partialFunction must be not null");
-        final Supplier<Collection<V>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<V>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
 
         Map<K, Collection<V>> result = new HashMap<>();
         sourceCollection.stream()
@@ -1980,7 +1981,7 @@ public class CollectionUtil {
         AssertUtil.notNull(discriminatorKey, "discriminatorKey must be not null");
         AssertUtil.notNull(valueMapper, "valueMapper must be not null");
 
-        final Supplier<Collection<V>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<V>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         final Stream<? extends T> sourceCollectionStream = Objects.isNull(filterPredicate)
                 ? sourceCollection.stream()
                 : sourceCollection.stream().filter(filterPredicate);
@@ -2244,7 +2245,7 @@ public class CollectionUtil {
     public static <T, E> Collection<E> map(final Collection<? extends T> sourceCollection,
                                            final Function<? super T, ? extends E> mapFunction,
                                            final Supplier<Collection<E>> collectionFactory) {
-        final Supplier<Collection<E>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<E>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -2321,7 +2322,7 @@ public class CollectionUtil {
     public static <T> Collection<Tuple> mapMulti(final Collection<? extends T> sourceCollection,
                                                  final Supplier<Collection<Tuple>> collectionFactory,
                                                  final Function<? super T, ?> ...mapFunctions) {
-        final Supplier<Collection<Tuple>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<Tuple>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (isEmpty(sourceCollection)) {
             return finalCollectionFactory.get();
         }
@@ -2801,7 +2802,7 @@ public class CollectionUtil {
     public static <T> Collection<T> sort(final Comparator<? super T> comparator,
                                          final Supplier<Collection<T>> collectionFactory,
                                          final Collection<? extends T> ...collections) {
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         if (ObjectUtil.isEmpty(collections)) {
             return finalCollectionFactory.get();
         }
@@ -2939,7 +2940,7 @@ public class CollectionUtil {
                     collectionFactory
             );
         }
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         return sourceCollection
                 .stream()
                 .takeWhile(filterPredicate)
@@ -3012,7 +3013,7 @@ public class CollectionUtil {
     public static <T> Collection<T> toCollection(final Supplier<Collection<T>> collectionFactory,
                                                  final Predicate<? super T> filterPredicate,
                                                  final T... elements) {
-        final Supplier<Collection<T>> finalCollectionFactory = getFinalCollectionFactory(collectionFactory);
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
         return ofNullable(elements)
                 .map(e -> {
                     final Stream<T> elementsStream = Objects.isNull(filterPredicate)
@@ -3732,23 +3733,6 @@ public class CollectionUtil {
         } else {
             return sourceCollection;
         }
-    }
-
-
-    /**
-     *    Returns provided {@link Supplier} of {@link Collection} {@code collectionFactory} if not {@code null},
-     * {@link Supplier} of {@link ArrayList} otherwise.
-     *
-     * @param collectionFactory
-     *    {@link Supplier} of {@link Collection}
-     *
-     * @return {@link Supplier} of {@link Collection}
-     */
-    private static <T> Supplier<Collection<T>> getFinalCollectionFactory(final Supplier<Collection<T>> collectionFactory) {
-        return getOrElse(
-                collectionFactory,
-                ArrayList::new
-        );
     }
 
 }

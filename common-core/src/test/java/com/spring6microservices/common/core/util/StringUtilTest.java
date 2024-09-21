@@ -951,6 +951,33 @@ public class StringUtilTest {
     }
 
 
+    static Stream<Arguments> isNotBlankTestCases() {
+        StringBuffer sbuffer = new StringBuffer("   ");
+        StringBuilder sbuilder = new StringBuilder("   3");
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,   expectedResult
+                Arguments.of( null,       false ),
+                Arguments.of( "",         false ),
+                Arguments.of( "  ",       false ),
+                Arguments.of( sbuffer,    false ),
+                Arguments.of( "  123 ",   true ),
+                Arguments.of( sbuilder,   true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("isNotBlankTestCases")
+    @DisplayName("isNotBlank: test cases")
+    public void isNotBlank_testCases(CharSequence sourceCS,
+                                     boolean expectedResult) {
+        assertEquals(
+                expectedResult,
+                isNotBlank(sourceCS)
+        );
+    }
+
+
     static Stream<Arguments> isEmptyTestCases() {
         StringBuffer sbuffer = new StringBuffer();
         StringBuilder sbuilder = new StringBuilder("   3");
@@ -974,6 +1001,33 @@ public class StringUtilTest {
         assertEquals(
                 expectedResult,
                 isEmpty(sourceCS)
+        );
+    }
+
+
+    static Stream<Arguments> isNotEmptyTestCases() {
+        StringBuffer sbuffer = new StringBuffer();
+        StringBuilder sbuilder = new StringBuilder("   3");
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,   expectedResult
+                Arguments.of( null,       false ),
+                Arguments.of( "",         false ),
+                Arguments.of( sbuffer,    false ),
+                Arguments.of( "  ",       true ),
+                Arguments.of( "  123 ",   true ),
+                Arguments.of( sbuilder,   true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("isNotEmptyTestCases")
+    @DisplayName("isNotEmpty: test cases")
+    public void isNotEmpty_testCases(CharSequence sourceCS,
+                                     boolean expectedResult) {
+        assertEquals(
+                expectedResult,
+                isNotEmpty(sourceCS)
         );
     }
 
@@ -1459,7 +1513,32 @@ public class StringUtilTest {
     }
 
 
-    static Stream<Arguments> splitBySizeTestCases() {
+    static Stream<Arguments> splitWithSourceStringTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   expectedResult
+                Arguments.of( null,           List.of() ),
+                Arguments.of( "",             List.of("") ),
+                Arguments.of( " ",            List.of(" ") ),
+                Arguments.of( "123",          List.of("123") ),
+                Arguments.of( "1,2,3",        List.of("1", "2", "3") ),
+                Arguments.of( ",1,",          List.of("", "1", "") )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringTestCases")
+    @DisplayName("split: only with sourceString using default separator test cases")
+    public void splitWithSourceString_testCases(String sourceString,
+                                                List<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndSizeTestCases() {
         return Stream.of(
                 //@formatter:off
                 //            sourceString,   size,   expectedResult
@@ -1475,11 +1554,11 @@ public class StringUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("splitBySizeTestCases")
-    @DisplayName("split: giving maximum size of every part test cases")
-    public void splitBySize_testCases(String sourceString,
-                                      int size,
-                                      List<String> expectedResult) {
+    @MethodSource("splitWithSourceStringAndSizeTestCases")
+    @DisplayName("split: with sourceString and maximum size of every part test cases")
+    public void splitWithSourceAndSize_testCases(String sourceString,
+                                                 int size,
+                                                 List<String> expectedResult) {
         assertEquals(
                 expectedResult,
                 split(sourceString, size)
@@ -1487,135 +1566,566 @@ public class StringUtilTest {
     }
 
 
-    static Stream<Arguments> splitWithSourceAndValueExtractorTestCases() {
+    static Stream<Arguments> splitWithSourceStringAndFilterTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   filterPredicate,   expectedResult
+                Arguments.of( null,           null,              List.of() ),
+                Arguments.of( null,           NOT_EMPTY,         List.of() ),
+                Arguments.of(  "",            null,              List.of("") ),
+                Arguments.of( "",             NOT_EMPTY,         List.of() ),
+                Arguments.of( "123",          null,              List.of("123") ),
+                Arguments.of( "123",          NOT_EMPTY,         List.of("123") ),
+                Arguments.of( "1,2,3",        null,              List.of("1", "2", "3") ),
+                Arguments.of( "1,2,3",        NOT_EMPTY,         List.of("1", "2", "3") ),
+                Arguments.of( ",1,",          null,              List.of("", "1", "") ),
+                Arguments.of( ",1,",          NOT_EMPTY,         List.of("1") )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndFilterTestCases")
+    @DisplayName("split: with sourceString and filterPredicate test cases")
+    public void splitWithSourceStringAndFilter_testCases(String sourceString,
+                                                         Predicate<String> filterPredicate,
+                                                         List<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString, filterPredicate)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndSeparatorTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   separator,   expectedResult
+                Arguments.of( null,           null,        List.of() ),
+                Arguments.of( null,           ",",         List.of() ),
+                Arguments.of( "",             null,        List.of("") ),
+                Arguments.of( "",             ",",         List.of("") ),
+                Arguments.of( "123",          null,        List.of("123") ),
+                Arguments.of( "123",          ",",         List.of("123") ),
+                Arguments.of( "1,2,3",        null,        List.of("1", "2", "3") ),
+                Arguments.of( "1,2,3",        ",",         List.of("1", "2", "3") ),
+                Arguments.of( "1,2,3",        ";",         List.of("1,2,3") ),
+                Arguments.of( ",1,",          null,        List.of("", "1", "") ),
+                Arguments.of( ",1,",          ",",         List.of("", "1", "") ),
+                Arguments.of( ",1,",          ";",         List.of(",1,") )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndSeparatorTestCases")
+    @DisplayName("split: with sourceString and separator test cases")
+    public void splitWithSourceStringAndSeparator_testCases(String sourceString,
+                                                            String separator,
+                                                            List<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString, separator)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndFilterPredicateAndSeparatorTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   filterPredicate,   separator,   expectedResult
+                Arguments.of( null,           null,              null,        List.of() ),
+                Arguments.of( null,           null,              ",",         List.of() ),
+                Arguments.of( null,           NOT_EMPTY,         ",",         List.of() ),
+                Arguments.of( "",             null,              null,        List.of("") ),
+                Arguments.of( "",             null,              ",",         List.of("") ),
+                Arguments.of( "",             NOT_EMPTY,         ",",         List.of() ),
+                Arguments.of( "123",          null,              null,        List.of("123") ),
+                Arguments.of( "123",          null,              ",",         List.of("123") ),
+                Arguments.of( "123",          NOT_EMPTY,         ",",         List.of("123") ),
+                Arguments.of( "1,2,3",        null,              null,        List.of("1", "2", "3") ),
+                Arguments.of( "1,2,3",        null,              ",",         List.of("1", "2", "3") ),
+                Arguments.of( "1,2,3",        NOT_EMPTY,         ",",         List.of("1", "2", "3") ),
+                Arguments.of( "1;2;3",        NOT_EMPTY,         ";",         List.of("1", "2", "3") ),
+                Arguments.of( ",1,",          null,              null,        List.of("", "1", "") ),
+                Arguments.of( ",1,",          null,              ",",         List.of("", "1", "") ),
+                Arguments.of( ",1,",          NOT_EMPTY,         ",",         List.of("1") ),
+                Arguments.of( ";1;",          NOT_EMPTY,         ";",         List.of("1") )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndFilterPredicateAndSeparatorTestCases")
+    @DisplayName("split: with sourceString, filterPredicate and separator test cases")
+    public void splitWithSourceStringAndFilterPredicateAndSeparator_testCases(String sourceString,
+                                                                              Predicate<String> filterPredicate,
+                                                                              String separator,
+                                                                              List<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString, filterPredicate, separator)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndSeparatorAndCollectionFactoryTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   separator,   collectionFactory,   expectedResult
+                Arguments.of( null,           null,        null,                List.of() ),
+                Arguments.of( null,           null,        SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( null,           ",",         null,                List.of() ),
+                Arguments.of( null,           ",",         SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( "",             null,        null,                List.of("") ),
+                Arguments.of( "",             null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("")) ),
+                Arguments.of( "",             ",",         null,                List.of("") ),
+                Arguments.of( "",             ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("")) ),
+                Arguments.of( "123",          null,        null,                List.of("123") ),
+                Arguments.of( "123",          null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("123")) ),
+                Arguments.of( "123",          ",",         null,                List.of("123") ),
+                Arguments.of( "123",          ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("123")) ),
+                Arguments.of( "1,2,2",        null,        null,                List.of("1", "2", "2") ),
+                Arguments.of( "1,2,2",        null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("1", "2")) ),
+                Arguments.of( "1,2,2",        ",",         null,                List.of("1", "2", "2") ),
+                Arguments.of( "1,2,2",        ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1", "2")) ),
+                Arguments.of( "1,2,2",        ";",         null,                List.of("1,2,2") ),
+                Arguments.of( "1,2,2",        ";",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1,2,2")) ),
+                Arguments.of( ",1,",          null,        null,                List.of("", "1", "") ),
+                Arguments.of( ",1,",          null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("", "1")) ),
+                Arguments.of( ",1,",          ",",         null,                List.of("", "1", "") ),
+                Arguments.of( ",1,",          ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("", "1")) ),
+                Arguments.of( ",1,",          ";",         null,                List.of(",1,") ),
+                Arguments.of( ",1,",          ";",         SET_SUPPLIER,        new LinkedHashSet<>(List.of(",1,")) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndSeparatorAndCollectionFactoryTestCases")
+    @DisplayName("split: with sourceString, separator and collection factory test cases")
+    public void splitWithSourceStringAndSeparatorAndCollectionFactory_testCases(String sourceString,
+                                                                                String separator,
+                                                                                Supplier<Collection<String>> collectionFactory,
+                                                                                Collection<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString, separator, collectionFactory)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndFilterPredicateAndSeparatorAndCollectionFactoryTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,   filterPredicate,   separator,   collectionFactory,   expectedResult
+                Arguments.of( null,           null,              null,        null,                List.of() ),
+                Arguments.of( null,           null,              null,        SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( null,           null,              ",",         SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( null,           NOT_EMPTY,         ",",         SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( "",             null,              null,        null,                List.of("") ),
+                Arguments.of( "",             null,              null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("")) ),
+                Arguments.of( "",             null,              ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("")) ),
+                Arguments.of( "",             NOT_EMPTY,         ",",         SET_SUPPLIER,        new LinkedHashSet<>() ),
+                Arguments.of( "123",          null,              null,        null,                List.of("123") ),
+                Arguments.of( "123",          null,              null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("123")) ),
+                Arguments.of( "123",          null,              ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("123")) ),
+                Arguments.of( "123",          NOT_EMPTY,         ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("123")) ),
+                Arguments.of( "1,2,2",        null,              null,        null,                List.of("1", "2", "2") ),
+                Arguments.of( "1,2,2",        null,              null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("1", "2")) ),
+                Arguments.of( "1,2,2",        null,              ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1", "2")) ),
+                Arguments.of( "1,2,2",        NOT_EMPTY,         ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1", "2")) ),
+                Arguments.of( "1,2,2",        NOT_EMPTY,         ";",         null,                List.of("1,2,2") ),
+                Arguments.of( "1,2,2",        NOT_EMPTY,         ";",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1,2,2")) ),
+                Arguments.of( ",1,",          null,              null,        null,                List.of("", "1", "") ),
+                Arguments.of( ",1,",          null,              null,        SET_SUPPLIER,        new LinkedHashSet<>(List.of("", "1")) ),
+                Arguments.of( ",1,",          null,              ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("", "1")) ),
+                Arguments.of( ",1,",          NOT_EMPTY,         ",",         SET_SUPPLIER,        new LinkedHashSet<>(List.of("1")) ),
+                Arguments.of( ",1,",          NOT_EMPTY,         ";",         null,                List.of(",1,") ),
+                Arguments.of( ",1,",          NOT_EMPTY,         ";",         SET_SUPPLIER,        new LinkedHashSet<>(List.of(",1,")) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndFilterPredicateAndSeparatorAndCollectionFactoryTestCases")
+    @DisplayName("split: with sourceString, separator and collection factory test cases")
+    public void splitWithSourceStringAndFilterPredicateAndSeparatorAndCollectionFactory_testCases(String sourceString,
+                                                                                                  Predicate<String> filterPredicate,
+                                                                                                  String separator,
+                                                                                                  Supplier<Collection<String>> collectionFactory,
+                                                                                                  Collection<String> expectedResult) {
+        assertEquals(
+                expectedResult,
+                split(sourceString, filterPredicate, separator, collectionFactory)
+        );
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndValueExtractorTestCases() {
         String integers = "1,2,3";
         String characters = "A,B,  3";
-        Function<String, Integer> fromStringToInteger = Integer::parseInt;
-        Function<String, String> fromStringToString = String::trim;
         return Stream.of(
                 //@formatter:off
-                //            sourceString,   valueExtractor,        expectedResult
-                Arguments.of( null,           null,                  List.of() ),
-                Arguments.of( integers,       null,                  List.of() ),
-                Arguments.of( integers,       fromStringToInteger,   List.of(1,2,3) ),
-                Arguments.of( characters,     fromStringToString,    List.of("A","B","3") )
+                //            sourceString,   valueExtractor,           expectedException,                expectedResult
+                Arguments.of( null,           null,                     null,                             List.of() ),
+                Arguments.of( "",             null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( integers,       null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( "",             FROM_STRING_TO_INTEGER,   NumberFormatException.class,      null ),
+                Arguments.of( characters,     FROM_STRING_TO_INTEGER,   NumberFormatException.class,      null ),
+                Arguments.of( integers,       FROM_STRING_TO_INTEGER,   null,                             List.of(1,2,3) ),
+                Arguments.of( characters,     STRING_TRIM,              null,                             List.of("A","B","3") )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("splitWithSourceAndValueExtractorTestCases")
-    @DisplayName("split: with source and value extractor test cases")
-    public <T> void splitWithSourceAndValueExtractor_testCases(String source,
-                                                                         Function<String, T> valueExtractor,
-                                                                         Collection<T> expectedResult) {
-        assertEquals(
-                expectedResult,
-                split(source, valueExtractor)
-        );
+    @MethodSource("splitWithSourceStringAndValueExtractorTestCases")
+    @DisplayName("split: with sourceString and valueExtractor test cases")
+    public <T> void splitWithSourceStringAndValueExtractor_testCases(String sourceString,
+                                                                     Function<String, T> valueExtractor,
+                                                                     Class<? extends Exception> expectedException,
+                                                                     Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, valueExtractor)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, valueExtractor)
+            );
+        }
     }
 
 
-    static Stream<Arguments> splitWithSourceAndSeparatorAndValueExtractorFactoryTestCases() {
-        String integers = "1,2,3,2";
-        String roles = "R1,  R2, R3,R3";
+    static Stream<Arguments> splitWithSourceStringAndFilterPredicateAndValueExtractorTestCases() {
+        String integers = "1,2,3";
+        String integersWithEmpty = "1,2,3,,";
+        String characters = "A,B,  3";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,   separator,   valueExtractor,           expectedResult
-                Arguments.of( null,           null,        null,                     List.of() ),
-                Arguments.of( integers,       null,        null,                     List.of() ),
-                Arguments.of( integers,       ",",         null,                     List.of() ),
-                Arguments.of( integers,       ",",         FROM_STRING_TO_INTEGER,   List.of(1, 2, 3, 2) ),
-                Arguments.of( roles,          ",",         TRIM_STRING,              List.of("R1", "R2", "R3", "R3"))
+                //            sourceString,        filterPredicate,   valueExtractor,           expectedException,                expectedResult
+                Arguments.of( null,                null,              null,                     null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     null,                             List.of() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,                             List.of() ),
+                Arguments.of( "",                  null,              null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  NOT_EMPTY,         null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            NOT_EMPTY,         null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   NumberFormatException.class,      null ),
+                Arguments.of( characters,          NOT_EMPTY,         FROM_STRING_TO_INTEGER,   NumberFormatException.class,      null ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,                             List.of() ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   null,                             List.of(1,2,3) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,                             List.of(1,2,3) ),
+                Arguments.of( characters,          null,              STRING_TRIM,   null,                                        List.of("A","B","3") ),
+                Arguments.of( characters,          NOT_EMPTY,         STRING_TRIM,   null,                                        List.of("A","B","3") )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("splitWithSourceAndSeparatorAndValueExtractorFactoryTestCases")
-    @DisplayName("split: with source, separator and valueExtractor test cases")
-    public <T> void splitWithSourceAndSeparatorAndValueExtractor_testCases(String source,
-                                                                           String separator,
-                                                                           Function<String, T> valueExtractor,
-                                                                           Collection<T> expectedResult) {
-        assertEquals(
-                expectedResult,
-                split(source, valueExtractor, separator)
-        );
+    @MethodSource("splitWithSourceStringAndFilterPredicateAndValueExtractorTestCases")
+    @DisplayName("split: with sourceString, filterPredicate and valueExtractor test cases")
+    public <T> void splitWithSourceStringAndFilterPredicateAndValueExtractor_testCases(String sourceString,
+                                                                                       Predicate<String> filterPredicate,
+                                                                                       Function<String, T> valueExtractor,
+                                                                                       Class<? extends Exception> expectedException,
+                                                                                       Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, filterPredicate, valueExtractor)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, filterPredicate, valueExtractor)
+            );
+        }
     }
 
 
-    static Stream<Arguments> splitWithSourceAndSeparatorAndValueExtractorAndCollectionFactoryTestCases() {
-        String integers = "1,2,3,2";
-        String characters = "A-B-3-B";
-        String roles = "R1,  R2, R3,R3";
-        Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
+    static Stream<Arguments> splitWithSourceStringAndValueExtractorAndSeparatorTestCases() {
+        String integers = "1,2,3";
+        String integersWithEmpty = "1,2,3,,";
+        String characters = "A;B;  3";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,   separator,   valueExtractor,           collectionFactory,         expectedResult
-                Arguments.of( null,           null,        null,                     null,                      List.of() ),
-                Arguments.of( integers,       null,        null,                     null,                      List.of() ),
-                Arguments.of( integers,       ",",         null,                     null,                      List.of() ),
-                Arguments.of( integers,       ",",         FROM_STRING_TO_INTEGER,   null,                      List.of(1, 2, 3, 2) ),
-                Arguments.of( roles,          ",",         TRIM_STRING,              null,                      List.of("R1", "R2", "R3", "R3")),
-                Arguments.of( integers,       ",",         FROM_STRING_TO_INTEGER,   setSupplier,               Set.of(1, 2, 3) ),
-                Arguments.of( characters,     "-",         FROM_STRING_TO_STRING,    setSupplier,               Set.of("A", "B", "3") ),
-                Arguments.of( roles,          ",",         TRIM_STRING,              setSupplier,               Set.of("R1", "R2", "R3"))
+                //            sourceString,        valueExtractor,           separator,   expectedException,                expectedResult
+                Arguments.of( null,                null,                     null,        null,                             List.of() ),
+                Arguments.of( null,                null,                     ",",         null,                             List.of() ),
+                Arguments.of( null,                FROM_STRING_TO_INTEGER,   null,        null,                             List.of() ),
+                Arguments.of( null,                FROM_STRING_TO_INTEGER,   ",",         null,                             List.of() ),
+                Arguments.of( "",                  null,                     null,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                     null,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( characters,          FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( integers,            FROM_STRING_TO_INTEGER,   null,        null,                             List.of(1,2,3) ),
+                Arguments.of( integers,            FROM_STRING_TO_INTEGER,   ",",         null,                             List.of(1,2,3) ),
+                Arguments.of( characters,          STRING_TRIM,              ";",         null,                             List.of("A","B","3") )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("splitWithSourceAndSeparatorAndValueExtractorAndCollectionFactoryTestCases")
-    @DisplayName("split: with source, separator, valueExtractor and collectionFactory test cases")
-    public <T> void splitWithSourceAndSeparatorAndValueExtractorAndCollectionFactory_testCases(String source,
-                                                                                               String separator,
-                                                                                               Function<String, T> valueExtractor,
-                                                                                               Supplier<Collection<T>> collectionFactory,
-                                                                                               Collection<T> expectedResult) {
-        assertEquals(
-                expectedResult,
-                split(source, valueExtractor, separator, collectionFactory)
-        );
+    @MethodSource("splitWithSourceStringAndValueExtractorAndSeparatorTestCases")
+    @DisplayName("split: with sourceString, valueExtractor and separator test cases")
+    public <T> void splitWithSourceStringAndValueExtractorAndSeparator_testCases(String sourceString,
+                                                                                 Function<String, T> valueExtractor,
+                                                                                 String separator,
+                                                                                 Class<? extends Exception> expectedException,
+                                                                                 Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, valueExtractor, separator)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, valueExtractor, separator)
+            );
+        }
     }
 
 
-    static Stream<Arguments> splitAllParametersTestCases() {
-        String integers = "1,2,3,2";
-        String characters = "A-B-3-B";
-        String roles = "R1,  R2, R3,R3";
-        Supplier<Collection<String>> setSupplier = LinkedHashSet::new;
+    static Stream<Arguments> splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparatorTestCases() {
+        String integers = "1,2,3";
+        String integersWithEmpty = "1,2,3,,";
+        String characters = "A;B;  3";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,   separator,   chunkLimit,   valueExtractor,           collectionFactory,         expectedResult
-                Arguments.of( null,           null,        -1,           null,                     null,                      List.of() ),
-                Arguments.of( null,           null,         2,           null,                     null,                      List.of() ),
-                Arguments.of( integers,       null,        -1,           null,                     null,                      List.of() ),
-                Arguments.of( integers,       null,         2,           null,                     null,                      List.of() ),
-                Arguments.of( integers,       ",",         -1,           null,                     null,                      List.of() ),
-                Arguments.of( integers,       ",",          2,           null,                     null,                      List.of() ),
-                Arguments.of( integers,       ",",         -1,           FROM_STRING_TO_INTEGER,   null,                      List.of(1, 2, 3, 2) ),
-                Arguments.of( integers,       ",",          4,           FROM_STRING_TO_INTEGER,   null,                      List.of(1, 2, 3, 2) ),
-                Arguments.of( integers,       ",",         10,           FROM_STRING_TO_INTEGER,   null,                      List.of(1, 2, 3, 2) ),
-                Arguments.of( roles,          ",",          2,           TRIM_STRING,              null,                      List.of("R1", "R2, R3,R3")),
-                Arguments.of( integers,       ",",         -1,           FROM_STRING_TO_INTEGER,   setSupplier,               Set.of(1, 2, 3) ),
-                Arguments.of( characters,     "-",         -1,           FROM_STRING_TO_STRING,    setSupplier,               Set.of("A", "B", "3") ),
-                Arguments.of( characters,     "-",          1,           FROM_STRING_TO_STRING,    setSupplier,               Set.of("A-B-3-B") ),
-                Arguments.of( roles,          ",",         -1,           TRIM_STRING,              setSupplier,               Set.of("R1", "R2", "R3")),
-                Arguments.of( roles,          ",",          4,           TRIM_STRING,              setSupplier,               Set.of("R1", "R2", "R3"))
+                //            sourceString,        filterPredicate,   valueExtractor,           separator,   expectedException,                expectedResult
+                Arguments.of( null,                null,              null,                     null,        null,                             List.of() ),
+                Arguments.of( null,                null,              null,                     ",",         null,                             List.of() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   null,        null,                             List.of() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   ",",         null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     null,        null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     ",",         null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                             List.of() ),
+                Arguments.of( "",                  null,              null,                     null,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  NOT_EMPTY,         null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     null,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            NOT_EMPTY,         null,                     ",",         IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   null,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   ",",         NumberFormatException.class,      null ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                             List.of() ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                             List.of() ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   null,        null,                             List.of(1,2,3) ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   ",",         null,                             List.of(1,2,3) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                             List.of(1,2,3) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                             List.of(1,2,3) ),
+                Arguments.of( characters,          NOT_EMPTY,         STRING_TRIM,              ";",         null,                             List.of("A","B","3") )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("splitAllParametersTestCases")
-    @DisplayName("split: with all parameters test cases")
-    public <T> void splitAllParameters_testCases(String source,
-                                                 String separator,
-                                                 int chunkLimit,
-                                                 Function<String, T> valueExtractor,
-                                                 Supplier<Collection<T>> collectionFactory,
-                                                 Collection<T> expectedResult) {
-        assertEquals(
-                expectedResult,
-                split(source, separator, chunkLimit, valueExtractor, collectionFactory)
+    @MethodSource("splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparatorTestCases")
+    @DisplayName("split: with sourceString, filterPredicate, valueExtractor and separator test cases")
+    public <T> void splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparator_testCases(String sourceString,
+                                                                                                   Predicate<String> filterPredicate,
+                                                                                                   Function<String, T> valueExtractor,
+                                                                                                   String separator,
+                                                                                                   Class<? extends Exception> expectedException,
+                                                                                                   Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, filterPredicate, valueExtractor, separator)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, filterPredicate, valueExtractor, separator)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparatorAndCollectionFactoryTestCases() {
+        String integers = "1,2,3,3";
+        String integersWithEmpty = "1,2,3,,";
+        String characters = "A;B;  3;B";
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,        filterPredicate,   valueExtractor,           separator,   collectionFactory,   expectedException,                expectedResult
+                Arguments.of( null,                null,              null,                     null,        null,                null,                             List.of() ),
+                Arguments.of( null,                null,              null,                     null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                null,              null,                     ",",         null,                null,                             List.of() ),
+                Arguments.of( null,                null,              null,                     ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of() ),
+                Arguments.of( null,                null,              FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     null,        null,                null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     ",",         null,                null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         null,                     ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of() ),
+                Arguments.of( null,                NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( "",                  null,              null,                     null,        null,                IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              null,                     null,        SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              null,                     ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              null,                     ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  NOT_EMPTY,         null,                     ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  NOT_EMPTY,         null,                     ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     null,        null,                IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     null,        SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,              null,                     ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            NOT_EMPTY,         null,                     ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            NOT_EMPTY,         null,                     ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( "",                  null,              FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   null,              FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( characters,          null,              FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of() ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of() ),
+                Arguments.of( "",                  NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            null,              FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        null,                null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         null,                null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   NOT_EMPTY,         FROM_STRING_TO_INTEGER,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( characters,          NOT_EMPTY,         STRING_TRIM,              ";",         null,                null,                             List.of("A","B","3","B") ),
+                Arguments.of( characters,          NOT_EMPTY,         STRING_TRIM,              ";",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of("A","B","3")) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparatorAndCollectionFactoryTestCases")
+    @DisplayName("split: with sourceString, filterPredicate, valueExtractor, separator and collectionFactory test cases")
+    public <T> void splitWithSourceStringAndFilterPredicateAndValueExtractorAndSeparatorAndCollectionFactory_testCases(String sourceString,
+                                                                                                                       Predicate<String> filterPredicate,
+                                                                                                                       Function<String, T> valueExtractor,
+                                                                                                                       String separator,
+                                                                                                                       Supplier<Collection<T>> collectionFactory,
+                                                                                                                       Class<? extends Exception> expectedException,
+                                                                                                                       Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, filterPredicate, valueExtractor, separator, collectionFactory)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, filterPredicate, valueExtractor, separator, collectionFactory)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> splitWithSourceStringAndPartialFunctionAndSeparatorAndCollectionFactoryTestCases() {
+        String integers = "1,2,3,3";
+        String integersWithEmpty = "1,2,3,,";
+        String characters = "A;B;  3;B";
+        PartialFunction<String, Integer> stringToInteger = PartialFunction.of(
+                PredicateUtil.alwaysTrue(),
+                FROM_STRING_TO_INTEGER
         );
+        PartialFunction<String, Integer> stringToIntegerWithNotEmpty = PartialFunction.of(
+                NOT_EMPTY,
+                FROM_STRING_TO_INTEGER
+        );
+        PartialFunction<String, String> stringTrimWithNotEmpty = PartialFunction.of(
+                NOT_EMPTY,
+                STRING_TRIM
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceString,        partialFunction,                separator,   collectionFactory,   expectedException,                expectedResult
+                Arguments.of( null,                null,                          null,        null,                null,                             List.of() ),
+                Arguments.of( null,                null,                          null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( null,                null,                          ",",         null,                null,                             List.of() ),
+                Arguments.of( null,                null,                          ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( "",                  null,                          null,        null,                IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,                          null,        SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,                          ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  null,                          ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                          null,        null,                IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                          null,        SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                          ",",         null,                IllegalArgumentException.class,   null ),
+                Arguments.of( integers,            null,                          ",",         SET_SUPPLIER,        IllegalArgumentException.class,   null ),
+                Arguments.of( "",                  stringToInteger,               null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( "",                  stringToInteger,               null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  stringToInteger,               ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( "",                  stringToInteger,               ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   stringToInteger,               null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   stringToInteger,               null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   stringToInteger,               ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( integersWithEmpty,   stringToInteger,               ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          stringToIntegerWithNotEmpty,   null,        null,                NumberFormatException.class,      null ),
+                Arguments.of( characters,          stringToIntegerWithNotEmpty,   null,        SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( characters,          stringToIntegerWithNotEmpty,   ",",         null,                NumberFormatException.class,      null ),
+                Arguments.of( characters,          stringToIntegerWithNotEmpty,   ",",         SET_SUPPLIER,        NumberFormatException.class,      null ),
+                Arguments.of( "",                  stringToIntegerWithNotEmpty,   null,        null,                null,                             List.of() ),
+                Arguments.of( "",                  stringToIntegerWithNotEmpty,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( "",                  stringToIntegerWithNotEmpty,   ",",         null,                null,                             List.of() ),
+                Arguments.of( "",                  stringToIntegerWithNotEmpty,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>() ),
+                Arguments.of( integers,            stringToInteger,               null,        null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            stringToInteger,               null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integers,            stringToInteger,               ",",         null,                null,                             List.of(1,2,3,3) ),
+                Arguments.of( integers,            stringToInteger,               ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integersWithEmpty,   stringToIntegerWithNotEmpty,   null,        null,                null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   stringToIntegerWithNotEmpty,   null,        SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( integersWithEmpty,   stringToIntegerWithNotEmpty,   ",",         null,                null,                             List.of(1,2,3) ),
+                Arguments.of( integersWithEmpty,   stringToIntegerWithNotEmpty,   ",",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of(1,2,3)) ),
+                Arguments.of( characters,          stringTrimWithNotEmpty,        ";",         null,                null,                             List.of("A","B","3","B") ),
+                Arguments.of( characters,          stringTrimWithNotEmpty,        ";",         SET_SUPPLIER,        null,                             new LinkedHashSet<>(List.of("A","B","3")) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("splitWithSourceStringAndPartialFunctionAndSeparatorAndCollectionFactoryTestCases")
+    @DisplayName("split: with sourceString, partialFunction, separator and collectionFactory test cases")
+    public <T> void splitWithSourceStringAndPartialFunctionAndSeparatorAndCollectionFactory_testCases(String sourceString,
+                                                                                                      PartialFunction<String, ? extends T> partialFunction,
+                                                                                                      String separator,
+                                                                                                      Supplier<Collection<T>> collectionFactory,
+                                                                                                      Class<? extends Exception> expectedException,
+                                                                                                      Collection<T> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> split(sourceString, partialFunction, separator, collectionFactory)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    split(sourceString, partialFunction, separator, collectionFactory)
+            );
+        }
     }
 
 
@@ -1936,7 +2446,7 @@ public class StringUtilTest {
 
     private static final Function<String, Integer> FROM_STRING_TO_INTEGER = Integer::parseInt;
 
-    private static final Function<String, String> FROM_STRING_TO_STRING = String::toString;
+    private static final Function<String, String> STRING_TRIM = String::trim;
 
     private static final Predicate<Integer> IS_INTEGER_EVEN = i ->
             null != i && 0 == i % 2;
@@ -1947,6 +2457,8 @@ public class StringUtilTest {
     private static final Predicate<Character> IS_VOWEL = c ->
             -1 != "aeiouAEIOU".indexOf(c);
 
-    private static final Function<String, String> TRIM_STRING = String::trim;
+    private static final Predicate<String> NOT_EMPTY = StringUtil::isNotEmpty;
+
+    private static final Supplier<Collection<String>> SET_SUPPLIER = LinkedHashSet::new;
 
 }

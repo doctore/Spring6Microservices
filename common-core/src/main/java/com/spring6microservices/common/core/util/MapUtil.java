@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultMapSupplier;
 import static com.spring6microservices.common.core.util.CollectorsUtil.toMapNullableValues;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionToMapEntryFunction;
 import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
@@ -108,7 +109,7 @@ public class MapUtil {
                                                            final BiFunction<? super K1, ? super V1, Map.Entry<? extends K2, ? extends V2>> firstMapper,
                                                            final BiFunction<? super K2, ? super V2, Map.Entry<? extends T, ? extends R>> secondMapper,
                                                            final Supplier<Map<T, R>> mapFactory) {
-        final Supplier<Map<T, R>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, R>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -125,7 +126,7 @@ public class MapUtil {
         return map(
                 sourceMap,
                 finalMapper,
-                mapFactory
+                finalMapFactory
         );
     }
 
@@ -217,7 +218,7 @@ public class MapUtil {
                                                            final BiFunction<? super K1, ? super V1, ? extends Map.Entry<K2, V2>> defaultMapper,
                                                            final BiFunction<? super K1, ? super V1, ? extends Map.Entry<K2, V2>> orElseMapper,
                                                            final Supplier<Map<K2, V2>> mapFactory) {
-        final Supplier<Map<K2, V2>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<K2, V2>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -230,7 +231,7 @@ public class MapUtil {
                         defaultMapper
                 ),
                 orElseMapper,
-                mapFactory
+                finalMapFactory
         );
     }
 
@@ -329,7 +330,7 @@ public class MapUtil {
                                                            final PartialFunction<? super Map.Entry<K1, V1>, ? extends Map.Entry<K2, V2>> partialFunction,
                                                            final BiFunction<? super K1, ? super V1, ? extends Map.Entry<K2, V2>> orElseMapper,
                                                            final Supplier<Map<K2, V2>> mapFactory) {
-        final Supplier<Map<K2, V2>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<K2, V2>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -437,7 +438,7 @@ public class MapUtil {
                                                        final BiPredicate<? super K1, ? super V1> filterPredicate,
                                                        final BiFunction<? super K1, ? super V1, ? extends Map.Entry<K2, V2>> mapFunction,
                                                        final Supplier<Map<K2, V2>> mapFactory) {
-        final Supplier<Map<K2, V2>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<K2, V2>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -448,7 +449,7 @@ public class MapUtil {
                         getOrAlwaysTrue(filterPredicate),
                         mapFunction
                 ),
-                mapFactory
+                finalMapFactory
         );
     }
 
@@ -540,7 +541,7 @@ public class MapUtil {
     public static <K1, K2, V1, V2> Map<K2, V2> collect(final Map<? extends K1, ? extends V1> sourceMap,
                                                        final PartialFunction<? super Map.Entry<K1, V1>, ? extends Map.Entry<K2, V2>> partialFunction,
                                                        final Supplier<Map<K2, V2>> mapFactory) {
-        final Supplier<Map<K2, V2>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<K2, V2>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -709,7 +710,7 @@ public class MapUtil {
     public static <T, E> Map<T, E> concat(final Supplier<Map<T, E>> mapFactory,
                                           final BinaryOperator<E> mergeValueFunction,
                                           final Map<? extends T, ? extends E> ...maps) {
-        final Supplier<Map<T, E>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         final BinaryOperator<E> finalMergeValueFunction = ObjectUtil.getOrElse(
                 mergeValueFunction,
                 overwriteWithNew()
@@ -773,7 +774,7 @@ public class MapUtil {
      */
     public static <T, E> Map<T, E> copy(final Map<? extends T, ? extends E> sourceMap,
                                         final Supplier<Map<T, E>> mapFactory) {
-        final Map<T, E> result =  getFinalMapFactory(mapFactory).get();
+        final Map<T, E> result =  getOrDefaultMapSupplier(mapFactory).get();
         if (!isEmpty(sourceMap)) {
             result.putAll(sourceMap);
         }
@@ -885,7 +886,7 @@ public class MapUtil {
                     mapFactory
             );
         }
-        final Supplier<Map<T, E>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         return sourceMap.entrySet()
                 .stream()
                 .dropWhile(entry ->
@@ -972,7 +973,7 @@ public class MapUtil {
                     mapFactory
             );
         }
-        final Supplier<Map<T, E>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         return sourceMap.entrySet()
                 .stream()
                 .filter(entry ->
@@ -1437,8 +1438,8 @@ public class MapUtil {
         }
         AssertUtil.notNull(discriminatorKey, "discriminatorKey must be not null");
 
-        final Supplier<Map<K, Map<T, E>>> finalMapResultFactory = getFinalMapFactory(mapResultFactory);
-        final Supplier<Map<T, E>> finalMapValuesFactory = getFinalMapFactory(mapValuesFactory);
+        final Supplier<Map<K, Map<T, E>>> finalMapResultFactory = getOrDefaultMapSupplier(mapResultFactory);
+        final Supplier<Map<T, E>> finalMapValuesFactory = getOrDefaultMapSupplier(mapValuesFactory);
 
         Map<K, Map<T, E>> result = finalMapResultFactory.get();
         sourceMap.forEach(
@@ -1558,8 +1559,8 @@ public class MapUtil {
         }
         AssertUtil.notNull(discriminatorKey, "discriminatorKey must be not null");
 
-        final Supplier<Map<K, Map<T, E>>> finalMapResultFactory = getFinalMapFactory(mapResultFactory);
-        final Supplier<Map<T, E>> finalMapValuesFactory = getFinalMapFactory(mapValuesFactory);
+        final Supplier<Map<K, Map<T, E>>> finalMapResultFactory = getOrDefaultMapSupplier(mapResultFactory);
+        final Supplier<Map<T, E>> finalMapValuesFactory = getOrDefaultMapSupplier(mapValuesFactory);
 
         Map<K, Map<T, E>> result = finalMapResultFactory.get();
         sourceMap.forEach(
@@ -2023,7 +2024,7 @@ public class MapUtil {
     public static <T, E, R, V> Map<R, V> map(final Map<? extends T, ? extends E> sourceMap,
                                              final BiFunction<? super T, ? super E, Map.Entry<? extends R, ? extends V>> mapFunction,
                                              final Supplier<Map<R, V>> mapFactory) {
-        final Supplier<Map<R, V>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<R, V>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -2108,7 +2109,7 @@ public class MapUtil {
     public static <T, E, R> Map<T, R> mapValues(final Map<? extends T, ? extends E> sourceMap,
                                                 final BiFunction<? super T, ? super E, ? extends R> mapFunction,
                                                 final Supplier<Map<T, R>> mapFactory) {
-        final Supplier<Map<T, R>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, R>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         if (isEmpty(sourceMap)) {
             return finalMapFactory.get();
         }
@@ -2410,7 +2411,7 @@ public class MapUtil {
     public static <T, E> Map<Boolean, Map<T, E>> partition(final Map<? extends T, ? extends E> sourceMap,
                                                            final BiPredicate<? super T, ? super E> discriminator,
                                                            final Supplier<Map<T, E>> mapFactory) {
-        final Supplier<Map<T, E>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         Map<Boolean, Map<T, E>> result = new HashMap<>() {{
             put(Boolean.TRUE, finalMapFactory.get());
             put(Boolean.FALSE, finalMapFactory.get());
@@ -2813,7 +2814,7 @@ public class MapUtil {
                     mapFactory
             );
         }
-        final Supplier<Map<T, E>> finalMapFactory = getFinalMapFactory(mapFactory);
+        final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         return sourceMap.entrySet()
                 .stream()
                 .takeWhile(entry ->
@@ -3010,23 +3011,6 @@ public class MapUtil {
                 .collect(
                         Collectors.toCollection(finalCollectionFactory)
                 );
-    }
-
-
-    /**
-     *    Returns provided {@link Supplier} of {@link Map} {@code mapFactory} if not {@code null},
-     * {@link Supplier} of {@link HashMap} otherwise.
-     *
-     * @param mapFactory
-     *    {@link Supplier} of {@link Map}
-     *
-     * @return {@link Supplier} of {@link Map}
-     */
-    private static <T, E> Supplier<Map<T, E>> getFinalMapFactory(final Supplier<Map<T, E>> mapFactory) {
-        return ObjectUtil.getOrElse(
-                mapFactory,
-                HashMap::new
-        );
     }
 
 }
