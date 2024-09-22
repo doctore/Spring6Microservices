@@ -49,6 +49,33 @@ import static java.util.Optional.ofNullable;
 public class CollectionUtil {
 
     /**
+     *    Adds the provided {@code element} in the given {@code sourceCollection}, returning {@code true} if both parameters
+     * are different of {@code null}, {@code false} otherwise.
+     *
+     * @param sourceCollection
+     *    Source {@link Collection} to include {@code element}
+     * @param element
+     *    Item to add in {@code sourceCollection}
+     *
+     * @return {@code true} if {@code sourceCollection} and {@code element} are not {@code null},
+     *         {@code false} otherwise
+     */
+    public static <T> boolean addIfNotNull(final Collection<T> sourceCollection,
+                                           final T element) {
+        return ofNullable(sourceCollection)
+                .map(sc ->
+                        ofNullable(element)
+                                .map(elto -> {
+                                    sc.add(elto);
+                                    return true;
+                                })
+                                .orElse(false)
+                )
+                .orElse(false);
+    }
+
+
+    /**
      *    Returns a new {@link List} using the given {@code sourceCollection}, applying to its elements the composed
      * {@link Function} {@code secondMapper}({@code firstMapper}(x))
      *

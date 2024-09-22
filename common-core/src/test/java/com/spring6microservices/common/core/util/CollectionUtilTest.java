@@ -51,6 +51,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionUtilTest {
 
+    static Stream<Arguments> addIfNotNullTestCases() {
+        List<String> modificableStringList = new ArrayList<>();
+        List<Integer> modificableIntegerList = new ArrayList<>(List.of(11, 19));
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,         element,   expectedResult
+                Arguments.of( null,                     null,      false ),
+                Arguments.of( List.of(),                null,      false ),
+                Arguments.of( null,                     "A",       false ),
+                Arguments.of( modificableStringList,    "A",       true ),
+                Arguments.of( modificableIntegerList,   2,         true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("addIfNotNullTestCases")
+    @DisplayName("addIfNotNull: test cases")
+    public <T> void addIfNotNull_testCases(Collection<T> sourceCollection,
+                                           T element,
+                                           boolean expectedResult) {
+        assertEquals(
+                expectedResult,
+                addIfNotNull(sourceCollection, element)
+        );
+    }
+
+
     static Stream<Arguments> andThenNoCollectionFactoryTestCases() {
         Set<Integer> ints = new LinkedHashSet<>(asList(1, 2, null, 6));
 
