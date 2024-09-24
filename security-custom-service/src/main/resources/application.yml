@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: security-jwt-service
+  flyway:
+    enabled: false

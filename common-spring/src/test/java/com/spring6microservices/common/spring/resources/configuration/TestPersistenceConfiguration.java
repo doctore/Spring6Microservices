@@ -60,7 +60,6 @@ public class TestPersistenceConfiguration {
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan(MODEL_PATH);
         factory.setDataSource(testDataSource());
-
         return factory;
     }
 
