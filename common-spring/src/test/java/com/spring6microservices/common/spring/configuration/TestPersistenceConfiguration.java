@@ -1,4 +1,4 @@
-package com.spring6microservices.common.spring.resources.configuration;
+package com.spring6microservices.common.spring.configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -14,9 +14,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
-import static com.spring6microservices.common.spring.resources.configuration.TestPersistenceConfiguration.ENTITY_MANAGER_FACTORY_BEAN;
-import static com.spring6microservices.common.spring.resources.configuration.TestPersistenceConfiguration.REPOSITORY_PATH;
-import static com.spring6microservices.common.spring.resources.configuration.TestPersistenceConfiguration.TRANSACTION_MANAGER_BEAN;
+import static com.spring6microservices.common.spring.configuration.TestPersistenceConfiguration.ENTITY_MANAGER_FACTORY_BEAN;
+import static com.spring6microservices.common.spring.configuration.TestPersistenceConfiguration.REPOSITORY_PATH;
+import static com.spring6microservices.common.spring.configuration.TestPersistenceConfiguration.TRANSACTION_MANAGER_BEAN;
 
 @Configuration
 @EnableJpaRepositories(
@@ -26,7 +26,7 @@ import static com.spring6microservices.common.spring.resources.configuration.Tes
 public class TestPersistenceConfiguration {
 
     public static final String REPOSITORY_PATH = "com.spring6microservices.common.spring.repository";
-    private final String MODEL_PATH = "com.spring6microservices.common.spring.resources.data";
+    private final String MODEL_PATH = "com.spring6microservices.common.spring.model";
 
     public static final String ENTITY_MANAGER_FACTORY_BEAN = "entityManagerFactory";
     public static final String TRANSACTION_MANAGER_BEAN = "transactionManager";

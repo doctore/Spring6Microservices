@@ -1,5 +1,6 @@
-package com.spring6microservices.common.spring.resources.data;
+package com.spring6microservices.common.spring.dto;
 
+import com.spring6microservices.common.spring.enums.PizzaEnum;
 import com.spring6microservices.common.spring.validator.enums.EnumHasInternalStringValue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PizzaDto {
 
-    @EnumHasInternalStringValue(enumClass=PizzaEnum.class)
+    @EnumHasInternalStringValue(enumClass= PizzaEnum.class)
     private String name;
 
     private Double cost;

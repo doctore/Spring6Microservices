@@ -1,4 +1,4 @@
-package com.spring6microservices.common.spring.resources.data;
+package com.spring6microservices.common.spring.enums;
 
 import com.spring6microservices.common.spring.validator.enums.IEnumInternalPropertyValue;
 

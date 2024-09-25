@@ -1,4 +1,4 @@
-package com.spring6microservices.common.spring.resources.data;
+package com.spring6microservices.common.spring.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

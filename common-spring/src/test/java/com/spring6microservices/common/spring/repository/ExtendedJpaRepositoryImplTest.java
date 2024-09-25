@@ -2,8 +2,8 @@ package com.spring6microservices.common.spring.repository;
 
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
 import com.spring6microservices.common.core.util.StringUtil;
-import com.spring6microservices.common.spring.resources.configuration.TestPersistenceConfiguration;
-import com.spring6microservices.common.spring.resources.data.User;
+import com.spring6microservices.common.spring.configuration.TestPersistenceConfiguration;
+import com.spring6microservices.common.spring.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;

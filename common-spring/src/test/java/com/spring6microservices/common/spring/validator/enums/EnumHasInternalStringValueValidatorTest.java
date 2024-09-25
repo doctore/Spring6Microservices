@@ -1,7 +1,7 @@
 package com.spring6microservices.common.spring.validator.enums;
 
-import com.spring6microservices.common.spring.resources.data.PizzaDto;
-import com.spring6microservices.common.spring.resources.data.PizzaEnum;
+import com.spring6microservices.common.spring.dto.PizzaDto;
+import com.spring6microservices.common.spring.enums.PizzaEnum;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static com.spring6microservices.common.spring.resources.data.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.spring.enums.PizzaEnum.CARBONARA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
