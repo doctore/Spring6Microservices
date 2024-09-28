@@ -53,7 +53,9 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("clearTestCases")
     @DisplayName("clear: test cases")
-    public void clear_testCases(String cacheName, Cache cacheManagerResult, boolean expectedResult) {
+    public void clear_testCases(String cacheName,
+                                Cache cacheManagerResult,
+                                boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
         if (null != cacheManagerResult) {
@@ -61,11 +63,11 @@ public class CacheServiceTest {
                     .when(cacheManagerResult)
                     .clear();
         }
-        boolean operationResult = service.clear(cacheName);
+        boolean result = service.clear(cacheName);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -87,7 +89,11 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("containsTestCases")
     @DisplayName("contains: test cases")
-    public void contains_testCases(String cacheName, String key, Cache cacheManagerResult, SimpleValueWrapper cacheResult, boolean expectedResult) {
+    public void contains_testCases(String cacheName,
+                                   String key,
+                                   Cache cacheManagerResult,
+                                   SimpleValueWrapper cacheResult,
+                                   boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
         if (null != cacheManagerResult) {
@@ -95,11 +101,11 @@ public class CacheServiceTest {
                     .thenReturn(cacheResult);
         }
 
-        boolean operationResult = service.contains(cacheName, key);
+        boolean result = service.contains(cacheName, key);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -121,7 +127,11 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("getTestCases")
     @DisplayName("get: test cases")
-    public void get_testCases(String cacheName, String key, Cache cacheManagerResult, SimpleValueWrapper cacheResult, Optional<String> expectedResult) {
+    public void get_testCases(String cacheName,
+                              String key,
+                              Cache cacheManagerResult,
+                              SimpleValueWrapper cacheResult,
+                              Optional<String> expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
         if (null != cacheManagerResult) {
@@ -129,11 +139,47 @@ public class CacheServiceTest {
                     .thenReturn(cacheResult);
         }
 
-        Optional<String> operationResult = service.get(cacheName, key);
+        Optional<String> result = service.get(cacheName, key);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
+        );
+    }
+
+
+    static Stream<Arguments> getCacheTestCases() {
+        Cache mockCache = Mockito.mock(Cache.class);
+        return Stream.of(
+                //@formatter:off
+                //            cacheName,         cacheManagerResult,   expectedResult
+                Arguments.of( null,              null,                 empty() ),
+                Arguments.of( "NotFoundCache",   null,                 empty() ),
+                Arguments.of( "FoundCache",      mockCache,            of(mockCache) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getCacheTestCases")
+    @DisplayName("getCache: test cases")
+    public void getCache_testCases(String cacheName,
+                                   Cache cacheManagerResult,
+                                   Optional<Cache> expectedResult) {
+        when(mockCacheManager.getCache(cacheName))
+                .thenReturn(cacheManagerResult);
+
+        Optional<Cache> result = service.getCache(cacheName);
+
+        assertEquals(
+                expectedResult.isPresent(),
+                result.isPresent()
+        );
+        result.ifPresent(
+                cache ->
+                        assertEquals(
+                                expectedResult.get(),
+                                cache
+                        )
         );
     }
 
@@ -153,18 +199,22 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("putTestCases")
     @DisplayName("put: test cases")
-    public void put_testCases(String cacheName, String key, String value, Cache cacheManagerResult, boolean expectedResult) {
+    public void put_testCases(String cacheName,
+                              String key,
+                              String value,
+                              Cache cacheManagerResult,
+                              boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
         if (null != cacheManagerResult) {
             doNothing().when(cacheManagerResult).put(key, value);
         }
 
-        boolean operationResult = service.put(cacheName, key, value);
+        boolean result = service.put(cacheName, key, value);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -186,7 +236,11 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("putIfAbsentTestCases")
     @DisplayName("putIfAbsent: test cases")
-    public void putIfAbsent_testCases(String cacheName, String key, String value, Cache cacheManagerResult, SimpleValueWrapper cacheResult,
+    public void putIfAbsent_testCases(String cacheName,
+                                      String key,
+                                      String value,
+                                      Cache cacheManagerResult,
+                                      SimpleValueWrapper cacheResult,
                                       boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
@@ -198,11 +252,11 @@ public class CacheServiceTest {
                     .put(key, value);
         }
 
-        boolean operationResult = service.putIfAbsent(cacheName, key, value);
+        boolean result = service.putIfAbsent(cacheName, key, value);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -224,7 +278,11 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("putIfPresentTestCases")
     @DisplayName("putIfPresent: test cases")
-    public void putIfPresent_testCases(String cacheName, String key, String value, Cache cacheManagerResult, SimpleValueWrapper cacheResult,
+    public void putIfPresent_testCases(String cacheName,
+                                       String key,
+                                       String value,
+                                       Cache cacheManagerResult,
+                                       SimpleValueWrapper cacheResult,
                                        boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
@@ -236,11 +294,11 @@ public class CacheServiceTest {
                     .put(key, value);
         }
 
-        boolean operationResult = service.putIfPresent(cacheName, key, value);
+        boolean result = service.putIfPresent(cacheName, key, value);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -260,15 +318,18 @@ public class CacheServiceTest {
     @ParameterizedTest
     @MethodSource("removeTestCases")
     @DisplayName("remove: test cases")
-    public void remove_testCases(String cacheName, String key, Cache cacheManagerResult, boolean expectedResult) {
+    public void remove_testCases(String cacheName,
+                                 String key,
+                                 Cache cacheManagerResult,
+                                 boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
                 .thenReturn(cacheManagerResult);
 
-        boolean operationResult = service.remove(cacheName, key);
+        boolean result = service.remove(cacheName, key);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 

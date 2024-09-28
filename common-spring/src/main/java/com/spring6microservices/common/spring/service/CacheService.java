@@ -1,6 +1,7 @@
 package com.spring6microservices.common.spring.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,20 @@ public class CacheService {
                 .map(cacheManager::getCache)
                 .map(c -> c.get(key))
                 .map(v -> (V)v.get());
+    }
+
+
+    /**
+     * Return the {@link Cache} related with provided {@code cacheName}.
+     *
+     * @param cacheName
+     *    Name of the {@link Cache} to search
+     *
+     * @return {@link Optional} with the {@link Cache} if it was found, {@link Optional#empty()} otherwise
+     */
+    public Optional<Cache> getCache(final String cacheName) {
+        return ofNullable(cacheName)
+                .map(cacheManager::getCache);
     }
 
 
