@@ -1,14 +1,20 @@
 package com.security.custom.exception;
 
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.service.ApplicationClientDetailsService;
 
-// TODO: PENDING TO ADD JwtClientDetailsService
+import java.io.Serial;
+
 /**
- * Thrown if an {@link JwtClientDetailsService} implementation cannot locate a {@link ApplicationClientDetails} by its clientId.
+ * Thrown if is no {@link ApplicationClientDetails#getId()} matching with provided one.
+ *
+ * @see ApplicationClientDetailsService
  */
 public class ApplicationClientNotFoundException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 338648360450595760L;
+
 
     public ApplicationClientNotFoundException() {
         super();
@@ -18,7 +24,8 @@ public class ApplicationClientNotFoundException extends RuntimeException {
         super(message);
     }
 
-    public ApplicationClientNotFoundException(String message, Throwable cause) {
+    public ApplicationClientNotFoundException(String message,
+                                              Throwable cause) {
         super(message, cause);
     }
 
@@ -26,7 +33,10 @@ public class ApplicationClientNotFoundException extends RuntimeException {
         super(cause);
     }
 
-    protected ApplicationClientNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected ApplicationClientNotFoundException(String message,
+                                                 Throwable cause,
+                                                 boolean enableSuppression,
+                                                 boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

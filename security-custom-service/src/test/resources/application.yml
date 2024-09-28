@@ -1,3 +1,11 @@
+# Internal caches used by the microservice
+cache:
+  testCache:
+    entryCapacity: 1
+    expireInSeconds: 50
+    name: onlyForTests
+
+# Spring framework configuration
 spring:
   datasource:
     driverClassName: org.h2.Driver
@@ -7,9 +15,8 @@ spring:
   flyway:
     enabled: false
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
-        ddlAuto: create-drop
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        hbm2ddl:
-          auto: create-drop

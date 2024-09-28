@@ -1,3 +1,11 @@
+# Internal caches used by the microservice
+cache:
+  applicationClientDetails:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: applicationClientDetailsCache
+
+# Server configuration
 server:
   port: 8180
 

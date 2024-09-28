@@ -19,7 +19,7 @@ public class HttpUtil {
 
 
     /**
-     * Build the required Basic Authentication header value.
+     * Builds the required Basic Authentication header value.
      *
      * @param username
      *    User's identifier. {@link StringUtil#EMPTY_STRING} will be used if it has no value
@@ -61,7 +61,7 @@ public class HttpUtil {
 
 
     /**
-     * Decode provided encoded Basic Authentication header value.
+     * Decodes provided encoded Basic Authentication header value.
      *
      * @param encodeBasicAuth
      *    {@link String} with an encoded Basic Authentication header value. {@link StringUtil#EMPTY_STRING} will be used if it has no value

@@ -1,5 +1,5 @@
 spring:
   application:
-    name: security-jwt-service
+    name: security-custom-service
   flyway:
     enabled: false

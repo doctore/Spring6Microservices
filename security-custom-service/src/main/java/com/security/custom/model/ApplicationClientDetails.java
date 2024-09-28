@@ -80,12 +80,12 @@ public class ApplicationClientDetails implements UserDetails {
     private String encryptionSecret;
 
     @NotNull
-    private int accessTokenValidity;
+    private int accessTokenValidityInSeconds;
 
     /**
      * If {@code null} then only access token will be generated and trying to refresh it will generate an error.
      */
-    private int refreshTokenValidity;
+    private int refreshTokenValidityInSeconds;
 
 
     @Override

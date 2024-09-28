@@ -14,17 +14,28 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
-@Configuration(value = Constants.APPLICATION_NAME + "PersistenceConfiguration")
+@Configuration(value = Constants.APPLICATION.NAME + "PersistenceConfiguration")
+/*
 @EnableJpaRepositories(
         basePackages = PersistenceConfiguration.REPOSITORY_PATH,
         entityManagerFactoryRef = PersistenceConfiguration.ENTITY_MANAGER_FACTORY_BEAN,
         transactionManagerRef= PersistenceConfiguration.TRANSACTION_MANAGER_BEAN,
         repositoryBaseClass = ExtendedJpaRepositoryImpl.class)
+ */
+@EnableJpaRepositories(
+        basePackages = PersistenceConfiguration.REPOSITORY_PATH,
+        repositoryBaseClass = ExtendedJpaRepositoryImpl.class)
+@EnableTransactionManagement
 public class PersistenceConfiguration {
 
+    public static final String REPOSITORY_PATH = "com.security.custom.repository";
+
+    // TODO: PENDING TO CLEAN
+    /*
     private final String DATASOURCE_PROPERTIES = "spring.datasource";
     public static final String DATASOURCE_BEAN = Constants.APPLICATION_NAME + "DataSource";
     public static final String DATASOURCE_PROPERTIES_BEAN = Constants.APPLICATION_NAME + "DataSourceProperties";
@@ -70,5 +81,6 @@ public class PersistenceConfiguration {
                 entityManagerFactory.getObject()
         );
     }
+     */
 
 }

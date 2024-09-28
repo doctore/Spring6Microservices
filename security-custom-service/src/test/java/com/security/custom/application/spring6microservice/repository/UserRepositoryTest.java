@@ -1,23 +1,97 @@
 package com.security.custom.application.spring6microservice.repository;
 
+import com.security.custom.application.spring6microservice.enums.Permissions;
+import com.security.custom.application.spring6microservice.enums.Roles;
+import com.security.custom.application.spring6microservice.model.Role;
+import com.security.custom.application.spring6microservice.model.User;
+import com.security.custom.model.ApplicationClientDetails;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.jdbc.Sql;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
+@DataJdbcTest
+@ComponentScan("com.security.custom.application.spring6microservice.repository")
+@Sql(
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
+        value = "classpath:db/spring6microservice_user.sql"
+)
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository repository;
 
 
-    @Test
-    @DisplayName("test")
-    public void test() {
-        int a = 1;
+    static Stream<Arguments> findByUsernameTestCases() {
+        Role role = new Role(
+                1,
+                Roles.ADMIN.name()
+        );
+        role.addPermission(
+                Permissions.CREATE_ORDER
+        );
+        role.addPermission(
+                Permissions.GET_ORDER
+        );
+        User existingUser = User.builder()
+                .id(1L)
+                .name("Test user name")
+                .username("Test user username")
+                .password("Test user password")
+                .active(true)
+                .roles(
+                        Set.of(
+                                role
+                        )
+                )
+                .build();
+
+        return Stream.of(
+                //@formatter:off
+                //            id,                           expectedResult
+                Arguments.of( null,                         empty() ),
+                Arguments.of( "ItDoesNotExist",             empty() ),
+                Arguments.of( existingUser.getUsername(),   of(existingUser) )
+        ); //@formatter:on
     }
+
+    @ParameterizedTest
+    @MethodSource("findByUsernameTestCases")
+    @DisplayName("findByUsername: test cases")
+    public void findByUsername_testCases(String username,
+                                         Optional<ApplicationClientDetails> expectedResult) {
+        Optional<User> result = repository.findByUsername(username);
+        if (expectedResult.isEmpty()) {
+            assertNotNull(result);
+            assertFalse(result.isPresent());
+        } else {
+            assertNotNull(result);
+            assertTrue(result.isPresent());
+            assertThat(
+                    result.get(),
+                    samePropertyValuesAs(
+                            expectedResult.get()
+                    )
+            );
+        }
+    }
+
 }

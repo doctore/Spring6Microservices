@@ -25,7 +25,7 @@ public class CacheService {
 
 
     /**
-     * Remove all the elements included in the given {@code cacheName}
+     * Removes all the elements included in the given {@code cacheName}
      *
      * @param cacheName
      *    Cache to clean
@@ -44,7 +44,7 @@ public class CacheService {
 
 
     /**
-     * Check if exists the given {@code key} inside the cache.
+     * Checks if exists the given {@code key} inside the cache.
      *
      * @param cacheName
      *    Cache on which the {@code key} will be searched
@@ -63,7 +63,7 @@ public class CacheService {
 
 
     /**
-     * Return the {@code value} related with the given {@code key} inside the cache.
+     * Returns the {@code value} related with the given {@code key} inside the cache.
      *
      * @param cacheName
      *    Cache on which the {@code key} will be searched
@@ -83,7 +83,7 @@ public class CacheService {
 
 
     /**
-     * Return the {@link Cache} related with provided {@code cacheName}.
+     * Returns the {@link Cache} related with provided {@code cacheName}.
      *
      * @param cacheName
      *    Name of the {@link Cache} to search
@@ -97,7 +97,7 @@ public class CacheService {
 
 
     /**
-     * Include a pair of {@code key} - {@code value} inside the cache.
+     * Includes a pair of {@code key} - {@code value} inside the cache.
      *
      * @param cacheName
      *    Cache on which the information will be included
@@ -122,7 +122,7 @@ public class CacheService {
 
 
     /**
-     * Include a pair of {@code key} - {@code value} inside the cache, ONLY if the provided key does not exist.
+     * Includes a pair of {@code key} - {@code value} inside the cache, ONLY if the provided key does not exist.
      *
      * @param cacheName
      *    Cache on which the information will be included
@@ -142,7 +142,7 @@ public class CacheService {
 
 
     /**
-     * Include a pair of {@code key} - {@code value} inside the cache, ONLY if the provided key exists.
+     * Includes a pair of {@code key} - {@code value} inside the cache, ONLY if the provided key exists.
      *
      * @param cacheName
      *    Cache on which the information will be included
@@ -162,7 +162,7 @@ public class CacheService {
 
 
     /**
-     * Remove the given {@code key} of the cache.
+     * Removes the given {@code key} of the cache.
      *
      * @param cacheName
      *    Cache on which the information will be removed

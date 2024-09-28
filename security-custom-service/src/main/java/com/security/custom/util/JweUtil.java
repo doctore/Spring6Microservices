@@ -222,7 +222,7 @@ public class JweUtil {
 
 
     /**
-     * Extract from the given {@code jweToken} all the information included in the payload of the nested JWS one.
+     * Extracts from the given {@code jweToken} all the information included in the payload of the nested JWS one.
      *
      * @param jweToken
      *    JWE token to extract the required information
@@ -302,7 +302,7 @@ public class JweUtil {
 
 
     /**
-     *    Get the information included in the nested JWS token of given JWE {@code jweToken} that match with provided
+     *    Gets the information included in the nested JWS token of given JWE {@code jweToken} that match with provided
      * {@code keysToInclude}.
      *
      * @apiNote
@@ -355,7 +355,7 @@ public class JweUtil {
 
 
     /**
-     *    Get the information included in the nested JWS token of given JWE {@code jweToken} except the given
+     *    Gets the information included in the nested JWS token of given JWE {@code jweToken} except the given
      * {@code keysToExclude}.
      *
      * @apiNote
@@ -409,7 +409,7 @@ public class JweUtil {
 
 
     /**
-     * Return if the given {@code token} is a JWE one.
+     * Returns if the given {@code token} is a JWE one.
      *
      * @param token
      *    {@link String} with the {@code token} to check
@@ -441,7 +441,7 @@ public class JweUtil {
 
 
     /**
-     * Encrypt the given JWS token using provided {@link TokenEncryptionAlgorithm} and {@link TokenEncryptionMethod}.
+     * Encrypts the given JWS token using provided {@link TokenEncryptionAlgorithm} and {@link TokenEncryptionMethod}.
      *
      * @param jwsToken
      *    {@link String} with the JWS token to encrypt
@@ -499,7 +499,7 @@ public class JweUtil {
 
 
     /**
-     * Decrypt the given JWE token using provided {@code encryptionSecret} and returning the nested JWS token.
+     * Decrypts the given JWE token using provided {@code encryptionSecret} and returning the nested JWS token.
      *
      * @param jweToken
      *    {@link String} with the JWE token to decrypt
@@ -543,7 +543,7 @@ public class JweUtil {
 
 
     /**
-     * Return the suitable {@link JWEEncrypter} taking into account the provided {@link TokenEncryptionAlgorithm}.
+     * Returns the suitable {@link JWEEncrypter} taking into account the provided {@link TokenEncryptionAlgorithm}.
      *
      * @param encryptionAlgorithm
      *    {@link TokenEncryptionAlgorithm} used to encrypt the JWE token
@@ -600,7 +600,7 @@ public class JweUtil {
 
 
     /**
-     *    Return the suitable {@link JWEDecrypter} taking into account the {@link TokenEncryptionAlgorithm} used to
+     *    Returns the suitable {@link JWEDecrypter} taking into account the {@link TokenEncryptionAlgorithm} used to
      * encrypt the given JWE token {@code jweObject}.
      *
      * @param encryptedJWT

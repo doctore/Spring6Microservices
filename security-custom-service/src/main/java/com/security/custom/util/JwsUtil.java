@@ -170,7 +170,7 @@ public class JwsUtil {
 
 
     /**
-     * Extract from the given {@code jwsToken} all the information included in the payload.
+     * Extracts from the given {@code jwsToken} all the information included in the payload.
      *
      * @param jwsToken
      *    JWS token to extract the required information
@@ -271,7 +271,7 @@ public class JwsUtil {
 
 
     /**
-     * Get the information included in the given JWS {@code jwsToken} that match with the given {@code keysToInclude}.
+     * Gets the information included in the given JWS {@code jwsToken} that match with the given {@code keysToInclude}.
      *
      * @apiNote
      *    If {@code keysToInclude} is {@code null} or empty, then an empty {@link Map} is returned.
@@ -318,7 +318,7 @@ public class JwsUtil {
 
 
     /**
-     * Get the information included in the given JWS {@code jwsToken} except the given {@code keysToExclude}.
+     * Gets the information included in the given JWS {@code jwsToken} except the given {@code keysToExclude}.
      *
      * @apiNote
      *    If {@code keysToExclude} is {@code null} or empty, then a {@link Map} containing all data of given {@code jwsToken}
@@ -366,7 +366,7 @@ public class JwsUtil {
 
 
     /**
-     * Return if the given {@code token} is a JWS one.
+     * Returns if the given {@code token} is a JWS one.
      *
      * @param token
      *    {@link String} with the {@code token} to check
@@ -398,7 +398,7 @@ public class JwsUtil {
 
 
     /**
-     * Generate the information to include in the JWT token.
+     * Generates the information to include in the JWT token.
      *
      * @param informationToInclude
      *    {@link Map} with the information to include in the returned JWS token
@@ -427,7 +427,7 @@ public class JwsUtil {
 
 
     /**
-     * Generate the signed JWT token (a JWS one).
+     * Generates the signed JWT token (a JWS one).
      *
      * @param signatureAlgorithm
      *    {@link TokenSignatureAlgorithm} used to sign the JWS token
@@ -468,7 +468,7 @@ public class JwsUtil {
 
 
     /**
-     * Return the suitable {@link JWSSigner} taking into account the provided {@link TokenSignatureAlgorithm}.
+     * Returns the suitable {@link JWSSigner} taking into account the provided {@link TokenSignatureAlgorithm}.
      *
      * @param signatureAlgorithm
      *    {@link TokenSignatureAlgorithm} used to sign the JWS token
@@ -523,7 +523,7 @@ public class JwsUtil {
 
 
     /**
-     *    Return the suitable {@link JWSVerifier} taking into account the {@link TokenSignatureAlgorithm} used to sing
+     *    Returns the suitable {@link JWSVerifier} taking into account the {@link TokenSignatureAlgorithm} used to sing
      * the given JWS token {@code signedJWT}.
      *
      * @param signedJWT
