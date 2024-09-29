@@ -1,31 +1,24 @@
 package com.security.custom.application.spring6microservice.service;
 
 import com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants;
-import com.security.custom.dto.RawAuthenticationInformationDto;
-import com.security.custom.interfaces.IAuthenticationGenerator;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.security.custom.interfaces.IAuthorizationService;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+@Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthorizationService")
+public class Spring6MicroserviceAuthorizationService implements IAuthorizationService {
 
-import static com.security.custom.enums.token.TokenKeys.AUTHORITIES;
-import static com.security.custom.enums.token.TokenKeys.USERNAME;
 
-@Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthenticationGenerator")
-public class Spring6MicroserviceAuthenticationGenerator implements IAuthenticationGenerator {
+    /* TODO: PENDING TO DO:
 
-    @Override
+        @Override
     public Optional<RawAuthenticationInformationDto> getRawAuthenticationInformation(final UserDetails userDetails) {
-        // TODO: PENDING
         return null;
-        /*
         return ofNullable(userDetails)
                 .map(user -> buildAuthenticationInformation((User)user));
-         */
     }
 
 
-    @Override
+     @Override
     public String getUsernameKey() {
         return USERNAME.getKey();
     }
@@ -37,7 +30,7 @@ public class Spring6MicroserviceAuthenticationGenerator implements IAuthenticati
         return AUTHORITIES.getKey();
     }
 
-    /* TODO: PENDING TO DO:
+
     private RawAuthenticationInformationDto buildAuthenticationInformation(final User user) {
         return RawAuthenticationInformationDto.builder()
                 .accessTokenInformation(

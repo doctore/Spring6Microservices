@@ -63,27 +63,6 @@ public enum TokenSignatureAlgorithm {
      * Get the {@link TokenSignatureAlgorithm} that matches with the given one.
      *
      * @param algorithm
-     *    Algorithm to sign the token to search
-     *
-     * @return {@link Optional} with {@link TokenSignatureAlgorithm} if {@code algorithm} matches with existing one,
-     *         {@link Optional#empty()} otherwise
-     */
-    public static Optional<TokenSignatureAlgorithm> getByAlgorithm(@Nullable String algorithm) {
-        return ofNullable(algorithm)
-                .flatMap(alg ->
-                        Arrays.stream(TokenSignatureAlgorithm.values())
-                                .filter(e ->
-                                        alg.equals(e.name())
-                                )
-                                .findFirst()
-                );
-    }
-
-
-    /**
-     * Get the {@link TokenSignatureAlgorithm} that matches with the given one.
-     *
-     * @param algorithm
      *    {@link JWSAlgorithm} to search
      *
      * @return {@link Optional} with {@link TokenSignatureAlgorithm} if {@code algorithm} matches with existing one,

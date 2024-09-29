@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.Map;
 
 /**
- * Required information to generate the final token sent as response
+ * Required information to generate the final response of an authentication request.
  */
 @AllArgsConstructor
 @Builder

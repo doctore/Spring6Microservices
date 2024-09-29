@@ -67,16 +67,17 @@ public class ApplicationClientDetailsServiceTest {
     @ParameterizedTest
     @MethodSource("findByIdTestCases")
     @DisplayName("findById: test cases")
-    public void findBytId_testCases(String id,
-                                    Optional<ApplicationClientDetails> repositoryResult,
-                                    ApplicationClientDetails cacheServiceResult,
-                                    Class<? extends Exception> expectedException,
-                                    ApplicationClientDetails expectedResult) {
+    public void findById_testCases(String id,
+                                   Optional<ApplicationClientDetails> repositoryResult,
+                                   ApplicationClientDetails cacheServiceResult,
+                                   Class<? extends Exception> expectedException,
+                                   ApplicationClientDetails expectedResult) {
 
         when(mockRepository.findById(id))
                 .thenReturn(repositoryResult);
         when(mockCacheService.get(eq(id)))
                 .thenReturn(ofNullable(cacheServiceResult));
+
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -89,7 +90,7 @@ public class ApplicationClientDetailsServiceTest {
                     service.findById(id)
             );
         }
-        findByClientId_verifyInvocations(
+        findByIdVerifyInvocations(
                 id,
                 repositoryResult,
                 cacheServiceResult
@@ -143,9 +144,9 @@ public class ApplicationClientDetailsServiceTest {
     }
 
 
-    private void findByClientId_verifyInvocations(String id,
-                                                  Optional<ApplicationClientDetails> repositoryResult,
-                                                  ApplicationClientDetails cacheServiceResult) {
+    private void findByIdVerifyInvocations(String id,
+                                           Optional<ApplicationClientDetails> repositoryResult,
+                                           ApplicationClientDetails cacheServiceResult) {
         // No id value provided
         if (null == id) {
             verify(mockRepository, times(0))

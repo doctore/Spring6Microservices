@@ -1,7 +1,7 @@
 package com.security.custom.model;
 
 import com.security.custom.configuration.Constants;
-import com.security.custom.enums.AuthenticationConfiguration;
+import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
@@ -57,7 +57,7 @@ public class ApplicationClientDetails implements UserDetails {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private AuthenticationConfiguration authenticationGenerator;
+    private SecurityHandler securityHandler;
 
     /**
      *    If {@code null} then only JWS token will be used. In this case: {@link ApplicationClientDetails#encryptionMethod}

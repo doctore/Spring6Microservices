@@ -1,6 +1,7 @@
 package com.security.custom;
 
-import com.security.custom.enums.AuthenticationConfiguration;
+import com.security.custom.application.spring6microservice.model.User;
+import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
@@ -16,7 +17,7 @@ public class TestDataFactory {
                 .applicationClientSecret("Spring6Microservices-application_client_secret")
                 .signatureAlgorithm(TokenSignatureAlgorithm.HS256)
                 .signatureSecret("hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k")
-                .authenticationGenerator(AuthenticationConfiguration.SPRING6_MICROSERVICES)
+                .securityHandler(SecurityHandler.SPRING6_MICROSERVICES)
                 .encryptionAlgorithm(TokenEncryptionAlgorithm.DIR)
                 .encryptionMethod(TokenEncryptionMethod.A128CBC_HS256)
                 .encryptionSecret("dirEncryptionSecret##9991a2(jwe)")

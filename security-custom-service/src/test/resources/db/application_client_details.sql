@@ -5,7 +5,7 @@ INSERT INTO security.application_client_details (id
                                                 ,application_client_secret
                                                 ,signature_algorithm
                                                 ,signature_secret
-                                                ,authentication_generator
+                                                ,security_handler
                                                 ,encryption_algorithm
                                                 ,encryption_method
                                                 ,encryption_secret

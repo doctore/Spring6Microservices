@@ -4,6 +4,9 @@ create user spring6 with encrypted password 'spring6';
 
 create database spring6 with owner spring6;
 
+-- Used by microservices
+create schema security;
+
 -- Used by database management tool: Flyway
 create schema changelog;
 
