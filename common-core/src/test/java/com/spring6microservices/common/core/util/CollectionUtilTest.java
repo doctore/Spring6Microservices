@@ -2701,6 +2701,31 @@ public class CollectionUtilTest {
     }
 
 
+    static Stream<Arguments> sizeTestCases() {
+        Set<Integer> integers = new LinkedHashSet<>(List.of(11, 12, 13, 14, 11));
+        List<String> strings = List.of("a", "b", "c", "d", "f");
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,   expectedResult
+                Arguments.of( null,               0 ),
+                Arguments.of( List.of(),          0 ),
+                Arguments.of( integers,           integers.size() ),
+                Arguments.of( strings,            strings.size() )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("sizeTestCases")
+    @DisplayName("size: test cases")
+    public <T> void size_testCases(Collection<T> sourceCollection,
+                                   int expectedResult) {
+        assertEquals(
+                expectedResult,
+                size(sourceCollection)
+        );
+    }
+
+
     static Stream<Arguments> sliceTestCases() {
         Set<Integer> integers = new LinkedHashSet<>(List.of(11, 12, 13, 14));
         List<String> strings = List.of("a", "b", "c", "d", "f");

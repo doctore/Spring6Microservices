@@ -2470,6 +2470,22 @@ public class MapUtil {
 
 
     /**
+     * Gets the size of {@code sourceMap} in a safe way, that is, managing when it is {@code null}.
+     *
+     * @param sourceMap
+     *    {@link Map} to get the size. It can be {@code null}
+     *
+     * @return {@link Map#size()} when {@code sourceMap} is not {@code null},
+     *         0 otherwise
+     */
+    public static <T, E> int size(final Map<? extends T, ? extends E> sourceMap) {
+        return ofNullable(sourceMap)
+                .map(Map::size)
+                .orElse(0);
+    }
+
+
+    /**
      *    Using the provided {@code sourceMap}, return all elements beginning at index {@code from} and afterward,
      * up to index {@code until} (excluding this one).
      *

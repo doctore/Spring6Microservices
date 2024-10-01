@@ -1051,7 +1051,7 @@ public class CollectionUtil {
 
 
     /**
-     * Converts given {@code sourceCollection} into a {@link List} formed by the elements of these iterable collections.
+     * Converts given {@code sourceCollection} into a {@link Collection} formed by the elements of these iterable collections.
      *
      * @apiNote
      *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
@@ -2537,6 +2537,22 @@ public class CollectionUtil {
 
 
     /**
+     * Gets the size of {@code sourceCollection} in a safe way, that is, managing when it is {@code null}.
+     *
+     * @param sourceCollection
+     *    {@link Collection} to get the size. It can be {@code null}
+     *
+     * @return {@link Collection#size()} when {@code sourceCollection} is not {@code null},
+     *         0 otherwise
+     */
+    public static <T> int size(final Collection<? extends T> sourceCollection) {
+        return ofNullable(sourceCollection)
+                .map(Collection::size)
+                .orElse(0);
+    }
+
+
+    /**
      *    Using the provided {@code sourceCollection}, return all elements beginning at index {@code from} and afterward,
      * up to index {@code until} (excluding this one).
      *
@@ -3707,7 +3723,7 @@ public class CollectionUtil {
 
 
     /**
-     *    Returns a {@link List} containing pairs consisting of all elements of this iterable collection paired with
+     *    Returns a {@link List} containing pairs consisting of all elements of {@code sourceCollection} paired with
      * their index. Indices start at {@code 0}.
      *
      * <pre>

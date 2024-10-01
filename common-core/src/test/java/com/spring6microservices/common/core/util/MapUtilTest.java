@@ -3105,6 +3105,33 @@ public class MapUtilTest {
     }
 
 
+    static Stream<Arguments> sizeTestCases() {
+        Map<String, Integer> sourceMap = new LinkedHashMap<>() {{
+            put("A", 1);
+            put("B", 2);
+            put("C", 3);
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            sourceMap,   expectedResult
+                Arguments.of( null,        0 ),
+                Arguments.of( Map.of(),    0 ),
+                Arguments.of( sourceMap,   sourceMap.size() )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("sizeTestCases")
+    @DisplayName("size: test cases")
+    public <T, E> void size_testCases(Map<? extends T, ? extends E> sourceMap,
+                                      int expectedResult) {
+        assertEquals(
+                expectedResult,
+                size(sourceMap)
+        );
+    }
+
+
     static Stream<Arguments> sliceTestCases() {
         Map<String, Integer> sourceMap = new LinkedHashMap<>() {{
             put("A", 1);
