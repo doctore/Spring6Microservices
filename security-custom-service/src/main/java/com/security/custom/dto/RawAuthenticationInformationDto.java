@@ -16,8 +16,8 @@ import java.util.Map;
 @NoArgsConstructor
 public class RawAuthenticationInformationDto {
 
-    Map<String, Object> accessTokenInformation;
-    Map<String, Object> refreshTokenInformation;
-    Map<String, Object> additionalTokenInformation;
+    Map<String, Object> accessAuthenticationInformation;
+    Map<String, Object> refreshAuthenticationInformation;
+    Map<String, Object> additionalAuthenticationInformation;
 
 }

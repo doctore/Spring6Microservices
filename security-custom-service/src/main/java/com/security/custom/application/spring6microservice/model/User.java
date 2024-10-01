@@ -1,6 +1,7 @@
 package com.security.custom.application.spring6microservice.model;
 
 import com.security.custom.application.spring6microservice.enums.Permissions;
+import com.spring6microservices.common.core.util.CollectionUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
@@ -18,7 +20,6 @@ import java.util.Set;
 
 import static com.spring6microservices.common.core.util.CollectionUtil.addIfNotNull;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
-import static java.util.Optional.ofNullable;
 
 @AllArgsConstructor
 @Builder
@@ -50,6 +51,15 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
 
+    /**
+     * Adds a new {@link Role} to the current {@link User}.
+     *
+     * @param role
+     *    {@link Role} to add
+     *
+     * @return {@code true} if {@code role} is not {@code null} and was added to {@link User#getRoles()},
+     *         {@code false} otherwise
+     */
     public boolean addRole(final Role role) {
         this.roles = getOrElse(
                 this.roles,
@@ -69,32 +79,46 @@ public class User implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        // TODO: PENDING TO DEVELOP
-        return new HashSet<>();
-        /*
-        return ofNullable(roles)
-                .map(rList -> rList.stream()
-                        .map(r -> new SimpleGrantedAuthority(r.name()))
-                        .collect(toSet()))
-                .orElseGet(HashSet::new);
-                 */
+        Set<GrantedAuthority> result = new HashSet<>();
+        if (!CollectionUtil.isEmpty(roles)) {
+            for (Role role: roles) {
+                result.add(
+                        new SimpleGrantedAuthority(
+                                role.getName().name()
+                        )
+                );
+                if (!CollectionUtil.isEmpty(role.getPermissions())) {
+                    for (Permissions permission: role.getPermissions()) {
+                        result.add(
+                                new SimpleGrantedAuthority(
+                                        permission.name()
+                                )
+                        );
+                    }
+                }
+            }
+        }
+        return result;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
         return active;
     }
 
+
     @Override
     public boolean isAccountNonLocked() {
         return active;
     }
 
+
     @Override
     public boolean isCredentialsNonExpired() {
         return active;
     }
+
 
     @Override
     public boolean isEnabled() {

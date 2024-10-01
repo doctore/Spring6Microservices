@@ -30,16 +30,26 @@ public class Role implements Serializable {
     @Size(min =1 , max = 128)
     private Roles name;
 
+    private Set<Permissions> permissions;
+
 
     public Role(final Integer id,
                 final String name) {
         this.id = id;
         this.name = Roles.valueOf(name);
+        this.permissions = new HashSet<>();
     }
 
-    private Set<Permissions> permissions;
 
-
+    /**
+     * Adds a new {@link Permissions} to the current {@link Role}.
+     *
+     * @param permission
+     *    {@link Permissions} to add
+     *
+     * @return {@code true} if {@code permission} is not {@code null} and was added to {@link Role#getPermissions()},
+     *         {@code false} otherwise
+     */
     public boolean addPermission(final Permissions permission) {
         this.permissions = getOrElse(
                 this.permissions,

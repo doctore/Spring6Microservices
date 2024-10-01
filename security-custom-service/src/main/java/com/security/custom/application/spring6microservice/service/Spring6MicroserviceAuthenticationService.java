@@ -9,15 +9,22 @@ import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import static com.security.custom.enums.token.TokenKeys.AUTHORITIES;
+import static com.security.custom.enums.token.TokenKeys.NAME;
+import static com.security.custom.enums.token.TokenKeys.USERNAME;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 @Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthenticationService")
 public class Spring6MicroserviceAuthenticationService implements IAuthenticationService {
@@ -35,10 +42,14 @@ public class Spring6MicroserviceAuthenticationService implements IAuthentication
     }
 
 
-    // TODO: TEMPORARY
     @Override
     public Optional<RawAuthenticationInformationDto> getRawAuthenticationInformation(final UserDetails userDetails) {
-        return Optional.empty();
+        return ofNullable(userDetails)
+                .map(user ->
+                        buildAuthenticationInformation(
+                                (User)user
+                        )
+                );
     }
 
 
@@ -84,6 +95,106 @@ public class Spring6MicroserviceAuthenticationService implements IAuthentication
                                         username)
                         )
                 );
+    }
+
+
+    /**
+     * Creates the {@link RawAuthenticationInformationDto} using data of provided {@link User}.
+     *
+     * @param user
+     *    {@link User} used as source of returned {@link RawAuthenticationInformationDto}
+     *
+     * @return {@link RawAuthenticationInformationDto}
+     */
+    private RawAuthenticationInformationDto buildAuthenticationInformation(final User user) {
+        return RawAuthenticationInformationDto.builder()
+                .accessAuthenticationInformation(
+                        getAccessAuthenticationInformation(user)
+                )
+                .refreshAuthenticationInformation(
+                        getRefreshAuthenticationInformation(user)
+                )
+                .additionalAuthenticationInformation(
+                        getAdditionalAuthenticationInformation(user)
+                )
+                .build();
+    }
+
+
+    /**
+     *    Using given {@link User}, returns the information to include in the property
+     * {@link RawAuthenticationInformationDto#getAccessAuthenticationInformation()}.
+     *
+     * @param user
+     *    {@link User} used as source
+     *
+     * @return {@link Map} with the data to add in {@link RawAuthenticationInformationDto#getAccessAuthenticationInformation()}
+     */
+    private Map<String, Object> getAccessAuthenticationInformation(final User user) {
+        return new HashMap<>() {{
+            put(
+                    USERNAME.getKey(),
+                    user.getUsername()
+            );
+            put(
+                    NAME.getKey(),
+                    user.getName()
+            );
+            put(
+                    AUTHORITIES.getKey(),
+                    user.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(
+                                    toList()
+                            )
+            );
+        }};
+    }
+
+
+    /**
+     *    Using given {@link User}, returns the information to include in the property
+     * {@link RawAuthenticationInformationDto#getRefreshAuthenticationInformation()}.
+     *
+     * @param user
+     *    {@link User} used as source
+     *
+     * @return {@link Map} with the data to add in {@link RawAuthenticationInformationDto#getRefreshAuthenticationInformation()}
+     */
+    private Map<String, Object> getRefreshAuthenticationInformation(final User user) {
+        return new HashMap<>() {{
+            put(
+                    USERNAME.getKey(),
+                    user.getUsername()
+            );
+        }};
+    }
+
+
+    /**
+     *    Using given {@link User}, returns the information to include in the property
+     * {@link RawAuthenticationInformationDto#getAdditionalAuthenticationInformation()}.
+     *
+     * @param user
+     *    {@link User} used as source
+     *
+     * @return {@link Map} with the data to add in {@link RawAuthenticationInformationDto#getAdditionalAuthenticationInformation()}
+     */
+    private Map<String, Object> getAdditionalAuthenticationInformation(final User user) {
+        return new HashMap<>() {{
+            put(
+                    USERNAME.getKey(),
+                    user.getUsername()
+            );
+            put(
+                    AUTHORITIES.getKey(),
+                    user.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(
+                                    toList()
+                            )
+            );
+        }};
     }
 
 }

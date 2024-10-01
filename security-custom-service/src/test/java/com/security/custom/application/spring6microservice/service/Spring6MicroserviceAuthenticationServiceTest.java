@@ -1,27 +1,42 @@
 package com.security.custom.application.spring6microservice.service;
 
+import com.security.custom.application.spring6microservice.enums.Permissions;
+import com.security.custom.application.spring6microservice.enums.Roles;
+import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.repository.UserRepository;
+import com.security.custom.dto.RawAuthenticationInformationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.security.custom.enums.token.TokenKeys.AUTHORITIES;
+import static com.security.custom.enums.token.TokenKeys.NAME;
+import static com.security.custom.enums.token.TokenKeys.USERNAME;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -41,6 +56,42 @@ public class Spring6MicroserviceAuthenticationServiceTest {
         service = new Spring6MicroserviceAuthenticationService(
                 mockUserRepository,
                 mockPasswordEncoder
+        );
+    }
+
+
+    @Test
+    @DisplayName("getRawAuthenticationInformation: when not existing user is given then Optional empty is returned")
+    public void getRawAuthenticationInformation_whenNotExistingUserIsGiven_thenOptionalEmptyIsReturned() {
+        Optional<RawAuthenticationInformationDto> rawTokenInformation = service.getRawAuthenticationInformation(null);
+
+        assertNotNull(rawTokenInformation);
+        assertFalse(rawTokenInformation.isPresent());
+    }
+
+
+    @Test
+    @DisplayName("getRawAuthenticationInformation: when an existing user is given then related information is returned")
+    public void getRawAuthenticationInformation_whenAnExistingUserIsGiven_thenRelatedInformationIsReturned() {
+        Role role = new Role(
+                1,
+                Roles.ROLE_ADMIN.name()
+        );
+        role.addPermission(Permissions.CREATE_ORDER);
+        role.addPermission(Permissions.GET_ORDER);
+
+        User user = User.builder()
+                .username("test username")
+                .name("test name")
+                .roles(new HashSet<>(List.of(role)))
+                .build();
+
+        Optional<RawAuthenticationInformationDto> rawTokenInformation = service.getRawAuthenticationInformation(user);
+
+        assertTrue(rawTokenInformation.isPresent());
+        checkRawAuthenticationInformation(
+                rawTokenInformation.get(),
+                user
         );
     }
 
@@ -120,6 +171,45 @@ public class Spring6MicroserviceAuthenticationServiceTest {
         assertEquals(
                 expectedResult,
                 service.isValidPassword(rawPassword, user)
+        );
+    }
+
+
+    private void checkRawAuthenticationInformation(RawAuthenticationInformationDto rawAuthenticationInformation,
+                                                   User user) {
+        assertNotNull(rawAuthenticationInformation);
+        assertNotNull(rawAuthenticationInformation.getAccessAuthenticationInformation());
+        assertNotNull(rawAuthenticationInformation.getRefreshAuthenticationInformation());
+        assertNotNull(rawAuthenticationInformation.getAdditionalAuthenticationInformation());
+
+        // AccessAuthenticationInformation
+        assertEquals(
+                user.getUsername(),
+                rawAuthenticationInformation.getAccessAuthenticationInformation().get(USERNAME.getKey())
+        );
+        assertEquals(
+                user.getName(),
+                rawAuthenticationInformation.getAccessAuthenticationInformation().get(NAME.getKey())
+        );
+        assertEquals(
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList()),
+                rawAuthenticationInformation.getAccessAuthenticationInformation().get(AUTHORITIES.getKey())
+        );
+
+        // RefreshAuthenticationInformation
+        assertEquals(
+                user.getUsername(),
+                rawAuthenticationInformation.getRefreshAuthenticationInformation().get(USERNAME.getKey())
+        );
+
+        // AdditionalAuthenticationInformation
+        assertEquals(
+                user.getUsername(),
+                rawAuthenticationInformation.getAdditionalAuthenticationInformation().get(USERNAME.getKey())
+        );
+        assertEquals(
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList()),
+                rawAuthenticationInformation.getAdditionalAuthenticationInformation().get(AUTHORITIES.getKey())
         );
     }
 

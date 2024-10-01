@@ -43,7 +43,7 @@ public class UserRepositoryTest {
     static Stream<Arguments> findByUsernameTestCases() {
         Role role = new Role(
                 1,
-                Roles.ADMIN.name()
+                Roles.ROLE_ADMIN.name()
         );
         role.addPermission(
                 Permissions.CREATE_ORDER

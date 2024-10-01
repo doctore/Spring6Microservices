@@ -59,8 +59,8 @@ VALUES (1
 
 
 INSERT INTO security.spring6microservice_role (id, name)
-VALUES (1, 'ADMIN')
-      ,(2, 'USER');
+VALUES (1, 'ROLE_ADMIN')
+      ,(2, 'ROLE_USER');
 
 
 INSERT INTO security.spring6microservice_permission (id, name)
@@ -75,14 +75,14 @@ VALUES (SELECT id
         WHERE username = 'Test user username'
        ,SELECT id
         FROM security.spring6microservice_role
-        WHERE name = 'ADMIN');
+        WHERE name = 'ROLE_ADMIN');
 
 
 INSERT INTO security.spring6microservice_role_permission (role_id,
                                                           permission_id)
 VALUES (SELECT id
         FROM security.spring6microservice_role
-        WHERE name = 'ADMIN'
+        WHERE name = 'ROLE_ADMIN'
        ,SELECT id
         FROM security.spring6microservice_permission
         WHERE name = 'CREATE_ORDER');
@@ -92,7 +92,7 @@ INSERT INTO security.spring6microservice_role_permission (role_id,
                                                           permission_id)
 VALUES (SELECT id
         FROM security.spring6microservice_role
-        WHERE name = 'ADMIN'
+        WHERE name = 'ROLE_ADMIN'
        ,SELECT id
         FROM security.spring6microservice_permission
         WHERE name = 'GET_ORDER');
