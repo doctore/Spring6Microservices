@@ -1,13 +1,11 @@
 package com.security.custom.enums.token;
 
 import com.nimbusds.jose.JWEAlgorithm;
+import com.spring6microservices.common.core.util.EnumUtil;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-import java.util.Arrays;
 import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Allowed algorithms to encrypt a JWT token.
@@ -66,15 +64,12 @@ public enum TokenEncryptionAlgorithm {
      * @return {@link Optional} with {@link TokenEncryptionAlgorithm} if {@code algorithm} matches with existing one,
      *         {@link Optional#empty()} otherwise
      */
-    public static Optional<TokenEncryptionAlgorithm> getByAlgorithm(@Nullable JWEAlgorithm algorithm) {
-        return ofNullable(algorithm)
-                .flatMap(alg ->
-                        Arrays.stream(TokenEncryptionAlgorithm.values())
-                                .filter(e ->
-                                        alg.equals(e.algorithm)
-                                )
-                                .findFirst()
-                );
+    public static Optional<TokenEncryptionAlgorithm> getByAlgorithm(@Nullable final JWEAlgorithm algorithm) {
+        return EnumUtil.getByInternalProperty(
+                TokenEncryptionAlgorithm.class,
+                algorithm,
+                TokenEncryptionAlgorithm::getAlgorithm
+        );
     }
 
 }

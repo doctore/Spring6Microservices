@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.enums.token.TokenKeys.AUTHORITIES;
-import static com.security.custom.enums.token.TokenKeys.NAME;
-import static com.security.custom.enums.token.TokenKeys.USERNAME;
+import static com.security.custom.enums.token.TokenKey.AUTHORITIES;
+import static com.security.custom.enums.token.TokenKey.NAME;
+import static com.security.custom.enums.token.TokenKey.USERNAME;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;

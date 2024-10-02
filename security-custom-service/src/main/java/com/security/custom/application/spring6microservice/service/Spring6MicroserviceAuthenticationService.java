@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.security.custom.enums.token.TokenKeys.AUTHORITIES;
-import static com.security.custom.enums.token.TokenKeys.NAME;
-import static com.security.custom.enums.token.TokenKeys.USERNAME;
+import static com.security.custom.enums.token.TokenKey.AUTHORITIES;
+import static com.security.custom.enums.token.TokenKey.NAME;
+import static com.security.custom.enums.token.TokenKey.USERNAME;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;

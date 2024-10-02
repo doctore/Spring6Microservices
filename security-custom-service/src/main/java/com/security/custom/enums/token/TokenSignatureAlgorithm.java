@@ -1,13 +1,11 @@
 package com.security.custom.enums.token;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.spring6microservices.common.core.util.EnumUtil;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-import java.util.Arrays;
 import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Allowed algorithms to sign a JWT token.
@@ -68,15 +66,12 @@ public enum TokenSignatureAlgorithm {
      * @return {@link Optional} with {@link TokenSignatureAlgorithm} if {@code algorithm} matches with existing one,
      *         {@link Optional#empty()} otherwise
      */
-    public static Optional<TokenSignatureAlgorithm> getByAlgorithm(@Nullable JWSAlgorithm algorithm) {
-        return ofNullable(algorithm)
-                .flatMap(alg ->
-                        Arrays.stream(TokenSignatureAlgorithm.values())
-                                .filter(e ->
-                                        alg.equals(e.algorithm)
-                                )
-                                .findFirst()
-                );
+    public static Optional<TokenSignatureAlgorithm> getByAlgorithm(@Nullable final JWSAlgorithm algorithm) {
+        return EnumUtil.getByInternalProperty(
+                TokenSignatureAlgorithm.class,
+                algorithm,
+                TokenSignatureAlgorithm::getAlgorithm
+        );
     }
 
 }

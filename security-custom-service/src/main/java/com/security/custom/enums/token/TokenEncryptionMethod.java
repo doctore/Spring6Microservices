@@ -1,13 +1,11 @@
 package com.security.custom.enums.token;
 
 import com.nimbusds.jose.EncryptionMethod;
+import com.spring6microservices.common.core.util.EnumUtil;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-import java.util.Arrays;
 import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 @Getter
 public enum TokenEncryptionMethod {
@@ -35,15 +33,12 @@ public enum TokenEncryptionMethod {
      * @return {@link Optional} with {@link TokenEncryptionMethod} if {@code method} matches with existing one,
      *         {@link Optional#empty()} otherwise
      */
-    public static Optional<TokenEncryptionMethod> getByMethod(@Nullable EncryptionMethod method) {
-        return ofNullable(method)
-                .flatMap(met ->
-                        Arrays.stream(TokenEncryptionMethod.values())
-                                .filter(e ->
-                                        met.equals(e.method)
-                                )
-                                .findFirst()
-                );
+    public static Optional<TokenEncryptionMethod> getByMethod(@Nullable final EncryptionMethod method) {
+        return EnumUtil.getByInternalProperty(
+                TokenEncryptionMethod.class,
+                method,
+                TokenEncryptionMethod::getMethod
+        );
     }
 
 }
