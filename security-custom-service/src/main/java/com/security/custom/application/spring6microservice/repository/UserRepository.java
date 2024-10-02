@@ -1,7 +1,7 @@
 package com.security.custom.application.spring6microservice.repository;
 
 import com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants;
-import com.security.custom.application.spring6microservice.enums.Permissions;
+import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.repository.mapper.UserMapper;
@@ -44,7 +44,7 @@ public class UserRepository {
 
 
     /**
-     *    Gets the {@link User} (including its {@link Role}s and {@link Permissions}) which {@link User#getUsername()}
+     *    Gets the {@link User} (including its {@link Role}s and {@link PermissionEnum}) which {@link User#getUsername()}
      * matches with the given one.
      *
      * @param username

@@ -1,6 +1,6 @@
 package com.security.custom.application.spring6microservice.model;
 
-import com.security.custom.application.spring6microservice.enums.Permissions;
+import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -73,7 +73,7 @@ public class User implements UserDetails {
 
 
     /**
-     * Get {@link Permissions} and add them to a {@link Set} of {@link GrantedAuthority}
+     * Get {@link PermissionEnum} and add them to a {@link Set} of {@link GrantedAuthority}
      *
      * @return {@link Set} of {@link GrantedAuthority}
      */
@@ -88,7 +88,7 @@ public class User implements UserDetails {
                         )
                 );
                 if (!CollectionUtil.isEmpty(role.getPermissions())) {
-                    for (Permissions permission: role.getPermissions()) {
+                    for (PermissionEnum permission: role.getPermissions()) {
                         result.add(
                                 new SimpleGrantedAuthority(
                                         permission.name()

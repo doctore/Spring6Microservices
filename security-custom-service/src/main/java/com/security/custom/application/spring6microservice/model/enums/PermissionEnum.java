@@ -1,11 +1,11 @@
-package com.security.custom.application.spring6microservice.enums;
+package com.security.custom.application.spring6microservice.model.enums;
 
 import com.security.custom.application.spring6microservice.model.Role;
 
 /**
  * Allowed permissions related with the {@link Role}s included in the application.
  */
-public enum Permissions {
+public enum PermissionEnum {
     CREATE_ORDER,
     GET_ORDER
 

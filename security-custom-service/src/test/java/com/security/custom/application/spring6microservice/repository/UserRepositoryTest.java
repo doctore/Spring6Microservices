@@ -1,7 +1,7 @@
 package com.security.custom.application.spring6microservice.repository;
 
-import com.security.custom.application.spring6microservice.enums.Permissions;
-import com.security.custom.application.spring6microservice.enums.Roles;
+import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
+import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.model.ApplicationClientDetails;
@@ -43,13 +43,13 @@ public class UserRepositoryTest {
     static Stream<Arguments> findByUsernameTestCases() {
         Role role = new Role(
                 1,
-                Roles.ROLE_ADMIN.name()
+                RoleEnum.ROLE_ADMIN.name()
         );
         role.addPermission(
-                Permissions.CREATE_ORDER
+                PermissionEnum.CREATE_ORDER
         );
         role.addPermission(
-                Permissions.GET_ORDER
+                PermissionEnum.GET_ORDER
         );
         User existingUser = User.builder()
                 .id(1L)

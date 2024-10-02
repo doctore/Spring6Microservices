@@ -1,7 +1,7 @@
 package com.security.custom.application.spring6microservice.repository.mapper;
 
-import com.security.custom.application.spring6microservice.enums.Permissions;
-import com.security.custom.application.spring6microservice.enums.Roles;
+import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
+import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.spring6microservices.common.core.util.MapUtil;
@@ -29,10 +29,10 @@ public class UserMapper {
 
     /**
      *    Using provided {@link ResultSetExtractor} {@code resultSet} returns a new {@link User} instance containing
-     * the related {@link Role} and {@link Permissions}.
+     * the related {@link Role} and {@link PermissionEnum}.
      *
-     * @throws IllegalArgumentException if stored role name in database has no constant with the specified name in {@link Roles}
-     *                                  or its related permissions in database has no constant with the specified name in {@link Permissions}
+     * @throws IllegalArgumentException if stored role name in database has no constant with the specified name in {@link RoleEnum}
+     *                                  or its related permissions in database has no constant with the specified name in {@link PermissionEnum}
      */
     public static final ResultSetExtractor<User> userWithRolesAndPermissionsResultExtractor = (resultSet) -> {
         Map<Integer, Role> roleMap = new HashMap<>();
@@ -75,7 +75,7 @@ public class UserMapper {
                 )
         );
         role.addPermission(
-                Permissions.valueOf(
+                PermissionEnum.valueOf(
                         resultSet.getString(PERMISSION_NAME_COLUMN)
                 )
         );
