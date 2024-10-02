@@ -1,7 +1,7 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.resources.PizzaDto;
-import com.spring6microservices.common.core.resources.UserDto;
+import com.spring6microservices.common.core.dto.PizzaDto;
+import com.spring6microservices.common.core.dto.UserDto;
 import com.spring6microservices.common.core.collection.tuple.Tuple;
 import com.spring6microservices.common.core.collection.tuple.Tuple1;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
@@ -3097,7 +3097,6 @@ public class CollectionUtilTest {
                 Arguments.of( intsSet,            IS_INTEGER_ODD,    List.of(1, 3) )
         ); //@formatter:on
     }
-
 
     @ParameterizedTest
     @MethodSource("takeWhileNoCollectionFactoryTestCases")

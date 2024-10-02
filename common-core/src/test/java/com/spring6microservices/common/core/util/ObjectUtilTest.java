@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.resources.PizzaDto;
+import com.spring6microservices.common.core.dto.PizzaDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.resources.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.resources.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.ObjectUtil.coalesce;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static com.spring6microservices.common.core.util.ObjectUtil.isEmpty;
@@ -20,7 +20,6 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ObjectUtilTest {
 
@@ -74,7 +73,7 @@ public class ObjectUtilTest {
 
 
     static Stream<Arguments> getOrElseGenericDefaultValueSourceDefaultParametersTestCases() {
-        PizzaDto pizza = new PizzaDto(CARBONARA.getInternalPropertyValue(), null);
+        PizzaDto pizza = new PizzaDto(CARBONARA.getDatabaseValue(), null);
         return Stream.of(
                 //@formatter:off
                 //            sourceInstance,    defaultValue,         expectedResult
@@ -140,7 +139,7 @@ public class ObjectUtilTest {
 
     static Stream<Arguments> getOrElseGenericDefaultValueSourceMapperDefaultParametersTestCases() {
         PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
-        PizzaDto pizzaWithAllProperties = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto pizzaWithAllProperties = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            sourceInstance,           mapper,           defaultValue,         expectedResult
@@ -174,7 +173,7 @@ public class ObjectUtilTest {
 
 
     static Stream<Arguments> getOrElseStringDefaultValueNoMapperTestCases() {
-        PizzaDto pizza = new PizzaDto(CARBONARA.getInternalPropertyValue(), null);
+        PizzaDto pizza = new PizzaDto(CARBONARA.getDatabaseValue(), null);
         return Stream.of(
                 //@formatter:off
                 //            sourceInstance,    defaultValue,         expectedResult
@@ -202,7 +201,7 @@ public class ObjectUtilTest {
 
     static Stream<Arguments> getOrElseStringDefaultValueAllParametersTestCases() {
         PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
-        PizzaDto pizzaWithAllProperties = new PizzaDto(MARGUERITA.getInternalPropertyValue(), 7D);
+        PizzaDto pizzaWithAllProperties = new PizzaDto(MARGUERITA.getDatabaseValue(), 7D);
         return Stream.of(
                 //@formatter:off
                 //            sourceInstance,           mapper,           defaultValue,         expectedResult

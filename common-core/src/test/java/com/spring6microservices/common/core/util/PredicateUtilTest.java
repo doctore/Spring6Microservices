@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.resources.PizzaDto;
+import com.spring6microservices.common.core.dto.PizzaDto;
 import com.spring6microservices.common.core.predicate.HeptaPredicate;
 import com.spring6microservices.common.core.predicate.HexaPredicate;
 import com.spring6microservices.common.core.predicate.NonaPredicate;
@@ -21,8 +21,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.resources.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.resources.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.PredicateUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PredicateUtilTest {
 
     static Stream<Arguments> allOfTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
-        PizzaDto marguerita = new PizzaDto(MARGUERITA.getInternalPropertyValue(), 15D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+        PizzaDto marguerita = new PizzaDto(MARGUERITA.getDatabaseValue(), 15D);
         Predicate<PizzaDto> nameLongerThan5 = p -> 5 < p.getName().length();
         Predicate<PizzaDto> costMoreExpenseThan10 = p -> 0 < p.getCost().compareTo(10d);
         return Stream.of(
@@ -70,7 +70,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> alwaysFalseTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t
@@ -93,7 +93,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> alwaysTrueTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t
@@ -186,7 +186,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> biAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,                 t2,             expectedResult
@@ -212,7 +212,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> biAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,                 t2,             expectedResult
@@ -274,7 +274,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> biIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,                 t2,                 expectedResult
@@ -308,7 +308,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> biNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,                 t2,                 expectedResult
@@ -375,7 +375,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> triAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             expectedResult
@@ -401,7 +401,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> triAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             expectedResult
@@ -462,7 +462,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> triIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          expectedResult
@@ -493,7 +493,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> triNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          expectedResult
@@ -557,7 +557,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> tetraAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     expectedResult
@@ -585,7 +585,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> tetraAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     expectedResult
@@ -646,7 +646,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> tetraIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        expectedResult
@@ -680,7 +680,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> tetraNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        expectedResult
@@ -749,7 +749,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> pentaAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     expectedResult
@@ -779,7 +779,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> pentaAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     expectedResult
@@ -846,7 +846,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> pentaIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        expectedResult
@@ -883,7 +883,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> pentaNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        expectedResult
@@ -956,7 +956,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> hexaAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      expectedResult
@@ -988,7 +988,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> hexaAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      expectedResult
@@ -1058,7 +1058,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> hexaIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        expectedResult
@@ -1098,7 +1098,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> hexaNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        expectedResult
@@ -1175,7 +1175,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> heptaAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     expectedResult
@@ -1209,7 +1209,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> heptaAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     expectedResult
@@ -1282,7 +1282,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> heptaIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        expectedResult
@@ -1325,7 +1325,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> heptaNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        expectedResult
@@ -1406,7 +1406,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> octaAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     t8,     expectedResult
@@ -1442,7 +1442,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> octaAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     t8,     expectedResult
@@ -1518,7 +1518,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> octaIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        t8,        expectedResult
@@ -1564,7 +1564,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> octaNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        t8,        expectedResult
@@ -1649,7 +1649,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> nonaAlwaysFalseTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     t8,     t9,     expectedResult
@@ -1687,7 +1687,7 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> nonaAlwaysTrueTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,      t2,          t3,             t4,     t5,     t6,      t7,     t8,     t9,     expectedResult
@@ -1766,7 +1766,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> nonaIsNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        t8,        t9,   expectedResult
@@ -1815,7 +1815,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> nonaNonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t1,        t2,        t3,          t4,        t5,        t6,        t7,        t8,        t9,   expectedResult
@@ -1863,10 +1863,10 @@ public class PredicateUtilTest {
 
 
     static Stream<Arguments> distinctByKeyTestCases() {
-        PizzaDto carbonaraCheap = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
-        PizzaDto carbonaraExpense = new PizzaDto(CARBONARA.getInternalPropertyValue(), 10D);
-        PizzaDto margheritaCheap = new PizzaDto(MARGUERITA.getInternalPropertyValue(), 5D);
-        PizzaDto margheritaExpense = new PizzaDto(MARGUERITA.getInternalPropertyValue(), 10D);
+        PizzaDto carbonaraCheap = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+        PizzaDto carbonaraExpense = new PizzaDto(CARBONARA.getDatabaseValue(), 10D);
+        PizzaDto margheritaCheap = new PizzaDto(MARGUERITA.getDatabaseValue(), 5D);
+        PizzaDto margheritaExpense = new PizzaDto(MARGUERITA.getDatabaseValue(), 10D);
         return Stream.of(
                 //@formatter:off
                 //            initialCollection,                             keyExtractor,     expectedResult
@@ -2059,7 +2059,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> isNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t,                  expectedResult
@@ -2085,7 +2085,7 @@ public class PredicateUtilTest {
 
     static Stream<Arguments> nonNullTestCases() {
         Integer nullInt = null;
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
                 //@formatter:off
                 //            t,                  expectedResult

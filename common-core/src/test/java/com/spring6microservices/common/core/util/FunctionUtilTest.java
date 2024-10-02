@@ -1,6 +1,6 @@
 package com.spring6microservices.common.core.util;
 
-import com.spring6microservices.common.core.resources.PizzaDto;
+import com.spring6microservices.common.core.dto.PizzaDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,8 +12,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.resources.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.resources.PizzaEnum.MARGUERITA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
+import static com.spring6microservices.common.core.enums.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionToMapEntryFunction;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionsToMapEntriesFunction;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromFunctionsToMapEntryFunction;
@@ -172,8 +172,8 @@ public class FunctionUtilTest {
 
 
     static Stream<Arguments> overwriteWithNewTestCases() {
-        PizzaDto carbonara = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
-        PizzaDto marguerita = new PizzaDto(MARGUERITA.getInternalPropertyValue(), 15D);
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+        PizzaDto marguerita = new PizzaDto(MARGUERITA.getDatabaseValue(), 15D);
         return Stream.of(
                 //@formatter:off
                 //            oldInstance,   newInstance,   expectedResult

@@ -1,9 +1,10 @@
-package com.spring6microservices.common.core.resources;
+package com.spring6microservices.common.core.enums;
 
 public enum PizzaEnum  {
 
     MARGUERITA("Margherita"),
-    CARBONARA("Carbonara");
+    CARBONARA("Carbonara"),
+    NULL(null);
 
     private String databaseValue;
 
@@ -11,7 +12,7 @@ public enum PizzaEnum  {
         this.databaseValue = databaseValue;
     }
 
-    public String getInternalPropertyValue() {
+    public String getDatabaseValue() {
         return this.databaseValue;
     }
 

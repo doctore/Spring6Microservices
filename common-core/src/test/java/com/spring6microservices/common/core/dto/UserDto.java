@@ -1,4 +1,4 @@
-package com.spring6microservices.common.core.resources;
+package com.spring6microservices.common.core.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
