@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getRootCause;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getThrowableList;
@@ -21,6 +22,66 @@ import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExceptionUtilTest {
+
+    static Stream<Arguments> getFormattedCurrentAndRootErrorTestCases() {
+        ConnectException connectException = new ConnectException("Connection refused");
+        IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Argument not valid", connectException);
+        SecurityException securityException = new SecurityException("Operation not allowed", illegalArgumentException);
+
+        // Recursive cause hierarchy use case
+        ExceptionWithCause exception1 = new ExceptionWithCause(null);
+        ExceptionWithCause exception2 = new ExceptionWithCause(exception1);
+        exception1.setCause(exception2);
+        ExceptionWithCause cyclicExceptionHierarchy = new ExceptionWithCause(exception1);
+
+        String currentErrorMessageFormat = "The class of the exception is: %s with error message: %s";
+        String rootErrorMessageFormat = ". The root cause was an exception of class: %s with error message: %s";
+
+        String errorMessageRootConnectionException = format(rootErrorMessageFormat,
+                connectException.getClass().getName(),
+                connectException.getMessage()
+        );
+
+        String errorMessageConnectionException = format(currentErrorMessageFormat,
+                connectException.getClass().getName(),
+                connectException.getMessage()
+        );
+        String errorMessageIllegalArgumentException = format(currentErrorMessageFormat,
+                illegalArgumentException.getClass().getName(),
+                illegalArgumentException.getMessage()
+        ) + errorMessageRootConnectionException;
+
+        String errorMessageSecurityException = format(currentErrorMessageFormat,
+                securityException.getClass().getName(),
+                securityException.getMessage()
+        ) + errorMessageRootConnectionException;
+
+        String errorMessageCyclicExceptionHierarchy = format(currentErrorMessageFormat,
+                exception1.getClass().getName(),
+                exception1.getMessage()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceThrowable,            expectedResult
+                Arguments.of( null,                       StringUtil.EMPTY_STRING ),
+                Arguments.of( connectException,           errorMessageConnectionException ),
+                Arguments.of( illegalArgumentException,   errorMessageIllegalArgumentException ),
+                Arguments.of( securityException,          errorMessageSecurityException ),
+                Arguments.of( cyclicExceptionHierarchy,   errorMessageCyclicExceptionHierarchy )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getFormattedCurrentAndRootErrorTestCases")
+    @DisplayName("getFormattedCurrentAndRootError: test cases")
+    public void getFormattedCurrentAndRootError_testCases(Throwable sourceThrowable,
+                                                          String expectedResult) {
+        assertEquals(
+                expectedResult,
+                getFormattedCurrentAndRootError(sourceThrowable)
+        );
+    }
+
 
     static Stream<Arguments> getFormattedRootErrorTestCases() {
         ConnectException connectException = new ConnectException("Connection refused");
@@ -38,7 +99,7 @@ public class ExceptionUtilTest {
                 connectException.getClass().getName(),
                 connectException.getMessage()
         );
-        String errorMessageRootExceptionWithCause = format(errorMessageFormat,
+        String errorMessageCyclicExceptionHierarchy = format(errorMessageFormat,
                 exception1.getClass().getName(),
                 exception1.getMessage()
         );
@@ -49,7 +110,7 @@ public class ExceptionUtilTest {
                 Arguments.of( connectException,           errorMessageRootConnectionException ),
                 Arguments.of( illegalArgumentException,   errorMessageRootConnectionException ),
                 Arguments.of( securityException,          errorMessageRootConnectionException ),
-                Arguments.of( cyclicExceptionHierarchy,   errorMessageRootExceptionWithCause )
+                Arguments.of( cyclicExceptionHierarchy,   errorMessageCyclicExceptionHierarchy )
         ); //@formatter:on
     }
 

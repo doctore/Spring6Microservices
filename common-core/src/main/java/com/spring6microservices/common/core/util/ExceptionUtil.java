@@ -21,6 +21,41 @@ public class ExceptionUtil {
 
     /**
      *    Introspects the {@link Throwable} to obtain the root cause, returning a formatted message including
+     * the class name and error message of {@code sourceThrowable} and similar with the root cause.
+     *
+     * @param sourceThrowable
+     *    {@link Throwable} to get the root cause for
+     *
+     * @return {@link String} including the class name and error message of {@code sourceThrowable} and similar with the root cause,
+     *         {@link StringUtil#EMPTY_STRING} if {@code sourceThrowable} is {@code null}
+     */
+    public static String getFormattedCurrentAndRootError(final Throwable sourceThrowable) {
+        return ofNullable(sourceThrowable)
+                .map(t -> {
+                    Throwable rootT = getRootCause(t).orElse(t);
+                    StringBuilder errorMessage = new StringBuilder(
+                            format("The class of the exception is: %s with error message: %s",
+                                    t.getClass().getName(),
+                                    t.getMessage()
+                            )
+                    );
+                    if (!t.getClass().getName().equals(rootT.getClass().getName()) ||
+                            !Objects.equals(t.getMessage(), rootT.getMessage())) {
+                        errorMessage.append(
+                                format(". The root cause was an exception of class: %s with error message: %s",
+                                        rootT.getClass().getName(),
+                                        rootT.getMessage()
+                                )
+                        );
+                    }
+                    return errorMessage.toString();
+                })
+                .orElse(StringUtil.EMPTY_STRING);
+    }
+
+
+    /**
+     *    Introspects the {@link Throwable} to obtain the root cause, returning a formatted message including
      * the class name of the root cause and the original error message.
      *
      * @param sourceThrowable
