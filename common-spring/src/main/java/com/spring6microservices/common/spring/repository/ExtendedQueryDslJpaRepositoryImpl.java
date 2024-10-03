@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 
 import java.io.Serializable;
 
-import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
@@ -45,7 +45,7 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the HQL equivalent. %s",
-                                        getFormattedRootError(e)
+                                        getFormattedCurrentAndRootError(e)
                                 ),
                                 e
                         );
@@ -66,7 +66,7 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the native SQL equivalent. %s",
-                                        getFormattedRootError(e)
+                                        getFormattedCurrentAndRootError(e)
                                 ),
                                 e
                         );

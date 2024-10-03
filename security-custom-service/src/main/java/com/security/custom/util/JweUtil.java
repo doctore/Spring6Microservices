@@ -39,6 +39,7 @@ import java.util.Set;
 
 import static com.spring6microservices.common.core.functional.either.Either.left;
 import static com.spring6microservices.common.core.functional.either.Either.right;
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.lang.String.format;
@@ -292,7 +293,7 @@ public class JweUtil {
             log.debug(
                     format("The was an error getting information included in JWE token: %s. %s",
                             jweToken,
-                            getFormattedRootError(e)
+                            getFormattedCurrentAndRootError(e)
                     ),
                     e
             );
@@ -431,7 +432,7 @@ public class JweUtil {
             log.debug(
                     format("The was a problem trying to figure out the type of token: %s. %s",
                             token,
-                            getFormattedRootError(e)
+                            getFormattedCurrentAndRootError(e)
                     ),
                     e
             );

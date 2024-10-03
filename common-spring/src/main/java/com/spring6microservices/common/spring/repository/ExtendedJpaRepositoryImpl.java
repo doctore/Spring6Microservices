@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedRootError;
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -72,7 +72,7 @@ public class ExtendedJpaRepositoryImpl<T, ID extends Serializable> extends Simpl
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the HQL equivalent. %s",
-                                        getFormattedRootError(e)
+                                        getFormattedCurrentAndRootError(e)
                                 ),
                                 e
                         );
