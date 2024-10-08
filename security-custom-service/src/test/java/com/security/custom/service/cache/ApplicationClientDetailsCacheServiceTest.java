@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildDefaultApplicationClientDetails;
+import static com.security.custom.TestDataFactory.buildApplicationClientDetails;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,7 +104,7 @@ public class ApplicationClientDetailsCacheServiceTest {
     static Stream<Arguments> getTestCases() {
         String id = "Spring6Microservices";
         Optional<ApplicationClientDetails> cacheServiceResult = of(
-                buildDefaultApplicationClientDetails(id)
+                buildApplicationClientDetails(id)
         );
         return Stream.of(
                 //@formatter:off
@@ -134,7 +134,7 @@ public class ApplicationClientDetailsCacheServiceTest {
 
     static Stream<Arguments> putTestCases() {
         String id = "Spring6Microservices";
-        ApplicationClientDetails applicationClientDetails = buildDefaultApplicationClientDetails(id);
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetails(id);
         return Stream.of(
                 //@formatter:off
                 //            id,     applicationClientDetails,   cacheServiceResult,   expectedResult
