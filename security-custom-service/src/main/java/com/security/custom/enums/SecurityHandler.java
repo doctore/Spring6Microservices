@@ -4,8 +4,8 @@ import com.security.custom.application.spring6microservice.configuration.Spring6
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthorizationService;
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthenticationService;
 import com.security.custom.exception.ApplicationClientNotFoundException;
-import com.security.custom.interfaces.IAuthenticationService;
-import com.security.custom.interfaces.IAuthorizationService;
+import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.security.custom.interfaces.ApplicationClientAuthorizationService;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
@@ -28,13 +28,13 @@ public enum SecurityHandler {
 
 
     private final String applicationClientId;
-    private final Class<? extends IAuthenticationService> authenticationServiceClass;
-    private final Class<? extends IAuthorizationService> authorizationServiceClass;
+    private final Class<? extends ApplicationClientAuthenticationService> authenticationServiceClass;
+    private final Class<? extends ApplicationClientAuthorizationService> authorizationServiceClass;
 
 
     SecurityHandler(final String applicationClientId,
-                    final Class<? extends IAuthenticationService> authenticationServiceClass,
-                    final Class<? extends IAuthorizationService> authorizationServiceClass) {
+                    final Class<? extends ApplicationClientAuthenticationService> authenticationServiceClass,
+                    final Class<? extends ApplicationClientAuthorizationService> authorizationServiceClass) {
         this.applicationClientId = applicationClientId;
         this.authenticationServiceClass = authenticationServiceClass;
         this.authorizationServiceClass = authorizationServiceClass;

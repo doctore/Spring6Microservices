@@ -4,7 +4,7 @@ import com.security.custom.application.spring6microservice.configuration.Spring6
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.repository.UserRepository;
 import com.security.custom.dto.RawAuthenticationInformationDto;
-import com.security.custom.interfaces.IAuthenticationService;
+import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -27,7 +27,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthenticationService")
-public class Spring6MicroserviceAuthenticationService implements IAuthenticationService {
+public class Spring6MicroserviceAuthenticationService implements ApplicationClientAuthenticationService {
 
     private final UserRepository repository;
 
@@ -76,7 +76,7 @@ public class Spring6MicroserviceAuthenticationService implements IAuthentication
      *
      * @return {@link UserDetails}
      *
-     * @throws UsernameNotFoundException if the given {@code username} does not exist in database
+     * @throws UsernameNotFoundException if the given {@code username} does not exist in database.
      *         {@link AccountStatusUserDetailsChecker#check(UserDetails)} for more information about the {@link Exception}s
      *         that could be thrown
      */

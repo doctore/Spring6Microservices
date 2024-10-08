@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 
 /**
- * Functionality related with the authentication process.
+ * Functionality related with the authentication process in every application.
  */
-public interface IAuthenticationService extends UserDetailsService {
+public interface ApplicationClientAuthenticationService extends UserDetailsService {
 
     /**
      * Returns the data required for the authentication process.

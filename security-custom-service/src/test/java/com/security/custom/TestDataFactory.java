@@ -1,6 +1,5 @@
 package com.security.custom;
 
-import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;

@@ -76,14 +76,15 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
      *
      * @return {@link Mono} of {@link UserDetails}
      *
-     * @throws ApplicationClientNotFoundException if the given {@code clientId} does not exist in database
+     * @throws ApplicationClientNotFoundException if the given {@code clientId} does not exist in database.
      *         {@link AccountStatusUserDetailsChecker#check(UserDetails)} for more information about the {@link Exception}s
      *         that could be thrown
      */
     @Override
     public Mono<UserDetails> findByUsername(final String id) {
         UserDetails userDetails = findById(id);
-        new AccountStatusUserDetailsChecker().check(userDetails);
+        new AccountStatusUserDetailsChecker()
+                .check(userDetails);
         return Mono.just(userDetails);
     }
 

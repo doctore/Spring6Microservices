@@ -1,9 +1,9 @@
 package com.security.custom.interfaces;
 
 /**
- * Functionality related with the authorization process.
+ * Functionality related with the authorization process in every application.
  */
-public interface IAuthorizationService {
+public interface ApplicationClientAuthorizationService {
 
 
     // TODO: PENDING TO STANDARIZE

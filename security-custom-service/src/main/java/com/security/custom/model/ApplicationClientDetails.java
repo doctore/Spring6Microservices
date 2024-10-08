@@ -85,7 +85,7 @@ public class ApplicationClientDetails implements UserDetails {
     /**
      * If {@code null} then only access token will be generated and trying to refresh it will generate an error.
      */
-    private int refreshTokenValidityInSeconds;
+    private Integer refreshTokenValidityInSeconds;
 
 
     @Override
