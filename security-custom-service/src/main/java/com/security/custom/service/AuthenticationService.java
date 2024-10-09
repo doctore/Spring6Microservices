@@ -133,9 +133,7 @@ public class AuthenticationService {
                                     applicationClientDetails.getAccessTokenValidityInSeconds()
                             )
                             .additionalInfo(
-                                    buildAdditionalInfo(
-                                            rawAuthenticationInformation
-                                    )
+                                    rawAuthenticationInformation.getAdditionalAuthenticationInformation()
                             )
                             .build();
                 });
@@ -164,11 +162,9 @@ public class AuthenticationService {
                         tokenIdentifier
                 )
         );
-        if (null != rawAuthenticationInformation) {
-            tokenInformation.putAll(
-                    rawAuthenticationInformation.getAccessAuthenticationInformation()
-            );
-        }
+        tokenInformation.putAll(
+                rawAuthenticationInformation.getAccessAuthenticationInformation()
+        );
         return generateToken(
                 tokenInformation,
                 applicationClientDetails,
@@ -203,31 +199,14 @@ public class AuthenticationService {
                         tokenIdentifier
                 )
         );
-        if (null != rawAuthenticationInformation) {
-            tokenInformation.putAll(
-                    rawAuthenticationInformation.getRefreshAuthenticationInformation()
-            );
-        }
+        tokenInformation.putAll(
+                rawAuthenticationInformation.getRefreshAuthenticationInformation()
+        );
         return generateToken(
                 tokenInformation,
                 applicationClientDetails,
                 applicationClientDetails.getRefreshTokenValidityInSeconds()
         );
-    }
-
-
-    /**
-     * Returns the specific data to include as additional information.
-     *
-     * @param rawAuthenticationInformation
-     *    {@link RawAuthenticationInformationDto} with the information that should be included
-     *
-     * @return {@link Map}
-     */
-    private Map<String, Object> buildAdditionalInfo(final RawAuthenticationInformationDto rawAuthenticationInformation) {
-        return null != rawAuthenticationInformation
-                ? rawAuthenticationInformation.getAdditionalAuthenticationInformation()
-                : new HashMap<>();
     }
 
 
