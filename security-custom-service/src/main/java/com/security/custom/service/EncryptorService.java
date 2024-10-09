@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import static java.util.Optional.ofNullable;
 
 @Service
-public class SecurityService {
+public class EncryptorService {
 
     /**
      * Prefix used to store the cipher passwords in database and/or configuration files
@@ -21,13 +21,13 @@ public class SecurityService {
 
 
     @Autowired
-    public SecurityService(@Lazy final TextEncryptor textEncryptor) {
+    public EncryptorService(@Lazy final TextEncryptor textEncryptor) {
         this.textEncryptor = textEncryptor;
     }
 
 
     /**
-     * Decrypts the given {@code encryptedText}.
+     * Decrypts the given {@code encryptedText} using default {@link TextEncryptor}.
      *
      * @param encryptedText
      *    {@link String} to decrypt

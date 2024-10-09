@@ -37,16 +37,16 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
-    private final SecurityService securityService;
+    private final EncryptorService encryptorService;
 
 
     @Autowired
     public AuthenticationService(@Lazy final ApplicationContext applicationContext,
                                  @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
-                                 @Lazy final SecurityService securityService) {
+                                 @Lazy final EncryptorService encryptorService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
-        this.securityService = securityService;
+        this.encryptorService = encryptorService;
     }
 
 
@@ -109,15 +109,12 @@ public class AuthenticationService {
                                                                                 final ApplicationClientAuthenticationService authenticationService,
                                                                                 final UserDetails userDetails) {
         return authenticationService.getRawAuthenticationInformation(userDetails)
-                .map(authenticationInformation -> {
+                .map(rawAuthenticationInformation -> {
                     String tokenIdentifier = UUID.randomUUID().toString();
-                    RawAuthenticationInformationDto rawAuthenticationInformation = authenticationService.getRawAuthenticationInformation(
-                            userDetails
-                    )
-                    .orElse(null);
 
                     return AuthenticationInformationDto.builder()
                             .id(tokenIdentifier)
+                            .application(applicationClientDetails.getId())
                             .accessToken(
                                     buildAccessToken(
                                             applicationClientDetails,
@@ -308,11 +305,11 @@ public class AuthenticationService {
                     informationToInclude,
                     applicationClientDetails.getEncryptionAlgorithm(),
                     applicationClientDetails.getEncryptionMethod(),
-                    securityService.decrypt(
+                    encryptorService.decrypt(
                             applicationClientDetails.getEncryptionSecret()
                     ),
                     applicationClientDetails.getSignatureAlgorithm(),
-                    securityService.decrypt(
+                    encryptorService.decrypt(
                             applicationClientDetails.getSignatureSecret()
                     ),
                     tokenValidityInSeconds
@@ -321,7 +318,7 @@ public class AuthenticationService {
         return JwsUtil.generateToken(
                 informationToInclude,
                 applicationClientDetails.getSignatureAlgorithm(),
-                securityService.decrypt(
+                encryptorService.decrypt(
                         applicationClientDetails.getSignatureSecret()
                 ),
                 tokenValidityInSeconds

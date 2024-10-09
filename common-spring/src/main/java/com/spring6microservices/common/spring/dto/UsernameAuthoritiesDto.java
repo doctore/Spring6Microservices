@@ -21,6 +21,9 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 @Schema(description = "Authorization information about an specific user")
 public class UsernameAuthoritiesDto {
 
+    @Schema(description = "What was the application (or microservice) used to generate this instance")
+    private String application;
+
     @Schema(description = "Identifier of the logged user", requiredMode = RequiredMode.REQUIRED)
     private String username;
 
@@ -31,8 +34,10 @@ public class UsernameAuthoritiesDto {
     private Map<String, Object> additionalInfo;
 
 
-    public UsernameAuthoritiesDto(final String username) {
+    public UsernameAuthoritiesDto(final String application,
+                                  final String username) {
         this(
+                application,
                 username,
                 new HashSet<>(),
                 new HashMap<>()
@@ -40,9 +45,11 @@ public class UsernameAuthoritiesDto {
     }
 
 
-    public UsernameAuthoritiesDto(final String username,
+    public UsernameAuthoritiesDto(final String application,
+                                  final String username,
                                   final Collection<String> authorities,
                                   final Map<String, Object> additionalInfo) {
+        this.application = application;
         this.username = username;
 
         this.authorities = null == authorities

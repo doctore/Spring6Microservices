@@ -1,15 +1,21 @@
 package com.security.custom.service;
 
 import com.security.custom.application.spring6microservice.model.User;
+import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthenticationService;
+import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.springframework.beans.BeansException;
@@ -20,9 +26,19 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import static com.security.custom.TestDataFactory.buildApplicationClientDetails;
+import static com.security.custom.TestDataFactory.buildRawAuthenticationInformationDto;
 import static com.security.custom.TestDataFactory.buildUser;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -39,7 +55,7 @@ public class AuthenticationServiceTest {
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
 
     @Mock
-    private SecurityService mockSecurityService;
+    private EncryptorService mockEncryptorService;
 
     private AuthenticationService service;
 
@@ -49,7 +65,7 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
-                mockSecurityService
+                mockEncryptorService
         );
     }
 
@@ -285,6 +301,106 @@ public class AuthenticationServiceTest {
         verify(mockAuthenticationService, times(1))
                 .isValidPassword(
                         eq(password),
+                        eq(user)
+                );
+    }
+
+
+    static Stream<Arguments> loginNoExceptionThrownTestCases() {
+        Optional<RawAuthenticationInformationDto> rawAuthenticationInformation = of(
+                buildRawAuthenticationInformationDto(
+                        "username value",
+                        List.of(
+                                RoleEnum.ROLE_ADMIN.name()
+                        )
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            rawAuthenticationInformation,   isExpectedResultEmpty
+                Arguments.of( empty(),                        true ),
+                Arguments.of( rawAuthenticationInformation,   false )
+        ); //@formatter:on
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("loginNoExceptionThrownTestCases")
+    @DisplayName("login: no exception thrown test cases")
+    public void loginNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
+                                                 boolean isExpectedResultEmpty) {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String username = "username value";
+        String password = "password value";
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
+        User user = buildUser(username, password, true);
+
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        buildApplicationClientDetails(applicationClientId)
+                );
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mockAuthenticationService
+                );
+        when(mockAuthenticationService.loadUserByUsername(eq(username)))
+                .thenReturn(
+                        user
+                );
+        when(mockAuthenticationService.isValidPassword(eq(password), eq(user)))
+                .thenReturn(
+                        true
+                );
+        when(mockAuthenticationService.getRawAuthenticationInformation(eq(user)))
+                .thenReturn(
+                        rawAuthenticationInformation
+                );
+        when(mockEncryptorService.decrypt(anyString()))
+                .then(
+                        returnsFirstArg()
+                );
+
+        Optional<AuthenticationInformationDto> result = service.login(
+                applicationClientId,
+                username,
+                password
+        );
+
+        if (isExpectedResultEmpty) {
+            assertTrue(result.isEmpty());
+
+            verify(mockEncryptorService, times(0))
+                    .decrypt(
+                            anyString()
+                    );
+        } else {
+            assertTrue(result.isPresent());
+
+            verify(mockEncryptorService, times(4))
+                    .decrypt(
+                            anyString()
+                    );
+        }
+
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockAuthenticationService, times(1))
+                .loadUserByUsername(
+                        eq(username)
+                );
+        verify(mockAuthenticationService, times(1))
+                .isValidPassword(
+                        eq(password),
+                        eq(user)
+                );
+        verify(mockAuthenticationService, times(1))
+                .getRawAuthenticationInformation(
                         eq(user)
                 );
     }

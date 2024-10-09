@@ -21,17 +21,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-public class SecurityServiceTest {
+public class EncryptorServiceTest {
 
     @Mock
     private TextEncryptor mockTextEncryptor;
 
-    private SecurityService service;
+    private EncryptorService service;
 
 
     @BeforeEach
     public void init() {
-        service = new SecurityService(
+        service = new EncryptorService(
                 mockTextEncryptor
         );
     }
