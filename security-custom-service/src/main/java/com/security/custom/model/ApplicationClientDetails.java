@@ -67,24 +67,20 @@ public class ApplicationClientDetails implements UserDetails {
     private TokenEncryptionAlgorithm encryptionAlgorithm;
 
     /**
-     *    If {@code null} then only JWS token will be used. In this case: {@link ApplicationClientDetails#encryptionAlgorithm}
-     * and {@link ApplicationClientDetails#encryptionSecret} must be {@code null} too.
+     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}
      */
     @Enumerated(EnumType.STRING)
     private TokenEncryptionMethod encryptionMethod;
 
     /**
-     *    If {@code null} then only JWS token will be used. In this case: {@link ApplicationClientDetails#encryptionAlgorithm}
-     * and {@link ApplicationClientDetails#encryptionMethod} must be {@code null} too.
+     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}
      */
     private String encryptionSecret;
 
     @NotNull
     private int accessTokenValidityInSeconds;
 
-    /**
-     * If {@code null} then only access token will be generated and trying to refresh it will generate an error.
-     */
+    @NotNull
     private Integer refreshTokenValidityInSeconds;
 
 
@@ -127,6 +123,11 @@ public class ApplicationClientDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public boolean useJwe() {
+        return null != encryptionAlgorithm;
     }
 
 }

@@ -29,9 +29,9 @@ import com.security.custom.exception.token.TokenInvalidException;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.either.Left;
 import com.spring6microservices.common.core.functional.either.Right;
+import com.spring6microservices.common.core.util.AssertUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.util.Assert;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -160,9 +160,9 @@ public class JweUtil {
                                 final TokenEncryptionAlgorithm encryptionAlgorithm,
                                 final TokenEncryptionMethod encryptionMethod,
                                 final String encryptionSecret) {
-        Assert.notNull(encryptionAlgorithm, "encryptionAlgorithm cannot be null");
-        Assert.notNull(encryptionMethod, "encryptionMethod cannot be null");
-        Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
+        AssertUtil.notNull(encryptionAlgorithm, "encryptionAlgorithm must be not null");
+        AssertUtil.notNull(encryptionMethod, "encryptionMethod must be not null");
+        AssertUtil.hasText(encryptionSecret, "encryptionSecret must be not null or empty");
         return encryptJwsToken(
                 jwsToken,
                 encryptionAlgorithm,
@@ -243,9 +243,9 @@ public class JweUtil {
     public static Map<String, Object> getAllClaimsFromToken(final String jweToken,
                                                             final String encryptionSecret,
                                                             final String signatureSecret) {
-        Assert.hasText(jweToken, "jweToken cannot be null or empty");
-        Assert.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
-        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
+        AssertUtil.hasText(jweToken, "jweToken cannot be null or empty");
+        AssertUtil.hasText(encryptionSecret, "encryptionSecret cannot be null or empty");
+        AssertUtil.hasText(signatureSecret, "signatureSecret cannot be null or empty");
         String jwsToken = decryptJweToken(
                 jweToken,
                 encryptionSecret
@@ -419,7 +419,7 @@ public class JweUtil {
      */
     public boolean isJweToken(final String token) {
         try {
-            Assert.hasText(token, "token cannot be null or empty");
+            AssertUtil.hasText(token, "token cannot be null or empty");
             Base64URL[] parts = JOSEObject.split(token);
             Map<String, Object> jsonObjectProperties = JSONObjectUtils.parse(
                     parts[0].decodeToString()

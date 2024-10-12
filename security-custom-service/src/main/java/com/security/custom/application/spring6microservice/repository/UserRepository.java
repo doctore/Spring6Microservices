@@ -50,7 +50,7 @@ public class UserRepository {
      * @param username
      *    Username to search a coincidence in {@link User#getUsername()}
      *
-     * @return {@link Optional} with the {@link User} which {@link User#getUsername()} matches with the given one.
+     * @return {@link Optional} with the {@link User} which {@link User#getUsername()} matches with the given one,
      *         {@link Optional#empty()} otherwise.
      */
     public Optional<User> findByUsername(@Nullable String username) {

@@ -7,6 +7,7 @@ import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -55,7 +56,7 @@ public class AuthenticationServiceTest {
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
 
     @Mock
-    private EncryptorService mockEncryptorService;
+    private TokenService mockTokenService;
 
     private AuthenticationService service;
 
@@ -65,7 +66,7 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
-                mockEncryptorService
+                mockTokenService
         );
     }
 
@@ -323,13 +324,13 @@ public class AuthenticationServiceTest {
         ); //@formatter:on
     }
 
-
     @ParameterizedTest
     @MethodSource("loginNoExceptionThrownTestCases")
     @DisplayName("login: no exception thrown test cases")
     public void loginNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
                                                  boolean isExpectedResultEmpty) {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetails(applicationClientId);
         String username = "username value";
         String password = "password value";
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
@@ -337,7 +338,7 @@ public class AuthenticationServiceTest {
 
         when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        buildApplicationClientDetails(applicationClientId)
+                        applicationClientDetails
                 );
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -355,10 +356,6 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
-        when(mockEncryptorService.decrypt(anyString()))
-                .then(
-                        returnsFirstArg()
-                );
 
         Optional<AuthenticationInformationDto> result = service.login(
                 applicationClientId,
@@ -366,20 +363,12 @@ public class AuthenticationServiceTest {
                 password
         );
 
+        int createTokensInvocations = 0;
         if (isExpectedResultEmpty) {
             assertTrue(result.isEmpty());
-
-            verify(mockEncryptorService, times(0))
-                    .decrypt(
-                            anyString()
-                    );
         } else {
             assertTrue(result.isPresent());
-
-            verify(mockEncryptorService, times(4))
-                    .decrypt(
-                            anyString()
-                    );
+            createTokensInvocations = 1;
         }
 
         verify(mockApplicationClientDetailsService, times(1))
@@ -402,6 +391,18 @@ public class AuthenticationServiceTest {
         verify(mockAuthenticationService, times(1))
                 .getRawAuthenticationInformation(
                         eq(user)
+                );
+        verify(mockTokenService, times(createTokensInvocations))
+                .createAccessToken(
+                        eq(applicationClientDetails),
+                        any(),
+                        anyString()
+                );
+        verify(mockTokenService, times(createTokensInvocations))
+                .createRefreshToken(
+                        eq(applicationClientDetails),
+                        any(),
+                        anyString()
                 );
     }
 

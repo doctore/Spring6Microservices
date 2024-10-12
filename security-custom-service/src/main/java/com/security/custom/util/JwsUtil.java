@@ -26,10 +26,10 @@ import com.security.custom.exception.token.TokenInvalidException;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.either.Left;
 import com.spring6microservices.common.core.functional.either.Right;
+import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.DateTimeUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.util.Assert;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -147,7 +147,7 @@ public class JwsUtil {
      *
      * @return {@link String} with the JWS
      *
-     * @throws IllegalArgumentException if {@code signatureAlgorithm} is  {@code null}.
+     * @throws IllegalArgumentException if {@code signatureAlgorithm} is {@code null}.
      *                                  if {@code signatureSecret} is {@code null} or empty
      * @throws TokenException if there was a problem generating the JWS token
      */
@@ -155,8 +155,8 @@ public class JwsUtil {
                                        final TokenSignatureAlgorithm signatureAlgorithm,
                                        final String signatureSecret,
                                        final long expirationTimeInSeconds) {
-        Assert.notNull(signatureAlgorithm, "signatureAlgorithm cannot be null");
-        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
+        AssertUtil.notNull(signatureAlgorithm, "signatureAlgorithm must be not null");
+        AssertUtil.hasText(signatureSecret, "signatureSecret must be not null or empty");
         JWTClaimsSet claimsSet = addClaims(
                 informationToInclude,
                 expirationTimeInSeconds
@@ -187,8 +187,8 @@ public class JwsUtil {
      */
     public static Map<String, Object> getAllClaimsFromToken(final String jwsToken,
                                                             final String signatureSecret) {
-        Assert.hasText(jwsToken, "jwsToken cannot be null or empty");
-        Assert.hasText(signatureSecret, "signatureSecret cannot be null or empty");
+        AssertUtil.hasText(jwsToken, "jwsToken cannot be null or empty");
+        AssertUtil.hasText(signatureSecret, "signatureSecret cannot be null or empty");
         try {
             if (!isJwsToken(jwsToken)) {
                 throw new TokenInvalidException(
@@ -376,7 +376,7 @@ public class JwsUtil {
      */
     public static boolean isJwsToken(final String token) {
         try {
-            Assert.hasText(token, "token cannot be null or empty");
+            AssertUtil.hasText(token, "token must be not null or empty");
             Base64URL[] parts = JOSEObject.split(token);
             Map<String, Object> jsonObjectProperties = JSONObjectUtils.parse(
                     parts[0].decodeToString()

@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS security.application_client_details (
     encryption_method                   varchar(32),
     encryption_secret                   text,
     access_token_validity_in_seconds    int            not null,
-    refresh_token_validity_in_seconds   int
+    refresh_token_validity_in_seconds   int            not null
 );
