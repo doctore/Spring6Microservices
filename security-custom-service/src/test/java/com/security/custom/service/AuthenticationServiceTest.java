@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildApplicationClientDetails;
+import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWE;
 import static com.security.custom.TestDataFactory.buildRawAuthenticationInformationDto;
 import static com.security.custom.TestDataFactory.buildUser;
 import static java.util.Optional.empty;
@@ -56,6 +56,9 @@ public class AuthenticationServiceTest {
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
 
     @Mock
+    private AuthorizationService mockAuthorizationService;
+
+    @Mock
     private TokenService mockTokenService;
 
     private AuthenticationService service;
@@ -66,6 +69,7 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
+                mockAuthorizationService,
                 mockTokenService
         );
     }
@@ -135,7 +139,7 @@ public class AuthenticationServiceTest {
 
         when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        buildApplicationClientDetails(applicationClientId)
+                        buildApplicationClientDetailsJWE(applicationClientId)
                 );
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenThrow(
@@ -172,7 +176,7 @@ public class AuthenticationServiceTest {
 
         when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        buildApplicationClientDetails(applicationClientId)
+                        buildApplicationClientDetailsJWE(applicationClientId)
                 );
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -217,7 +221,7 @@ public class AuthenticationServiceTest {
 
         when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        buildApplicationClientDetails(applicationClientId)
+                        buildApplicationClientDetailsJWE(applicationClientId)
                 );
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -263,7 +267,7 @@ public class AuthenticationServiceTest {
 
         when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        buildApplicationClientDetails(applicationClientId)
+                        buildApplicationClientDetailsJWE(applicationClientId)
                 );
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -330,7 +334,7 @@ public class AuthenticationServiceTest {
     public void loginNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
                                                  boolean isExpectedResultEmpty) {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetails(applicationClientId);
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         String username = "username value";
         String password = "password value";
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);

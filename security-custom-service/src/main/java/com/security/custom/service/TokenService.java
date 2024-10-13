@@ -1,6 +1,9 @@
 package com.security.custom.service;
 
 import com.security.custom.dto.RawAuthenticationInformationDto;
+import com.security.custom.exception.token.TokenException;
+import com.security.custom.exception.token.TokenExpiredException;
+import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.util.JweUtil;
 import com.security.custom.util.JwsUtil;
@@ -112,6 +115,44 @@ public class TokenService {
                 tokenInformation,
                 applicationClientDetails,
                 applicationClientDetails.getRefreshTokenValidityInSeconds()
+        );
+    }
+
+
+    /**
+     * Gets from the given JWS or JWE {@code token} its verified payload information.
+     *
+     * @param applicationClientDetails
+     *    {@link ApplicationClientDetails} with the details about how to get token's payload
+     * @param token
+     *    {@link String} with the token of which to extract the payload
+     *
+     * @return {@link Map} with the {@code payload} of the given token
+     *
+     * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws TokenInvalidException if the given {@code token} is not a valid one
+     * @throws TokenExpiredException if {@code token} is valid but has expired
+     * @throws TokenException if there was a problem getting claims of {@code token}
+     */
+    public Map<String, Object> getPayloadOfToken(final ApplicationClientDetails applicationClientDetails,
+                                                 final String token) {
+        AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
+        if (applicationClientDetails.useJwe()) {
+            return JweUtil.getAllClaimsFromToken(
+                    token,
+                    encryptorService.decrypt(
+                            applicationClientDetails.getEncryptionSecret()
+                    ),
+                    encryptorService.decrypt(
+                            applicationClientDetails.getSignatureSecret()
+                    )
+            );
+        }
+        return JwsUtil.getAllClaimsFromToken(
+                token,
+                encryptorService.decrypt(
+                        applicationClientDetails.getSignatureSecret()
+                )
         );
     }
 

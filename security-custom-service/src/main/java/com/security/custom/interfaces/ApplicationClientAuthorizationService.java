@@ -10,25 +10,25 @@ import java.util.Set;
 public interface ApplicationClientAuthorizationService {
 
     /**
+     * Returns the authorities related to the current authorized user included in provided {@code source}.
+     *
+     * @param rawAuthorizationInformation
+     *    {@link Map} containing all data related to the current authorized user
+     *
+     * @return {@link Set} with all authorities related to the authorized user
+     */
+    Set<String> getAuthorities(final Map<String, Object> rawAuthorizationInformation);
+
+
+    /**
      * Returns the username related to the current authorized user included in provided {@code source}.
      *
-     * @param source
+     * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
      * @return {@link Optional} with the username value if exists in {@code source},
      *         {@link Optional#empty()} otherwise.
      */
-    Optional<String> getUsername(final Map<String, Object> source);
-
-
-    /**
-     * Returns the authorities related to the current authorized user included in provided {@code source}.
-     *
-     * @param source
-     *    {@link Map} containing all data related to the current authorized user
-     *
-     * @return {@link Set} with all authorities related to the authorized user
-     */
-    Set<String> getAuthorities(final Map<String, Object> source);
+    Optional<String> getUsername(final Map<String, Object> rawAuthorizationInformation);
 
 }

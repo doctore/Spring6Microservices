@@ -18,22 +18,11 @@ import static java.util.Optional.ofNullable;
 public class Spring6MicroserviceAuthorizationService implements ApplicationClientAuthorizationService {
 
     @Override
-    public Optional<String> getUsername(final Map<String, Object> source) {
-        return ofNullable(source)
-                .map(s ->
-                        (String) s.get(
-                                USERNAME.getKey()
-                        )
-                );
-    }
-
-
-    @Override
     @SuppressWarnings("unchecked")
-    public Set<String> getAuthorities(final Map<String, Object> source) {
-        return ofNullable(source)
+    public Set<String> getAuthorities(final Map<String, Object> rawAuthorizationInformation) {
+        return ofNullable(rawAuthorizationInformation)
                 .map(s -> {
-                    Object authorities = source.get(
+                    Object authorities = s.get(
                             AUTHORITIES.getKey()
                     );
                     return null == authorities
@@ -41,6 +30,17 @@ public class Spring6MicroserviceAuthorizationService implements ApplicationClien
                             : new HashSet<>((List<String>) authorities);
                 })
                 .orElseGet(HashSet::new);
+    }
+
+
+    @Override
+    public Optional<String> getUsername(final Map<String, Object> rawAuthorizationInformation) {
+        return ofNullable(rawAuthorizationInformation)
+                .map(s ->
+                        (String) s.get(
+                                USERNAME.getKey()
+                        )
+                );
     }
 
 }

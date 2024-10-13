@@ -19,7 +19,7 @@ import reactor.test.StepVerifier;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildApplicationClientDetails;
+import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -53,7 +53,7 @@ public class ApplicationClientDetailsServiceTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetails("ItDoesNotCare");
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
         return Stream.of(
                 //@formatter:off
                 //            id,                      repositoryResult,               cacheServiceResult,         expectedException,                          expectedResult
@@ -99,7 +99,7 @@ public class ApplicationClientDetailsServiceTest {
 
 
     static Stream<Arguments> findByUsernameTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetails("ItDoesNotCare");
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
         return Stream.of(
                 //@formatter:off
                 //            id,                repositoryResult,       expectedException,               expectedResult

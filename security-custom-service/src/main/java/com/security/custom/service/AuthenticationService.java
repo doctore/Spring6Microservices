@@ -2,6 +2,7 @@ package com.security.custom.service;
 
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
+import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
@@ -30,15 +31,19 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
+    private final AuthorizationService authorizationService;
+
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthenticationService(@Lazy final ApplicationContext applicationContext,
                                  @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
+                                 @Lazy final AuthorizationService authorizationService,
                                  @Lazy final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
+        this.authorizationService = authorizationService;
         this.tokenService = tokenService;
     }
 
@@ -105,9 +110,14 @@ public class AuthenticationService {
      * @throws UnauthorizedException if the given {@code refreshToken} is not a valid one
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username} or the included one does not exist in database
      * @throws TokenExpiredException if provided {@code refreshToken} has expired
+     * @throws TokenException if there was a problem getting claims of {@code refreshToken}
      */
     public Optional<AuthenticationInformationDto> refresh(final String applicationClientId,
                                                           final String refreshToken) {
+        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
+        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
+
+
 
         return null;
     }

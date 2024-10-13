@@ -24,7 +24,7 @@ import static com.security.custom.enums.token.TokenKey.USERNAME;
 @UtilityClass
 public class TestDataFactory {
 
-    public static ApplicationClientDetails buildApplicationClientDetails(final String id) {
+    public static ApplicationClientDetails buildApplicationClientDetailsJWE(final String id) {
         return ApplicationClientDetails.builder()
                 .id(id)
                 .applicationClientSecret("Spring6Microservices-application_client_secret")
@@ -34,6 +34,22 @@ public class TestDataFactory {
                 .encryptionAlgorithm(TokenEncryptionAlgorithm.DIR)
                 .encryptionMethod(TokenEncryptionMethod.A128CBC_HS256)
                 .encryptionSecret("dirEncryptionSecret##9991a2(jwe)")
+                .accessTokenValidityInSeconds(900)
+                .refreshTokenValidityInSeconds(3600)
+                .build();
+    }
+
+
+    public static ApplicationClientDetails buildApplicationClientDetailsJWS(final String id) {
+        return ApplicationClientDetails.builder()
+                .id(id)
+                .applicationClientSecret("Spring6Microservices-application_client_secret")
+                .signatureAlgorithm(TokenSignatureAlgorithm.HS256)
+                .signatureSecret("hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k")
+                .securityHandler(SecurityHandler.SPRING6_MICROSERVICES)
+                .encryptionAlgorithm(null)
+                .encryptionMethod(null)
+                .encryptionSecret(null)
                 .accessTokenValidityInSeconds(900)
                 .refreshTokenValidityInSeconds(3600)
                 .build();
