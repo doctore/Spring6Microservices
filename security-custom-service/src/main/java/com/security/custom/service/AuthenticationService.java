@@ -31,19 +31,15 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
-    private final AuthorizationService authorizationService;
-
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthenticationService(@Lazy final ApplicationContext applicationContext,
                                  @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
-                                 @Lazy final AuthorizationService authorizationService,
                                  @Lazy final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
-        this.authorizationService = authorizationService;
         this.tokenService = tokenService;
     }
 
@@ -64,18 +60,15 @@ public class AuthenticationService {
      * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} is disabled
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem creating class instances defined in {@link SecurityHandler#getAuthenticationServiceClass()}
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
      * @throws UnauthorizedException if the given {@code password} does not match with exists one related with given {@code username}
      * @throws UsernameNotFoundException if provided {@code username} does not exist in database
      */
     public Optional<AuthenticationInformationDto> login(final String applicationClientId,
                                                         final String username,
                                                         final String password) {
-        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
+        ApplicationClientAuthenticationService authenticationService = getApplicationClientAuthenticationService(applicationClientId);
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
-        ApplicationClientAuthenticationService authenticationService = applicationContext.getBean(
-                securityHandler.getAuthenticationServiceClass()
-        );
         UserDetails userDetails = authenticationService.loadUserByUsername(username);
         if (!authenticationService.isValidPassword(password, userDetails)) {
             throw new UnauthorizedException(
@@ -114,15 +107,14 @@ public class AuthenticationService {
      */
     public Optional<AuthenticationInformationDto> refresh(final String applicationClientId,
                                                           final String refreshToken) {
-        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
+        ApplicationClientAuthenticationService authenticationService = getApplicationClientAuthenticationService(applicationClientId);
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
 
 
+        // TODO:
 
         return null;
     }
-
-
 
 
     /**
@@ -208,6 +200,25 @@ public class AuthenticationService {
                             )
                             .build();
                 });
+    }
+
+
+    /**
+     * Gets the {@link ApplicationClientAuthenticationService} related with provided {@link ApplicationClientDetails#getId()}).
+     *
+     * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link ApplicationClientAuthenticationService} instance
+     *
+     * @return {@link ApplicationClientAuthenticationService}
+     *
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} was not defined in {@link SecurityHandler}
+     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthenticationService}
+     */
+    private ApplicationClientAuthenticationService getApplicationClientAuthenticationService(final String applicationClientId) {
+        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
+        return applicationContext.getBean(
+                securityHandler.getAuthenticationServiceClass()
+        );
     }
 
 }

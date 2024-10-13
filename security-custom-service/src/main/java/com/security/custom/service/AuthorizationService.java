@@ -31,17 +31,13 @@ public class AuthorizationService {
 
     private final ApplicationContext applicationContext;
 
-    private final ApplicationClientDetailsService applicationClientDetailsService;
-
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthorizationService(@Lazy final ApplicationContext applicationContext,
-                                @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
                                 @Lazy final TokenService tokenService) {
         this.applicationContext = applicationContext;
-        this.applicationClientDetailsService = applicationClientDetailsService;
         this.tokenService = tokenService;
     }
 
@@ -58,17 +54,14 @@ public class AuthorizationService {
      * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
      *
      * @throws ApplicationClientNotFoundException if the given {@link ApplicationClientDetails#getId()} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem creating class instances defined in {@link SecurityHandler#getAuthorizationServiceClass()}
+     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      */
     public Set<String> getAuthorities(final ApplicationClientDetails applicationClientDetails,
                                       final Map<String, Object> rawAuthorizationInformation) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(
+        ApplicationClientAuthorizationService authorizationService = getApplicationClientAuthorizationService(
                 applicationClientDetails.getId()
-        );
-        ApplicationClientAuthorizationService authorizationService = applicationContext.getBean(
-                securityHandler.getAuthorizationServiceClass()
         );
         return ofNullable(rawAuthorizationInformation)
                 .map(authorizationService::getAuthorities)
@@ -126,18 +119,15 @@ public class AuthorizationService {
      * @return {@link String} with the username value contained in {@code rawAuthorizationInformation}
      *
      * @throws ApplicationClientNotFoundException if the given {@link ApplicationClientDetails#getId()} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem creating class instances defined in {@link SecurityHandler#getAuthorizationServiceClass()}
+     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws UsernameNotFoundException if {@code rawAuthorizationInformation} does not contain a username value
      */
     public String getUsername(final ApplicationClientDetails applicationClientDetails,
                               final Map<String, Object> rawAuthorizationInformation) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(
+        ApplicationClientAuthorizationService authorizationService = getApplicationClientAuthorizationService(
                 applicationClientDetails.getId()
-        );
-        ApplicationClientAuthorizationService authorizationService = applicationContext.getBean(
-                securityHandler.getAuthorizationServiceClass()
         );
         return authorizationService.getUsername(
                 rawAuthorizationInformation
@@ -153,6 +143,25 @@ public class AuthorizationService {
                                 applicationClientDetails.getId()
                         )
                 )
+        );
+    }
+
+
+    /**
+     * Gets the {@link ApplicationClientAuthorizationService} related with provided {@link ApplicationClientDetails#getId()}).
+     *
+     * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link ApplicationClientAuthorizationService} instance
+     *
+     * @return {@link ApplicationClientAuthorizationService}
+     *
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} was not defined in {@link SecurityHandler}
+     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
+     */
+    private ApplicationClientAuthorizationService getApplicationClientAuthorizationService(final String applicationClientId) {
+        SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
+        return applicationContext.getBean(
+                securityHandler.getAuthorizationServiceClass()
         );
     }
 
