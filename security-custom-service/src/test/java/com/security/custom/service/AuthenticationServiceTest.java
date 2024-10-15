@@ -6,6 +6,7 @@ import com.security.custom.application.spring6microservice.service.Spring6Micros
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
+import com.security.custom.exception.token.TokenException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
@@ -27,7 +28,9 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -56,6 +59,9 @@ public class AuthenticationServiceTest {
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
 
     @Mock
+    private AuthorizationService mockAuthorizationService;
+
+    @Mock
     private TokenService mockTokenService;
 
     private AuthenticationService service;
@@ -66,6 +72,7 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
+                mockAuthorizationService,
                 mockTokenService
         );
     }
@@ -99,6 +106,34 @@ public class AuthenticationServiceTest {
 
 
     @Test
+    @DisplayName("login: when no ApplicationClientAuthenticationService is found related with SecurityHandler then BeansException is thrown")
+    public void login_whenNoApplicationClientAuthenticationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String username = "username value";
+        String password = "password value";
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenThrow(
+                        NoSuchBeanDefinitionException.class
+                );
+
+        assertThrows(
+                BeansException.class,
+                () -> service.login(
+                        applicationClientId,
+                        username,
+                        password
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+    }
+
+
+    @Test
     @DisplayName("login: when no ApplicationClientDetails is found in database then ApplicationClientNotFoundException is thrown")
     public void login_whenNoApplicationClientDetailsIsFoundInDatabase_thenApplicationClientNotFoundExceptionIsThrown() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
@@ -126,34 +161,6 @@ public class AuthenticationServiceTest {
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
                         eq(applicationClientId)
-                );
-    }
-
-
-    @Test
-    @DisplayName("login: when no ApplicationClientAuthenticationService is found related with SecurityHandler then BeansException is thrown")
-    public void login_whenNoApplicationClientAuthenticationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
-        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
-        String username = "username value";
-        String password = "password value";
-
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
-                .thenThrow(
-                        NoSuchBeanDefinitionException.class
-                );
-
-        assertThrows(
-                BeansException.class,
-                () -> service.login(
-                        applicationClientId,
-                        username,
-                        password
-                )
-        );
-
-        verify(mockApplicationContext, times(1))
-                .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
                 );
     }
 
@@ -383,6 +390,435 @@ public class AuthenticationServiceTest {
                 .isValidPassword(
                         eq(password),
                         eq(user)
+                );
+        verify(mockAuthenticationService, times(1))
+                .getRawAuthenticationInformation(
+                        eq(user)
+                );
+        verify(mockTokenService, times(createTokensInvocations))
+                .createAccessToken(
+                        eq(applicationClientDetails),
+                        any(),
+                        anyString()
+                );
+        verify(mockTokenService, times(createTokensInvocations))
+                .createRefreshToken(
+                        eq(applicationClientDetails),
+                        any(),
+                        anyString()
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when no applicationClientId is found in SecurityHandler then ApplicationClientNotFoundException is thrown")
+    public void refresh_whenNoApplicationClientIdIsFoundInSecurityHandler_thenApplicationClientNotFoundExceptionIsThrown() {
+        String applicationClientId = "NotFound";
+        String refreshToken = "ItDoesNotCare";
+
+        assertThrows(
+                ApplicationClientNotFoundException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(0))
+                .getBean(
+                        eq(ApplicationClientAuthenticationService.class)
+                );
+        verify(mockApplicationClientDetailsService, times(0))
+                .findById(
+                        eq(applicationClientId)
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when no ApplicationClientAuthenticationService is found related with SecurityHandler then BeansException is thrown")
+    public void refresh_whenNoApplicationClientAuthenticationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "ItDoesNotCare";
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenThrow(
+                        NoSuchBeanDefinitionException.class
+                );
+
+        assertThrows(
+                BeansException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when no ApplicationClientDetails is found in database then ApplicationClientNotFoundException is thrown")
+    public void refresh_whenNoApplicationClientDetailsIsFoundInDatabase_thenApplicationClientNotFoundExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "ItDoesNotCare";
+
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenThrow(
+                        ApplicationClientNotFoundException.class
+                );
+
+        assertThrows(
+                ApplicationClientNotFoundException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(0))
+                .getBean(
+                        eq(ApplicationClientAuthenticationService.class)
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when there is a problem getting content of refreshToken then TokenException is thrown")
+    public void refresh_whenThereIsAProblemGettingContentOfRefreshToken_thenTokenExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "NotValidToken";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mock(Spring6MicroserviceAuthenticationService.class)
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+                .thenThrow(
+                        TokenException.class
+                );
+
+        assertThrows(
+                TokenException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getRawAuthorizationInformation(
+                        eq(applicationClientDetails),
+                        eq(refreshToken),
+                        eq(false)
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when refreshToken does not contain username Value then UsernameNotFoundException is thrown")
+    public void refresh_whenRefreshTokenDoesNotContainUsernameValue_thenUsernameNotFoundExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "ItDoesNotCare";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
+        Map<String, Object> rawAuthorizationInformation = new HashMap<>();
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mockAuthenticationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+                .thenReturn(
+                        rawAuthorizationInformation
+                );
+        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
+                .thenThrow(
+                        UsernameNotFoundException.class
+                );
+
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getRawAuthorizationInformation(
+                        eq(applicationClientDetails),
+                        eq(refreshToken),
+                        eq(false)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(applicationClientDetails),
+                        eq(rawAuthorizationInformation)
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when a User with given username is not found in database then UsernameNotFoundException is thrown")
+    public void refresh_whenAUserWithGivenUsernameIsNotFoundInDatabase_thenUsernameNotFoundExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "ItDoesNotCare";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
+        String username = "username value";
+        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
+            put("username", username);
+        }};
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mockAuthenticationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+                .thenReturn(
+                        rawAuthorizationInformation
+                );
+        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
+                .thenReturn(
+                        username
+                );
+        when(mockAuthenticationService.loadUserByUsername(eq(username)))
+                .thenThrow(
+                        UsernameNotFoundException.class
+                );
+
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getRawAuthorizationInformation(
+                        eq(applicationClientDetails),
+                        eq(refreshToken),
+                        eq(false)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(applicationClientDetails),
+                        eq(rawAuthorizationInformation)
+                );
+        verify(mockAuthenticationService, times(1))
+                .loadUserByUsername(
+                        eq(username)
+                );
+    }
+
+
+    @Test
+    @DisplayName("refresh: when User with given username is found in database but inactive then AccountStatusException is thrown")
+    public void refresh_whenUserWithGivenUsernameIsFoundInDatabaseButInactive_thenAccountStatusExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String refreshToken = "ItDoesNotCare";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
+        String username = "username value";
+        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
+            put("username", username);
+        }};
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mockAuthenticationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+                .thenReturn(
+                        rawAuthorizationInformation
+                );
+        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
+                .thenReturn(
+                        username
+                );
+        when(mockAuthenticationService.loadUserByUsername(eq(username)))
+                .thenThrow(
+                        LockedException.class
+                );
+
+        assertThrows(
+                AccountStatusException.class,
+                () -> service.refresh(
+                        applicationClientId,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getRawAuthorizationInformation(
+                        eq(applicationClientDetails),
+                        eq(refreshToken),
+                        eq(false)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(applicationClientDetails),
+                        eq(rawAuthorizationInformation)
+                );
+        verify(mockAuthenticationService, times(1))
+                .loadUserByUsername(
+                        eq(username)
+                );
+    }
+
+
+    static Stream<Arguments> refreshNoExceptionThrownTestCases() {
+        Optional<RawAuthenticationInformationDto> rawAuthenticationInformation = of(
+                buildRawAuthenticationInformationDto(
+                        "username value",
+                        List.of(
+                                RoleEnum.ROLE_ADMIN.name()
+                        )
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            rawAuthenticationInformation,   isExpectedResultEmpty
+                Arguments.of( empty(),                        true ),
+                Arguments.of( rawAuthenticationInformation,   false )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("refreshNoExceptionThrownTestCases")
+    @DisplayName("refresh: no exception thrown test cases")
+    public void refreshNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
+                                                   boolean isExpectedResultEmpty) {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        String refreshToken = "ItDoesNotCare";
+        String username = "username value";
+        String password = "password value";
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
+        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
+            put("username", username);
+        }};
+        User user = buildUser(username, password, true);
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+                .thenReturn(
+                        mockAuthenticationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+                .thenReturn(
+                        rawAuthorizationInformation
+                );
+        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
+                .thenReturn(
+                        username
+                );
+        when(mockAuthenticationService.loadUserByUsername(eq(username)))
+                .thenReturn(
+                        user
+                );
+        when(mockAuthenticationService.getRawAuthenticationInformation(eq(user)))
+                .thenReturn(
+                        rawAuthenticationInformation
+                );
+
+        Optional<AuthenticationInformationDto> result = service.refresh(
+                applicationClientId,
+                refreshToken
+        );
+
+        int createTokensInvocations = 0;
+        if (isExpectedResultEmpty) {
+            assertTrue(result.isEmpty());
+        } else {
+            assertTrue(result.isPresent());
+            createTokensInvocations = 1;
+        }
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getRawAuthorizationInformation(
+                        eq(applicationClientDetails),
+                        eq(refreshToken),
+                        eq(false)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(applicationClientDetails),
+                        eq(rawAuthorizationInformation)
+                );
+        verify(mockAuthenticationService, times(1))
+                .loadUserByUsername(
+                        eq(username)
                 );
         verify(mockAuthenticationService, times(1))
                 .getRawAuthenticationInformation(

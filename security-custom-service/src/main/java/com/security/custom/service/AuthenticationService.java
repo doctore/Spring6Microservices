@@ -4,6 +4,7 @@ import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
+import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,15 +33,19 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
+    private final AuthorizationService authorizationService;
+
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthenticationService(@Lazy final ApplicationContext applicationContext,
                                  @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
+                                 @Lazy final AuthorizationService authorizationService,
                                  @Lazy final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
+        this.authorizationService = authorizationService;
         this.tokenService = tokenService;
     }
 
@@ -76,6 +82,11 @@ public class AuthenticationService {
                             username)
             );
         }
+        log.info(
+                format("Regarding to the ApplicationClientDetails: %s, the username: %s exists in database and provided password matches",
+                        applicationClientId,
+                        username)
+        );
         return getAuthenticationInformation(
                 applicationClientDetails,
                 authenticationService,
@@ -100,8 +111,8 @@ public class AuthenticationService {
      *                                            was not defined in {@link SecurityHandler}
      * @throws BeansException if there was a problem creating class instances defined in {@link SecurityHandler#getAuthenticationServiceClass()}
      *                        or {@link SecurityHandler#getAuthorizationServiceClass()}
-     * @throws UnauthorizedException if the given {@code refreshToken} is not a valid one
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username} or the included one does not exist in database
+     * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
      * @throws TokenExpiredException if provided {@code refreshToken} has expired
      * @throws TokenException if there was a problem getting claims of {@code refreshToken}
      */
@@ -109,50 +120,27 @@ public class AuthenticationService {
                                                           final String refreshToken) {
         ApplicationClientAuthenticationService authenticationService = getApplicationClientAuthenticationService(applicationClientId);
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
-
-
-        // TODO:
-
-        return null;
+        Map<String, Object> rawAuthorizationInformation = authorizationService.getRawAuthorizationInformation(
+                applicationClientDetails,
+                refreshToken,
+                false
+        );
+        String username = authorizationService.getUsername(
+                applicationClientDetails,
+                rawAuthorizationInformation
+        );
+        UserDetails userDetails = authenticationService.loadUserByUsername(username);
+        log.info(
+                format("Regarding to the ApplicationClientDetails: %s, the username: %s exists in database",
+                        applicationClientId,
+                        username)
+        );
+        return getAuthenticationInformation(
+                applicationClientDetails,
+                authenticationService,
+                userDetails
+        );
     }
-
-
-    /**
-     *    Build the {@link AuthenticationInformationDto} with the specific information using the given {@code refreshToken}
-     * and {@code clientId} (belongs to a {@link JwtClientDetails}).
-     *
-     * @param refreshToken
-     *    {@link String} with the refresh token to check
-     * @param clientId
-     *    {@link JwtClientDetails#getClientId()} used to know the details to include
-     *
-     * @return {@link Optional} of {@link AuthenticationInformationDto}
-     *
-     * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} included in the token is disabled
-     * @throws ClientNotFoundException if the given {@code clientId} does not exist in database
-     * @throws UnauthorizedException if the given {@code refreshToken} is not a valid one
-     * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username} or the included one does not exist in database
-     * @throws TokenExpiredException if the given {@code refreshToken} has expired
-
-    public Optional<AuthenticationInformationDto> refresh(final String refreshToken,
-                                                          final String clientId) {
-        Map<String, Object> payload = authenticationService.getPayloadOfToken(refreshToken, clientId, false);
-        String username = getUsernameFromPayload(payload, clientId);
-
-        return of(AuthenticationConfigurationEnum.getByClientId(clientId))
-                .map(authConfig -> applicationContext.getBean(authConfig.getUserServiceClass()))
-                .flatMap(userService -> {
-                    UserDetails userDetails = userService.loadUserByUsername(username);
-                    return authenticationService.getAuthenticationInformation(
-                            clientId,
-                            userDetails
-                    );
-                });
-    }
-    */
-
-
-
 
 
     /**
