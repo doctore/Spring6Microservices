@@ -466,7 +466,8 @@ public class JweUtil {
             if (!JwsUtil.isJwsToken(jwsToken)) {
                 throw new TokenInvalidException(
                         format("The token: %s is not a JWS one",
-                                jwsToken)
+                                jwsToken
+                        )
                 );
             }
             JWEObject jweObject = new JWEObject(
@@ -518,7 +519,8 @@ public class JweUtil {
             if (!isJweToken(jweToken)) {
                 throw new TokenInvalidException(
                         format("The token: %s is not a JWE one",
-                                jweToken)
+                                jweToken
+                        )
                 );
             }
             EncryptedJWT encryptedJWT = EncryptedJWT.parse(jweToken);

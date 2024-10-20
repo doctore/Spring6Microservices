@@ -9,6 +9,7 @@ import com.security.custom.interfaces.ApplicationClientAuthorizationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
+import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.security.custom.enums.token.TokenKey.REFRESH_JWT_ID;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
@@ -31,41 +32,160 @@ public class AuthorizationService {
 
     private final ApplicationContext applicationContext;
 
+    private final ApplicationClientDetailsService applicationClientDetailsService;
+
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthorizationService(@Lazy final ApplicationContext applicationContext,
+                                @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
                                 @Lazy final TokenService tokenService) {
         this.applicationContext = applicationContext;
+        this.applicationClientDetailsService = applicationClientDetailsService;
         this.tokenService = tokenService;
     }
 
 
     /**
-     *    Returns the authorities included in the given {@code rawAuthorizationInformation}, based on how the provided
-     * {@link ApplicationClientDetails} handles its authorization data.
+     *    Verifies the given {@code accessToken}, based on the provided {@code applicationClientId} (belonging to
+     * a {@link ApplicationClientDetails}). If provided token is valid then returns and instance of
+     * {@link AuthorizationInformationDto} with its content.
+     *
+     * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authorization data to include
+     * @param accessToken
+     *    {@link String} with the access token to use
+     *
+     * @return {@link AuthorizationInformationDto} with the data of {@code accessToken} based on {@link ApplicationClientDetails}
+     *
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
+     *                                            was not defined in {@link SecurityHandler}
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
+     * @throws UsernameNotFoundException if the {@code accessToken} does not contain a {@code username}
+     * @throws TokenInvalidException if the given {@code accessToken} is not a valid one
+     * @throws TokenExpiredException if provided {@code accessToken} is valid but has expired
+     * @throws TokenException if there was a problem getting the content of {@code accessToken}
+     */
+    public AuthorizationInformationDto checkAccessToken(final String applicationClientId,
+                                                        final String accessToken) {
+        ApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
+                applicationClientId
+        );
+        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
+                applicationClientId
+        );
+        AuthorizationInformationDto result = this.getAuthorizationInformation(
+                applicationClientDetails,
+                applicationAuthorizationService,
+                accessToken,
+                true
+        );
+        log.info(
+                format("Regarding to the ApplicationClientDetails: %s, the authorize information of the username: %s "
+                     + "was validated using access token",
+                        applicationClientDetails.getId(),
+                        result.getUsername()
+                )
+        );
+        return result;
+    }
+
+
+    /**
+     *    Verifies the given {@code refreshToken}, based on the provided {@link ApplicationClientDetails}. If provided
+     * token is valid then returns and instance of {@link AuthorizationInformationDto} with its content.
      *
      * @param applicationClientDetails
-     *    {@link ApplicationClientDetails} with the details about how to get authorities of authorized user
-     * @param rawAuthorizationInformation
-     *    {@link Map} containing all data related to the current authorized user
+     *    {@link ApplicationClientDetails} with the details about how to get the specific authorization data to include
+     * @param refreshToken
+     *    {@link String} with the refresh token to use
      *
-     * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
+     * @return {@link AuthorizationInformationDto} with the data of {@code refreshToken} based on {@link ApplicationClientDetails}
      *
-     * @throws ApplicationClientNotFoundException if the given {@link ApplicationClientDetails#getId()} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientDetails} was not defined in {@link SecurityHandler}
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username}
+     * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
+     * @throws TokenExpiredException if provided {@code refreshToken} is valid but has expired
+     * @throws TokenException if there was a problem getting the content of {@code refreshToken}
      */
-    public Set<String> getAuthorities(final ApplicationClientDetails applicationClientDetails,
-                                      final Map<String, Object> rawAuthorizationInformation) {
+    public AuthorizationInformationDto checkRefreshToken(final ApplicationClientDetails applicationClientDetails,
+                                                         final String refreshToken) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        ApplicationClientAuthorizationService authorizationService = getApplicationClientAuthorizationService(
+        ApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
                 applicationClientDetails.getId()
         );
-        return ofNullable(rawAuthorizationInformation)
-                .map(authorizationService::getAuthorities)
-                .orElseGet(HashSet::new);
+        AuthorizationInformationDto result = this.getAuthorizationInformation(
+                applicationClientDetails,
+                applicationAuthorizationService,
+                refreshToken,
+                false
+        );
+        log.info(
+                format("Regarding to the ApplicationClientDetails: %s, the authorize information of the username: %s "
+                     + "was validated using refresh token",
+                        applicationClientDetails.getId(),
+                        result.getUsername()
+                )
+        );
+        return result;
+    }
+
+
+    /**
+     *    Using provided {@code token}, returns an instance of {@link AuthorizationInformationDto} with its content,
+     * based on the provided {@link ApplicationClientDetails}.
+     *
+     * @param applicationClientDetails
+     *    {@link ApplicationClientDetails} with the details about how to get token's payload
+     * @param applicationAuthorizationService
+     *    {@link ApplicationClientAuthorizationService} to know how to get authorization data
+     * @param token
+     *    {@link String} with the token of which to extract the payload
+     * @param isAccessToken
+     *    {@code true} if {@code token} is an access one, {@code false} if it is a refresh token
+     *
+     * @return {@link AuthorizationInformationDto} with the data of {@code token} based on {@link ApplicationClientDetails}
+     *
+     * @throws TokenInvalidException if the given {@code token} is not a valid one
+     * @throws TokenExpiredException if provided {@code token} is valid but has expired
+     * @throws TokenException if there was a problem getting the content of {@code token}
+     */
+    private AuthorizationInformationDto getAuthorizationInformation(final ApplicationClientDetails applicationClientDetails,
+                                                                    final ApplicationClientAuthorizationService applicationAuthorizationService,
+                                                                    final String token,
+                                                                    final boolean isAccessToken) {
+        Map<String, Object> rawAuthorizationInformation = this.getRawAuthorizationInformation(
+                applicationClientDetails,
+                token,
+                isAccessToken
+        );
+        return AuthorizationInformationDto.builder()
+                .application(
+                        applicationClientDetails.getId()
+                )
+                .username(
+                        this.getUsername(
+                                applicationClientDetails.getId(),
+                                applicationAuthorizationService,
+                                rawAuthorizationInformation
+                        )
+                )
+                .authorities(
+                        this.getAuthorities(
+                                applicationAuthorizationService,
+                                rawAuthorizationInformation
+                        )
+                )
+                .additionalInformation(
+                        this.getAdditionalInformation(
+                                applicationAuthorizationService,
+                                rawAuthorizationInformation
+                        )
+                )
+                .build();
     }
 
 
@@ -82,20 +202,18 @@ public class AuthorizationService {
      *
      * @return {@link Map} with the content of the given {@code token}
      *
-     * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws TokenInvalidException if the given {@code token} is not a valid one
      * @throws TokenExpiredException if provided {@code token} is valid but has expired
      * @throws TokenException if there was a problem getting the content of {@code token}
      */
-    public Map<String, Object> getRawAuthorizationInformation(final ApplicationClientDetails applicationClientDetails,
-                                                              final String token,
-                                                              final boolean isAccessToken) {
-        AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
+    private Map<String, Object> getRawAuthorizationInformation(final ApplicationClientDetails applicationClientDetails,
+                                                               final String token,
+                                                               final boolean isAccessToken) {
         Map<String, Object> payload = tokenService.getPayloadOfToken(
                 applicationClientDetails,
                 token
         );
-        if (isAccessToken != isPayloadRelatedWithAccessToken(payload)) {
+        if (isAccessToken != tokenService.isPayloadRelatedWithAccessToken(payload)) {
             throw new TokenInvalidException(
                     format("The given token: %s related with clientId: %s is not an " + (isAccessToken ? "access " : "refresh ") + "one",
                             token,
@@ -111,39 +229,73 @@ public class AuthorizationService {
      *    Returns the {@code username} included in the given {@code rawAuthorizationInformation}, based on how the provided
      * {@link ApplicationClientDetails} handles its authorization data.
      *
-     * @param applicationClientDetails
-     *    {@link ApplicationClientDetails} with the details about how to get username of authorized user
+     * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authorization data to include
+     * @param authorizationService
+     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
      * @return {@link String} with the username value contained in {@code rawAuthorizationInformation}
      *
-     * @throws ApplicationClientNotFoundException if the given {@link ApplicationClientDetails#getId()} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
-     * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws UsernameNotFoundException if {@code rawAuthorizationInformation} does not contain a username value
      */
-    public String getUsername(final ApplicationClientDetails applicationClientDetails,
-                              final Map<String, Object> rawAuthorizationInformation) {
-        AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        ApplicationClientAuthorizationService authorizationService = getApplicationClientAuthorizationService(
-                applicationClientDetails.getId()
-        );
+    private String getUsername(final String applicationClientId,
+                               final ApplicationClientAuthorizationService authorizationService,
+                               final Map<String, Object> rawAuthorizationInformation) {
         return authorizationService.getUsername(
-                rawAuthorizationInformation
-        )
-        .orElseThrow(() ->
-                new UsernameNotFoundException(
-                        format("In the given rawAuthorizationInformation with the keys: %s and related with the ApplicationClientDetails: %s, there is no a username",
-                                null != rawAuthorizationInformation
-                                        ? StringUtil.join(
-                                                rawAuthorizationInformation.keySet()
-                                          )
-                                        : "null",
-                                applicationClientDetails.getId()
-                        )
+                        rawAuthorizationInformation
                 )
-        );
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                format("In the given rawAuthorizationInformation with the keys: %s and related with the ApplicationClientDetails: %s, there is no a username",
+                                        null != rawAuthorizationInformation
+                                                ? StringUtil.join(
+                                                        rawAuthorizationInformation.keySet()
+                                                )
+                                                : "null",
+                                        applicationClientId
+                                )
+                        )
+                );
+    }
+
+
+    /**
+     *    Returns the authorities included in the given {@code rawAuthorizationInformation}, based on how the provided
+     * {@link ApplicationClientDetails} handles its authorization data.
+     *
+     * @param authorizationService
+     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
+     * @param rawAuthorizationInformation
+     *    {@link Map} containing all data related to the current authorized user
+     *
+     * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
+     */
+    private Set<String> getAuthorities(final ApplicationClientAuthorizationService authorizationService,
+                                       final Map<String, Object> rawAuthorizationInformation) {
+        return ofNullable(rawAuthorizationInformation)
+                .map(authorizationService::getAuthorities)
+                .orElseGet(HashSet::new);
+    }
+
+
+    /**
+     *    Returns the additional information included in the given {@code rawAuthorizationInformation}, based on how
+     * the provided {@link ApplicationClientDetails} handles its authorization data.
+     *
+     * @param authorizationService
+     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
+     * @param rawAuthorizationInformation
+     *    {@link Map} containing all data related to the current authorized user
+     *
+     * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
+     */
+    private Map<String, Object> getAdditionalInformation(final ApplicationClientAuthorizationService authorizationService,
+                                                         final Map<String, Object> rawAuthorizationInformation) {
+        return ofNullable(rawAuthorizationInformation)
+                .map(authorizationService::getAdditionalAuthorizationInformation)
+                .orElseGet(HashMap::new);
     }
 
 
@@ -156,33 +308,13 @@ public class AuthorizationService {
      * @return {@link ApplicationClientAuthorizationService}
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthorizationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
      */
     private ApplicationClientAuthorizationService getApplicationClientAuthorizationService(final String applicationClientId) {
         SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
         return applicationContext.getBean(
                 securityHandler.getAuthorizationServiceClass()
         );
-    }
-
-
-    /**
-     * Checks if the given {@code payload} contains information related with an JWS/JWE access token.
-     *
-     * @param payload
-     *    JWS/JWE token payload information
-     *
-     * @return {@code true} if the {@code payload} comes from an access token,
-     *         {@code false} otherwise
-     */
-    private boolean isPayloadRelatedWithAccessToken(final Map<String, Object> payload) {
-        return ofNullable(payload)
-                .map(p ->
-                        null == p.get(
-                                REFRESH_JWT_ID.getKey()
-                        )
-                )
-                .orElse(true);
     }
 
 }

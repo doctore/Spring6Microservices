@@ -14,7 +14,7 @@ import java.util.Map;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 /**
- * Required information to send as response in the {@code login} request
+ * Required information to send as response when trying to authenticate a user.
  */
 @AllArgsConstructor
 @Builder
@@ -43,6 +43,6 @@ public class AuthenticationInformationDto implements Serializable {
     private String refreshToken;
 
     @Schema(description = "Extra data returned by security service")
-    private Map<String, Object> additionalInfo;
+    private Map<String, Object> additionalInformation;
 
 }

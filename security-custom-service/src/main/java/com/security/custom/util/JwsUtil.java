@@ -566,7 +566,7 @@ public class JwsUtil {
 
                 case null, default -> throw new TokenException(
                         format("It was not possible to find a suitable verifier for the signature algorithm: %s",
-                                ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                               ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
                         )
                 );
             };

@@ -21,6 +21,7 @@ import java.util.UUID;
 import static com.security.custom.enums.token.TokenKey.AUDIENCE;
 import static com.security.custom.enums.token.TokenKey.JWT_ID;
 import static com.security.custom.enums.token.TokenKey.REFRESH_JWT_ID;
+import static java.util.Optional.ofNullable;
 
 @Log4j2
 @Service
@@ -56,7 +57,7 @@ public class TokenService {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
         final String finalTokenIdentifier = ObjectUtil.getOrElse(
                 tokenIdentifier,
-                UUID.randomUUID().toString()
+                this.getNewIdentifier()
         );
         Map<String, Object> tokenInformation = new HashMap<>(
                 getDefaultDataOfAccessToken(
@@ -98,7 +99,7 @@ public class TokenService {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
         final String finalTokenIdentifier = ObjectUtil.getOrElse(
                 tokenIdentifier,
-                UUID.randomUUID().toString()
+                this.getNewIdentifier()
         );
         Map<String, Object> tokenInformation = new HashMap<>(
                 getDefaultDataOfRefreshToken(
@@ -116,6 +117,16 @@ public class TokenService {
                 applicationClientDetails,
                 applicationClientDetails.getRefreshTokenValidityInSeconds()
         );
+    }
+
+
+    /**
+     * Returns a new value that could be used as token's identifier.
+     *
+     * @return {@link String} with a token's identifier
+     */
+    public String getNewIdentifier() {
+        return UUID.randomUUID().toString();
     }
 
 
@@ -154,6 +165,29 @@ public class TokenService {
                         applicationClientDetails.getSignatureSecret()
                 )
         );
+    }
+
+
+    /**
+     * Checks if the given {@code payload} contains information related with an JWS/JWE access token.
+     *
+     * @apiNote
+     *    If {@code payload} is {@code null} or empty, {@code true} will be returned.
+     *
+     * @param payload
+     *    JWS/JWE token payload information
+     *
+     * @return {@code true} if the {@code payload} comes from an access token,
+     *         {@code false} otherwise
+     */
+    public boolean isPayloadRelatedWithAccessToken(final Map<String, Object> payload) {
+        return ofNullable(payload)
+                .map(p ->
+                        null == p.get(
+                                REFRESH_JWT_ID.getKey()
+                        )
+                )
+                .orElse(true);
     }
 
 

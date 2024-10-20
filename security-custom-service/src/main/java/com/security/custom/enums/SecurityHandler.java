@@ -63,7 +63,8 @@ public enum SecurityHandler {
                 .orElseThrow(() ->
                         new ApplicationClientNotFoundException(
                                 format("The given applicationClientId: %s was not found",
-                                        applicationClientId)
+                                        applicationClientId
+                                )
                         )
                 );
     }

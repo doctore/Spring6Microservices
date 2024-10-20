@@ -11,10 +11,12 @@ import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
+import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import lombok.experimental.UtilityClass;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.security.custom.enums.token.TokenKey.AUTHORITIES;
@@ -59,7 +61,9 @@ public class TestDataFactory {
     public static AuthenticationInformationDto buildAuthenticationInformationDto(final String id) {
         return AuthenticationInformationDto.builder()
                 .id(id)
-                .application(SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId())
+                .application(
+                        SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+                )
                 .accessToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIHZhbHVlIiwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl0s"
                         + "Im5hbWUiOiJuYW1lIHZhbHVlIiwianRpIjoidW5pcXVlIGlkZW50aWZpZXIiLCJhZ2UiOjIzLCJpYXQiOjUwMDAwMDAwM"
                         + "DAsImV4cCI6NTAwMDAwMDAwMH0.pKoZm2qHaA1zOw9MPCT_1ho2WtDmcYcn2eNr73r_CWg")
@@ -67,11 +71,25 @@ public class TestDataFactory {
                         + "iOiJuYW1lIHZhbHVlIiwianRpIjoidW5pcXVlIGlkZW50aWZpZXIiLCJhdGkiOiJyZWZyZXNoIHRva2VuIGlkZW50aWZpZXIiLCJ"
                         + "hZ2UiOjIzLCJpYXQiOjUwMDAwMDAwMDAsImV4cCI6NTAwMDAwMDAwMH0.vwelPSmcasRZItPfBZ_wwqazR_74U0kHF-d_b7DKO3g")
                 .expiresIn(250)
-                .additionalInfo(
+                .additionalInformation(
                         new LinkedHashMap<>() {{
                             put(NAME.getKey(), "name value");
                         }}
                 )
+                .build();
+    }
+
+
+    public static AuthorizationInformationDto buildAuthorizationInformationDto(final String username,
+                                                                               final Set<String> authorities,
+                                                                               final Map<String, Object> additionalInformation) {
+        return AuthorizationInformationDto.builder()
+                .application(
+                        SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+                )
+                .username(username)
+                .authorities(authorities)
+                .additionalInformation(additionalInformation)
                 .build();
     }
 

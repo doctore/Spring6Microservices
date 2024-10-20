@@ -10,6 +10,7 @@ import com.security.custom.exception.token.TokenException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
+import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,15 +31,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWE;
+import static com.security.custom.TestDataFactory.buildAuthenticationInformationDto;
 import static com.security.custom.TestDataFactory.buildRawAuthenticationInformationDto;
 import static com.security.custom.TestDataFactory.buildUser;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -319,11 +322,12 @@ public class AuthenticationServiceTest {
                         )
                 )
         );
+        AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("11");
         return Stream.of(
                 //@formatter:off
-                //            rawAuthenticationInformation,   isExpectedResultEmpty
-                Arguments.of( empty(),                        true ),
-                Arguments.of( rawAuthenticationInformation,   false )
+                //            rawAuthenticationInformation,   expectedResult
+                Arguments.of( empty(),                        empty() ),
+                Arguments.of( rawAuthenticationInformation,   of(authenticationInformation) )
         ); //@formatter:on
     }
 
@@ -331,13 +335,15 @@ public class AuthenticationServiceTest {
     @MethodSource("loginNoExceptionThrownTestCases")
     @DisplayName("login: no exception thrown test cases")
     public void loginNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
-                                                 boolean isExpectedResultEmpty) {
+                                                 Optional<AuthenticationInformationDto> expectedResult) {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         String username = "username value";
         String password = "password value";
-        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
         User user = buildUser(username, password, true);
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(
+                Spring6MicroserviceAuthenticationService.class
+        );
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -359,6 +365,20 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
+        if (expectedResult.isPresent()) {
+            when(mockTokenService.getNewIdentifier())
+                    .thenReturn(
+                            expectedResult.get().getId()
+                    );
+            when(mockTokenService.createAccessToken(eq(applicationClientDetails), eq(rawAuthenticationInformation.get()), eq(expectedResult.get().getId())))
+                    .thenReturn(
+                            expectedResult.get().getAccessToken()
+                    );
+            when(mockTokenService.createRefreshToken(eq(applicationClientDetails), eq(rawAuthenticationInformation.get()), eq(expectedResult.get().getId())))
+                    .thenReturn(
+                            expectedResult.get().getRefreshToken()
+                    );
+        }
 
         Optional<AuthenticationInformationDto> result = service.login(
                 applicationClientId,
@@ -367,10 +387,14 @@ public class AuthenticationServiceTest {
         );
 
         int createTokensInvocations = 0;
-        if (isExpectedResultEmpty) {
+        if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
         } else {
             assertTrue(result.isPresent());
+            assertEquals(
+                    expectedResult,
+                    result
+            );
             createTokensInvocations = 1;
         }
 
@@ -506,7 +530,7 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         applicationClientDetails
                 );
-        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+        when(mockAuthorizationService.checkRefreshToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenThrow(
                         TokenException.class
                 );
@@ -528,22 +552,20 @@ public class AuthenticationServiceTest {
                         eq(applicationClientId)
                 );
         verify(mockAuthorizationService, times(1))
-                .getRawAuthorizationInformation(
+                .checkRefreshToken(
                         eq(applicationClientDetails),
-                        eq(refreshToken),
-                        eq(false)
+                        eq(refreshToken)
                 );
     }
 
 
     @Test
-    @DisplayName("refresh: when refreshToken does not contain username Value then UsernameNotFoundException is thrown")
+    @DisplayName("refresh: when refreshToken does not contain username value then UsernameNotFoundException is thrown")
     public void refresh_whenRefreshTokenDoesNotContainUsernameValue_thenUsernameNotFoundExceptionIsThrown() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         String refreshToken = "ItDoesNotCare";
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
-        Map<String, Object> rawAuthorizationInformation = new HashMap<>();
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -553,11 +575,7 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         applicationClientDetails
                 );
-        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
-                .thenReturn(
-                        rawAuthorizationInformation
-                );
-        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
+        when(mockAuthorizationService.checkRefreshToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenThrow(
                         UsernameNotFoundException.class
                 );
@@ -579,15 +597,9 @@ public class AuthenticationServiceTest {
                         eq(applicationClientId)
                 );
         verify(mockAuthorizationService, times(1))
-                .getRawAuthorizationInformation(
+                .checkRefreshToken(
                         eq(applicationClientDetails),
-                        eq(refreshToken),
-                        eq(false)
-                );
-        verify(mockAuthorizationService, times(1))
-                .getUsername(
-                        eq(applicationClientDetails),
-                        eq(rawAuthorizationInformation)
+                        eq(refreshToken)
                 );
     }
 
@@ -600,9 +612,9 @@ public class AuthenticationServiceTest {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
         String username = "username value";
-        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
-            put("username", username);
-        }};
+        AuthorizationInformationDto authorizationInformation = AuthorizationInformationDto.builder()
+                .username(username)
+                .build();
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -612,13 +624,9 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         applicationClientDetails
                 );
-        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+        when(mockAuthorizationService.checkRefreshToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenReturn(
-                        rawAuthorizationInformation
-                );
-        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
-                .thenReturn(
-                        username
+                        authorizationInformation
                 );
         when(mockAuthenticationService.loadUserByUsername(eq(username)))
                 .thenThrow(
@@ -642,15 +650,9 @@ public class AuthenticationServiceTest {
                         eq(applicationClientId)
                 );
         verify(mockAuthorizationService, times(1))
-                .getRawAuthorizationInformation(
+                .checkRefreshToken(
                         eq(applicationClientDetails),
-                        eq(refreshToken),
-                        eq(false)
-                );
-        verify(mockAuthorizationService, times(1))
-                .getUsername(
-                        eq(applicationClientDetails),
-                        eq(rawAuthorizationInformation)
+                        eq(refreshToken)
                 );
         verify(mockAuthenticationService, times(1))
                 .loadUserByUsername(
@@ -667,9 +669,9 @@ public class AuthenticationServiceTest {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
         String username = "username value";
-        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
-            put("username", username);
-        }};
+        AuthorizationInformationDto authorizationInformation = AuthorizationInformationDto.builder()
+                .username(username)
+                .build();
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -679,13 +681,9 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         applicationClientDetails
                 );
-        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+        when(mockAuthorizationService.checkRefreshToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenReturn(
-                        rawAuthorizationInformation
-                );
-        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
-                .thenReturn(
-                        username
+                        authorizationInformation
                 );
         when(mockAuthenticationService.loadUserByUsername(eq(username)))
                 .thenThrow(
@@ -709,15 +707,9 @@ public class AuthenticationServiceTest {
                         eq(applicationClientId)
                 );
         verify(mockAuthorizationService, times(1))
-                .getRawAuthorizationInformation(
+                .checkRefreshToken(
                         eq(applicationClientDetails),
-                        eq(refreshToken),
-                        eq(false)
-                );
-        verify(mockAuthorizationService, times(1))
-                .getUsername(
-                        eq(applicationClientDetails),
-                        eq(rawAuthorizationInformation)
+                        eq(refreshToken)
                 );
         verify(mockAuthenticationService, times(1))
                 .loadUserByUsername(
@@ -735,11 +727,12 @@ public class AuthenticationServiceTest {
                         )
                 )
         );
+        AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("11");
         return Stream.of(
                 //@formatter:off
-                //            rawAuthenticationInformation,   isExpectedResultEmpty
-                Arguments.of( empty(),                        true ),
-                Arguments.of( rawAuthenticationInformation,   false )
+                //            rawAuthenticationInformation,   expectedResult
+                Arguments.of( empty(),                        empty() ),
+                Arguments.of( rawAuthenticationInformation,   of(authenticationInformation) )
         ); //@formatter:on
     }
 
@@ -747,17 +740,25 @@ public class AuthenticationServiceTest {
     @MethodSource("refreshNoExceptionThrownTestCases")
     @DisplayName("refresh: no exception thrown test cases")
     public void refreshNoExceptionThrown_testCases(Optional<RawAuthenticationInformationDto> rawAuthenticationInformation,
-                                                   boolean isExpectedResultEmpty) {
+                                                   Optional<AuthenticationInformationDto> expectedResult) {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         String refreshToken = "ItDoesNotCare";
         String username = "username value";
         String password = "password value";
-        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
-        Map<String, Object> rawAuthorizationInformation = new HashMap<>() {{
-            put("username", username);
-        }};
+        AuthorizationInformationDto authorizationInformation = AuthorizationInformationDto.builder()
+                .username(username)
+                .authorities(
+                        Set.of(RoleEnum.ROLE_ADMIN.name())
+                )
+                .additionalInformation(new HashMap<>())
+                .build();
+
         User user = buildUser(username, password, true);
+
+        Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(
+                Spring6MicroserviceAuthenticationService.class
+        );
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
                 .thenReturn(
@@ -767,13 +768,9 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         applicationClientDetails
                 );
-        when(mockAuthorizationService.getRawAuthorizationInformation(eq(applicationClientDetails), eq(refreshToken), eq(false)))
+        when(mockAuthorizationService.checkRefreshToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenReturn(
-                        rawAuthorizationInformation
-                );
-        when(mockAuthorizationService.getUsername(eq(applicationClientDetails), eq(rawAuthorizationInformation)))
-                .thenReturn(
-                        username
+                        authorizationInformation
                 );
         when(mockAuthenticationService.loadUserByUsername(eq(username)))
                 .thenReturn(
@@ -783,6 +780,20 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
+        if (expectedResult.isPresent()) {
+            when(mockTokenService.getNewIdentifier())
+                    .thenReturn(
+                            expectedResult.get().getId()
+                    );
+            when(mockTokenService.createAccessToken(eq(applicationClientDetails), eq(rawAuthenticationInformation.get()), eq(expectedResult.get().getId())))
+                    .thenReturn(
+                            expectedResult.get().getAccessToken()
+                    );
+            when(mockTokenService.createRefreshToken(eq(applicationClientDetails), eq(rawAuthenticationInformation.get()), eq(expectedResult.get().getId())))
+                    .thenReturn(
+                            expectedResult.get().getRefreshToken()
+                    );
+        }
 
         Optional<AuthenticationInformationDto> result = service.refresh(
                 applicationClientId,
@@ -790,10 +801,14 @@ public class AuthenticationServiceTest {
         );
 
         int createTokensInvocations = 0;
-        if (isExpectedResultEmpty) {
+        if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
         } else {
             assertTrue(result.isPresent());
+            assertEquals(
+                    expectedResult,
+                    result
+            );
             createTokensInvocations = 1;
         }
 
@@ -806,15 +821,9 @@ public class AuthenticationServiceTest {
                         eq(applicationClientId)
                 );
         verify(mockAuthorizationService, times(1))
-                .getRawAuthorizationInformation(
+                .checkRefreshToken(
                         eq(applicationClientDetails),
-                        eq(refreshToken),
-                        eq(false)
-                );
-        verify(mockAuthorizationService, times(1))
-                .getUsername(
-                        eq(applicationClientDetails),
-                        eq(rawAuthorizationInformation)
+                        eq(refreshToken)
                 );
         verify(mockAuthenticationService, times(1))
                 .loadUserByUsername(

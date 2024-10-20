@@ -14,12 +14,15 @@ import java.util.Set;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
+/**
+ * Required information to send as response when trying to authorize a user.
+ */
 @Builder
 @Data
 @EqualsAndHashCode(of = {"username"})
 @NoArgsConstructor
 @Schema(description = "Authorization information about an specific user")
-public class UsernameAuthoritiesDto {
+public class AuthorizationInformationDto {
 
     @Schema(description = "What was the application (or microservice) used to generate this instance")
     private String application;
@@ -31,11 +34,11 @@ public class UsernameAuthoritiesDto {
     private Set<String> authorities;
 
     @Schema(description = "Extra data returned by security service", requiredMode = RequiredMode.REQUIRED)
-    private Map<String, Object> additionalInfo;
+    private Map<String, Object> additionalInformation;
 
 
-    public UsernameAuthoritiesDto(final String application,
-                                  final String username) {
+    public AuthorizationInformationDto(final String application,
+                                       final String username) {
         this(
                 application,
                 username,
@@ -45,10 +48,10 @@ public class UsernameAuthoritiesDto {
     }
 
 
-    public UsernameAuthoritiesDto(final String application,
-                                  final String username,
-                                  final Collection<String> authorities,
-                                  final Map<String, Object> additionalInfo) {
+    public AuthorizationInformationDto(final String application,
+                                       final String username,
+                                       final Collection<String> authorities,
+                                       final Map<String, Object> additionalInformation) {
         this.application = application;
         this.username = username;
 
@@ -56,9 +59,9 @@ public class UsernameAuthoritiesDto {
                 ? new HashSet<>()
                 : new HashSet<>(authorities);
 
-        this.additionalInfo = null == additionalInfo
+        this.additionalInformation = null == additionalInformation
                 ? new HashMap<>()
-                : new HashMap<>(additionalInfo);
+                : new HashMap<>(additionalInformation);
     }
 
 }

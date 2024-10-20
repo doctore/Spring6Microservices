@@ -2,8 +2,10 @@ package com.security.custom.application.spring6microservice.service;
 
 import com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants;
 import com.security.custom.interfaces.ApplicationClientAuthorizationService;
+import com.spring6microservices.common.core.util.MapUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +20,34 @@ import static java.util.Optional.ofNullable;
 public class Spring6MicroserviceAuthorizationService implements ApplicationClientAuthorizationService {
 
     @Override
+    public Map<String, Object> getAdditionalAuthorizationInformation(final Map<String, Object> rawAuthorizationInformation) {
+        if (MapUtil.isEmpty(rawAuthorizationInformation)) {
+            return new HashMap<>();
+        }
+        Map<String, Object> result = new HashMap<>();
+        getUsername(rawAuthorizationInformation)
+                .ifPresent(usename ->
+                        result.put(
+                                USERNAME.getKey(),
+                                usename
+                        )
+                );
+        result.put(
+                AUTHORITIES.getKey(),
+                this.getAuthorities(
+                        rawAuthorizationInformation
+                )
+        );
+        return result;
+    }
+
+
+    @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAuthorities(final Map<String, Object> rawAuthorizationInformation) {
         return ofNullable(rawAuthorizationInformation)
-                .map(s -> {
-                    Object authorities = s.get(
+                .map(rai -> {
+                    Object authorities = rai.get(
                             AUTHORITIES.getKey()
                     );
                     return null == authorities
@@ -36,8 +61,8 @@ public class Spring6MicroserviceAuthorizationService implements ApplicationClien
     @Override
     public Optional<String> getUsername(final Map<String, Object> rawAuthorizationInformation) {
         return ofNullable(rawAuthorizationInformation)
-                .map(s ->
-                        (String) s.get(
+                .map(rai ->
+                        (String) rai.get(
                                 USERNAME.getKey()
                         )
                 );

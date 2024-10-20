@@ -6,6 +6,7 @@ import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.model.ApplicationClientDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,11 @@ import java.util.stream.Stream;
 import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWE;
 import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWS;
 import static com.security.custom.TestDataFactory.buildRawAuthenticationInformationDto;
+import static com.security.custom.enums.token.TokenKey.JWT_ID;
+import static com.security.custom.enums.token.TokenKey.REFRESH_JWT_ID;
+import static com.security.custom.enums.token.TokenKey.USERNAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -138,6 +144,16 @@ public class TokenServiceTest {
     }
 
 
+    @Test
+    @DisplayName("getNewIdentifier: test cases")
+    public void getNewIdentifier_testCases() {
+        String result = service.getNewIdentifier();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+
     static Stream<Arguments> getPayloadOfTokenTestCases() {
         ApplicationClientDetails applicationClientDetailsJWE = buildApplicationClientDetailsJWE("JWE");
         ApplicationClientDetails applicationClientDetailsJWS = buildApplicationClientDetailsJWS("JWS");
@@ -186,6 +202,38 @@ public class TokenServiceTest {
                     service.getPayloadOfToken(applicationClientDetails, token)
             );
         }
+    }
+
+
+    static Stream<Arguments> isPayloadRelatedWithAccessTokenTestCases() {
+        Map<String, Object> payloadAccessToken = new HashMap<>() {{
+           put(USERNAME.name(), "username value");
+            put(JWT_ID.name(), "token identifier");
+        }};
+        Map<String, Object> payloadRefreshToken = new HashMap<>() {{
+            put(USERNAME.name(), "username value");
+            put(JWT_ID.name(), "token identifier");
+            put(REFRESH_JWT_ID.name(), "token identifier");
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            payload,               expectedResult
+                Arguments.of( null,                  true ),
+                Arguments.of( new HashMap<>(),       true ),
+                Arguments.of( payloadAccessToken,    true ),
+                Arguments.of( payloadRefreshToken,   true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("isPayloadRelatedWithAccessTokenTestCases")
+    @DisplayName("isPayloadRelatedWithAccessToken: test cases")
+    public void isPayloadRelatedWithAccessToken_testCases(Map<String, Object> payload,
+                                                          boolean expectedResult) {
+        assertEquals(
+                expectedResult,
+                service.isPayloadRelatedWithAccessToken(payload)
+        );
     }
 
 

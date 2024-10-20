@@ -62,7 +62,8 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
                 .orElseThrow(() ->
                         new ApplicationClientNotFoundException(
                                 format("The given id: %s was not found in database",
-                                        id)
+                                        id
+                                )
                         )
                 );
     }

@@ -1,20 +1,18 @@
 package com.security.custom.service;
 
+import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthorizationService;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.token.TokenException;
-import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.interfaces.ApplicationClientAuthorizationService;
 import com.security.custom.model.ApplicationClientDetails;
+import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.springframework.beans.BeansException;
@@ -23,18 +21,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static com.security.custom.TestDataFactory.buildApplicationClientDetailsJWE;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
+import static com.security.custom.TestDataFactory.buildAuthorizationInformationDto;
+import static com.security.custom.enums.token.TokenKey.AUTHORITIES;
+import static com.security.custom.enums.token.TokenKey.USERNAME;
+import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,6 +45,9 @@ public class AuthorizationServiceTest {
     private ApplicationContext mockApplicationContext;
 
     @Mock
+    private ApplicationClientDetailsService mockApplicationClientDetailsService;
+
+    @Mock
     private TokenService mockTokenService;
 
     private AuthorizationService service;
@@ -59,55 +57,42 @@ public class AuthorizationServiceTest {
     public void init() {
         service = new AuthorizationService(
                 mockApplicationContext,
+                mockApplicationClientDetailsService,
                 mockTokenService
         );
     }
 
 
     @Test
-    @DisplayName("getAuthorities: when applicationClientDetails is null then IllegalArgumentException is thrown")
-    public void getAuthorities_whenApplicationClientDetailsIsNull_thenIllegalArgumentExceptionIsThrown() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.getAuthorities(
-                        null,
-                        new HashMap<>()
-                )
-        );
-
-        verify(mockApplicationContext, times(0))
-                .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
-                );
-    }
-
-
-    @Test
-    @DisplayName("getAuthorities: when applicationClientDetails is not found in SecurityHandler then ApplicationClientNotFoundException is thrown")
-    public void getAuthorities_whenApplicationClientIdIsNotFoundInSecurityHandler_thenApplicationClientNotFoundExceptionIsThrown() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("NotFound");
+    @DisplayName("checkAccessToken: when no applicationClientId is found in SecurityHandler then ApplicationClientNotFoundException is thrown")
+    public void checkAccessToken_whenNoApplicationClientIdIsFoundInSecurityHandler_thenApplicationClientNotFoundExceptionIsThrown() {
+        String applicationClientId = "NotFound";
+        String accessToken = "ItDoesNotCare";
 
         assertThrows(
                 ApplicationClientNotFoundException.class,
-                () -> service.getAuthorities(
-                        applicationClientDetails,
-                        new HashMap<>()
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
                 )
         );
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(ApplicationClientAuthorizationService.class)
+                );
+        verify(mockApplicationClientDetailsService, times(0))
+                .findById(
+                        eq(applicationClientId)
                 );
     }
 
 
     @Test
-    @DisplayName("getAuthorities: when no ApplicationClientAuthorizationService is found related with SecurityHandler then BeansException is thrown")
-    public void getAuthorities_whenNoApplicationClientAuthorizationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
-                SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
-        );
+    @DisplayName("checkAccessToken: when no ApplicationClientAuthenticationService is found related with SecurityHandler then BeansException is thrown")
+    public void checkAccessToken_whenNoApplicationClientAuthenticationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "ItDoesNotCare";
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenThrow(
@@ -116,9 +101,9 @@ public class AuthorizationServiceTest {
 
         assertThrows(
                 BeansException.class,
-                () -> service.getAuthorities(
-                        applicationClientDetails,
-                        new HashMap<>()
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
                 )
         );
 
@@ -129,223 +114,284 @@ public class AuthorizationServiceTest {
     }
 
 
-    static Stream<Arguments> getAuthoritiesNoExceptionThrownTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
-                SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+    @Test
+    @DisplayName("checkAccessToken: when no ApplicationClientDetails is found in database then ApplicationClientNotFoundException is thrown")
+    public void checkAccessToken_whenNoApplicationClientDetailsIsFoundInDatabase_thenApplicationClientNotFoundExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "ItDoesNotCare";
+
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenThrow(
+                        ApplicationClientNotFoundException.class
+                );
+
+        assertThrows(
+                ApplicationClientNotFoundException.class,
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
+                )
         );
-        Map<String, Object> rawAuthorizationInformation = new LinkedHashMap<>() {{
-            put("name", "name value");
-            put("exp", new Date(5000000000L * 1000));
-            put("iat", new Date(1700000000L * 1000));
-            put("age", 23L);
-            put("authorities", List.of("admin", "user"));
-            put("username", "username value");
-        }};
-        return Stream.of(
-                //@formatter:off
-                //            applicationClientDetails,   rawAuthorizationInformation,   expectedResult
-                Arguments.of( applicationClientDetails,   null,                          new HashSet<>() ),
-                Arguments.of( applicationClientDetails,   new HashMap<>(),               new HashSet<>() ),
-                Arguments.of( applicationClientDetails,   rawAuthorizationInformation,   Set.of("admin", "user") )
-        ); //@formatter:on
+
+        verify(mockApplicationContext, times(0))
+                .getBean(
+                        eq(ApplicationClientAuthenticationService.class)
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
     }
 
-    @ParameterizedTest
-    @MethodSource("getAuthoritiesNoExceptionThrownTestCases")
-    @DisplayName("getAuthorities: no exception thrown test cases")
-    public void getAuthoritiesNoExceptionThrown_testCases(ApplicationClientDetails applicationClientDetails,
-                                                          Map<String, Object> rawAuthorizationInformation,
-                                                          Set<String> expectedResult) {
-        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
-        int getAuthoritiesInvocations = null == rawAuthorizationInformation
-                ? 0
-                : 1;
+
+    @Test
+    @DisplayName("checkAccessToken: when there is a problem getting content of accessToken then TokenException is thrown")
+    public void checkAccessToken_whenThereIsAProblemGettingContentOfAccessToken_thenTokenExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "NotValidToken";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenReturn(
-                        mockAuthorizationService
+                        mock(Spring6MicroserviceAuthorizationService.class)
                 );
-        when(mockAuthorizationService.getAuthorities(eq(rawAuthorizationInformation)))
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
                 .thenReturn(
-                        expectedResult
+                        applicationClientDetails
                 );
-
-        assertEquals(
-                expectedResult,
-                service.getAuthorities(applicationClientDetails, rawAuthorizationInformation)
-        );
-
-        verify(mockAuthorizationService, times(getAuthoritiesInvocations))
-                .getAuthorities(
-                        eq(rawAuthorizationInformation)
-                );
-    }
-
-
-    @Test
-    @DisplayName("getRawAuthorizationInformation: when applicationClientDetails is null then IllegalArgumentException is thrown")
-    public void getRawAuthorizationInformation_whenApplicationClientDetailsIsNull_thenIllegalArgumentExceptionIsThrown() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.getRawAuthorizationInformation(
-                        null,
-                        "ItDoesNotCare",
-                        true
-                )
-        );
-    }
-
-
-    @Test
-    @DisplayName("getRawAuthorizationInformation: when there is an error with the token then TokenException is thrown")
-    public void getRawAuthorizationInformation_whenThereIsAnErrorWithTheToken_thenTokenExceptionIsThrown() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
-        String token = "ItDoesNotCare";
-
-        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(token)))
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(accessToken)))
                 .thenThrow(
                         TokenException.class
                 );
 
         assertThrows(
                 TokenException.class,
-                () -> service.getRawAuthorizationInformation(
-                        applicationClientDetails,
-                        token,
-                        true
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
                 )
         );
 
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(
                         eq(applicationClientDetails),
-                        eq(token)
+                        eq(accessToken)
                 );
     }
 
 
     @Test
-    @DisplayName("getRawAuthorizationInformation: when isAccessToken and given token does not match then TokenInvalidException is thrown")
-    public void getRawAuthorizationInformation_whenIsAccessTokenAndGivenTokenDoesNotMatch_thenTokenInvalidExceptionIsThrown() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
-        String token = "ItDoesNotCare";
+    @DisplayName("checkAccessToken: when accessToken does not contain username value then UsernameNotFoundException is thrown")
+    public void checkAccessToken_whenAccessTokenDoesNotContainUsernameValue_thenUsernameNotFoundExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "ItDoesNotCare";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>();
 
-        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(token)))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenReturn(
-                        new HashMap<>()
+                        mockAuthorizationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(accessToken)))
+                .thenReturn(
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        true
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenThrow(
+                        UsernameNotFoundException.class
                 );
 
         assertThrows(
-                TokenInvalidException.class,
-                () -> service.getRawAuthorizationInformation(
-                        applicationClientDetails,
-                        token,
-                        false
+                UsernameNotFoundException.class,
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
                 )
         );
 
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(
                         eq(applicationClientDetails),
-                        eq(token)
+                        eq(accessToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(tokenPayload)
                 );
     }
 
 
-    static Stream<Arguments> getRawAuthorizationInformationNoExceptionThrownTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
-                SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+    @Test
+    @DisplayName("checkAccessToken: no exception thrown test cases")
+    public void checkAccessTokenNoExceptionThrown_testCases() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "ItDoesNotCare";
+        String username = "username value";
+        Set<String> authorities = Set.of(
+                RoleEnum.ROLE_ADMIN.name()
         );
-        String token = "ItDoesNotCare";
-        Map<String, Object> rawAuthorizationInformationAccessToken = new LinkedHashMap<>() {{
-            put("jti", "12345");
-            put("authorities", List.of("admin", "user"));
-            put("username", "username value");
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>() {{
+            put(USERNAME.getKey(), username);
+            put(AUTHORITIES.getKey(), authorities);
         }};
-        Map<String, Object> rawAuthorizationInformationRefreshToken = new LinkedHashMap<>() {{
-            put("jti", "12345");
-            put("ati", "12345");
-            put("authorities", List.of("admin", "user"));
-            put("username", "username value");
-        }};
-        return Stream.of(
-                //@formatter:off
-                //            applicationClientDetails,   token,   isAccessToken,   rawAuthorizationInformationResult,         expectedResult
-                Arguments.of( applicationClientDetails,   token,   true,            rawAuthorizationInformationAccessToken,    rawAuthorizationInformationAccessToken ),
-                Arguments.of( applicationClientDetails,   token,   false,           rawAuthorizationInformationRefreshToken,   rawAuthorizationInformationRefreshToken )
-        ); //@formatter:on
-    }
+        AuthorizationInformationDto authorizationInformation = buildAuthorizationInformationDto(
+                username,
+                authorities,
+                new HashMap<>()
+        );
 
-    @ParameterizedTest
-    @MethodSource("getRawAuthorizationInformationNoExceptionThrownTestCases")
-    @DisplayName("getRawAuthorizationInformation: no exception thrown test cases")
-    public void getRawAuthorizationInformationNoExceptionThrown_testCases(ApplicationClientDetails applicationClientDetails,
-                                                                          String token,
-                                                                          boolean isAccessToken,
-                                                                          Map<String, Object> rawAuthorizationInformationResult,
-                                                                          Map<String, Object> expectedResult) {
-        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(token)))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenReturn(
-                        rawAuthorizationInformationResult
+                        mockAuthorizationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(accessToken)))
+                .thenReturn(
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        true
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenReturn(
+                        of(username)
+                );
+        when(mockAuthorizationService.getAuthorities(eq(tokenPayload)))
+                .thenReturn(
+                        authorities
+                );
+        when(mockAuthorizationService.getAdditionalAuthorizationInformation(eq(tokenPayload)))
+                .thenReturn(
+                        new HashMap<>()
                 );
 
         assertEquals(
-                expectedResult,
-                service.getRawAuthorizationInformation(applicationClientDetails, token, isAccessToken)
+                authorizationInformation,
+                service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
+                )
         );
 
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(
                         eq(applicationClientDetails),
-                        eq(token)
+                        eq(accessToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getAuthorities(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getAdditionalAuthorizationInformation(
+                        eq(tokenPayload)
                 );
     }
 
 
     @Test
-    @DisplayName("getUsername: when applicationClientDetails is null then IllegalArgumentException is thrown")
-    public void getUsername_whenApplicationClientDetailsIsNull_thenIllegalArgumentExceptionIsThrown() {
+    @DisplayName("checkRefreshToken: when applicationClientDetails is null then IllegalArgumentException is thrown")
+    public void checkRefreshToken_whenApplicationClientIsNull_thenIllegalArgumentExceptionIsThrown() {
+        String refreshToken = "ItDoesNotCare";
+
         assertThrows(
                 IllegalArgumentException.class,
-                () -> service.getUsername(
+                () -> service.checkRefreshToken(
                         null,
-                        new HashMap<>()
+                        refreshToken
                 )
         );
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(ApplicationClientAuthorizationService.class)
                 );
     }
 
 
     @Test
-    @DisplayName("getUsername: when applicationClientDetails is not found in SecurityHandler then ApplicationClientNotFoundException is thrown")
-    public void getUsername_whenApplicationClientIdIsNotFoundInSecurityHandler_thenApplicationClientNotFoundExceptionIsThrown() {
+    @DisplayName("checkRefreshToken: when no applicationClientId is found in SecurityHandler then ApplicationClientNotFoundException is thrown")
+    public void checkRefreshToken_whenNoApplicationClientIdIsFoundInSecurityHandler_thenApplicationClientNotFoundExceptionIsThrown() {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("NotFound");
+        String refreshToken = "ItDoesNotCare";
 
         assertThrows(
                 ApplicationClientNotFoundException.class,
-                () -> service.getUsername(
+                () -> service.checkRefreshToken(
                         applicationClientDetails,
-                        new HashMap<>()
+                        refreshToken
                 )
         );
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(ApplicationClientAuthorizationService.class)
+                );
+        verify(mockApplicationClientDetailsService, times(0))
+                .findById(
+                        eq(applicationClientDetails.getId())
                 );
     }
 
 
     @Test
-    @DisplayName("getUsername: when no ApplicationClientAuthorizationService is found related with SecurityHandler then BeansException is thrown")
-    public void getUsername_whenNoApplicationClientAuthorizationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
+    @DisplayName("checkRefreshToken: when no ApplicationClientAuthenticationService is found related with SecurityHandler then BeansException is thrown")
+    public void checkRefreshToken_whenNoApplicationClientAuthenticationServiceIsFoundRelatedWithSecurityHandler_thenBeansExceptionIsThrown() {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
                 SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
         );
+        String refreshToken = "ItDoesNotCare";
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenThrow(
@@ -354,9 +400,9 @@ public class AuthorizationServiceTest {
 
         assertThrows(
                 BeansException.class,
-                () -> service.getUsername(
+                () -> service.checkRefreshToken(
                         applicationClientDetails,
-                        new HashMap<>()
+                        refreshToken
                 )
         );
 
@@ -368,29 +414,27 @@ public class AuthorizationServiceTest {
 
 
     @Test
-    @DisplayName("getUsername: when rawAuthorizationInformation does not contain username value then UsernameNotFoundException is thrown")
-    public void getUsername_whenRawAuthorizationInformationDoesNotContainUsernameValue_thenUsernameNotFoundExceptionIsThrown() {
+    @DisplayName("checkRefreshToken: when there is a problem getting content of refreshToken then TokenException is thrown")
+    public void checkRefreshToken_whenThereIsAProblemGettingContentOfAccessToken_thenTokenExceptionIsThrown() {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
                 SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
         );
-        Map<String, Object> rawAuthorizationInformation = new HashMap<>();
-
-        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        String refreshToken = "NotValidToken";
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenReturn(
-                        mockAuthorizationService
+                        mock(Spring6MicroserviceAuthorizationService.class)
                 );
-        when(mockAuthorizationService.getUsername(eq(rawAuthorizationInformation)))
-                .thenReturn(
-                        empty()
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(refreshToken)))
+                .thenThrow(
+                        TokenException.class
                 );
 
         assertThrows(
-                UsernameNotFoundException.class,
-                () -> service.getUsername(
+                TokenException.class,
+                () -> service.checkRefreshToken(
                         applicationClientDetails,
-                        rawAuthorizationInformation
+                        refreshToken
                 )
         );
 
@@ -398,57 +442,148 @@ public class AuthorizationServiceTest {
                 .getBean(
                         ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
                 );
-        verify(mockAuthorizationService, times(1))
-                .getUsername(
-                        eq(rawAuthorizationInformation)
+        verify(mockTokenService, times(1))
+                .getPayloadOfToken(
+                        eq(applicationClientDetails),
+                        eq(refreshToken)
                 );
     }
 
 
-    static Stream<Arguments> getUsernameNoExceptionThrownTestCases() {
+    @Test
+    @DisplayName("checkRefreshToken: when refreshToken does not contain username value then UsernameNotFoundException is thrown")
+    public void checkRefreshToken_whenRefreshTokenDoesNotContainUsernameValue_thenUsernameNotFoundExceptionIsThrown() {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
                 SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
         );
-        Map<String, Object> rawAuthorizationInformation = new LinkedHashMap<>() {{
-            put("name", "name value");
-            put("exp", new Date(5000000000L * 1000));
-            put("iat", new Date(1700000000L * 1000));
-            put("age", 23L);
-            put("authorities", List.of("admin", "user"));
-            put("username", "username value");
-        }};
-        return Stream.of(
-                //@formatter:off
-                //            applicationClientDetails,   rawAuthorizationInformation,   expectedResult
-                Arguments.of( applicationClientDetails,   rawAuthorizationInformation,   "username value" )
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("getUsernameNoExceptionThrownTestCases")
-    @DisplayName("getUsername: no exception thrown test cases")
-    public void getUsernameNoExceptionThrown_testCases(ApplicationClientDetails applicationClientDetails,
-                                                       Map<String, Object> rawAuthorizationInformation,
-                                                       String expectedResult) {
+        String refreshToken = "ItDoesNotCare";
         Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>();
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mockAuthorizationService
                 );
-        when(mockAuthorizationService.getUsername(eq(rawAuthorizationInformation)))
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(refreshToken)))
                 .thenReturn(
-                        ofNullable(expectedResult)
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        false
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenThrow(
+                        UsernameNotFoundException.class
+                );
+
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.checkRefreshToken(
+                        applicationClientDetails,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                );
+        verify(mockTokenService, times(1))
+                .getPayloadOfToken(
+                        eq(applicationClientDetails),
+                        eq(refreshToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(tokenPayload)
+                );
+    }
+
+
+    @Test
+    @DisplayName("checkRefreshToken: no exception thrown test cases")
+    public void checkRefreshTokenNoExceptionThrown_testCases() {
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
+                SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+        );
+        String refreshToken = "ItDoesNotCare";
+        String username = "username value";
+        Set<String> authorities = Set.of(
+                RoleEnum.ROLE_ADMIN.name()
+        );
+        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>() {{
+            put(USERNAME.getKey(), username);
+            put(AUTHORITIES.getKey(), authorities);
+        }};
+        AuthorizationInformationDto authorizationInformation = buildAuthorizationInformationDto(
+                username,
+                authorities,
+                new HashMap<>()
+        );
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+                .thenReturn(
+                        mockAuthorizationService
+                );
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(refreshToken)))
+                .thenReturn(
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        false
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenReturn(
+                        of(username)
+                );
+        when(mockAuthorizationService.getAuthorities(eq(tokenPayload)))
+                .thenReturn(
+                        authorities
+                );
+        when(mockAuthorizationService.getAdditionalAuthorizationInformation(eq(tokenPayload)))
+                .thenReturn(
+                        new HashMap<>()
                 );
 
         assertEquals(
-                expectedResult,
-                service.getUsername(applicationClientDetails, rawAuthorizationInformation)
+                authorizationInformation,
+                service.checkRefreshToken(
+                        applicationClientDetails,
+                        refreshToken
+                )
         );
 
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                );
+        verify(mockTokenService, times(1))
+                .getPayloadOfToken(
+                        eq(applicationClientDetails),
+                        eq(refreshToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
         verify(mockAuthorizationService, times(1))
                 .getUsername(
-                        eq(rawAuthorizationInformation)
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getAuthorities(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getAdditionalAuthorizationInformation(
+                        eq(tokenPayload)
                 );
     }
 

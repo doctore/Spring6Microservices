@@ -8,6 +8,7 @@ import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
+import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
@@ -19,9 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static java.lang.String.format;
 
@@ -51,7 +50,7 @@ public class AuthenticationService {
 
 
     /**
-     *    Builds the {@link AuthenticationInformationDto} with the specific authentication information: {@code username}
+     *    Builds the {@link AuthenticationInformationDto} using the authentication information: {@code username}
      * and {@code password} related with a {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}).
      *
      * @param applicationClientId
@@ -61,7 +60,8 @@ public class AuthenticationService {
      * @param password
      *    Password of the user who is trying to authenticate
      *
-     * @return {@link Optional} of {@link AuthenticationInformationDto}
+     * @return {@link Optional} of {@link AuthenticationInformationDto} with the authentication data based on {@link ApplicationClientDetails},
+     *         {@link Optional#empty()} if {@link SecurityHandler#getAuthenticationServiceClass()} of specific {@link ApplicationClientDetails} returns no data.
      *
      * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} is disabled
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
@@ -73,44 +73,52 @@ public class AuthenticationService {
     public Optional<AuthenticationInformationDto> login(final String applicationClientId,
                                                         final String username,
                                                         final String password) {
-        ApplicationClientAuthenticationService authenticationService = getApplicationClientAuthenticationService(applicationClientId);
-        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
-        UserDetails userDetails = authenticationService.loadUserByUsername(username);
-        if (!authenticationService.isValidPassword(password, userDetails)) {
+        ApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
+                applicationClientId
+        );
+        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
+                applicationClientId
+        );
+        UserDetails userDetails = applicationAuthenticationService.loadUserByUsername(
+                username
+        );
+        if (!applicationAuthenticationService.isValidPassword(password, userDetails)) {
             throw new UnauthorizedException(
                     format("The password given for the username: %s does not match",
-                            username)
+                            username
+                    )
             );
         }
         log.info(
                 format("Regarding to the ApplicationClientDetails: %s, the username: %s exists in database and provided password matches",
                         applicationClientId,
-                        username)
+                        username
+                )
         );
         return getAuthenticationInformation(
                 applicationClientDetails,
-                authenticationService,
+                applicationAuthenticationService,
                 userDetails
         );
     }
 
 
     /**
-     *    Builds the {@link AuthenticationInformationDto} with the specific information using the given {@code refreshToken}
-     * related with a {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}).
+     *    Builds the {@link AuthenticationInformationDto} using the given {@code refreshToken}, based on the provided
+     * {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}).
      *
      * @param applicationClientId
      *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authentication data to include
      * @param refreshToken
      *    {@link String} with the refresh token to check
      *
-     * @return {@link Optional} of {@link AuthenticationInformationDto}
+     * @return {@link Optional} of {@link AuthenticationInformationDto} with the authentication data based on {@link ApplicationClientDetails},
+     *         {@link Optional#empty()} if {@link SecurityHandler#getAuthenticationServiceClass()} of specific {@link ApplicationClientDetails} returns no data.
      *
      * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} included in the token is disabled
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem creating class instances defined in {@link SecurityHandler#getAuthenticationServiceClass()}
-     *                        or {@link SecurityHandler#getAuthorizationServiceClass()}
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username} or the included one does not exist in database
      * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
      * @throws TokenExpiredException if provided {@code refreshToken} has expired
@@ -118,26 +126,28 @@ public class AuthenticationService {
      */
     public Optional<AuthenticationInformationDto> refresh(final String applicationClientId,
                                                           final String refreshToken) {
-        ApplicationClientAuthenticationService authenticationService = getApplicationClientAuthenticationService(applicationClientId);
-        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(applicationClientId);
-        Map<String, Object> rawAuthorizationInformation = authorizationService.getRawAuthorizationInformation(
-                applicationClientDetails,
-                refreshToken,
-                false
+        ApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
+                applicationClientId
         );
-        String username = authorizationService.getUsername(
-                applicationClientDetails,
-                rawAuthorizationInformation
+        ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
+                applicationClientId
         );
-        UserDetails userDetails = authenticationService.loadUserByUsername(username);
+        AuthorizationInformationDto authorizationInformation = authorizationService.checkRefreshToken(
+                applicationClientDetails,
+                refreshToken
+        );
+        UserDetails userDetails = applicationAuthenticationService.loadUserByUsername(
+                authorizationInformation.getUsername()
+        );
         log.info(
                 format("Regarding to the ApplicationClientDetails: %s, the username: %s exists in database",
                         applicationClientId,
-                        username)
+                        authorizationInformation.getUsername()
+                )
         );
         return getAuthenticationInformation(
                 applicationClientDetails,
-                authenticationService,
+                applicationAuthenticationService,
                 userDetails
         );
     }
@@ -145,11 +155,11 @@ public class AuthenticationService {
 
     /**
      *    Builds the {@link AuthenticationInformationDto} with the specific information related with a {@link UserDetails}
-     * and {@code applicationClientId} (belongs to a {@link ApplicationClientDetails}).
+     * and {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}).
      *
      * @param applicationClientDetails
      *    {@link ApplicationClientDetails} with the details about how to generate authentication information
-     * @param authenticationService
+     * @param applicationAuthenticationService
      *    {@link ApplicationClientAuthenticationService} used to know the authentication data to include
      * @param userDetails
      *    {@link UserDetails} with the information about who is trying to authenticate
@@ -157,15 +167,17 @@ public class AuthenticationService {
      * @return {@link Optional} of {@link AuthenticationInformationDto}
      */
     private Optional<AuthenticationInformationDto> getAuthenticationInformation(final ApplicationClientDetails applicationClientDetails,
-                                                                                final ApplicationClientAuthenticationService authenticationService,
+                                                                                final ApplicationClientAuthenticationService applicationAuthenticationService,
                                                                                 final UserDetails userDetails) {
-        return authenticationService.getRawAuthenticationInformation(userDetails)
+        return applicationAuthenticationService.getRawAuthenticationInformation(userDetails)
                 .map(rawAuthenticationInformation -> {
-                    String tokenIdentifier = UUID.randomUUID().toString();
+                    String tokenIdentifier = tokenService.getNewIdentifier();
 
                     return AuthenticationInformationDto.builder()
                             .id(tokenIdentifier)
-                            .application(applicationClientDetails.getId())
+                            .application(
+                                    applicationClientDetails.getId()
+                            )
                             .accessToken(
                                     tokenService.createAccessToken(
                                             applicationClientDetails,
@@ -183,7 +195,7 @@ public class AuthenticationService {
                             .expiresIn(
                                     applicationClientDetails.getAccessTokenValidityInSeconds()
                             )
-                            .additionalInfo(
+                            .additionalInformation(
                                     rawAuthenticationInformation.getAdditionalAuthenticationInformation()
                             )
                             .build();

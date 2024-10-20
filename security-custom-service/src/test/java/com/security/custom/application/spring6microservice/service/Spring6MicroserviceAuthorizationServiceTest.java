@@ -34,6 +34,51 @@ public class Spring6MicroserviceAuthorizationServiceTest {
     }
 
 
+    static Stream<Arguments> getAdditionalAuthorizationInformationTestCases() {
+        Map<String, Object> rawAuthorizationInformationNoUsername = new LinkedHashMap<>() {{
+            put("name", "name value");
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("age", 23L);
+            put("authorities", List.of("admin", "user"));
+        }};
+        Map<String, Object> rawAuthorizationInformationComplete = new LinkedHashMap<>() {{
+            put("name", "name value");
+            put("exp", new Date(5000000000L * 1000));
+            put("iat", new Date(1700000000L * 1000));
+            put("age", 23L);
+            put("authorities", List.of("admin", "user"));
+            put("username", "username value");
+        }};
+        Map<String, Object> expectedResultNoUsername = new LinkedHashMap<>() {{
+            put("authorities", Set.of("admin", "user"));
+        }};
+        Map<String, Object> expectedResultComplete = new LinkedHashMap<>() {{
+            put("username", "username value");
+            put("authorities", Set.of("admin", "user"));
+        }};
+        return Stream.of(
+                //@formatter:off
+                //            rawAuthorizationInformation,             expectedResult
+                Arguments.of( null,                                    new HashMap<>() ),
+                Arguments.of( new HashMap<>(),                         new HashMap<>() ),
+                Arguments.of( rawAuthorizationInformationNoUsername,   expectedResultNoUsername ),
+                Arguments.of( rawAuthorizationInformationComplete,     expectedResultComplete )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getAdditionalAuthorizationInformationTestCases")
+    @DisplayName("getAdditionalAuthorizationInformation: test cases")
+    public void getAdditionalAuthorizationInformation_testCases(Map<String, Object> rawAuthorizationInformation,
+                                                                Map<String, Object> expectedResult) {
+        assertEquals(
+                expectedResult,
+                service.getAdditionalAuthorizationInformation(rawAuthorizationInformation)
+        );
+    }
+
+
     static Stream<Arguments> getAuthoritiesTestCases() {
         Map<String, Object> rawAuthorizationInformation = new LinkedHashMap<>() {{
             put("name", "name value");

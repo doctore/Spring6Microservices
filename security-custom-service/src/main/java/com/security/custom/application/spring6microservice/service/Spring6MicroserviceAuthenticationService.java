@@ -92,7 +92,8 @@ public class Spring6MicroserviceAuthenticationService implements ApplicationClie
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 format("Username: %s not found in database",
-                                        username)
+                                        username
+                                )
                         )
                 );
     }
