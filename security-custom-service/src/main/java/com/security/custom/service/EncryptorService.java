@@ -12,7 +12,7 @@ import static java.util.Optional.ofNullable;
 public class EncryptorService {
 
     /**
-     * Prefix used to store the cipher passwords in database and/or configuration files
+     * Prefix used to store the cipher texts in database and/or configuration files.
      */
     private static final String CIPHER_SECRET_PREFIX = "{cipher}";
 

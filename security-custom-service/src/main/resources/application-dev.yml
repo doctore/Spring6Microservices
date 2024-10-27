@@ -5,6 +5,13 @@ cache:
     expireInSeconds: 3600
     name: applicationClientDetailsCache
 
+# Required to expose the routes included actuator: actuator/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+
 # Server configuration
 server:
   port: 8180
@@ -23,8 +30,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  # PENDING TO INTEGRATE FLYWAY/LIQUIBASE/ETC BASED ON RUN IT EXTERNALLY TO START THE APPLICATION
 
   # To include trace and span identifiers in every log
   #sleuth:

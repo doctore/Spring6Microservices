@@ -3,3 +3,21 @@ spring:
     name: security-custom-service
   flyway:
     enabled: false
+
+# API documentation
+springdoc:
+  api-docs:
+    # Path of the OpenAPI documentation in Json format
+    path: /security/custom/api-docs
+  documentation:
+    apiVersion: 1.0
+    title: Security Custom Rest Api
+    description: Services related with authentication/authorization functionality
+  # Custom properties to define security configuration for documented API
+  security:
+    authorization: Basic Auth
+    schema: basic
+  swagger-ui:
+    path: /swagger-ui.html
+  webjars:
+    prefix: /webjars

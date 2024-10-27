@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.5</version>
         <relativePath/>
     </parent>
 
@@ -22,11 +22,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <bouncycastle-jdk18on.version>1.78.1</bouncycastle-jdk18on.version>
-        <flywaydb.version>10.18.0</flywaydb.version>
+        <flywaydb.version>10.20.1</flywaydb.version>
         <google-crypto-tink.verion>1.15.0</google-crypto-tink.verion>
         <hamcrest.version>3.0</hamcrest.version>
         <hazelcast.version>5.5.0</hazelcast.version>
-        <nimbus-jose-jwt.version>9.41.1</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>9.41.2</nimbus-jose-jwt.version>
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
         <springdoc.version>1.8.0</springdoc.version>
     </properties>
@@ -48,6 +48,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <!-- Spring6 microservices common -->
         <dependency>

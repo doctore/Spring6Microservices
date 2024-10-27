@@ -4,6 +4,7 @@ import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
+import com.security.custom.dto.AuthenticationRequestDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
@@ -77,6 +78,15 @@ public class TestDataFactory {
                         }}
                 )
                 .build();
+    }
+
+
+    public static AuthenticationRequestDto buildAuthenticationRequest(final String username,
+                                                                      final String password) {
+        return new AuthenticationRequestDto(
+                username,
+                password
+        );
     }
 
 
