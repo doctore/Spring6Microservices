@@ -16,7 +16,7 @@ public final class Constants {
         public static final String SCHEMA = "security";
 
         public static final class TABLE {
-            public static final String APPLICATION_CLIENTS_DETAILS = "application_client_details";
+            public static final String APPLICATION_CLIENT_DETAILS = "application_client_details";
         }
     }
 

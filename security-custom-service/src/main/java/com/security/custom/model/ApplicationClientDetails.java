@@ -32,7 +32,7 @@ import static com.security.custom.configuration.Constants.DATABASE;
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @Table(
-        name = DATABASE.TABLE.APPLICATION_CLIENTS_DETAILS,
+        name = DATABASE.TABLE.APPLICATION_CLIENT_DETAILS,
         schema = DATABASE.SCHEMA
 )
 public class ApplicationClientDetails implements UserDetails {
