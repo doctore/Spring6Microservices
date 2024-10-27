@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants.DATABASE;
 import static java.util.Optional.ofNullable;
 
 @Repository(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "UserRepository")
@@ -27,12 +28,6 @@ public class UserRepository {
     public static String ROLE_ID_COLUMN = "roleId";
     public static String ROLE_NAME_COLUMN = "roleName";
     public static String PERMISSION_NAME_COLUMN = "permissionName";
-
-    private final String USER_TABLE = "security.spring6microservice_user";
-    private final String USER_ROLE_TABLE = "security.spring6microservice_user_role";
-    private final String ROLE_TABLE = "security.spring6microservice_role";
-    private final String ROLE_PERMISSION_TABLE = "security.spring6microservice_role_permission";
-    private final String PERMISSION_TABLE = "security.spring6microservice_permission";
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -65,11 +60,11 @@ public class UserRepository {
                                      + ", r.id as " + ROLE_ID_COLUMN
                                      + ", r.name as " + ROLE_NAME_COLUMN
                                      + ", p.name as " + PERMISSION_NAME_COLUMN + " "
-                              + "from " + USER_TABLE + " u "
-                              + "join " + USER_ROLE_TABLE + " ur on (ur.user_id = u.id) "
-                              + "join " + ROLE_TABLE + " r on (r.id = ur.role_id) "
-                              + "join " + ROLE_PERMISSION_TABLE + " rp on (rp.role_id = r.id) "
-                              + "join " + PERMISSION_TABLE + " p on (p.id = rp.permission_id) "
+                              + "from " + DATABASE.TABLE.USER + " u "
+                              + "join " + DATABASE.TABLE.USER_ROLE + " ur on (ur.user_id = u.id) "
+                              + "join " + DATABASE.TABLE.ROLE + " r on (r.id = ur.role_id) "
+                              + "join " + DATABASE.TABLE.ROLE_PERMISSION + " rp on (rp.role_id = r.id) "
+                              + "join " + DATABASE.TABLE.PERMISSION + " p on (p.id = rp.permission_id) "
                               + "where u.username = :username",
                            Map.of(USER_USERNAME_COLUMN, username),
                            UserMapper.userWithRolesAndPermissionsResultExtractor

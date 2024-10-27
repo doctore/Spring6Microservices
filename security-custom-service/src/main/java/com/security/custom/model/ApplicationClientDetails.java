@@ -1,6 +1,5 @@
 package com.security.custom.model;
 
-import com.security.custom.configuration.Constants;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
@@ -24,6 +23,8 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static com.security.custom.configuration.Constants.DATABASE;
+
 @AllArgsConstructor
 @Builder
 @Data
@@ -31,8 +32,8 @@ import java.util.HashSet;
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @Table(
-        name = "application_client_details",
-        schema = Constants.DATABASE_SCHEMA.SECURITY
+        name = DATABASE.TABLE.APPLICATION_CLIENTS_DETAILS,
+        schema = DATABASE.SCHEMA
 )
 public class ApplicationClientDetails implements UserDetails {
 

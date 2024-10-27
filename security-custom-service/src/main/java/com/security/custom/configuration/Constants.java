@@ -11,9 +11,13 @@ public final class Constants {
         public static final String CACHE_INSTANCE_NAME = NAME + "CacheInstance";
     }
 
-    // Database schemas on which the entities have been included
-    public static final class DATABASE_SCHEMA {
-        public static final String SECURITY = "security";
+    // Database constants
+    public static final class DATABASE {
+        public static final String SCHEMA = "security";
+
+        public static final class TABLE {
+            public static final String APPLICATION_CLIENTS_DETAILS = "application_client_details";
+        }
     }
 
     // Path of the folders in the application (or imported through external dependencies)
