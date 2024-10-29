@@ -560,22 +560,24 @@ public class JwsUtil {
         try {
             return switch (signatureAlgorithm) {
                 case HS256, HS384, HS512 ->
-                        new MACVerifier(signatureSecret);
+                        new MACVerifier(
+                                signatureSecret
+                        );
 
                 case RS256, RS384, RS512 ->
                         new RSASSAVerifier(
                                 RSAKey.parseFromPEMEncodedObjects(
-                                           signatureSecret
-                                        )
-                                        .toRSAKey()
+                                        signatureSecret
+                                )
+                                .toRSAKey()
                         );
 
                 case ES256, ES384, ES512 ->
                         new ECDSAVerifier(
                                 ECKey.parseFromPEMEncodedObjects(
-                                           signatureSecret
-                                        )
-                                        .toECKey()
+                                        signatureSecret
+                                )
+                                .toECKey()
                         );
 
                 case null, default -> throw new TokenException(

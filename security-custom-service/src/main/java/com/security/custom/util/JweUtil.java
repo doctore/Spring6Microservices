@@ -596,14 +596,14 @@ public class JweUtil {
                 case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
                         new RSAEncrypter(
                                 RSAKey.parseFromPEMEncodedObjects(
-                                    encryptionSecret
+                                        encryptionSecret
                                 )
                                 .toRSAKey()
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
                     ECKey key = ECKey.parseFromPEMEncodedObjects(
-                                   encryptionSecret
+                                        encryptionSecret
                                 )
                                 .toECKey();
 
@@ -662,14 +662,14 @@ public class JweUtil {
                 case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
                         new RSADecrypter(
                                 RSAKey.parseFromPEMEncodedObjects(
-                                   encryptionSecret
+                                        encryptionSecret
                                 )
                                 .toRSAKey()
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
                     ECKey key = ECKey.parseFromPEMEncodedObjects(
-                                   encryptionSecret
+                                        encryptionSecret
                                 )
                                 .toECKey();
 
