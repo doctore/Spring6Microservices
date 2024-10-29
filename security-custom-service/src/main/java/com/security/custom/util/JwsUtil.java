@@ -23,6 +23,7 @@ import com.security.custom.enums.token.TokenSignatureAlgorithm;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
+import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.either.Left;
 import com.spring6microservices.common.core.functional.either.Right;
@@ -65,9 +66,6 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
  *      an {@link String} with a format similar to:
  *      <pre>
- *        -----BEGIN PUBLIC KEY-----
- *        ...
- *        -----END PUBLIC KEY-----
  *        -----BEGIN PRIVATE KEY-----
  *        ...
  *        -----END PRIVATE KEY-----
@@ -77,9 +75,6 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenSignatureAlgorithm#ES256}, {@link TokenSignatureAlgorithm#ES384}, {@link TokenSignatureAlgorithm#ES512}:
  *      an {@link String} with a format similar to:
  *      <pre>
- *        -----BEGIN PUBLIC KEY-----
- *        ...
- *        -----END PUBLIC KEY-----
  *        -----BEGIN EC PRIVATE KEY-----
  *        ...
  *        -----END EC PRIVATE KEY-----
@@ -102,6 +97,23 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenSignatureAlgorithm#HS256}, {@link TokenSignatureAlgorithm#HS384}, {@link TokenSignatureAlgorithm#HS512}:
  *      a <i>raw</i> {@link String} with the secret value.
  *   </li>
+ *   <li>
+ *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512},
+ *      {@link TokenSignatureAlgorithm#ES256}, {@link TokenSignatureAlgorithm#ES384}, {@link TokenSignatureAlgorithm#ES512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *      </pre>
+ *   </li>
+ * </ul>
+ * <p>
+ *    If you are going to use only one location to store the signature secret, for example, in
+ * {@link ApplicationClientDetails#getSignatureSecret()} then, depending on selected {@link TokenSignatureAlgorithm},
+ * the expected value when it uses public/private keys will be different:
+ * <p>
+ * <ul>
  *   <li>
  *      {@link TokenSignatureAlgorithm#RS256}, {@link TokenSignatureAlgorithm#RS384}, {@link TokenSignatureAlgorithm#RS512}:
  *      an {@link String} with a format similar to:
@@ -486,22 +498,24 @@ public class JwsUtil {
         try {
             return switch (signatureAlgorithm) {
                 case HS256, HS384, HS512 ->
-                        new MACSigner(signatureSecret);
+                        new MACSigner(
+                                signatureSecret
+                        );
 
                 case RS256, RS384, RS512 ->
                         new RSASSASigner(
                                 RSAKey.parseFromPEMEncodedObjects(
-                                           signatureSecret
-                                        )
-                                        .toRSAKey()
+                                        signatureSecret
+                                )
+                                .toRSAKey()
                         );
 
                 case ES256, ES384, ES512 ->
                         new ECDSASigner(
                                 ECKey.parseFromPEMEncodedObjects(
-                                           signatureSecret
-                                        )
-                                        .toECKey()
+                                        signatureSecret
+                                )
+                                .toECKey()
                         );
 
                 case null, default ->

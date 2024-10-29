@@ -26,6 +26,7 @@ import com.security.custom.enums.token.TokenSignatureAlgorithm;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
+import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.either.Left;
 import com.spring6microservices.common.core.functional.either.Right;
@@ -69,10 +70,7 @@ import static java.util.stream.Collectors.toMap;
  *        -----BEGIN PUBLIC KEY-----
  *        ...
  *        -----END PUBLIC KEY-----
- *        -----BEGIN PRIVATE KEY-----
- *        ...
- *        -----END PRIVATE KEY-----
- *      </pre>      
+ *      </pre>
  *   </li>
  *   <li>
  *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}:
@@ -107,6 +105,34 @@ import static java.util.stream.Collectors.toMap;
  *      {@link TokenEncryptionAlgorithm#RSA_OAEP_256}, {@link TokenEncryptionAlgorithm#RSA_OAEP_384}, {@link TokenEncryptionAlgorithm#RSA_OAEP_512}:
  *      an {@link String} with a format similar to:
  *      <pre>
+ *        -----BEGIN PRIVATE KEY-----
+ *        ...
+ *        -----END PRIVATE KEY-----
+ *      </pre>
+ *   </li>
+ *   <li>
+ *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
+ *        -----BEGIN PUBLIC KEY-----
+ *        ...
+ *        -----END PUBLIC KEY-----
+ *        -----BEGIN EC PRIVATE KEY-----
+ *        ...
+ *        -----END EC PRIVATE KEY-----
+ *      </pre>
+ *   </li>
+ * </ul>
+ * <p>
+ *    If you are going to use only one location to store the encryption secret, for example, in
+ * {@link ApplicationClientDetails#getEncryptionSecret()} then, depending on selected {@link TokenEncryptionAlgorithm},
+ * the expected value when it uses public/private keys will be different:
+ * <p>
+ * <ul>
+ *   <li>
+ *      {@link TokenEncryptionAlgorithm#RSA_OAEP_256}, {@link TokenEncryptionAlgorithm#RSA_OAEP_384}, {@link TokenEncryptionAlgorithm#RSA_OAEP_512}:
+ *      an {@link String} with a format similar to:
+ *      <pre>
  *        -----BEGIN PUBLIC KEY-----
  *        ...
  *        -----END PUBLIC KEY-----
@@ -116,7 +142,7 @@ import static java.util.stream.Collectors.toMap;
  *      </pre>
  *   </li>
  *   <li>
- *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}:
+ *      {@link TokenEncryptionAlgorithm#ECDH_1PU_A128KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A192KW}, {@link TokenEncryptionAlgorithm#ECDH_1PU_A256KW}::
  *      an {@link String} with a format similar to:
  *      <pre>
  *        -----BEGIN PUBLIC KEY-----
@@ -563,19 +589,23 @@ public class JweUtil {
         try {
             return switch (encryptionAlgorithm) {
                 case DIR ->
-                        new DirectEncrypter(encryptionSecret.getBytes());
+                        new DirectEncrypter(
+                                encryptionSecret.getBytes()
+                        );
 
                 case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
                         new RSAEncrypter(
-                                RSAKey.parseFromPEMEncodedObjects(encryptionSecret)
-                                        .toRSAKey()
+                                RSAKey.parseFromPEMEncodedObjects(
+                                    encryptionSecret
+                                )
+                                .toRSAKey()
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
                     ECKey key = ECKey.parseFromPEMEncodedObjects(
                                    encryptionSecret
-                            )
-                            .toECKey();
+                                )
+                                .toECKey();
 
                     yield new ECDH1PUEncrypter(
                             key.toECPrivateKey(),
@@ -625,19 +655,23 @@ public class JweUtil {
         try {
             return switch (encryptionAlgorithm) {
                 case DIR ->
-                        new DirectDecrypter(encryptionSecret.getBytes());
+                        new DirectDecrypter(
+                                encryptionSecret.getBytes()
+                        );
 
                 case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
                         new RSADecrypter(
-                                RSAKey.parseFromPEMEncodedObjects(encryptionSecret)
-                                        .toRSAKey()
+                                RSAKey.parseFromPEMEncodedObjects(
+                                   encryptionSecret
+                                )
+                                .toRSAKey()
                         );
 
                 case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
                     ECKey key = ECKey.parseFromPEMEncodedObjects(
                                    encryptionSecret
-                            )
-                            .toECKey();
+                                )
+                                .toECKey();
 
                     yield new ECDH1PUDecrypter(
                             key.toECPrivateKey(),
