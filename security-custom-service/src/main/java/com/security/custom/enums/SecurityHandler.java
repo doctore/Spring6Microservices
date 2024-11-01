@@ -42,7 +42,7 @@ public enum SecurityHandler {
 
 
     /**
-     * Get the {@link SecurityHandler#getApplicationClientId()} that matches with the given one.
+     * Gets the {@link SecurityHandler#getApplicationClientId()} that matches with the given one.
      *
      * @param applicationClientId
      *    ClientId to search
@@ -51,7 +51,7 @@ public enum SecurityHandler {
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in the {@code enum}
      */
-    public static SecurityHandler getByApplicationClientId(@Nullable String applicationClientId) {
+    public static SecurityHandler getByApplicationClientId(@Nullable final String applicationClientId) {
         return ofNullable(applicationClientId)
                 .flatMap(id ->
                         Arrays.stream(SecurityHandler.values())

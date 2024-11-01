@@ -25,7 +25,7 @@ public enum TokenEncryptionMethod {
 
 
     /**
-     * Get the {@link TokenEncryptionMethod} that matches with the given one.
+     * Gets the {@link TokenEncryptionMethod} that matches with the given one.
      *
      * @param method
      *    {@link EncryptionMethod} to search

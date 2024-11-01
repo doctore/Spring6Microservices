@@ -56,7 +56,7 @@ public enum TokenEncryptionAlgorithm {
 
 
     /**
-     * Get the {@link TokenEncryptionAlgorithm} that matches with the given one.
+     * Gets the {@link TokenEncryptionAlgorithm} that matches with the given one.
      *
      * @param algorithm
      *    {@link JWEAlgorithm} to search

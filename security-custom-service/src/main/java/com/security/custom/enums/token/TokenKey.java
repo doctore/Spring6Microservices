@@ -31,7 +31,7 @@ public enum TokenKey {
 
 
     /**
-     * Get the {@link TokenKey} that matches with the given one.
+     * Gets the {@link TokenKey} that matches with the given one.
      *
      * @param key
      *    Internal token key to search

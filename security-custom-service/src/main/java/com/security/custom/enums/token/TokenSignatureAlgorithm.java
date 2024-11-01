@@ -58,7 +58,7 @@ public enum TokenSignatureAlgorithm {
 
 
     /**
-     * Get the {@link TokenSignatureAlgorithm} that matches with the given one.
+     * Gets the {@link TokenSignatureAlgorithm} that matches with the given one.
      *
      * @param algorithm
      *    {@link JWSAlgorithm} to search
