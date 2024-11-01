@@ -6,9 +6,9 @@ import org.hibernate.validator.constraintvalidation.HibernateConstraintValidator
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  *    Validates if the given {@link String} matches with one of the internal {@link String} property belonging to the
@@ -26,9 +26,15 @@ public class EnumHasInternalStringValueValidator implements ConstraintValidator<
 	@Override
 	@SuppressWarnings("unchecked")
 	public void initialize(final EnumHasInternalStringValue hasInternalStringValue) {
-		enumValidValues = Arrays.stream(hasInternalStringValue.enumClass().getEnumConstants())
-				.map(e -> ((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue())
-				.collect(Collectors.toList());
+		enumValidValues = Arrays.stream(
+				        hasInternalStringValue.enumClass().getEnumConstants()
+				)
+				.map(e ->
+						((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue()
+				)
+				.collect(
+						toList()
+				);
 		constraintTemplate = hasInternalStringValue.message();
 		isNullAccepted = hasInternalStringValue.isNullAccepted();
 	}

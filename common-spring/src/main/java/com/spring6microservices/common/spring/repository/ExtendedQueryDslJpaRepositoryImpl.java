@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLTemplates;
+import com.spring6microservices.common.core.util.StringUtil;
 import jakarta.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -52,7 +53,7 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                         return null;
                     }
                 })
-                .orElse("");
+                .orElse(StringUtil.EMPTY_STRING);
     }
 
 
@@ -73,7 +74,7 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                         return null;
                     }
                 })
-                .orElse("");
+                .orElse(StringUtil.EMPTY_STRING);
     }
 
 

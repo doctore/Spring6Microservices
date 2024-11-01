@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AssertUtil {
 
-
     /**
      *    Assert that the given {@code text} contains valid text content; that is, it must not be {@code null} and must
      * contain at least one non-whitespace character.

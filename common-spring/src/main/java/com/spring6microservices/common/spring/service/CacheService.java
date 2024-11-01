@@ -57,7 +57,9 @@ public class CacheService {
                                 final K key) {
         return ofNullable(cacheName)
                 .map(cacheManager::getCache)
-                .map(c -> c.get(key))
+                .map(c ->
+                        c.get(key)
+                )
                 .isPresent();
     }
 
@@ -77,8 +79,12 @@ public class CacheService {
                                   final K key) {
         return ofNullable(cacheName)
                 .map(cacheManager::getCache)
-                .map(c -> c.get(key))
-                .map(v -> (V)v.get());
+                .map(c ->
+                        c.get(key)
+                )
+                .map(v ->
+                        (V) v.get()
+                );
     }
 
 

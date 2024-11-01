@@ -79,7 +79,7 @@ public class ExtendedJpaRepositoryImpl<T, ID extends Serializable> extends Simpl
                         return null;
                     }
                 })
-                .orElse("");
+                .orElse(StringUtil.EMPTY_STRING);
     }
 
 

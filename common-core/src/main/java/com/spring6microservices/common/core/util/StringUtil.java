@@ -37,7 +37,7 @@ public class StringUtil {
 
     private final String DEFAULT_SEPARATOR_STRING = ",";
 
-    private static final int INDEX_NOT_FOUND = -1;
+    private final int INDEX_NOT_FOUND = -1;
 
 
     /**
