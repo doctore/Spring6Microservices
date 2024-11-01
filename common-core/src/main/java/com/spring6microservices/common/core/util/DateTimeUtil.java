@@ -3,6 +3,7 @@ package com.spring6microservices.common.core.util;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
 import lombok.experimental.UtilityClass;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -13,7 +14,6 @@ import static java.lang.Math.abs;
 
 @UtilityClass
 public class DateTimeUtil {
-
 
     /**
      * Compares provided {@link Date}s taking into account the given {@code epsilon} and {@code timeUnit}.
@@ -106,46 +106,44 @@ public class DateTimeUtil {
 
 
     /**
-     * Converts to an instance of {@link Date} the given {@link LocalDateTime} using {@link ZoneId#systemDefault()}
+     * Converts to an instance of {@link LocalDate} the given {@link Date} using {@link ZoneId#systemDefault()}
      *
-     * @param sourceLocalDateTime
-     *    {@link LocalDateTime} value to convert. If {@code null} then {@link LocalDateTime#now()} will be used
+     * @param sourceDate
+     *    {@link Date} value to convert. If {@code null} then new {@link Date} will be used
      *
-     * @return {@link Date}
+     * @return {@link LocalDate}
      */
-    public static Date fromLocalDateTimeToDate(final LocalDateTime sourceLocalDateTime) {
-        return fromLocalDateTimeToDate(
-                sourceLocalDateTime,
+    public static LocalDate fromDateToLocalDate(final Date sourceDate) {
+        return fromDateToLocalDate(
+                sourceDate,
                 ZoneId.systemDefault()
         );
     }
 
 
     /**
-     * Converts to an instance of {@link Date} the given {@link LocalDateTime} using the provided {@link ZoneId}
+     * Converts to an instance of {@link LocalDate} the given {@link Date} using the provided {@link ZoneId}
      *
-     * @param sourceLocalDateTime
-     *    {@link LocalDateTime} value to convert. If {@code null} then {@link LocalDateTime#now()} with {@code zoneId} will be used
+     * @param sourceDate
+     *    {@link Date} value to convert. If {@code null} then new {@link Date} will be used
      * @param zoneId
      *    {@link ZoneId} used in the conversion. If {@code null} then new {@link ZoneId#systemDefault()} will be used
      *
-     * @return {@link Date}
+     * @return {@link LocalDate}
      */
-    public static Date fromLocalDateTimeToDate(final LocalDateTime sourceLocalDateTime,
-                                               final ZoneId zoneId) {
+    public static LocalDate fromDateToLocalDate(final Date sourceDate,
+                                                final ZoneId zoneId) {
         final ZoneId finalZoneId = getOrElse(
                 zoneId,
                 ZoneId.systemDefault()
         );
-        final LocalDateTime finalSourceLocalDateTime = getOrElse(
-                sourceLocalDateTime,
-                LocalDateTime.now(finalZoneId)
+        final Date finalSourceDate = getOrElse(
+                sourceDate,
+                new Date()
         );
-        return Date.from(
-                finalSourceLocalDateTime
-                        .atZone(finalZoneId)
-                        .toInstant()
-        );
+        return finalSourceDate.toInstant()
+                .atZone(finalZoneId)
+                .toLocalDate();
     }
 
 
@@ -188,6 +186,94 @@ public class DateTimeUtil {
         return finalSourceDate.toInstant()
                 .atZone(finalZoneId)
                 .toLocalDateTime();
+    }
+
+
+    /**
+     * Converts to an instance of {@link Date} the given {@link LocalDate} using {@link ZoneId#systemDefault()}
+     *
+     * @param sourceLocalDate
+     *    {@link LocalDate} value to convert. If {@code null} then {@link LocalDate#now()} will be used
+     *
+     * @return {@link Date}
+     */
+    public static Date fromLocalDateToDate(final LocalDate sourceLocalDate) {
+        return fromLocalDateToDate(
+                sourceLocalDate,
+                ZoneId.systemDefault()
+        );
+    }
+
+
+    /**
+     * Converts to an instance of {@link Date} the given {@link LocalDate} using the provided {@link ZoneId}
+     *
+     * @param sourceLocalDate
+     *    {@link LocalDate} value to convert. If {@code null} then {@link LocalDate#now()} with {@code zoneId} will be used
+     * @param zoneId
+     *    {@link ZoneId} used in the conversion. If {@code null} then new {@link ZoneId#systemDefault()} will be used
+     *
+     * @return {@link Date}
+     */
+    public static Date fromLocalDateToDate(final LocalDate sourceLocalDate,
+                                           final ZoneId zoneId) {
+        final ZoneId finalZoneId = getOrElse(
+                zoneId,
+                ZoneId.systemDefault()
+        );
+        final LocalDate finalSourceLocalDate = getOrElse(
+                sourceLocalDate,
+                LocalDate.now(finalZoneId)
+        );
+        return Date.from(
+                finalSourceLocalDate
+                        .atStartOfDay(finalZoneId)
+                        .toInstant()
+        );
+    }
+
+
+    /**
+     * Converts to an instance of {@link Date} the given {@link LocalDateTime} using {@link ZoneId#systemDefault()}
+     *
+     * @param sourceLocalDateTime
+     *    {@link LocalDateTime} value to convert. If {@code null} then {@link LocalDateTime#now()} will be used
+     *
+     * @return {@link Date}
+     */
+    public static Date fromLocalDateTimeToDate(final LocalDateTime sourceLocalDateTime) {
+        return fromLocalDateTimeToDate(
+                sourceLocalDateTime,
+                ZoneId.systemDefault()
+        );
+    }
+
+
+    /**
+     * Converts to an instance of {@link Date} the given {@link LocalDateTime} using the provided {@link ZoneId}
+     *
+     * @param sourceLocalDateTime
+     *    {@link LocalDateTime} value to convert. If {@code null} then {@link LocalDateTime#now()} with {@code zoneId} will be used
+     * @param zoneId
+     *    {@link ZoneId} used in the conversion. If {@code null} then new {@link ZoneId#systemDefault()} will be used
+     *
+     * @return {@link Date}
+     */
+    public static Date fromLocalDateTimeToDate(final LocalDateTime sourceLocalDateTime,
+                                               final ZoneId zoneId) {
+        final ZoneId finalZoneId = getOrElse(
+                zoneId,
+                ZoneId.systemDefault()
+        );
+        final LocalDateTime finalSourceLocalDateTime = getOrElse(
+                sourceLocalDateTime,
+                LocalDateTime.now(finalZoneId)
+        );
+        return Date.from(
+                finalSourceLocalDateTime
+                        .atZone(finalZoneId)
+                        .toInstant()
+        );
     }
 
 

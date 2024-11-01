@@ -39,7 +39,9 @@ public interface BaseConverter<M, D> {
      *         {@link Optional#empty()} otherwise.
      */
     default Optional<M> fromDtoToOptionalModel(final D dto) {
-        return ofNullable(this.fromDtoToModel(dto));
+        return ofNullable(
+                this.fromDtoToModel(dto)
+        );
     }
 
     /**
@@ -74,7 +76,9 @@ public interface BaseConverter<M, D> {
      *         {@link Optional#empty()} otherwise.
      */
     default Optional<D> fromModelToOptionalDto(final M model) {
-        return ofNullable(this.fromModelToDto(model));
+        return ofNullable(
+                this.fromModelToDto(model)
+        );
     }
 
     /**
