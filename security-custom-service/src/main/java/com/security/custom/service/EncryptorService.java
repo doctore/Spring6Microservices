@@ -16,7 +16,6 @@ public class EncryptorService {
      */
     private static final String CIPHER_SECRET_PREFIX = "{cipher}";
 
-
     private final TextEncryptor textEncryptor;
 
 

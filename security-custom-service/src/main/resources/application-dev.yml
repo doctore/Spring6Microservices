@@ -18,6 +18,11 @@ server:
 
 # Spring framework configuration
 spring:
+  # TODO: TEMPORAL BY NOW
+  cloud:
+    # Disable configuration server for testing
+    config:
+      enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/spring6
     username: spring6
@@ -26,10 +31,10 @@ spring:
     # Raw password: spring6
     #password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
     password: spring6
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  #jpa:
+  #  properties:
+  #    hibernate:
+  #      dialect: org.hibernate.dialect.PostgreSQLDialect    # No longer required (selected by default)
 
   # To include trace and span identifiers in every log
   #sleuth:

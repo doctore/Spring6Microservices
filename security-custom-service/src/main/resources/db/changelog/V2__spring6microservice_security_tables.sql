@@ -41,4 +41,4 @@ CREATE TABLE IF NOT EXISTS security.spring6microservice_role_permission (
     constraint spring6microservice_role_permission_pk primary key (role_id, permission_id)
 );
 
-CREATE INDEX spring6microservice_role_permission_role_id_index ON security.spring6microservice_role_permission (rol_id);
+CREATE INDEX spring6microservice_role_permission_role_id_index ON security.spring6microservice_role_permission (role_id);
