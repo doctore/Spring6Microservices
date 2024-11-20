@@ -12,11 +12,7 @@ import com.spring6microservices.common.core.util.ObjectUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -209,6 +205,52 @@ public abstract class Validation<E, T> implements Serializable {
             }
         }
         return result;
+    }
+
+
+    /**
+     * Checks the given {@code verifyAll} and {@code verifyUpToFirstInvalid} following the next rules:
+     * <p>
+     *   1. If {@code verifyAll} is not empty, then verifies all provided ones. {@link Valid#empty()} will be returned otherwise.
+     * <p>
+     *   2. If {@link Valid} was the result after checking {@code verifyAll}, then verifies given {@code verifyUpToFirstInvalid}
+     *   up to receive the first {@link Invalid} one. If {@code verifyUpToFirstInvalid} is {@code null} or empty, the result of
+     *   point 1 will be returned.
+     *
+     * <pre>
+     *    combineAllAndGetFirstInvalid(List.of(Validation.valid(11)), List.of(() -> Validation.valid(7)));                    // Valid(7)
+     *    combineAllAndGetFirstInvalid(List.of(Validation.invalid(asList("A"))), List.of(Validation.valid(7)));               // Invalid(List("A"))
+     *    combineAllAndGetFirstInvalid(List.of(Validation.valid(11)), List.of(() -> Validation.invalid(asList("B")));         // Invalid(List("B"))
+     * </pre>
+     *
+     * @param verifyAll
+     *    {@link Collection} of {@link Validation} instances to combine and check
+     * @param verifyUpToFirstInvalid
+     *    {@link Collection} of {@link Supplier} of {@link Validation} instances to verify
+     *
+     * @return {@link Validation}
+     */
+    @SuppressWarnings("unchecked")
+    public static <E, T> Validation<E, T> combineAllAndGetFirstInvalid(final Collection<Validation<E, T>> verifyAll,
+                                                                       final Collection<Supplier<Validation<E, T>>> verifyUpToFirstInvalid) {
+        Validation<E, T> resultVerifyAll = CollectionUtil.isEmpty(verifyAll)
+                ? combine()
+                : combine(
+                        verifyAll.toArray(
+                                new Validation[0]
+                        )
+                  );
+        return resultVerifyAll
+                .flatMap(
+                       v ->
+                               CollectionUtil.isEmpty(verifyUpToFirstInvalid)
+                                       ? resultVerifyAll
+                                       : combineGetFirstInvalid(
+                                               verifyUpToFirstInvalid.toArray(
+                                                       new Supplier[0]
+                                               )
+                               )
+                );
     }
 
 

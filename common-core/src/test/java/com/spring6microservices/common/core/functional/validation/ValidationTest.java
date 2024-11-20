@@ -8,11 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -216,6 +212,60 @@ public class ValidationTest {
         assertEquals(
                 expectedResult,
                 result
+        );
+    }
+
+
+    static Stream<Arguments> combineAllAndGetFirstInvalidTestCases() {
+        Validation<String, Integer> valid1 = Validation.valid(1);
+        Validation<String, Integer> valid2 = Validation.valid(4);
+        Validation<String, Integer> invalid1 = Validation.invalid(List.of("problem1"));
+        Validation<String, Integer> invalid2 = Validation.invalid(List.of("problem2"));
+
+        Supplier<Validation<String, Integer>> supValid1 = () -> valid1;
+        Supplier<Validation<String, Integer>> supValid2 = () -> valid2;
+        Supplier<Validation<String, Integer>> supInvalid1 = () -> invalid1;
+        Supplier<Validation<String, Integer>> supInvalid2 = () -> invalid2;
+
+        List<Validation<String, Integer>> allValids = List.of(valid1, valid2);
+        List<Validation<String, Integer>> allInvalids = List.of(invalid1, invalid2);
+
+        List<Supplier<Validation<String, Integer>>> allValidSuppliers = List.of(supValid1, supValid2);
+        List<Supplier<Validation<String, Integer>>> allInvalidSuppliers = List.of(supInvalid1, supInvalid2);
+
+        List<String> allErrors = new ArrayList<>(invalid1.getErrors());
+        allErrors.addAll(invalid2.getErrors());
+        Validation<String, Integer> expectedInvalidAll = Validation.invalid(allErrors);
+        return Stream.of(
+                //@formatter:off
+                //            verifyAll,           verifyUpToFirstInvalid,   expectedResult
+                Arguments.of( null,                null,                     Valid.empty() ),
+                Arguments.of( null,                List.of(),                Valid.empty() ),
+                Arguments.of( List.of(),           null,                     Valid.empty() ),
+                Arguments.of( List.of(),           List.of(),                Valid.empty() ),
+                Arguments.of( List.of(valid1),     List.of(),                valid1 ),
+                Arguments.of( allValids,           List.of(),                valid2 ),
+                Arguments.of( allInvalids,         List.of(),                expectedInvalidAll ),
+                Arguments.of( List.of(),           List.of(supValid1),       valid1 ),
+                Arguments.of( List.of(),           List.of(supInvalid2),     invalid2 ),
+                Arguments.of( List.of(invalid1),   allValidSuppliers,        invalid1 ),
+                Arguments.of( List.of(invalid2),   allInvalidSuppliers,      invalid2 ),
+                Arguments.of( allValids,           allValidSuppliers,        valid2 ),
+                Arguments.of( allValids,           allInvalidSuppliers,      invalid1 ),
+                Arguments.of( allInvalids,         allValidSuppliers,        expectedInvalidAll ),
+                Arguments.of( allInvalids,         allInvalidSuppliers,      expectedInvalidAll )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("combineAllAndGetFirstInvalidTestCases")
+    @DisplayName("combineAllAndGetFirstInvalid: test cases")
+    public <E, T> void combineAllAndGetFirstInvalid_testCases(Collection<Validation<E, T>> verifyAll,
+                                                              Collection<Supplier<Validation<E, T>>> verifyUpToFirstInvalid,
+                                                              Validation<E, T> expectedResult) {
+        assertEquals(
+                expectedResult,
+                Validation.combineAllAndGetFirstInvalid(verifyAll, verifyUpToFirstInvalid)
         );
     }
 
