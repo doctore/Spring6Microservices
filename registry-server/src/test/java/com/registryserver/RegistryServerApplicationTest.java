@@ -20,7 +20,7 @@ public class RegistryServerApplicationTest {
 
 
     @Test
-    public void testCatalogLoads() {
+    public void apps_whenTheEndpointToGetTheListOfRegisteredApplicationsIsInvoked_thenOkHttpCodeIsReturned() {
         @SuppressWarnings("rawtypes")
         ResponseEntity<Map> entity = testRestTemplate.getForEntity(
                 "/eureka/apps",
@@ -32,7 +32,7 @@ public class RegistryServerApplicationTest {
 
 
     @Test
-    public void testApplicationHealth() {
+    public void health_whenEndpointIsInvoked_thenOkHttpCodeIsReturned() {
         @SuppressWarnings("rawtypes")
         ResponseEntity<Map> entity = testRestTemplate.getForEntity(
                 "/actuator/health",
