@@ -1,0 +1,27 @@
+server:
+  port: 8888
+
+eureka:
+  client:
+    # Pull down a local copy of the registry
+    fetchRegistry: true
+    healthcheck:
+      enabled: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Indicates the duration the server waits since it received the last heartbeat before it can evict an instance
+    # from its registry. This value should be greater than leaseRenewalIntervalInSeconds
+    leaseExpirationDurationInSeconds: 60
+    # Indicates the interval of heartbeats that the client sends to the server. The default value is 30 seconds
+    # which means that the client will send one heartbeat every 30 seconds.
+    leaseRenewalIntervalInSeconds: 45
+    # Register the IP of the service rather than the server name (useful when there is no a server-based
+    # environment where a service is assigned a DNS-backed host name, usually in Docker for example)
+    preferIpAddress: true
+
+# Defined symmetric (shared) key to encrypt/decrypt text.
+# To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the password in its body
+encrypt:
+  key: ${ENCRYPT_KEY}
