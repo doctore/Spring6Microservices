@@ -1,20 +1,8 @@
-# Internal caches used by the microservice
-cache:
-  applicationClientDetails:
-    entryCapacity: 2
-    expireInSeconds: 3600
-    name: applicationClientDetailsCache
-
-# Required to expose the routes included actuator: actuator/routes
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info
-
 # Server configuration
 server:
   port: 8180
+
+
 
 # Spring framework configuration
 spring:
@@ -40,3 +28,10 @@ spring:
   #sleuth:
   #  reactor:
   #    instrumentation-type: decorate_on_each
+
+# Internal caches used by the microservice
+cache:
+  applicationClientDetails:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: applicationClientDetailsCache

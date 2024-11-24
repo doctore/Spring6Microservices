@@ -4,6 +4,13 @@ spring:
   flyway:
     enabled: false
 
+# Required to expose the routes included actuator: actuator/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+
 # API documentation
 springdoc:
   api-docs:

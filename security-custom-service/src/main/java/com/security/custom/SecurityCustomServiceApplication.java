@@ -7,8 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SecurityCustomServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SecurityCustomServiceApplication.class, args);
-
+        SpringApplication.run(
+                SecurityCustomServiceApplication.class,
+                args
+        );
         /*
         ConfigurableApplicationContext context = SpringApplication.run(SecurityCustomServiceApplication.class, args);
         UserRepository repository = context.getBean(UserRepository.class);

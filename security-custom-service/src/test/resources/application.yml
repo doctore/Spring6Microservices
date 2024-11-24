@@ -1,10 +1,3 @@
-# Internal caches used by the microservice
-cache:
-  applicationClientDetails:
-    entryCapacity: 1
-    expireInSeconds: 50
-    name: onlyForTests
-
 # Spring framework configuration
 spring:
   cloud:
@@ -25,6 +18,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Internal caches used by the microservice
+cache:
+  applicationClientDetails:
+    entryCapacity: 1
+    expireInSeconds: 50
+    name: onlyForTests
 
 # API documentation
 springdoc:
