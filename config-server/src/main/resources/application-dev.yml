@@ -22,6 +22,6 @@ eureka:
     preferIpAddress: true
 
 # Defined symmetric (shared) key to encrypt/decrypt text.
-# To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the password in its body
+# To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
 encrypt:
-  key: ${ENCRYPT_KEY}
+  key: ${ENCRYPT_KEY:ENCRYPT_KEY}

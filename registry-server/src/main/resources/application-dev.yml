@@ -1,6 +1,8 @@
+# Server configuration
 server:
   port: 8761
 
+# Eureka configuration
 eureka:
   instance:
     hostname: localhost
