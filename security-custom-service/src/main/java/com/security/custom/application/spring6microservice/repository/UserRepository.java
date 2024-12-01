@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants.DATABASE;
 import static java.util.Optional.ofNullable;
+import static com.security.custom.application.spring6microservice.configuration.persistence.PersistenceConfiguration.TABLE;
 
 @Repository(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "UserRepository")
 public class UserRepository {
@@ -60,13 +60,16 @@ public class UserRepository {
                                      + ", r.id as " + ROLE_ID_COLUMN
                                      + ", r.name as " + ROLE_NAME_COLUMN
                                      + ", p.name as " + PERMISSION_NAME_COLUMN + " "
-                              + "from " + DATABASE.TABLE.USER + " u "
-                              + "join " + DATABASE.TABLE.USER_ROLE + " ur on (ur.user_id = u.id) "
-                              + "join " + DATABASE.TABLE.ROLE + " r on (r.id = ur.role_id) "
-                              + "join " + DATABASE.TABLE.ROLE_PERMISSION + " rp on (rp.role_id = r.id) "
-                              + "join " + DATABASE.TABLE.PERMISSION + " p on (p.id = rp.permission_id) "
+                              + "from " + TABLE.USER + " u "
+                              + "join " + TABLE.USER_ROLE + " ur on (ur.user_id = u.id) "
+                              + "join " + TABLE.ROLE + " r on (r.id = ur.role_id) "
+                              + "join " + TABLE.ROLE_PERMISSION + " rp on (rp.role_id = r.id) "
+                              + "join " + TABLE.PERMISSION + " p on (p.id = rp.permission_id) "
                               + "where u.username = :username",
-                           Map.of(USER_USERNAME_COLUMN, username),
+                           Map.of(
+                                   USER_USERNAME_COLUMN,
+                                   username
+                           ),
                            UserMapper.userWithRolesAndPermissionsResultExtractor
                         )
                 );

@@ -1,3 +1,4 @@
+# Spring framework configuration
 spring:
   application:
     name: security-custom-service

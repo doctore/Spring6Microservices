@@ -1,19 +1,13 @@
 package com.security.custom.configuration.security;
 
 import com.security.custom.configuration.documentation.DocumentationConfiguration;
-import com.security.custom.service.ApplicationClientDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import reactor.core.publisher.Mono;
@@ -33,30 +27,13 @@ public class WebSecurityConfiguration {
 
     private final DocumentationConfiguration documentationConfiguration;
 
-    private final ApplicationClientDetailsService applicationClientDetailsService;
+    private final SecurityManager securityManager;
 
 
     public WebSecurityConfiguration(@Lazy final DocumentationConfiguration documentationConfiguration,
-                                    @Lazy final ApplicationClientDetailsService applicationClientDetailsService) {
+                                    @Lazy final SecurityManager securityManager) {
         this.documentationConfiguration = documentationConfiguration;
-        this.applicationClientDetailsService = applicationClientDetailsService;
-    }
-
-
-    /**
-     *    Overwrites the default authentication functionality, adding customs: {@link PasswordEncoder} and
-     * {@link ReactiveUserDetailsService}.
-     *
-     * @return {@link ReactiveAuthenticationManager}
-     */
-    @Bean
-    public ReactiveAuthenticationManager authenticationManager() {
-        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager =
-                new UserDetailsRepositoryReactiveAuthenticationManager(applicationClientDetailsService);
-        authenticationManager.setPasswordEncoder(
-                passwordEncoder()
-        );
-        return authenticationManager;
+        this.securityManager = securityManager;
     }
 
 
@@ -107,7 +84,7 @@ public class WebSecurityConfiguration {
                 )
                 // Include our custom AuthenticationManager
                 .authenticationManager(
-                        authenticationManager()
+                        this.securityManager
                 )
                 .authorizeExchange(
                         exchange ->
@@ -119,17 +96,6 @@ public class WebSecurityConfiguration {
                                         .anyExchange().authenticated()
                 )
                 .build();
-    }
-
-
-    /**
-     * Encoder used to manage the passwords included in database.
-     *
-     * @return {@link PasswordEncoder}
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 
