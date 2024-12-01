@@ -1,6 +1,9 @@
+# Server configuration
 server:
   port: 8888
 
+
+# Service registration and discovery
 eureka:
   client:
     # Pull down a local copy of the registry
@@ -20,6 +23,7 @@ eureka:
     # Register the IP of the service rather than the server name (useful when there is no a server-based
     # environment where a service is assigned a DNS-backed host name, usually in Docker for example)
     preferIpAddress: true
+
 
 # Defined symmetric (shared) key to encrypt/decrypt text.
 # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body

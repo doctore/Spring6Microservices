@@ -1,3 +1,4 @@
+# Spring framework configuration
 spring:
   application:
     name: config-server
@@ -11,9 +12,9 @@ spring:
           enabled: false
         git:
           uri: https://github.com/doctore/Spring6Microservices_ConfigServerData.git
-          # TODO: Pending to add
-          #searchPaths: gateway-server,security-custom-service
+          searchPaths: security-custom-service
           defaultLabel: main
+
 
 # Required to expose the routes included actuator: actuator/routes
 management:

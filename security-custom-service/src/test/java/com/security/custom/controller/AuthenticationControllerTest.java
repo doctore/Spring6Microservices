@@ -235,7 +235,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         String applicationClientId = "ItDoesNotCare";
         String refreshToken = "refreshToken";
 
-        when(mockAuthenticationService.refresh(refreshToken, applicationClientId))
+        when(mockAuthenticationService.refresh(applicationClientId, refreshToken))
                 .thenReturn(authenticationInformation);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
@@ -256,8 +256,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         }
         verify(mockAuthenticationService, times(1))
                 .refresh(
-                        refreshToken,
-                        applicationClientId
+                        applicationClientId,
+                        refreshToken
                 );
     }
 

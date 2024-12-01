@@ -97,7 +97,7 @@ public class AuthorizationControllerTest extends BaseControllerTest {
                 new HashMap<>()
         );
 
-        when(mockAuthorizationService.checkAccessToken(accessToken, applicationClientId))
+        when(mockAuthorizationService.checkAccessToken(applicationClientId, accessToken))
                 .thenReturn(authorizationInformation);
 
         webTestClient.post()
@@ -110,8 +110,8 @@ public class AuthorizationControllerTest extends BaseControllerTest {
 
         verify(mockAuthorizationService, times(1))
                 .checkAccessToken(
-                        accessToken,
-                        applicationClientId
+                        applicationClientId,
+                        accessToken
                 );
     }
 

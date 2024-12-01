@@ -1,6 +1,8 @@
+# Spring framework configuration
 spring:
   application:
     name: registry-server
+
 
 # Required to expose the routes included actuator: actuator/routes
 management:
