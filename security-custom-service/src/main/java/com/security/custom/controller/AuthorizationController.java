@@ -110,8 +110,8 @@ public class AuthorizationController extends BaseController {
                 .map(userDetails ->
                         new ResponseEntity<>(
                                 service.checkAccessToken(
-                                        accessToken,
-                                        userDetails.getUsername()
+                                        userDetails.getUsername(),
+                                        accessToken
                                 ),
                                 OK
                         )

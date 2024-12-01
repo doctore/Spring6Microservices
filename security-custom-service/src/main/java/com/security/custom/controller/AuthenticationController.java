@@ -199,8 +199,8 @@ public class AuthenticationController extends BaseController {
         return getPrincipal()
                 .map(userDetails ->
                         service.refresh(
-                                        refreshToken,
-                                        userDetails.getUsername()
+                                        userDetails.getUsername(),
+                                        refreshToken
                                 )
                                 .map(ai ->
                                         new ResponseEntity<>(
