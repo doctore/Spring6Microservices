@@ -20,6 +20,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false
+
+
 # Internal caches used by the microservice
 cache:
   applicationClientDetails:
