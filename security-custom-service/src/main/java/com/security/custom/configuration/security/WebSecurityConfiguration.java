@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import reactor.core.publisher.Mono;
 
@@ -27,13 +29,13 @@ public class WebSecurityConfiguration {
 
     private final DocumentationConfiguration documentationConfiguration;
 
-    private final SecurityManager securityManager;
+    private final AuthenticationManager authenticationManager;
 
 
     public WebSecurityConfiguration(@Lazy final DocumentationConfiguration documentationConfiguration,
-                                    @Lazy final SecurityManager securityManager) {
+                                    @Lazy final AuthenticationManager authenticationManager) {
         this.documentationConfiguration = documentationConfiguration;
-        this.securityManager = securityManager;
+        this.authenticationManager = authenticationManager;
     }
 
 
@@ -61,44 +63,80 @@ public class WebSecurityConfiguration {
                 .securityContextRepository(
                         NoOpServerSecurityContextRepository.getInstance()
                 )
-                // Handle an authorized attempts
+                // Handle unauthorized attempts
                 .exceptionHandling(
                         (exception) ->
                                 exception
                                         // There is no a logged user
                                         .authenticationEntryPoint(
-                                                (exchange, ex) ->
-                                                        Mono.fromRunnable(
-                                                                () ->
-                                                                        exchange.getResponse().setStatusCode(UNAUTHORIZED)
-                                                        )
+                                                serverAuthenticationEntryPointForUnauthorized()
                                         )
                                         // Logged user has not the required authorities
                                         .accessDeniedHandler(
-                                                (exchange, ex) ->
-                                                        Mono.fromRunnable(
-                                                                () ->
-                                                                        exchange.getResponse().setStatusCode(FORBIDDEN)
-                                                        )
+                                                serverAccessDeniedHandlerForUnauthorized()
                                         )
                 )
                 // Include our custom AuthenticationManager
                 .authenticationManager(
-                        this.securityManager
+                        this.authenticationManager
                 )
+                // Configure request's authorization
                 .authorizeExchange(
-                        exchange ->
-                                exchange
-                                        // List of services do not require authentication
-                                        .pathMatchers(OPTIONS).permitAll()
-                                        .pathMatchers(GET, allowedGetEndpoints()).permitAll()
-                                        // Any other request must be authenticated
-                                        .anyExchange().authenticated()
+                        requestAuthorizationConfiguration()
                 )
                 .build();
     }
 
 
+    /**
+     * Used to manage an {@link Exception} due to there is no a logged user.
+     *
+     * @return {@link ServerAuthenticationEntryPoint}
+     */
+    private ServerAuthenticationEntryPoint serverAuthenticationEntryPointForUnauthorized() {
+        return (exchange, ex) ->
+                Mono.fromRunnable(
+                        () ->
+                                exchange.getResponse().setStatusCode(UNAUTHORIZED)
+                );
+    }
+
+
+    /**
+     * Used to manage an {@link Exception} due to the logged user has no required authorities.
+     *
+     * @return {@link ServerAccessDeniedHandler}
+     */
+    private ServerAccessDeniedHandler serverAccessDeniedHandlerForUnauthorized() {
+        return (exchange, ex) ->
+                Mono.fromRunnable(
+                        () ->
+                                exchange.getResponse().setStatusCode(FORBIDDEN)
+                );
+    }
+
+
+    /**
+     * Includes the security rules to verify incoming requests.
+     *
+     * @return {@link Customizer} of {@link ServerHttpSecurity.AuthorizeExchangeSpec}
+     */
+    private Customizer<ServerHttpSecurity.AuthorizeExchangeSpec> requestAuthorizationConfiguration() {
+        return exchange ->
+                exchange
+                        // List of services do not require authentication
+                        .pathMatchers(OPTIONS).permitAll()
+                        .pathMatchers(GET, allowedGetEndpoints()).permitAll()
+                        // Any other request must be authenticated
+                        .anyExchange().authenticated();
+    }
+
+
+    /**
+     * Returns the list of allowed GET endpoints without security restrictions.
+     *
+     * @return array of {@link String}
+     */
     private String[] allowedGetEndpoints() {
         return new String[] {
                 SPRING_ACTUATOR_PATH + ALLOW_ALL_ENDPOINTS,

@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration(value = Constants.APPLICATION.NAME + "PersistenceConfiguration")
 @EnableJpaRepositories(
         basePackages = PersistenceConfiguration.REPOSITORY_PATH,
-        repositoryBaseClass = ExtendedJpaRepositoryImpl.class)
+        repositoryBaseClass = ExtendedJpaRepositoryImpl.class
+)
 @EnableTransactionManagement
 public class PersistenceConfiguration {
 

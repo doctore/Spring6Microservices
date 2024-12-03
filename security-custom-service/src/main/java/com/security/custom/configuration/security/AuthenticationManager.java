@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
  * adding customs: {@link PasswordEncoder} and {@link ReactiveUserDetailsService}
  */
 @Component
-public class SecurityManager extends UserDetailsRepositoryReactiveAuthenticationManager {
+public class AuthenticationManager extends UserDetailsRepositoryReactiveAuthenticationManager {
 
     @Autowired
-    public SecurityManager(@Lazy final ApplicationClientDetailsService applicationClientDetailsService,
-                           @Lazy final PasswordEncoder passwordEncoder) {
+    public AuthenticationManager(@Lazy final ApplicationClientDetailsService applicationClientDetailsService,
+                                 @Lazy final PasswordEncoder passwordEncoder) {
         super(applicationClientDetailsService);
         this.setPasswordEncoder(
                 passwordEncoder
