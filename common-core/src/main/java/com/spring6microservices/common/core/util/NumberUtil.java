@@ -124,6 +124,7 @@ public class NumberUtil {
      *    {@link BigDecimal} of the "right side" of compare method
      * @param epsilon
      *    Tolerance used to know what is the maximum difference to consider {@code one} and {@code two} as equals values.
+     *    {@link BigDecimal#ZERO} if {@code null}.
      *
      * @return {@code one#compareTo(two)} using {@code epsilon} as tolerance value.
      *
