@@ -249,7 +249,7 @@ public abstract class Validation<E, T> implements Serializable {
                                                verifyUpToFirstInvalid.toArray(
                                                        new Supplier[0]
                                                )
-                               )
+                                         )
                 );
     }
 

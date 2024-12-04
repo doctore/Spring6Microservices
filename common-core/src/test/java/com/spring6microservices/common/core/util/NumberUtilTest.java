@@ -28,12 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NumberUtilTest {
 
-    static Stream<Arguments> compareBigDecimalDefaultRoundingModeTestCases() {
+    static Stream<Arguments> compareBigDecimalWithNumberOfDecimalsTestCases() {
         BigDecimal bg1 = new BigDecimal(100);
         BigDecimal bg2 = new BigDecimal(111);
         BigDecimal bg3 = new BigDecimal("100.1241");
         BigDecimal bg4 = new BigDecimal("100.1251");
         BigDecimal bg5 = new BigDecimal("100.1242");
+        BigDecimal bg6 = new BigDecimal("-100.1242");
         return Stream.of(
                 //@formatter:off
                 //            one,    two,    numberOfDecimals,   expectedException,                expectedResult
@@ -47,18 +48,22 @@ public class NumberUtilTest {
                 Arguments.of( bg2,    bg1,     0,                 null,                             CompareToResult.GREATER_THAN_ZERO ),
                 Arguments.of( bg3,    bg4,     3,                 null,                             CompareToResult.LESS_THAN_ZERO ),
                 Arguments.of( bg4,    bg3,     3,                 null,                             CompareToResult.GREATER_THAN_ZERO ),
-                Arguments.of( bg3,    bg5,     3,                 null,                             CompareToResult.ZERO )
+                Arguments.of( bg3,    bg5,     3,                 null,                             CompareToResult.ZERO ),
+                Arguments.of( bg3,    bg5,     4,                 null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg5,    bg3,     4,                 null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg5,    bg6,     4,                 null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,     4,                 null,                             CompareToResult.LESS_THAN_ZERO )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("compareBigDecimalDefaultRoundingModeTestCases")
-    @DisplayName("compare: BigDecimal using default RoundingMode test cases")
-    public void compareBigDecimalDefaultRoundingMode_testCases(BigDecimal one,
-                                                               BigDecimal two,
-                                                               int numberOfDecimals,
-                                                               Class<? extends Exception> expectedException,
-                                                               CompareToResult expectedResult) {
+    @MethodSource("compareBigDecimalWithNumberOfDecimalsTestCases")
+    @DisplayName("compare: BigDecimal with numberOfDecimals test cases")
+    public void compareBigDecimalWithNumberOfDecimals_testCases(BigDecimal one,
+                                                                BigDecimal two,
+                                                                int numberOfDecimals,
+                                                                Class<? extends Exception> expectedException,
+                                                                CompareToResult expectedResult) {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -75,12 +80,13 @@ public class NumberUtilTest {
     }
 
 
-    static Stream<Arguments> compareBigDecimalAllParametersTestCases() {
+    static Stream<Arguments> compareBigDecimalWithNumberOfDecimalsAndRoundingModeTestCases() {
         BigDecimal bg1 = new BigDecimal(100);
         BigDecimal bg2 = new BigDecimal(111);
         BigDecimal bg3 = new BigDecimal("100.124");
         BigDecimal bg4 = new BigDecimal("100.125");
         BigDecimal bg5 = new BigDecimal("100.126");
+        BigDecimal bg6 = new BigDecimal("-100.126");
         return Stream.of(
                 //@formatter:off
                 //            one,    two,    numberOfDecimals,   roundingMode,             expectedException,                expectedResult
@@ -100,19 +106,26 @@ public class NumberUtilTest {
                 Arguments.of( bg3,    bg5,     2,                 RoundingMode.DOWN,        null,                             CompareToResult.ZERO ),
                 Arguments.of( bg5,    bg3,     2,                 RoundingMode.DOWN,        null,                             CompareToResult.ZERO ),
                 Arguments.of( bg3,    bg5,     2,                 RoundingMode.UP,          null,                             CompareToResult.ZERO ),
-                Arguments.of( bg5,    bg3,     2,                 RoundingMode.UP,          null,                             CompareToResult.ZERO )
+                Arguments.of( bg5,    bg3,     2,                 RoundingMode.UP,          null,                             CompareToResult.ZERO ),
+                Arguments.of( bg5,    bg6,     3,                 RoundingMode.HALF_DOWN,   null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,     3,                 RoundingMode.HALF_DOWN,   null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg5,    bg6,     3,                 RoundingMode.DOWN,        null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,     3,                 RoundingMode.DOWN,        null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg5,    bg6,     3,                 RoundingMode.UP,          null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,     3,                 RoundingMode.UP,          null,                             CompareToResult.LESS_THAN_ZERO )
+
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("compareBigDecimalAllParametersTestCases")
-    @DisplayName("compare: BigDecimal with all parameters test cases")
-    public void compareBigDecimalAllParameters_testCases(BigDecimal one,
-                                                         BigDecimal two,
-                                                         int numberOfDecimals,
-                                                         RoundingMode roundingMode,
-                                                         Class<? extends Exception> expectedException,
-                                                         CompareToResult expectedResult) {
+    @MethodSource("compareBigDecimalWithNumberOfDecimalsAndRoundingModeTestCases")
+    @DisplayName("compare: BigDecimal with with numberOfDecimals and roundingMode test cases")
+    public void compareBigDecimalWithNumberOfDecimalsAndRoundingMode_testCases(BigDecimal one,
+                                                                               BigDecimal two,
+                                                                               int numberOfDecimals,
+                                                                               RoundingMode roundingMode,
+                                                                               Class<? extends Exception> expectedException,
+                                                                               CompareToResult expectedResult) {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -120,6 +133,73 @@ public class NumberUtilTest {
             );
         } else {
             int result = NumberUtil.compare(one, two, numberOfDecimals, roundingMode);
+            switch (expectedResult) {
+                case LESS_THAN_ZERO -> assertTrue(0 > result);
+                case ZERO -> assertEquals(0, result);
+                case GREATER_THAN_ZERO -> assertTrue(0 < result);
+            }
+        }
+    }
+
+
+    static Stream<Arguments> compareBigDecimalWithEpsilonTestCases() {
+        BigDecimal bg1 = new BigDecimal(100);
+        BigDecimal bg2 = new BigDecimal(101);
+        BigDecimal bg3 = new BigDecimal("100.1241");
+        BigDecimal bg4 = new BigDecimal("100.1251");
+        BigDecimal bg5 = new BigDecimal("100.1242");
+        BigDecimal bg6 = new BigDecimal("-100.1242");
+
+        BigDecimal ep1 = new BigDecimal(1);
+        BigDecimal ep2 = new BigDecimal("0.001");
+        BigDecimal ep3 = new BigDecimal("0.0001");
+        return Stream.of(
+                //@formatter:off
+                //            one,    two,    epsilon,              expectedException,                expectedResult
+                Arguments.of( null,   null,   new BigDecimal(-1),   IllegalArgumentException.class,   null ),
+                Arguments.of( bg1,    null,   new BigDecimal(-1),   IllegalArgumentException.class,   null ),
+                Arguments.of( bg1,    bg2,    new BigDecimal(-1),   IllegalArgumentException.class,   null ),
+                Arguments.of( null,   null,   BigDecimal.ZERO,      null,                             CompareToResult.ZERO ),
+                Arguments.of( bg1,    null,   BigDecimal.ZERO,      null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( null,   bg1,    BigDecimal.ZERO,      null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg1,    bg2,    BigDecimal.ZERO,      null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg2,    bg1,    BigDecimal.ZERO,      null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg1,    bg2,    ep1,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg2,    bg1,    ep1,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg1,    bg2,    ep2,                  null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg2,    bg1,    ep2,                  null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg3,    bg4,    ep2,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg4,    bg3,    ep2,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg3,    bg4,    ep3,                  null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg4,    bg3,    ep3,                  null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg3,    bg5,    ep2,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg5,    bg3,    ep2,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg3,    bg5,    ep3,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg5,    bg3,    ep3,                  null,                             CompareToResult.ZERO ),
+                Arguments.of( bg5,    bg6,    ep1,                  null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,    ep1,                  null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg5,    bg6,    ep2,                  null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,    ep2,                  null,                             CompareToResult.LESS_THAN_ZERO ),
+                Arguments.of( bg5,    bg6,    ep3,                  null,                             CompareToResult.GREATER_THAN_ZERO ),
+                Arguments.of( bg6,    bg5,    ep3,                  null,                             CompareToResult.LESS_THAN_ZERO )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("compareBigDecimalWithEpsilonTestCases")
+    @DisplayName("compare: BigDecimal with epsilon test cases")
+    public void compareBigDecimalWithEpsilon_testCases(BigDecimal one,
+                                                       BigDecimal two,
+                                                       BigDecimal epsilon,
+                                                       Class<? extends Exception> expectedException,
+                                                       CompareToResult expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> NumberUtil.compare(one, two, epsilon)
+            );
+        } else {
+            int result = NumberUtil.compare(one, two, epsilon);
             switch (expectedResult) {
                 case LESS_THAN_ZERO -> assertTrue(0 > result);
                 case ZERO -> assertEquals(0, result);

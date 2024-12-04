@@ -25,6 +25,12 @@ public class NumberUtil {
      *    Compares provided {@link BigDecimal}s taking into account the number of decimals included in the parameter
      * {@code numberOfDecimals}. {@link RoundingMode#HALF_UP} will be used in the comparison.
      *
+     * <pre>
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), 4)  =  < 0
+     *    compare(new BigDecimal("100.1242"), new BigDecimal("100.1241"), 4)  =  > 0
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), 3)  =  0
+     * </pre>
+     *
      * @param one
      *    {@link BigDecimal} of the "left side" of compare method
      * @param two
@@ -51,6 +57,12 @@ public class NumberUtil {
     /**
      *    Compares provided {@link BigDecimal}s taking into account the number of decimals included in the parameter
      * {@code numberOfDecimals}.
+     *
+     * <pre>
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), 4, RoundingMode.HALF_UP)  =  < 0
+     *    compare(new BigDecimal("100.1242"), new BigDecimal("100.1241"), 4, RoundingMode.HALF_UP)  =  > 0
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), 3, RoundingMode.HALF_UP)  =  0
+     * </pre>
      *
      * @param one
      *    {@link BigDecimal} of the "left side" of compare method
@@ -94,6 +106,55 @@ public class NumberUtil {
                 finalRoundingMode
         );
         return oneWithProvidedPrecision.compareTo(twoWithProvidedPrecision);
+    }
+
+
+    /**
+     *  Compares provided {@link BigDecimal}s taking into account the given tolerance {@code epsilon}.
+     *
+     * <pre>
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), new BigDecimal(0.0001))  =  < 0
+     *    compare(new BigDecimal("100.1242"), new BigDecimal("100.1241"), new BigDecimal(0.0001))  =  > 0
+     *    compare(new BigDecimal("100.1241"), new BigDecimal("100.1242"), new BigDecimal(0.001))   =  0
+     * </pre>
+     *
+     * @param one
+     *    {@link BigDecimal} of the "left side" of compare method
+     * @param two
+     *    {@link BigDecimal} of the "right side" of compare method
+     * @param epsilon
+     *    Tolerance used to know what is the maximum difference to consider {@code one} and {@code two} as equals values.
+     *
+     * @return {@code one#compareTo(two)} using {@code epsilon} as tolerance value.
+     *
+     * @throws IllegalArgumentException if {@code epsilon} is less than {@code zero}
+     */
+    public static int compare(final BigDecimal one,
+                              final BigDecimal two,
+                              final BigDecimal epsilon) {
+        final BigDecimal finalEpsilon = getOrElse(
+                epsilon,
+                BigDecimal.ZERO
+        );
+        AssertUtil.isTrue(
+                0 <= finalEpsilon.doubleValue(),
+                "epsilon must be equals or greater than 0"
+        );
+        if (null == one) {
+            return null == two
+                    ? 0
+                    : -1;
+        }
+        if (null == two) {
+            return 1;
+        }
+        final BigDecimal diff = one.subtract(two);
+        if (0 >= diff.abs().compareTo(finalEpsilon)) {
+            return 0;
+        }
+        return 0 > diff.compareTo(finalEpsilon)
+                ? -1
+                : 1;
     }
 
 
@@ -192,7 +253,9 @@ public class NumberUtil {
                 potentialNumber,
                 Byte.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
@@ -229,7 +292,9 @@ public class NumberUtil {
                 potentialNumber,
                 Double.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
@@ -266,7 +331,9 @@ public class NumberUtil {
                 potentialNumber,
                 Float.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
@@ -303,7 +370,9 @@ public class NumberUtil {
                 potentialNumber,
                 Integer.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
@@ -340,7 +409,9 @@ public class NumberUtil {
                 potentialNumber,
                 Long.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
@@ -377,7 +448,9 @@ public class NumberUtil {
                 potentialNumber,
                 Short.class
         )
-        .map(opt -> opt.orElse(defaultValue))
+        .map(opt ->
+                opt.orElse(defaultValue)
+        )
         .getOrElse(defaultValue);
     }
 
