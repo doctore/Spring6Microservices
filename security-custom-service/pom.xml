@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.4.0</version>
         <relativePath/>
     </parent>
 
@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <bouncycastle-jdk18on.version>1.79</bouncycastle-jdk18on.version>
-        <flywaydb.version>11.0.0</flywaydb.version>
+        <flywaydb.version>11.0.1</flywaydb.version>
         <google-crypto-tink.verion>1.15.0</google-crypto-tink.verion>
         <hamcrest.version>3.0</hamcrest.version>
         <hazelcast.version>5.5.0</hazelcast.version>
@@ -30,7 +30,8 @@
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
         <springdoc.version>1.8.0</springdoc.version>
 
-        <spring-cloud.version>2023.0.4</spring-cloud.version>
+        <spring-cloud.version>2024.0.0</spring-cloud.version>
+        <spring-security-rsa.version>1.1.5</spring-security-rsa.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-rsa</artifactId>
+            <version>${spring-security-rsa.version}</version>
         </dependency>
         <!-- Spring6 microservices common -->
         <dependency>
@@ -122,11 +124,26 @@
             <version>${hazelcast.version}</version>
         </dependency>
         <!-- Documentation -->
+
+        <!-- TODO: PENDING TO FIX
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+        Provokes a lot of errors in some tests and Swagger URL does not work
+        -->
+
+        <!-- TODO: PENDING TO FIX
+             Following in required for no Spring Boot projects and Swagger URL does not work
+        -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-webflux-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

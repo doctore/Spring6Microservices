@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = SecurityCustomServiceApplication.class)
 public class AuthorizationControllerTest extends BaseControllerTest {
 
-    @MockBean
+    @MockitoBean
     private AuthorizationService mockAuthorizationService;
 
     private WebTestClient webTestClient;

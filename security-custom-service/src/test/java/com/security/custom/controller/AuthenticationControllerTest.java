@@ -14,9 +14,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -41,7 +41,7 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 @SpringBootTest(classes = SecurityCustomServiceApplication.class)
 public class AuthenticationControllerTest extends BaseControllerTest {
 
-    @MockBean
+    @MockitoBean
     private AuthenticationService mockAuthenticationService;
 
     private WebTestClient webTestClient;

@@ -61,6 +61,7 @@ public class DocumentationConfiguration {
                 .info(apiInfo());
     }
 
+
     /**
      * Includes more information related with the Rest Api documentation.
      *

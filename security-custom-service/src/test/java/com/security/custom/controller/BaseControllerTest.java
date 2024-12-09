@@ -2,9 +2,9 @@ package com.security.custom.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public abstract class BaseControllerTest {
 
@@ -12,7 +12,7 @@ public abstract class BaseControllerTest {
     protected ApplicationContext context;
 
     // To avoid Hazelcast instance creation
-    @MockBean
+    @MockitoBean
     @Qualifier("cacheManager")
     private CacheManager mockCacheManager;
 
