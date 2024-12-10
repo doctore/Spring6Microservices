@@ -1,6 +1,7 @@
 package com.security.custom.configuration.security;
 
 import com.security.custom.configuration.documentation.DocumentationConfiguration;
+import com.security.custom.configuration.rest.RestRoutes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -141,8 +142,8 @@ public class WebSecurityConfiguration {
         return new String[] {
                 SPRING_ACTUATOR_PATH + ALLOW_ALL_ENDPOINTS,
                 documentationConfiguration.getApiDocsPath() + ALLOW_ALL_ENDPOINTS,
-                documentationConfiguration.getApiUiUrl() + ALLOW_ALL_ENDPOINTS,
-                documentationConfiguration.getWebjarsUrl() + ALLOW_ALL_ENDPOINTS
+                documentationConfiguration.getApiUiUrl(),
+                RestRoutes.ROOT + documentationConfiguration.getWebjarsUrl() + ALLOW_ALL_ENDPOINTS
         };
     }
 
