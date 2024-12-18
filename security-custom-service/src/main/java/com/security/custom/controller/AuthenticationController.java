@@ -35,7 +35,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Validated
 public class AuthenticationController extends BaseController {
 
-    public final AuthenticationService service;
+    private final AuthenticationService service;
 
 
     @Autowired
