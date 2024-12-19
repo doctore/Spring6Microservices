@@ -111,11 +111,11 @@ The technologies used are the following ones:
 * **[Hazelcast](https://hazelcast.com)** as cache to reduce the invocations to the database.
 * **[NimbusJoseJwt](https://connect2id.com/products/nimbus-jose-jwt)** to work with JWS/JWE tokens.
 * **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
-* **[Webflux](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)** creating a reactive REST Api to manage the authentication/authorization requests.
+* **[Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)** creating a reactive REST Api to manage the authentication/authorization requests.
 
 In this microservice, the layer's division is:
 
-* **application** parent folder of the microservice group whose authentication/authorization is managed by this one.
+* **application** parent folder of the microservice groups whose authentication/authorization is managed by this one.
 * **repository** layer used to access to the database.
 * **service** containing the business logic.
 * **controller** REST Api using Webflux.
@@ -154,15 +154,18 @@ Generic interfaces used to provide common conversion functionality using [MapStr
 
 And functional programming structures and useful classes like:
 
-* [Either](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/either)
-* [Function](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/function) improvements
-* [Lazy](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Lazy.java)
-* [PartialFunction](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/PartialFunction.java) 
-* [Predicate](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/predicate) improvements
-* [Try](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Try)
-* [Tuple](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/collection/tuple)
-* [Validation](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/validation)
+* [Either](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/either) as an alternative to [Optional](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html) for dealing with possibly missing values.
+* [Function](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/function) improvements.
+* [Lazy](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Lazy.java) to manage a lazy evaluated value. 
+* [PartialFunction](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/PartialFunction.java) unary function where the domain does not necessarily include all values of the type used.  
+* [Predicate](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/predicate) improvements.
+* [Try](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Try) representing a computation that may either result in an exception, or return a successfully computed value. 
+* [Tuple](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/collection/tuple) immutable objects that contains a fixed number of elements (by now up to 9).
+* [Validation](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/validation) to validate the given instance.
 <br><br>
+
+
+A common use of Either is as an alternative to scala.Option for dealing with possibly missing values.
 
 
 ### [common-spring](https://github.com/doctore/Spring6Microservices/tree/main/common-spring)
