@@ -32,7 +32,7 @@ Below is shown a brief introduction to the subprojects included in this one:
 <br><br>
 
 
-### registry-server
+### [registry-server](https://github.com/doctore/Spring6Microservices/tree/main/registry-server)
 
 Server used to register all microservices included in this project. In this case, using [Netflix Eureka](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
 each client can simultaneously act as a server, to replicate its status to a connected peer. In other words, a client retrieves a list of all connected
@@ -60,9 +60,20 @@ spring:
     password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
 ```
 
-To increase the security level, in the [config-server](#config-server) microservice I have deactivated the decryption in [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/config-server/src/main/resources/application.yml),
-sending the information encrypted and delegating in every microservice the labour of decrypt it. That is the reason to include in their *pom.xml* files,
-the dependency:
+To increase the security level, in the [config-server](#config-server) microservice I have deactivated the decryption in [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/config-server/src/main/resources/application.yml):
+
+```
+spring:
+  cloud:
+    config:
+      server:
+        encrypt:
+          # We will send encrypted properties
+          enabled: false
+```
+
+sending the information encrypted and delegating in every microservice the labour of decrypt it. That is the reason to include in their *pom.xml*
+files, the dependency:
 
 ```
 <dependency>
