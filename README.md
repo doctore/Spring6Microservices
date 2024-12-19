@@ -1,6 +1,6 @@
 # Spring6Microservices
 
-**UNDER CONSTRUCTION**
+**--- UNDER CONSTRUCTION ---**
 
 - [Why was this project created?](#why-was-this-project-created)
 - [Elements included in this project](#elements-included-in-this-project)
@@ -40,7 +40,7 @@ peers of a service registry and makes all further requests to any other services
 <br><br>
 
 
-### config-server
+### [config-server](https://github.com/doctore/Spring6Microservices/tree/main/config-server)
 
 [Configuration server](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#_spring_cloud_config_server) used by the included microservices
 to get their required initial values like database configuration, for example. Those configuration values have been added into the project:
@@ -85,14 +85,14 @@ files, the dependency:
 <br><br>
 
 
-### gateway-server
+### [gateway-server](https://github.com/doctore/Spring6Microservices/tree/main/gateway-server)
 
 Using [Spring Gateway](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html), this is the gateway implementation used by the other
 microservices included in this proof of concept. This module contains a filter to registry every web service invoked, helping to debug each request.
 <br><br>
 
 
-### security-custom-service
+### [security-custom-service](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service)
 
 Based on JWT token, this module was created to centralize the management of authentication/authorization functionalities. Its main purpose is provided
 a completely multi-application platform to generate/manage their own access and refresh tokens (including additional information), choosing between JWS
@@ -129,7 +129,7 @@ On the other hand, there are other important folders:
 <br><br>
 
 
-### common-core
+### [common-core](https://github.com/doctore/Spring6Microservices/tree/main/common-core)
 
 Maven project that includes common code used in several microservices, with different useful helper classes like:
 
@@ -165,7 +165,7 @@ And functional programming structures and useful classes like:
 <br><br>
 
 
-### common-spring
+### [common-spring](https://github.com/doctore/Spring6Microservices/tree/main/common-spring)
 
 Maven project that includes common code specifically related with Spring framework, used in several microservices. It contains different useful helper classes like:
 
@@ -191,7 +191,7 @@ Common DTOs to send/receive authentication, authorization data and/or handle err
 <br><br>
 
 
-### sql
+### [sql](https://github.com/doctore/Spring6Microservices/tree/main/sql)
 
 With SQL files included in the database, just to expose the initial steps/changes needed to start working with these microservices.
 <br><br>
