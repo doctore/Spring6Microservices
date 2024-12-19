@@ -85,7 +85,9 @@ microservices included in this proof of concept. This module contains a filter t
 
 Based on JWT token, this module was created to centralize the management of authentication/authorization functionalities. Its main purpose is provided
 a completely multi-application platform to generate/manage their own access and refresh tokens (including additional information), choosing between JWS
-or JWE token type. Every application will be able to manage its own token configuration/generation adding a new row in the database table: **security.application_client_details**
+or JWE token type. 
+
+Every application will be able to manage its own token configuration/generation adding a new row in the database table: **security.application_client_details**
 and including/developing a new constants in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
 
 The technologies used are the following ones:
