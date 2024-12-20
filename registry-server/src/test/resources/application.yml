@@ -10,3 +10,11 @@ eureka:
     # Only in NON PRODUCTION settings, preventing the deregistration of active services
     # when network hiccup has stopped the renewal request from making its way to Eureka
     enableSelfPreservation: false
+
+
+# Required to expose the routes included actuator: actuator/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

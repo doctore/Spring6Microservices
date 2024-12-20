@@ -1,0 +1,13 @@
+# Spring framework configuration
+spring:
+  application:
+    name: test-configuration
+
+
+# Main properties in Spring Boot to configure some general purpose services
+management:
+  endpoints:
+    web:
+      exposure:
+        # Actuator endpoints exposed: actuator/routes
+        include: health, info

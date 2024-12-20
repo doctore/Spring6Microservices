@@ -1,6 +1,7 @@
-package com.registryserver;
+package com.configserver;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -13,17 +14,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
-public class RegistryServerApplicationTest {
+public class ConfigServerApplicationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
 
     @Test
-    public void whenTheEndpointToGetTheListOfRegisteredApplicationsIsInvoked_thenOkHttpCodeIsReturned() {
+    public void whenExistingExternalConfigurationIsInvoked_thenOkHttpCodeIsReturned() {
         @SuppressWarnings("rawtypes")
         ResponseEntity<Map> entity = testRestTemplate.getForEntity(
-                "/eureka/apps",
+                "/test-configuration/dev",
                 Map.class
         );
         assertThat(entity.getStatusCode())
