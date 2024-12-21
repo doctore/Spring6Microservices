@@ -1,0 +1,27 @@
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server for testing
+    config:
+      enabled: false
+
+
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false
+
+
+# Required to expose the routes included actuator: actuator/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+
+# API documentation
+springdoc:
+  documentation:
+    documentedServices: onlyForTests
+    microservicesPath: /onlyForTests
