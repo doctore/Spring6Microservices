@@ -126,6 +126,20 @@ On the other hand, there are other important folders:
 * **model** to store the entities.
 * **dto** custom objects to contain specific data.
 * **util** to manage the JWS/JWE functionality.
+
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application.yml)  
+the project has been configured to avoid invoking it when this microservice is launched or packaged:
+
+```
+spring:
+  flyway:
+    enabled: false
+```
+
+So, if you want to manage it manually, you can create a new [maven](https://maven.apache.org/) configuration. The next picture displays how to do it
+using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
+
+![Alt text](/documentation/ConfigureFlywayInSecurityCustomService.png?raw=true "Configure Flyway")
 <br><br>
 
 
@@ -184,7 +198,7 @@ Wrapper to manage a cache, regardless of the selected implementation:
 
 * [CacheService](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/service/CacheService.java)
 
-New validator using *Enums* to map database values in Hibernate POJOs, allowing to verify internal properties:
+New validator using **Enums** to map database values in Hibernate POJOs, allowing to verify internal properties:
 
 * [Enum validator](https://github.com/doctore/Spring6Microservices/tree/main/common-spring/src/main/java/com/spring6microservices/common/spring/validator/enums)
 
