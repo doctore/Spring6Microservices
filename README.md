@@ -127,8 +127,8 @@ On the other hand, there are other important folders:
 * **dto** custom objects to contain specific data.
 * **util** to manage the JWS/JWE functionality.
 
-Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application.yml)  
-the project has been configured to avoid invoking it when this microservice is launched or packaged:
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application.yml) the project has been configured to avoid invoking it
+when this microservice is launched or packaged:
 
 ```
 spring:
