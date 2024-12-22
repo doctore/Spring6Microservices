@@ -11,7 +11,8 @@
   - [common-core](#common-core)
   - [common-spring](#common-spring)
   - [sql](#sql)
-- [Previous steps](#previous-steps) 
+- [Previous steps](#previous-steps)
+- [Rest API documentation](#rest-api-documentation)
 
 
 
@@ -283,4 +284,22 @@ To do it:
 ![Alt text](/documentation/Encryption.png?raw=true "Encryption endpoint")
 
 - Overwrite current values by the provided ones.
+<br><br>
+
+
+
+## Rest API documentation
+
+The following microservices have a well documented Rest API:
+
+* [security-custom-service](#security-custom-service)
+
+[Swagger](https://swagger.io) has been used in all cases, however for a better an easier integration with Spring Framework, the library used is:
+
+* **[Springdoc-OpenApi](https://springdoc.org)** both in every documented microservice and the [gateway-server](#gateway-server).
+
+To facilitate access to this documentation, we can use the [gateway-server](#gateway-server) URL. On that way, using the upper selector: *Select a definition*,
+we will be able to choose between all existing microservices. In local (**dev** environment), the url to access them is `http://localhost:5555/webjars/swagger-ui/index.html`
+
+![Alt text](/documentation/Swagger.png?raw=true "Swagger documentation")
 <br><br>
