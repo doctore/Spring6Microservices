@@ -14,7 +14,7 @@ public class GatewayServerApplication {
                 GatewayServerApplication.class,
                 args
         );
+        // To automatically include traceId and spanId in the logs, using Micrometer Tracing
         Hooks.enableAutomaticContextPropagation();
     }
-
 }
