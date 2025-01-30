@@ -1361,7 +1361,7 @@ public class MapUtil {
      */
     public static <T, E> E getOrElseGet(final Map<? extends T, ? extends E> sourceMap,
                                         final T key,
-                                        final Supplier<E> defaultValue) {
+                                        final Supplier<? extends E> defaultValue) {
         final Map<? extends T, ? extends E> finalSourceMap = ObjectUtil.getOrElse(
                 sourceMap,
                 Map.of()
