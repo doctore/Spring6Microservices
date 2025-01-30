@@ -1319,11 +1319,14 @@ public class MapUtil {
     public static <T, E> E getOrElse(final Map<? extends T, ? extends E> sourceMap,
                                      final T key,
                                      final E defaultValue) {
-        return getOrElse(
+        final Map<? extends T, ? extends E> finalSourceMap = ObjectUtil.getOrElse(
                 sourceMap,
-                key,
-                () -> defaultValue
+                Map.of()
         );
+        if (null != key && finalSourceMap.containsKey(key)) {
+            return finalSourceMap.get(key);
+        }
+        return defaultValue;
     }
 
 
@@ -1354,19 +1357,20 @@ public class MapUtil {
      * @return value related with given {@code key} if {@code sourceMap} contains it,
      *         {@link Supplier#get()} of {@code defaultValue} otherwise.
      *
-     * @throws IllegalArgumentException if {@code defaultValue} is {@code null}
+     * @throws IllegalArgumentException if {@code defaultValue} is {@code null} and {@code sourceMap} does not contain {@code key}
      */
-    public static <T, E> E getOrElse(final Map<? extends T, ? extends E> sourceMap,
-                                     final T key,
-                                     final Supplier<E> defaultValue) {
-        AssertUtil.notNull(defaultValue, "defaultValue must be not null");
+    public static <T, E> E getOrElseGet(final Map<? extends T, ? extends E> sourceMap,
+                                        final T key,
+                                        final Supplier<E> defaultValue) {
         final Map<? extends T, ? extends E> finalSourceMap = ObjectUtil.getOrElse(
                 sourceMap,
                 Map.of()
         );
-        return ofNullable(key)
-                .map(k -> (E) finalSourceMap.get(k))
-                .orElseGet(defaultValue);
+        if (null != key && finalSourceMap.containsKey(key)) {
+            return finalSourceMap.get(key);
+        }
+        AssertUtil.notNull(defaultValue, "defaultValue must be not null");
+        return defaultValue.get();
     }
 
 
@@ -1980,7 +1984,6 @@ public class MapUtil {
     }
 
 
-    // TODO: PENDING TO ADD A TEST
     /**
      *    Returns {@code true} if the supplied {@link Map} is {@code null} or empty.
      * Otherwise, return {@code false}.

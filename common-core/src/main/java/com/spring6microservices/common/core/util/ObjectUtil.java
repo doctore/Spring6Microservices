@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static com.spring6microservices.common.core.util.PredicateUtil.alwaysTrue;
 import static java.util.Optional.ofNullable;
@@ -141,7 +142,8 @@ public class ObjectUtil {
                 .map(si ->
                         null == mapper
                                 ? defaultValue
-                                : mapper.apply(sourceInstance))
+                                : mapper.apply(sourceInstance)
+                )
                 .orElse(defaultValue);
     }
 
@@ -195,9 +197,79 @@ public class ObjectUtil {
                 .map(si ->
                         null == mapper
                                 ? defaultValue
-                                : mapper.apply(sourceInstance))
+                                : mapper.apply(sourceInstance)
+                )
                 .map(Object::toString)
                 .orElse(defaultValue);
+    }
+
+
+    /**
+     *    Return the given {@code sourceInstance} if is not {@code null}. Otherwise, returns the result of the {@link Supplier}
+     * {@code defaultValue}.
+     *
+     *
+     * <pre>
+     *    getOrElseGet(                  Result:
+     *       23,                          23
+     *       () -> 25
+     *    )
+     * </pre>
+     *
+     * @param sourceInstance
+     *    Object returned only if is not {@code null}
+     * @param defaultValue
+     *    {@link Supplier} with the alternative value to return
+     *
+     * @return {@code sourceInstance} if is not {@code null}, result of {@code defaultValue} otherwise
+     *
+     * @throws IllegalArgumentException if {@code defaultValue} is {@code null} and {@code sourceInstance} is {@code null}
+     */
+    public static <T> T getOrElseGet(final T sourceInstance,
+                                     final Supplier<? extends T> defaultValue) {
+        return ofNullable(sourceInstance)
+                .orElseGet(() -> {
+                    AssertUtil.notNull(defaultValue, "defaultValue must be not null");
+                    return defaultValue.get();
+                });
+    }
+
+
+    /**
+     *    Using the provided {@link Function} {@code mapper}, transform/extract from the given {@code sourceInstance}
+     * the related value. Otherwise, returns the result of the {@link Supplier} {@code defaultValue}.
+     *
+     * <pre>
+     *    getOrElseGet(                  Result:
+     *       23,                          "23"
+     *       Object::toString,
+     *       () -> "other"
+     *    )
+     * </pre>
+     *
+     * @param sourceInstance
+     *    Object used to transform/extract required information.
+     * @param mapper
+     *    A mapping {@link Function} to use required information from {@code sourceInstance}
+     * @param defaultValue
+     *    {@link Supplier} with the alternative value to return if applying {@code mapper} no value is obtained.
+     *
+     * @return {@code mapper} {@code apply} method if not {@code null} is returned,
+     *         result of {@code defaultValue} otherwise.
+     *
+     * @throws IllegalArgumentException if {@code defaultValue} is {@code null} and {@code sourceInstance} is {@code null}
+     */
+    public static <T, E> E getOrElseGet(final T sourceInstance,
+                                        final Function<? super T, ? extends E> mapper,
+                                        final Supplier<? extends E> defaultValue) {
+        if (null != sourceInstance && null != mapper) {
+            final E mapperResult = mapper.apply(sourceInstance);
+            if (null != mapperResult) {
+                return mapperResult;
+            }
+        }
+        AssertUtil.notNull(defaultValue, "defaultValue must be not null");
+        return defaultValue.get();
     }
 
 }

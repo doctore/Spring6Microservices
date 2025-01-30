@@ -313,7 +313,7 @@ public class DateTimeUtilTest {
                         .toInstant()
         );
         Date expectedResultNullAndLocalDate = Date.from(
-                LocalDate.now()
+                LocalDate.now(gmtZoneId)
                         .atStartOfDay(
                                 gmtZoneId
                         )

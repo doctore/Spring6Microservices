@@ -1600,7 +1600,7 @@ public class MapUtilTest {
     }
 
 
-    static Stream<Arguments> getOrElseDirectValueAsDefaultTestCases() {
+    static Stream<Arguments> getOrElseTestCases() {
         Map<Integer, Integer> integersMap = new HashMap<>() {{
             put(1, 21);
             put(4, 43);
@@ -1626,12 +1626,12 @@ public class MapUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getOrElseDirectValueAsDefaultTestCases")
-    @DisplayName("getOrElse: with a direct value as default test cases")
-    public <T, E> void getOrElseDirectValueAsDefault_testCases(Map<? extends T, ? extends E> sourceMap,
-                                                               T key,
-                                                               E defaultValue,
-                                                               E expectedResult) {
+    @MethodSource("getOrElseTestCases")
+    @DisplayName("getOrElse: test cases")
+    public <T, E> void getOrElse_testCases(Map<? extends T, ? extends E> sourceMap,
+                                           T key,
+                                           E defaultValue,
+                                           E expectedResult) {
         assertEquals(
                 expectedResult,
                 getOrElse(sourceMap, key, defaultValue)
@@ -1639,7 +1639,7 @@ public class MapUtilTest {
     }
 
 
-    static Stream<Arguments> getOrElseSupplierAsDefaultValueTestCases() {
+    static Stream<Arguments> getOrElseGetTestCases() {
         Map<Integer, Integer> integersMap = new HashMap<>() {{
             put(1, 21);
             put(4, 43);
@@ -1655,28 +1655,29 @@ public class MapUtilTest {
                 Arguments.of( Map.of(),      null,   always25,       null,                             always25.get() ),
                 Arguments.of( Map.of(),      1,      always25,       null,                             always25.get() ),
                 Arguments.of( integersMap,   null,   always25,       null,                             always25.get() ),
+                Arguments.of( integersMap,   1,      null,           null,                             21 ),
                 Arguments.of( integersMap,   1,      always25,       null,                             21 ),
                 Arguments.of( integersMap,   2,      always25,       null,                             always25.get() )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("getOrElseSupplierAsDefaultValueTestCases")
-    @DisplayName("getOrElse: with Supplier as default value test cases")
-    public <T, E> void getOrElseSupplierAsDefaultValue_testCases(Map<? extends T, ? extends E> sourceMap,
-                                                                 T key,
-                                                                 Supplier<E> defaultValue,
-                                                                 Class<? extends Exception> expectedException,
-                                                                 E expectedResult) {
+    @MethodSource("getOrElseGetTestCases")
+    @DisplayName("getOrElseGet: test cases")
+    public <T, E> void getOrElseGet_testCases(Map<? extends T, ? extends E> sourceMap,
+                                              T key,
+                                              Supplier<E> defaultValue,
+                                              Class<? extends Exception> expectedException,
+                                              E expectedResult) {
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () -> getOrElse(sourceMap, key, defaultValue)
+                    () -> getOrElseGet(sourceMap, key, defaultValue)
             );
         } else {
             assertEquals(
                     expectedResult,
-                    getOrElse(sourceMap, key, defaultValue)
+                    getOrElseGet(sourceMap, key, defaultValue)
             );
         }
     }
