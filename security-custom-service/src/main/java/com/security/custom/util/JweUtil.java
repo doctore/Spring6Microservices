@@ -182,10 +182,10 @@ public class JweUtil {
      * @throws TokenInvalidException it the given {@code jwsToken} is not a JWS one
      * @throws TokenException if there was a problem generating the JWE token
      */
-    public String generateToken(final String jwsToken,
-                                final TokenEncryptionAlgorithm encryptionAlgorithm,
-                                final TokenEncryptionMethod encryptionMethod,
-                                final String encryptionSecret) {
+    public static String generateToken(final String jwsToken,
+                                       final TokenEncryptionAlgorithm encryptionAlgorithm,
+                                       final TokenEncryptionMethod encryptionMethod,
+                                       final String encryptionSecret) {
         AssertUtil.notNull(encryptionAlgorithm, "encryptionAlgorithm must be not null");
         AssertUtil.notNull(encryptionMethod, "encryptionMethod must be not null");
         AssertUtil.hasText(encryptionSecret, "encryptionSecret must be not null or empty");
@@ -226,13 +226,13 @@ public class JweUtil {
      *                                  if {@code encryptionSecret} or {@code signatureSecret} are {@code null} or empty.
      * @throws TokenException if there was a problem generating the JWE token
      */
-    public String generateToken(final Map<String, Object> informationToInclude,
-                                final TokenEncryptionAlgorithm encryptionAlgorithm,
-                                final TokenEncryptionMethod encryptionMethod,
-                                final String encryptionSecret,
-                                final TokenSignatureAlgorithm signatureAlgorithm,
-                                final String signatureSecret,
-                                final long expirationTimeInSeconds) {
+    public static String generateToken(final Map<String, Object> informationToInclude,
+                                       final TokenEncryptionAlgorithm encryptionAlgorithm,
+                                       final TokenEncryptionMethod encryptionMethod,
+                                       final String encryptionSecret,
+                                       final TokenSignatureAlgorithm signatureAlgorithm,
+                                       final String signatureSecret,
+                                       final long expirationTimeInSeconds) {
         String jwsToken = JwsUtil.generateToken(
                 informationToInclude,
                 signatureAlgorithm,
@@ -353,10 +353,10 @@ public class JweUtil {
      * @throws TokenExpiredException if {@code jweToken} is valid but its nested JWS has expired
      * @throws TokenException if there was a problem getting claims of {@code jweToken}
      */
-    public Map<String, Object> getPayloadKeys(final String jweToken,
-                                              final String encryptionSecret,
-                                              final String signatureSecret,
-                                              final Set<String> keysToInclude) {
+    public static Map<String, Object> getPayloadKeys(final String jweToken,
+                                                     final String encryptionSecret,
+                                                     final String signatureSecret,
+                                                     final Set<String> keysToInclude) {
         final Set<String> finalKeysToInclude = getOrElse(
                 keysToInclude,
                 new HashSet<>()
@@ -407,10 +407,10 @@ public class JweUtil {
      * @throws TokenExpiredException if {@code jweToken} is valid but its nested JWS has expired
      * @throws TokenException if there was a problem getting claims of {@code jweToken}
      */
-    public Map<String, Object> getPayloadExceptKeys(final String jweToken,
-                                                    final String encryptionSecret,
-                                                    final String signatureSecret,
-                                                    final Set<String> keysToExclude) {
+    public static Map<String, Object> getPayloadExceptKeys(final String jweToken,
+                                                           final String encryptionSecret,
+                                                           final String signatureSecret,
+                                                           final Set<String> keysToExclude) {
         final Set<String> finalKeysToExclude = getOrElse(
                 keysToExclude,
                 new HashSet<>()
@@ -443,7 +443,7 @@ public class JweUtil {
      *
      * @return {@code true} if the {@code token} is an JWE one, {@code false} otherwise
      */
-    public boolean isJweToken(final String token) {
+    public static boolean isJweToken(final String token) {
         try {
             AssertUtil.hasText(token, "token cannot be null or empty");
             Base64URL[] parts = JOSEObject.split(token);
@@ -484,10 +484,10 @@ public class JweUtil {
      * @throws TokenInvalidException it the given {@code jwsToken} is not a JWS one
      * @throws TokenException it there was a problem encrypting {@code jwsToken}
      */
-    private String encryptJwsToken(final String jwsToken,
-                                   final TokenEncryptionAlgorithm encryptionAlgorithm,
-                                   final TokenEncryptionMethod encryptionMethod,
-                                   final String encryptionSecret) {
+    private static String encryptJwsToken(final String jwsToken,
+                                          final TokenEncryptionAlgorithm encryptionAlgorithm,
+                                          final TokenEncryptionMethod encryptionMethod,
+                                          final String encryptionSecret) {
         try {
             if (!JwsUtil.isJwsToken(jwsToken)) {
                 throw new TokenInvalidException(
@@ -539,8 +539,8 @@ public class JweUtil {
      * @throws TokenInvalidException it the given {@code jwsToken} is not a JWS one
      * @throws TokenException it there was a problem decrypting {@code jweToken}
      */
-    private String decryptJweToken(final String jweToken,
-                                   final String encryptionSecret) {
+    private static String decryptJweToken(final String jweToken,
+                                          final String encryptionSecret) {
         try {
             if (!isJweToken(jweToken)) {
                 throw new TokenInvalidException(

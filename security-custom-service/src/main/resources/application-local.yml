@@ -6,7 +6,7 @@ server:
 # Spring framework configuration
 spring:
   cloud:
-    # Disable configuration server for testing
+    # Disable configuration server request to work provided values
     config:
       enabled: false
   datasource:
