@@ -7,7 +7,6 @@ import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,8 +34,8 @@ public class Spring6MicroserviceAuthenticationService implements ApplicationClie
 
 
     @Autowired
-    public Spring6MicroserviceAuthenticationService(@Lazy final UserRepository repository,
-                                                    @Lazy final PasswordEncoder passwordEncoder) {
+    public Spring6MicroserviceAuthenticationService(final UserRepository repository,
+                                                    final PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }

@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class AuthenticationController extends BaseController {
 
 
     @Autowired
-    public AuthenticationController(@Lazy final AuthenticationService service) {
+    public AuthenticationController(final AuthenticationService service) {
         this.service = service;
     }
 

@@ -4,7 +4,6 @@ import com.security.custom.configuration.cache.ApplicationClientDetailsCacheConf
 import com.security.custom.model.ApplicationClientDetails;
 import com.spring6microservices.common.spring.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,8 +17,8 @@ public class ApplicationClientDetailsCacheService {
 
 
     @Autowired
-    public ApplicationClientDetailsCacheService(@Lazy final ApplicationClientDetailsCacheConfiguration cacheConfiguration,
-                                                @Lazy final CacheService cacheService) {
+    public ApplicationClientDetailsCacheService(final ApplicationClientDetailsCacheConfiguration cacheConfiguration,
+                                                final CacheService cacheService) {
         this.cacheConfiguration = cacheConfiguration;
         this.cacheService = cacheService;
     }

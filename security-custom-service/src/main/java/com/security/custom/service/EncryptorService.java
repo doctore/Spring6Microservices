@@ -2,7 +2,6 @@ package com.security.custom.service;
 
 import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ public class EncryptorService {
 
 
     @Autowired
-    public EncryptorService(@Lazy final TextEncryptor textEncryptor) {
+    public EncryptorService(final TextEncryptor textEncryptor) {
         this.textEncryptor = textEncryptor;
     }
 

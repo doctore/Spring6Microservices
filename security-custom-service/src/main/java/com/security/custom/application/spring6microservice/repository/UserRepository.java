@@ -7,7 +7,6 @@ import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.repository.mapper.UserMapper;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -33,7 +32,7 @@ public class UserRepository {
 
 
     @Autowired
-    public UserRepository(@Lazy final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public UserRepository(final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 

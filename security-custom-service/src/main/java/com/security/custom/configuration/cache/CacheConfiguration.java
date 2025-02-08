@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @ComponentScan(basePackages = { Constants.PATH.EXTERNAL.COMMON_SPRING })
@@ -26,7 +25,7 @@ public class CacheConfiguration {
 
 
     @Autowired
-    public CacheConfiguration(@Lazy final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration) {
+    public CacheConfiguration(final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration) {
         this.applicationClientDetailsCacheConfiguration = applicationClientDetailsCacheConfiguration;
     }
 

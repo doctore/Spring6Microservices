@@ -11,7 +11,6 @@ import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.ObjectUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,7 +30,7 @@ public class TokenService {
 
 
     @Autowired
-    public TokenService(@Lazy final EncryptorService encryptorService) {
+    public TokenService(final EncryptorService encryptorService) {
         this.encryptorService = encryptorService;
     }
 

@@ -14,7 +14,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,10 +37,10 @@ public class AuthenticationService {
 
 
     @Autowired
-    public AuthenticationService(@Lazy final ApplicationContext applicationContext,
-                                 @Lazy final ApplicationClientDetailsService applicationClientDetailsService,
-                                 @Lazy final AuthorizationService authorizationService,
-                                 @Lazy final TokenService tokenService) {
+    public AuthenticationService(final ApplicationContext applicationContext,
+                                 final ApplicationClientDetailsService applicationClientDetailsService,
+                                 final AuthorizationService authorizationService,
+                                 final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
         this.authorizationService = authorizationService;

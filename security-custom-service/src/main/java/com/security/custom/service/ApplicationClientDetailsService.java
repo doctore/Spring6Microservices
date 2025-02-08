@@ -5,7 +5,6 @@ import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.repository.ApplicationClientDetailsRepository;
 import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +25,8 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
 
 
     @Autowired
-    public ApplicationClientDetailsService(@Lazy final ApplicationClientDetailsCacheService cacheService,
-                                           @Lazy final ApplicationClientDetailsRepository repository) {
+    public ApplicationClientDetailsService(final ApplicationClientDetailsCacheService cacheService,
+                                           final ApplicationClientDetailsRepository repository) {
         this.cacheService = cacheService;
         this.repository = repository;
     }

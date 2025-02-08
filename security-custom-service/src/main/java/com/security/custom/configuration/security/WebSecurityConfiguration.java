@@ -4,7 +4,6 @@ import com.security.custom.configuration.documentation.DocumentationConfiguratio
 import com.security.custom.configuration.rest.RestRoutes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -33,8 +32,8 @@ public class WebSecurityConfiguration {
     private final AuthenticationManager authenticationManager;
 
 
-    public WebSecurityConfiguration(@Lazy final DocumentationConfiguration documentationConfiguration,
-                                    @Lazy final AuthenticationManager authenticationManager) {
+    public WebSecurityConfiguration(final DocumentationConfiguration documentationConfiguration,
+                                    final AuthenticationManager authenticationManager) {
         this.documentationConfiguration = documentationConfiguration;
         this.authenticationManager = authenticationManager;
     }

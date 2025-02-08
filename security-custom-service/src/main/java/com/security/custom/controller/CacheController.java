@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,7 +33,7 @@ public class CacheController extends BaseController {
 
 
     @Autowired
-    public CacheController(@Lazy final ApplicationClientDetailsCacheService applicationClientDetailsCacheService) {
+    public CacheController(final ApplicationClientDetailsCacheService applicationClientDetailsCacheService) {
         this.applicationClientDetailsCacheService = applicationClientDetailsCacheService;
     }
 
