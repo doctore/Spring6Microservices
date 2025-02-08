@@ -1036,8 +1036,8 @@ public class StringUtilTest {
         Set<Integer> ints = new LinkedHashSet<>(asList(1, 2, 33, 68));
         List<String> stringsWithNulls = asList("", null, "242", "ab", null, "H");
 
-        String expectedIntsResult = "123368";
-        String expectedStringsWithNullsResult = "242abH";
+        String expectedIntsResult = "1,2,33,68";
+        String expectedStringsWithNullsResult = ",,242,ab,,H";
         return Stream.of(
                 //@formatter:off
                 //            sourceString,       expectedResult
@@ -1064,8 +1064,8 @@ public class StringUtilTest {
         List<Integer> ints = List.of(33, 68, 99, 2);
         List<String> stringsWithNulls = asList(null, null, "242", "ab", "", "H");
 
-        String expectedIntsResult = "3368992";
-        String expectedStringsWithNullsResult = "242abH";
+        String expectedIntsResult = "33,68,99,2";
+        String expectedStringsWithNullsResult = ",,242,ab,,H";
         return Stream.of(
                 //@formatter:off
                 //            elements,           expectedResult
@@ -1098,9 +1098,9 @@ public class StringUtilTest {
         Set<Integer> ints = new LinkedHashSet<>(asList(1, 2, 33, 68));
         List<String> stringsWithNulls = asList("", null, "242", "ab", null, "H");
 
-        String expectedIntsResultNoFilter = "123368";
-        String expectedIntsResultWithFilter = "268";
-        String expectedStringsWithNullsResultNoFilter = "242abH";
+        String expectedIntsResultNoFilter = "1,2,33,68";
+        String expectedIntsResultWithFilter = "2,68";
+        String expectedStringsWithNullsResultNoFilter = ",,242,ab,,H";
         String expectedStringsWithNullsResultWithFilter = "242";
         return Stream.of(
                 //@formatter:off

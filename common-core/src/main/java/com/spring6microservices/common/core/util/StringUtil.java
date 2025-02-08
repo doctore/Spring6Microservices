@@ -1060,6 +1060,12 @@ public class StringUtil {
     /**
      * Joins the elements of the provided {@link Collection} into a single {@link String} containing the provided elements.
      *
+     * <pre>
+     *    join(null)          = ""
+     *    join(List.of())     = ""
+     *    join(List.of(1, 2)) = "1,2"
+     * </pre>
+     *
      * @apiNote
      *    {@code null} elements will be managed as empty {@link String}.
      *
@@ -1072,7 +1078,7 @@ public class StringUtil {
         return join(
                 sourceCollection,
                 null,
-                EMPTY_STRING
+                DEFAULT_SEPARATOR_STRING
         );
     }
 
@@ -1093,7 +1099,7 @@ public class StringUtil {
         return join(
                 CollectionUtil.toList(elements),
                 null,
-                EMPTY_STRING
+                DEFAULT_SEPARATOR_STRING
         );
     }
 
@@ -1118,7 +1124,7 @@ public class StringUtil {
         return join(
                 sourceCollection,
                 filterPredicate,
-                EMPTY_STRING
+                DEFAULT_SEPARATOR_STRING
         );
     }
 
@@ -1196,7 +1202,9 @@ public class StringUtil {
                             : c.stream().filter(filterPredicate);
 
                     return collectionStream
-                            .map(e -> Objects.toString(e, EMPTY_STRING))
+                            .map(e ->
+                                    Objects.toString(e, EMPTY_STRING)
+                            )
                             .collect(
                                     joining(finalSeparator)
                             );
