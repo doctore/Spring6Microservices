@@ -26,6 +26,7 @@ import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -206,9 +207,11 @@ public class GlobalErrorWebExceptionHandler {
                 getErrorMessageUsingHttpRequest(exchange),
                 exception
         );
-        List<String> errorMessages = Arrays.asList(
-                format("Main error was: %s",
-                        exception.getMessage())
+        List<String> errorMessages = new ArrayList<>(
+                Arrays.asList(
+                        format("Main error was: %s",
+                                exception.getMessage())
+                )
         );
         errorMessages.addAll(
                 getConstraintViolationExceptionErrorMessages(

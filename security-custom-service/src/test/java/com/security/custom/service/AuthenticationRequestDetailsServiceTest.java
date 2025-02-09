@@ -3,7 +3,7 @@ package com.security.custom.service;
 import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
-import com.security.custom.exception.ApplicationClientNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
 import jakarta.validation.ConstraintViolationException;
@@ -52,10 +52,10 @@ public class AuthenticationRequestDetailsServiceTest {
         AuthenticationRequestDetails authenticationRequestDetails = buildAuthenticationRequestDetails("ItDoesNotCare");
         return Stream.of(
                 //@formatter:off
-                //            authorizationCode,   cacheServiceResult,             expectedException,                          expectedResult
-                Arguments.of( null,                null,                           ApplicationClientNotFoundException.class,   null ),
-                Arguments.of( "NotFound",          null,                           ApplicationClientNotFoundException.class,   null ),
-                Arguments.of( "FoundInCache",      authenticationRequestDetails,   null,                                       authenticationRequestDetails )
+                //            authorizationCode,   cacheServiceResult,             expectedException,                                     expectedResult
+                Arguments.of( null,                null,                           AuthenticationRequestDetailsNotFoundException.class,   null ),
+                Arguments.of( "NotFound",          null,                           AuthenticationRequestDetailsNotFoundException.class,   null ),
+                Arguments.of( "FoundInCache",      authenticationRequestDetails,   null,                                                  authenticationRequestDetails )
         ); //@formatter:on
     }
 

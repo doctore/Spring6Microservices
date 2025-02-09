@@ -82,10 +82,10 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         AuthenticationRequestCredentialsDto notValidUsernameRequest = buildAuthenticationRequestCredentials(longString, "passwordValue");
         AuthenticationRequestCredentialsDto notValidPasswordRequest = buildAuthenticationRequestCredentials("usernameValue", longString);
 
-        String nullUsernameRequestError = "Field error in object 'authenticationRequestDto' on field 'username' due to: must not be null";
-        String nullPasswordRequestError = "Field error in object 'authenticationRequestDto' on field 'password' due to: must not be null";
-        String notValidUsernameRequestError = "Field error in object 'authenticationRequestDto' on field 'username' due to: size must be between 1 and 64";
-        String notValidPasswordRequestError = "Field error in object 'authenticationRequestDto' on field 'password' due to: size must be between 1 and 128";
+        String nullUsernameRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'username' due to: must not be null";
+        String nullPasswordRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'password' due to: must not be null";
+        String notValidUsernameRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'username' due to: size must be between 1 and 64";
+        String notValidPasswordRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'password' due to: size must be between 1 and 128";
         return Stream.of(
                 //@formatter:off
                 //            invalidAuthenticationRequestDto,   expectedError
@@ -196,7 +196,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     public void refresh_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned() {
         ErrorResponseDto expectedResponse = new ErrorResponseDto(
                 VALIDATION,
-                List.of("refreshToken: size must be between 1 and 2147483647")
+                List.of("Main error was: refresh.refreshToken: size must be between 1 and 2147483647",
+                        "refreshToken: size must be between 1 and 2147483647")
         );
 
         webTestClient.post()
