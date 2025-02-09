@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
@@ -33,14 +31,14 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
 
 
     /**
-     * Returns the {@link ApplicationClientDetails#getId()} that matches with {@code id}.
+     * Returns the {@link ApplicationClientDetails} that matches with {@code id}.
      *
      * @param id
      *    {@link ApplicationClientDetails#getId()} to search
      *
-     * @return {@link Optional} of {@link ApplicationClientDetails} if exists, {@link Optional#empty()} otherwise
+     * @return {@link ApplicationClientDetails} if exists
      *
-     * @throws ApplicationClientNotFoundException if the given {@code clientId} does not exist in database
+     * @throws ApplicationClientNotFoundException if the given {@code id} does not exist neither in database nor cache
      */
     public ApplicationClientDetails findById(final String id) {
         return ofNullable(id)
@@ -76,7 +74,7 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
      *
      * @return {@link Mono} of {@link UserDetails}
      *
-     * @throws ApplicationClientNotFoundException if the given {@code clientId} does not exist in database.
+     * @throws ApplicationClientNotFoundException if the given {@code id} does not exist in database.
      *         {@link AccountStatusUserDetailsChecker#check(UserDetails)} for more information about the {@link Exception}s
      *         that could be thrown
      */

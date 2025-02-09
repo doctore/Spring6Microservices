@@ -62,7 +62,13 @@ public class AuthenticationServiceTest {
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
 
     @Mock
+    private AuthenticationRequestDetailsService mockAuthenticationRequestDetailsService;
+
+    @Mock
     private AuthorizationService mockAuthorizationService;
+
+    @Mock
+    private EncryptorService mockEncryptorService;
 
     @Mock
     private TokenService mockTokenService;
@@ -75,7 +81,9 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
+                mockAuthenticationRequestDetailsService,
                 mockAuthorizationService,
+                mockEncryptorService,
                 mockTokenService
         );
     }

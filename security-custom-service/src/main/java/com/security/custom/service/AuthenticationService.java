@@ -1,15 +1,23 @@
 package com.security.custom.service;
 
+import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
+import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
+import com.security.custom.exception.ApplicationClientMismatchException;
 import com.security.custom.exception.ApplicationClientNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.model.AuthenticationRequestDetails;
+import com.security.custom.util.HashUtil;
+import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +39,11 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
+    private final AuthenticationRequestDetailsService authenticationRequestDetailsService;
+
     private final AuthorizationService authorizationService;
+
+    private final EncryptorService encryptorService;
 
     private final TokenService tokenService;
 
@@ -39,11 +51,15 @@ public class AuthenticationService {
     @Autowired
     public AuthenticationService(final ApplicationContext applicationContext,
                                  final ApplicationClientDetailsService applicationClientDetailsService,
+                                 final AuthenticationRequestDetailsService authenticationRequestDetailsService,
                                  final AuthorizationService authorizationService,
+                                 final EncryptorService encryptorService,
                                  final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
+        this.authenticationRequestDetailsService = authenticationRequestDetailsService;
         this.authorizationService = authorizationService;
+        this.encryptorService = encryptorService;
         this.tokenService = tokenService;
     }
 
@@ -98,6 +114,88 @@ public class AuthenticationService {
                 applicationClientDetails,
                 applicationAuthenticationService,
                 userDetails
+        );
+    }
+
+
+    /**
+     *
+     *
+     * @param applicationClientId
+     * @param authenticationRequestDto
+     *
+     * @return
+     *
+     * @throws ConstraintViolationException if given {@link AuthenticationRequestCredentialsAndChallengeDto#getChallengeMethod()}
+     *                                      does not match with existing in {@link HashAlgorithm}
+     */
+    public Optional<AuthenticationInformationAuthorizationCodeDto> loginAuthorized(final String applicationClientId,
+                                                                                   final AuthenticationRequestCredentialsAndChallengeDto authenticationRequestDto) {
+        return authenticationRequestDetailsService.save(
+                applicationClientId,
+                authenticationRequestDto
+        )
+        .map(acd ->
+                AuthenticationInformationAuthorizationCodeDto.builder()
+                        .authorizationCode(acd.getAuthorizationCode())
+                        .build()
+        );
+    }
+
+
+    /**
+     *
+     *
+     * @param applicationClientId
+     * @param authorizationCode
+     * @param verifier
+     *
+     * @return
+     *
+     * @throws AccountStatusException if the {@link UserDetails} related with the stored {@link AuthenticationRequestDetails#getUsername()}
+     *                                is disabled
+     * @throws ApplicationClientMismatchException if given {@code applicationClientId} does not match with stored one
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
+     *                                            was not defined in {@link SecurityHandler}
+     * @throws AuthenticationRequestDetailsNotFoundException if the given {@code authorizationCode} does not exist in cache
+     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
+     * @throws UnauthorizedException if the provided {@code verifier} does not match with stored {@link AuthenticationRequestDetails#getChallenge()}
+     *                               and {@link AuthenticationRequestDetails#getChallengeMethod()} of the first request.
+     *                               If the stored {@code password} does not match with exists one related with stored
+     *                               {@link AuthenticationRequestDetails#getUsername()}
+     * @throws UsernameNotFoundException if stored {@link AuthenticationRequestDetails#getUsername()} does not exist in database
+     */
+    public Optional<AuthenticationInformationDto> loginToken(final String applicationClientId,
+                                                             final String authorizationCode,
+                                                             final String verifier) {
+        AuthenticationRequestDetails authenticationRequestDetails = authenticationRequestDetailsService.findByAuthorizationCode(
+                authorizationCode
+        );
+        if (null == applicationClientId ||
+                null == authenticationRequestDetails.getApplicationClientId() ||
+                !applicationClientId.equals(authenticationRequestDetails.getApplicationClientId())) {
+            throw new ApplicationClientMismatchException(
+                    format("The provided application identifier: %s does not match with stored one: %s",
+                            applicationClientId,
+                            authenticationRequestDetails.getApplicationClientId())
+            );
+        }
+        // Checks provided verifier with stored: challenge & challengeMethod
+        if (!HashUtil.verifyHash(verifier, authenticationRequestDetails.getChallenge(), authenticationRequestDetails.getChallengeMethod())) {
+            throw new UnauthorizedException(
+                    format("Provided verifier: %s does not match with the stored challenge: %s and challenge method: %s",
+                            verifier,
+                            authenticationRequestDetails.getChallenge(),
+                            authenticationRequestDetails.getChallengeMethod()
+                    )
+            );
+        }
+        return login(
+                applicationClientId,
+                authenticationRequestDetails.getUsername(),
+                encryptorService.decrypt(
+                        authenticationRequestDetails.getEncryptedPassword()
+                )
         );
     }
 

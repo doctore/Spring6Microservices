@@ -2,7 +2,7 @@ package com.security.custom.controller;
 
 import com.security.custom.SecurityCustomServiceApplication;
 import com.security.custom.configuration.rest.RestRoutes;
-import com.security.custom.dto.AuthenticationRequestDto;
+import com.security.custom.dto.AuthenticationRequestCredentialsDto;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.security.custom.TestDataFactory.buildAuthenticationInformationDto;
-import static com.security.custom.TestDataFactory.buildAuthenticationRequest;
+import static com.security.custom.TestDataFactory.buildAuthenticationRequestCredentials;
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -59,13 +59,13 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("login: when no basic authentication is provided then unauthorized code is returned")
     public void login_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
-        AuthenticationRequestDto authenticationRequest = buildAuthenticationRequest("usernameValue", "passwordValue");
+        AuthenticationRequestCredentialsDto authenticationRequest = buildAuthenticationRequestCredentials("usernameValue", "passwordValue");
 
         webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(authenticationRequest),
-                        AuthenticationRequestDto.class
+                        AuthenticationRequestCredentialsDto.class
                 )
                 .exchange()
                 .expectStatus().isUnauthorized();
@@ -77,10 +77,10 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     static Stream<Arguments> login_invalidParametersTestCases() {
         String longString = String.join("", Collections.nCopies(150, "a"));
 
-        AuthenticationRequestDto nullUsernameRequest = buildAuthenticationRequest(null, "passwordValue");
-        AuthenticationRequestDto nullPasswordRequest = buildAuthenticationRequest("usernameValue", null);
-        AuthenticationRequestDto notValidUsernameRequest = buildAuthenticationRequest(longString, "passwordValue");
-        AuthenticationRequestDto notValidPasswordRequest = buildAuthenticationRequest("usernameValue", longString);
+        AuthenticationRequestCredentialsDto nullUsernameRequest = buildAuthenticationRequestCredentials(null, "passwordValue");
+        AuthenticationRequestCredentialsDto nullPasswordRequest = buildAuthenticationRequestCredentials("usernameValue", null);
+        AuthenticationRequestCredentialsDto notValidUsernameRequest = buildAuthenticationRequestCredentials(longString, "passwordValue");
+        AuthenticationRequestCredentialsDto notValidPasswordRequest = buildAuthenticationRequestCredentials("usernameValue", longString);
 
         String nullUsernameRequestError = "Field error in object 'authenticationRequestDto' on field 'username' due to: must not be null";
         String nullPasswordRequestError = "Field error in object 'authenticationRequestDto' on field 'password' due to: must not be null";
@@ -101,7 +101,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("login_invalidParametersTestCases")
     @DisplayName("login: when given parameters do not verify validations then bad request error is returned with validation errors")
     @WithMockUser
-    public void login_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestDto invalidAuthenticationRequestDto,
+    public void login_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestCredentialsDto invalidAuthenticationRequestDto,
                                                                                                                      String expectedErrors) {
         ErrorResponseDto expectedResponse = new ErrorResponseDto(
                 VALIDATION,
@@ -112,7 +112,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(invalidAuthenticationRequestDto),
-                        AuthenticationRequestDto.class
+                        AuthenticationRequestCredentialsDto.class
                 )
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -142,7 +142,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                                                                                           HttpStatus expectedResultHttpCode,
                                                                                           AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
-        AuthenticationRequestDto authenticationRequestDto = buildAuthenticationRequest("usernameValue", "passwordValue");
+        AuthenticationRequestCredentialsDto authenticationRequestDto = buildAuthenticationRequestCredentials("usernameValue", "passwordValue");
 
         when(mockAuthenticationService.login(applicationClientId, authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword()))
                 .thenReturn(authenticationInformation);
@@ -151,7 +151,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(authenticationRequestDto),
-                        AuthenticationRequestDto.class
+                        AuthenticationRequestCredentialsDto.class
                 )
                 .exchange();
 

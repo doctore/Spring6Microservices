@@ -1,6 +1,8 @@
 package com.security.custom.configuration.rest;
 
+import com.security.custom.exception.ApplicationClientMismatchException;
 import com.security.custom.exception.ApplicationClientNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -24,6 +26,7 @@ import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.spring6microservices.common.spring.enums.ExtendedHttpStatus.TOKEN_EXPIRED;
@@ -73,6 +76,32 @@ public class GlobalErrorWebExceptionHandler {
 
 
     /**
+     * Method used to manage when a Rest request throws a {@link ApplicationClientMismatchException}.
+     *
+     * @param exchange
+     *    {@link ServerWebExchange} with the request information
+     * @param exception
+     *    {@link ApplicationClientMismatchException} thrown
+     *
+     * @return {@link Mono} with the suitable response
+     */
+    @ExceptionHandler(ApplicationClientMismatchException.class)
+    public Mono<Void> applicationClientMismatchException(final ServerWebExchange exchange,
+                                                         final ApplicationClientMismatchException exception) {
+        log.error(
+                getErrorMessageUsingHttpRequest(exchange),
+                exception
+        );
+        return buildErrorResponse(
+                SECURITY,
+                List.of("The application client details identifier of the second request is not the same as the first one"),
+                exchange,
+                FORBIDDEN.value()
+        );
+    }
+
+
+    /**
      * Method used to manage when a Rest request throws a {@link ApplicationClientNotFoundException}.
      *
      * @param exchange
@@ -92,6 +121,32 @@ public class GlobalErrorWebExceptionHandler {
         return buildErrorResponse(
                 SECURITY,
                 List.of("Given invalid application client details identifier"),
+                exchange,
+                UNAUTHORIZED.value()
+        );
+    }
+
+
+    /**
+     * Method used to manage when a Rest request throws a {@link AuthenticationRequestDetailsNotFoundException}.
+     *
+     * @param exchange
+     *    {@link ServerWebExchange} with the request information
+     * @param exception
+     *    {@link AuthenticationRequestDetailsNotFoundException} thrown
+     *
+     * @return {@link Mono} with the suitable response
+     */
+    @ExceptionHandler(AuthenticationRequestDetailsNotFoundException.class)
+    public Mono<Void> authenticationRequestDetailsNotFoundException(final ServerWebExchange exchange,
+                                                                    final AuthenticationRequestDetailsNotFoundException exception) {
+        log.error(
+                getErrorMessageUsingHttpRequest(exchange),
+                exception
+        );
+        return buildErrorResponse(
+                SECURITY,
+                List.of("Given invalid authorization code identifier"),
                 exchange,
                 UNAUTHORIZED.value()
         );
@@ -151,12 +206,44 @@ public class GlobalErrorWebExceptionHandler {
                 getErrorMessageUsingHttpRequest(exchange),
                 exception
         );
-        List<String> errorMessages = getConstraintViolationExceptionErrorMessages(
-                exception
+        List<String> errorMessages = Arrays.asList(
+                format("Main error was: %s",
+                        exception.getMessage())
+        );
+        errorMessages.addAll(
+                getConstraintViolationExceptionErrorMessages(
+                        exception
+                )
         );
         return buildErrorResponse(
                 VALIDATION,
                 errorMessages,
+                exchange,
+                BAD_REQUEST.value()
+        );
+    }
+
+
+    /**
+     * Method used to manage when a Rest request throws a {@link IllegalArgumentException}.
+     *
+     * @param exchange
+     *    {@link ServerWebExchange} with the request information
+     * @param exception
+     *    {@link IllegalArgumentException} thrown
+     *
+     * @return {@link Mono} with the suitable response
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Mono<Void> illegalArgumentException(final ServerWebExchange exchange,
+                                               final IllegalArgumentException exception) {
+        log.error(
+                getErrorMessageUsingHttpRequest(exchange),
+                exception
+        );
+        return buildErrorResponse(
+                VALIDATION,
+                List.of("There was an error in the provided information"),
                 exchange,
                 BAD_REQUEST.value()
         );
@@ -331,7 +418,7 @@ public class GlobalErrorWebExceptionHandler {
      * @return error message with Http request information
      */
     private String getErrorMessageUsingHttpRequest(final ServerWebExchange exchange) {
-        return format("There was an error trying to execute the request with:%s"
+        return format("There was an error trying to execute the request with: %s"
                         + "Http method = %s %s"
                         + "Uri = %s %s"
                         + "Header = %s",
@@ -354,8 +441,7 @@ public class GlobalErrorWebExceptionHandler {
      * @return {@link List} of {@link String} with the error messages
      */
     private List<String> getServerWebInputExceptionErrorMessages(final ServerWebInputException exception) {
-        if (exception.getCause() instanceof TypeMismatchException) {
-            TypeMismatchException ex = (TypeMismatchException)exception.getCause();
+        if (exception.getCause() instanceof TypeMismatchException ex) {
             return List.of(
                     format("There was an type mismatch error in %s. The provided value was %s and required type is %s",
                             exception.getMethodParameter(),

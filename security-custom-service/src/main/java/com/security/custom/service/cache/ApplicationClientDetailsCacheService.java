@@ -70,7 +70,7 @@ public class ApplicationClientDetailsCacheService {
 
 
     /**
-     * Include a pair of {@link ApplicationClientDetails#getId()} - {@link ApplicationClientDetails} inside the related cache.
+     * Include a pair of {@code id} - {@link ApplicationClientDetails} inside the related cache.
      *
      * @param id
      *    {@link ApplicationClientDetails#getId()} used to identify the {@link ApplicationClientDetails} to store

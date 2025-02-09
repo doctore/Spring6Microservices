@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,6 +68,39 @@ public class EncryptorServiceTest {
         verify(mockTextEncryptor, timesInvoked)
                 .decrypt(
                         anyString()
+                );
+    }
+
+
+    static Stream<Arguments> encryptTestCases() {
+        String encryptedText = "ItIsNotImportant";
+        return Stream.of(
+                //@formatter:off
+                //            textToEncrypt,     expectedResult
+                Arguments.of( null,              StringUtil.EMPTY_STRING ),
+                Arguments.of( "ItDoesNotCare",   encryptedText )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("encryptTestCases")
+    @DisplayName("encrypt: test cases")
+    public void encrypt_testCases(String textToEncrypt,
+                                  String expectedResult) {
+        when(mockTextEncryptor.encrypt(eq(textToEncrypt)))
+                .thenReturn(expectedResult);
+
+        assertEquals(
+                expectedResult,
+                service.encrypt(textToEncrypt)
+        );
+        VerificationMode timesInvoked = null == textToEncrypt
+                ? times(0)
+                : times(1);
+
+        verify(mockTextEncryptor, timesInvoked)
+                .encrypt(
+                        eq(textToEncrypt)
                 );
     }
 

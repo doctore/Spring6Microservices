@@ -11,13 +11,18 @@ import lombok.ToString;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
+/**
+ * Required data to authenticate a user not using flow with PKCE.
+ *
+ * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+ */
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(of = { "username" })
 @NoArgsConstructor
-@Schema(description = "Required data to authenticate a user")
+@Schema(description = "Required data to authenticate a user not using flow with PKCE")
 @ToString(exclude = { "password" })
-public class AuthenticationRequestDto {
+public class AuthenticationRequestCredentialsDto {
 
     @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotNull

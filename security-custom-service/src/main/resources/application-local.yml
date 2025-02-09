@@ -36,10 +36,16 @@ eureka:
 
 # Internal caches used by the microservice
 cache:
+  # To manage the configuration of the applications included in the microservice
   applicationClientDetails:
     entryCapacity: 2
     expireInSeconds: 3600
     name: applicationClientDetailsCache
+  # Used in the authentication flow with PKCE (Proof of Key Code Exchange)
+  authenticationRequestDetails:
+    entryCapacity: 10
+    expireInSeconds: 600
+    name: authenticationRequestsDetails
 
 
 # Main properties in Spring Boot to configure some general purpose services

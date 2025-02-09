@@ -29,9 +29,13 @@ eureka:
 # Internal caches used by the microservice
 cache:
   applicationClientDetails:
-    entryCapacity: 1
-    expireInSeconds: 50
+    entryCapacity: 0
+    expireInSeconds: 0
     name: onlyForTests
+  authenticationRequestDetails:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests2
 
 
 # API documentation

@@ -25,7 +25,8 @@ public class EncryptorService {
 
 
     /**
-     * Decrypts the given {@code encryptedText} using default {@link TextEncryptor}.
+     *    Decrypts the given {@code encryptedText} using default {@link TextEncryptor}, based on the configured
+     * environment variable: {@code ENCRYPT_KEY}.
      *
      * @param encryptedText
      *    {@link String} to decrypt
@@ -42,6 +43,24 @@ public class EncryptorService {
                                 )
                         )
                 )
+                .orElse(
+                        StringUtil.EMPTY_STRING
+                );
+    }
+
+
+    /**
+     *    Encrypts the given {@code textToEncrypt} using default {@link TextEncryptor}, based on the configured
+     * environment variable: {@code ENCRYPT_KEY}.
+     *
+     * @param textToEncrypt
+     *    {@link String} to encrypt
+     *
+     * @return {@link String} with encrypted text
+     */
+    public String encrypt(final String textToEncrypt) {
+        return ofNullable(textToEncrypt)
+                .map(textEncryptor::encrypt)
                 .orElse(
                         StringUtil.EMPTY_STRING
                 );

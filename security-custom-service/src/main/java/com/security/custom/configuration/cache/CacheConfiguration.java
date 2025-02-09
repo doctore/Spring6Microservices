@@ -23,10 +23,14 @@ public class CacheConfiguration {
 
     private final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration;
 
+    private final AuthenticationRequestDetailsCacheConfiguration authenticationRequestDetailsCacheConfiguration;
+
 
     @Autowired
-    public CacheConfiguration(final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration) {
+    public CacheConfiguration(final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration,
+                              final AuthenticationRequestDetailsCacheConfiguration authenticationRequestDetailsCacheConfiguration) {
         this.applicationClientDetailsCacheConfiguration = applicationClientDetailsCacheConfiguration;
+        this.authenticationRequestDetailsCacheConfiguration = authenticationRequestDetailsCacheConfiguration;
     }
 
 
@@ -65,6 +69,11 @@ public class CacheConfiguration {
                         addApplicationClientDetailsCache(
                                 this.applicationClientDetailsCacheConfiguration
                         )
+                )
+                .addMapConfig(
+                        addAuthenticationRequestsDetailsCache(
+                                this.authenticationRequestDetailsCacheConfiguration
+                        )
                 );
     }
 
@@ -78,6 +87,31 @@ public class CacheConfiguration {
      * @return {@link MapConfig}
      */
     private MapConfig addApplicationClientDetailsCache(final ApplicationClientDetailsCacheConfiguration cacheConfiguration) {
+        return new MapConfig()
+                .setName(cacheConfiguration.getCacheName())
+                .setEvictionConfig(
+                        new EvictionConfig()
+                                .setSize(
+                                        cacheConfiguration.getCacheEntryCapacity()
+                                )
+                                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
+                                .setEvictionPolicy(EvictionPolicy.LRU)
+                )
+                .setTimeToLiveSeconds(
+                        cacheConfiguration.getCacheExpireInSeconds()
+                );
+    }
+
+
+    /**
+     * Creates the {@link MapConfig} related with {@link AuthenticationRequestDetailsCacheConfiguration}.
+     *
+     * @param cacheConfiguration
+     *    {@link AuthenticationRequestDetailsCacheConfiguration} with its specific configuration values
+     *
+     * @return {@link MapConfig}
+     */
+    private MapConfig addAuthenticationRequestsDetailsCache(final AuthenticationRequestDetailsCacheConfiguration cacheConfiguration) {
         return new MapConfig()
                 .setName(cacheConfiguration.getCacheName())
                 .setEvictionConfig(
