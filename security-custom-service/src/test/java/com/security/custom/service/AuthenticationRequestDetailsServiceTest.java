@@ -6,7 +6,6 @@ import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,11 +109,11 @@ public class AuthenticationRequestDetailsServiceTest {
         );
         return Stream.of(
                 //@formatter:off
-                //            applicationClientId,   authenticationRequestDto,   expectedException,                    expectedResult
-                Arguments.of( null,                  null,                       null,                                 empty() ),
-                Arguments.of( "ItDoesNotCare",       null,                       null,                                 empty() ),
-                Arguments.of( "ItDoesNotCare",       invalidDto,                 ConstraintViolationException.class,   null ),
-                Arguments.of( applicationClientId,   validDto,                   null,                                 of(expectedFromValidDto) )
+                //            applicationClientId,   authenticationRequestDto,   expectedException,                expectedResult
+                Arguments.of( null,                  null,                       null,                             empty() ),
+                Arguments.of( "ItDoesNotCare",       null,                       null,                             empty() ),
+                Arguments.of( "ItDoesNotCare",       invalidDto,                 IllegalArgumentException.class,   null ),
+                Arguments.of( applicationClientId,   validDto,                   null,                             of(expectedFromValidDto) )
         ); //@formatter:on
     }
 
