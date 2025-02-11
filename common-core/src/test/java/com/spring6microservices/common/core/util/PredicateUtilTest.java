@@ -1881,9 +1881,9 @@ public class PredicateUtilTest {
     @ParameterizedTest
     @MethodSource("distinctByKeyTestCases")
     @DisplayName("distinctByKey: test cases")
-    public void distinctByKey_testCases(List<PizzaDto> initialCollection,
-                                        Function<PizzaDto, String> keyExtractor,
-                                        List<PizzaDto> expectedResult) {
+    public <T> void distinctByKey_testCases(List<PizzaDto> initialCollection,
+                                            Function<PizzaDto, T> keyExtractor,
+                                            List<PizzaDto> expectedResult) {
         List<PizzaDto> distinctCollection = initialCollection.stream()
                 .filter(distinctByKey(keyExtractor))
                 .toList();

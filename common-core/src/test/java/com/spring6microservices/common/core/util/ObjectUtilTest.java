@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
-import static com.spring6microservices.common.core.enums.PizzaEnum.MARGUERITA;
 import static com.spring6microservices.common.core.util.ObjectUtil.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -72,7 +71,7 @@ public class ObjectUtilTest {
     }
 
 
-    static Stream<Arguments> getOrElseGenericWithSourceInstanceAndDefaultValueParametersTestCases() {
+    static Stream<Arguments> getOrElseWithSourceInstanceAndDefaultValueParametersTestCases() {
         PizzaDto pizza = new PizzaDto(CARBONARA.getDatabaseValue(), null);
         return Stream.of(
                 //@formatter:off
@@ -87,11 +86,11 @@ public class ObjectUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getOrElseGenericWithSourceInstanceAndDefaultValueParametersTestCases")
-    @DisplayName("getOrElse: with generic source and default value as parameters test cases")
-    public <T> void getOrElseGenericWithSourceInstanceAndDefaultValueParameters_testCases(T sourceInstance,
-                                                                                          T defaultValue,
-                                                                                          T expectedResult) {
+    @MethodSource("getOrElseWithSourceInstanceAndDefaultValueParametersTestCases")
+    @DisplayName("getOrElse: with source instance and default value as parameters test cases")
+    public <T> void getOrElseWithSourceInstanceAndDefaultValueParameters_testCases(T sourceInstance,
+                                                                                   T defaultValue,
+                                                                                   T expectedResult) {
         assertEquals(
                 expectedResult,
                 getOrElse(sourceInstance, defaultValue)
@@ -99,7 +98,7 @@ public class ObjectUtilTest {
     }
 
 
-    static Stream<Arguments> getOrElseGenericWithSourceInstanceAndPredicateAndDefaultValueParametersTestCases() {
+    static Stream<Arguments> getOrElseWithSourceInstanceAndPredicateAndDefaultValueParametersTestCases() {
         String emptyString = "   ";
         String notEmptyString = "Test string";
         double nine = 9D;
@@ -124,12 +123,12 @@ public class ObjectUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getOrElseGenericWithSourceInstanceAndPredicateAndDefaultValueParametersTestCases")
-    @DisplayName("getOrElse: with generic source, predicate and default value parameters test cases")
-    public <T> void getOrElseGenericWithSourceInstanceAndPredicateAndDefaultValueParameters_testCases(T sourceInstance,
-                                                                                                      Predicate<? super T> filterPredicate,
-                                                                                                      T defaultValue,
-                                                                                                      T expectedResult) {
+    @MethodSource("getOrElseWithSourceInstanceAndPredicateAndDefaultValueParametersTestCases")
+    @DisplayName("getOrElse: with source instance, predicate and default value parameters test cases")
+    public <T> void getOrElseWithSourceInstanceAndPredicateAndDefaultValueParameters_testCases(T sourceInstance,
+                                                                                               Predicate<? super T> filterPredicate,
+                                                                                               T defaultValue,
+                                                                                               T expectedResult) {
         assertEquals(
                 expectedResult,
                 getOrElse(sourceInstance, filterPredicate, defaultValue)
@@ -137,7 +136,7 @@ public class ObjectUtilTest {
     }
 
 
-    static Stream<Arguments> getOrElseGenericWithSourceInstanceAndMapperAndDefaultValueParametersTestCases() {
+    static Stream<Arguments> getOrElseWithSourceInstanceAndMapperAndDefaultValueParametersTestCases() {
         PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
         PizzaDto pizzaWithAllProperties = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         return Stream.of(
@@ -159,74 +158,12 @@ public class ObjectUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getOrElseGenericWithSourceInstanceAndMapperAndDefaultValueParametersTestCases")
-    @DisplayName("getOrElse: using generic source, mapper and default value parameters test cases")
-    public <T, E> void getOrElseGenericWithSourceInstanceAndMapperAndDefaultValueParameters_testCases(T sourceInstance,
-                                                                                                      Function<? super T, ? extends E> mapper,
-                                                                                                      E defaultValue,
-                                                                                                      E expectedResult) {
-        assertEquals(
-                expectedResult,
-                getOrElse(sourceInstance, mapper, defaultValue)
-        );
-    }
-
-
-    static Stream<Arguments> getOrElseStringWithSourceInstanceAndDefaultValueTestCases() {
-        PizzaDto pizza = new PizzaDto(CARBONARA.getDatabaseValue(), null);
-        return Stream.of(
-                //@formatter:off
-                //            sourceInstance,    defaultValue,         expectedResult
-                Arguments.of( null,              null,                 null ),
-                Arguments.of( null,              "testDefaultValue",   "testDefaultValue" ),
-                Arguments.of( pizza.getName(),   null,                 pizza.getName() ),
-                Arguments.of( pizza.getName(),   "testDefaultValue",   pizza.getName() ),
-                Arguments.of( pizza,             null,                 "PizzaDto(name=Carbonara, cost=null)" ),
-                Arguments.of( pizza,             "testDefaultValue",   "PizzaDto(name=Carbonara, cost=null)" )
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("getOrElseStringWithSourceInstanceAndDefaultValueTestCases")
-    @DisplayName("getOrElse: using generic source and string default value test cases")
-    public <T> void getOrElseStringWithSourceInstanceAndDefaultValue_testCases(T sourceInstance,
-                                                                               String defaultValue,
-                                                                               String expectedResult) {
-        assertEquals(
-                expectedResult,
-                getOrElse(sourceInstance, defaultValue)
-        );
-    }
-
-
-    static Stream<Arguments> getOrElseStringWithSourceInstanceAndMapperAndDefaultValueParametersTestCases() {
-        PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
-        PizzaDto pizzaWithAllProperties = new PizzaDto(MARGUERITA.getDatabaseValue(), 7D);
-        return Stream.of(
-                //@formatter:off
-                //            sourceInstance,           mapper,           defaultValue,         expectedResult
-                Arguments.of( null,                     null,             null,                 null ),
-                Arguments.of( null,                     null,             "testDefaultValue",   "testDefaultValue" ),
-                Arguments.of( null,                     GET_PIZZA_NAME,   null,                 null ),
-                Arguments.of( null,                     GET_PIZZA_NAME,   "testDefaultValue",   "testDefaultValue" ),
-                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   null,                 pizzaWithAllProperties.getName() ),
-                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   "testDefaultValue",   pizzaWithAllProperties.getName() ),
-                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   null,                 null ),
-                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   "testDefaultValue",   "testDefaultValue" ),
-                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_COST,   null,                 pizzaWithAllProperties.getCost().toString() ),
-                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_COST,   "1111",               pizzaWithAllProperties.getCost().toString() ),
-                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_COST,   null,                 null ),
-                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_COST,   "9999",               "9999" )
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("getOrElseStringWithSourceInstanceAndMapperAndDefaultValueParametersTestCases")
-    @DisplayName("getOrElse: using generic source, mapper and string default value test cases")
-    public <T, E> void getOrElseStringWithSourceInstanceAndMapperAndDefaultValueParameters_testCases(T sourceInstance,
-                                                                                                     Function<? super T, ? extends E> mapper,
-                                                                                                     String defaultValue,
-                                                                                                     String expectedResult) {
+    @MethodSource("getOrElseWithSourceInstanceAndMapperAndDefaultValueParametersTestCases")
+    @DisplayName("getOrElse: using source instance, mapper and default value parameters test cases")
+    public <T, E> void getOrElseWithSourceInstanceAndMapperAndDefaultValueParameters_testCases(T sourceInstance,
+                                                                                               Function<? super T, ? extends E> mapper,
+                                                                                               E defaultValue,
+                                                                                               E expectedResult) {
         assertEquals(
                 expectedResult,
                 getOrElse(sourceInstance, mapper, defaultValue)
