@@ -26,8 +26,6 @@ import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.spring6microservices.common.spring.enums.ExtendedHttpStatus.TOKEN_EXPIRED;
@@ -207,16 +205,8 @@ public class GlobalErrorWebExceptionHandler {
                 getErrorMessageUsingHttpRequest(exchange),
                 exception
         );
-        List<String> errorMessages = new ArrayList<>(
-                Arrays.asList(
-                        format("Main error was: %s",
-                                exception.getMessage())
-                )
-        );
-        errorMessages.addAll(
-                getConstraintViolationExceptionErrorMessages(
-                        exception
-                )
+        List<String> errorMessages = getConstraintViolationExceptionErrorMessages(
+                exception
         );
         return buildErrorResponse(
                 VALIDATION,

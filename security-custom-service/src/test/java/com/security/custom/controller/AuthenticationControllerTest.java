@@ -2,7 +2,7 @@ package com.security.custom.controller;
 
 import com.security.custom.SecurityCustomServiceApplication;
 import com.security.custom.configuration.rest.RestRoutes;
-import com.security.custom.dto.AuthenticationRequestCredentialsDto;
+import com.security.custom.dto.AuthenticationRequestLoginDto;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.security.custom.TestDataFactory.buildAuthenticationInformationDto;
-import static com.security.custom.TestDataFactory.buildAuthenticationRequestCredentials;
+import static com.security.custom.TestDataFactory.buildAuthenticationRequestLoginDto;
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -59,13 +59,13 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("login: when no basic authentication is provided then unauthorized code is returned")
     public void login_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
-        AuthenticationRequestCredentialsDto authenticationRequest = buildAuthenticationRequestCredentials("usernameValue", "passwordValue");
+        AuthenticationRequestLoginDto authenticationRequest = buildAuthenticationRequestLoginDto("usernameValue", "passwordValue");
 
         webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(authenticationRequest),
-                        AuthenticationRequestCredentialsDto.class
+                        AuthenticationRequestLoginDto.class
                 )
                 .exchange()
                 .expectStatus().isUnauthorized();
@@ -77,15 +77,15 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     static Stream<Arguments> login_invalidParametersTestCases() {
         String longString = String.join("", Collections.nCopies(150, "a"));
 
-        AuthenticationRequestCredentialsDto nullUsernameRequest = buildAuthenticationRequestCredentials(null, "passwordValue");
-        AuthenticationRequestCredentialsDto nullPasswordRequest = buildAuthenticationRequestCredentials("usernameValue", null);
-        AuthenticationRequestCredentialsDto notValidUsernameRequest = buildAuthenticationRequestCredentials(longString, "passwordValue");
-        AuthenticationRequestCredentialsDto notValidPasswordRequest = buildAuthenticationRequestCredentials("usernameValue", longString);
+        AuthenticationRequestLoginDto nullUsernameRequest = buildAuthenticationRequestLoginDto(null, "passwordValue");
+        AuthenticationRequestLoginDto nullPasswordRequest = buildAuthenticationRequestLoginDto("usernameValue", null);
+        AuthenticationRequestLoginDto notValidUsernameRequest = buildAuthenticationRequestLoginDto(longString, "passwordValue");
+        AuthenticationRequestLoginDto notValidPasswordRequest = buildAuthenticationRequestLoginDto("usernameValue", longString);
 
-        String nullUsernameRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'username' due to: must not be null";
-        String nullPasswordRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'password' due to: must not be null";
-        String notValidUsernameRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'username' due to: size must be between 1 and 64";
-        String notValidPasswordRequestError = "Field error in object 'authenticationRequestCredentialsDto' on field 'password' due to: size must be between 1 and 128";
+        String nullUsernameRequestError = "Field error in object 'authenticationRequestLoginDto' on field 'username' due to: must not be null";
+        String nullPasswordRequestError = "Field error in object 'authenticationRequestLoginDto' on field 'password' due to: must not be null";
+        String notValidUsernameRequestError = "Field error in object 'authenticationRequestLoginDto' on field 'username' due to: size must be between 1 and 64";
+        String notValidPasswordRequestError = "Field error in object 'authenticationRequestLoginDto' on field 'password' due to: size must be between 1 and 128";
         return Stream.of(
                 //@formatter:off
                 //            invalidAuthenticationRequestDto,   expectedError
@@ -101,7 +101,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("login_invalidParametersTestCases")
     @DisplayName("login: when given parameters do not verify validations then bad request error is returned with validation errors")
     @WithMockUser
-    public void login_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestCredentialsDto invalidAuthenticationRequestDto,
+    public void login_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestLoginDto invalidAuthenticationRequestDto,
                                                                                                                      String expectedErrors) {
         ErrorResponseDto expectedResponse = new ErrorResponseDto(
                 VALIDATION,
@@ -112,7 +112,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(invalidAuthenticationRequestDto),
-                        AuthenticationRequestCredentialsDto.class
+                        AuthenticationRequestLoginDto.class
                 )
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -142,7 +142,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                                                                                           HttpStatus expectedResultHttpCode,
                                                                                           AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
-        AuthenticationRequestCredentialsDto authenticationRequestDto = buildAuthenticationRequestCredentials("usernameValue", "passwordValue");
+        AuthenticationRequestLoginDto authenticationRequestDto = buildAuthenticationRequestLoginDto("usernameValue", "passwordValue");
 
         when(mockAuthenticationService.login(applicationClientId, authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword()))
                 .thenReturn(authenticationInformation);
@@ -151,7 +151,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
                         Mono.just(authenticationRequestDto),
-                        AuthenticationRequestCredentialsDto.class
+                        AuthenticationRequestLoginDto.class
                 )
                 .exchange();
 
@@ -196,8 +196,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     public void refresh_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned() {
         ErrorResponseDto expectedResponse = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Main error was: refresh.refreshToken: size must be between 1 and 2147483647",
-                        "refreshToken: size must be between 1 and 2147483647")
+                List.of("refreshToken: size must be between 1 and 2147483647")
         );
 
         webTestClient.post()

@@ -22,7 +22,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 @NoArgsConstructor
 @Schema(description = "Required data to authenticate a user not using flow with PKCE")
 @ToString(exclude = { "password" })
-public class AuthenticationRequestCredentialsDto {
+public class AuthenticationRequestLoginDto {
 
     @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotNull

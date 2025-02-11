@@ -1,17 +1,21 @@
 package com.security.custom.service;
 
-import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
+import com.security.custom.controller.AuthenticationController;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.enums.HashAlgorithm;
-import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
+import com.spring6microservices.common.core.util.CollectionUtil;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,21 +69,21 @@ public class AuthenticationRequestDetailsService {
 
     /**
      *    Returns a new {@link AuthenticationRequestDetails} using provided {@code applicationClientId} and
-     * {@link AuthenticationRequestCredentialsAndChallengeDto}, saving in the cache the returned instance.
+     * {@link AuthenticationRequestLoginAuthorizedDto}, saving in the cache the returned instance.
      *
      * @param applicationClientId
      *    {@link ApplicationClientDetails#getId()} used to know what is the application sending the request
      * @param authenticationRequestDto
-     *    {@link AuthenticationRequestCredentialsAndChallengeDto} with the source data provided in the request
+     *    {@link AuthenticationRequestLoginAuthorizedDto} with the source data provided in the request
      *
      * @return {@link Optional} of {@link AuthenticationRequestDetails} with the authentication data based on given parameters,
      *         {@link Optional#empty()} if {@code authenticationRequestDto} is {@code null}.
      *
-     * @throws ConstraintViolationException if given {@link AuthenticationRequestCredentialsAndChallengeDto#getChallengeMethod()}
+     * @throws ConstraintViolationException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
      *                                      does not match with existing in {@link HashAlgorithm}
      */
     public Optional<AuthenticationRequestDetails> save(final String applicationClientId,
-                                                       final AuthenticationRequestCredentialsAndChallengeDto authenticationRequestDto) {
+                                                       final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
         return of(
                 applicationClientId,
                 authenticationRequestDto
@@ -96,21 +100,21 @@ public class AuthenticationRequestDetailsService {
 
     /**
      *    Returns a new {@link AuthenticationRequestDetails} using provided {@code applicationClientId} and
-     * {@link AuthenticationRequestCredentialsAndChallengeDto}.
+     * {@link AuthenticationRequestLoginAuthorizedDto}.
      *
      * @param applicationClientId
      *    {@link ApplicationClientDetails#getId()} used to know what is the application sending the request
      * @param authenticationRequestDto
-     *    {@link AuthenticationRequestCredentialsAndChallengeDto} with the source data provided in the request
+     *    {@link AuthenticationRequestLoginAuthorizedDto} with the source data provided in the request
      *
      * @return {@link Optional} of {@link AuthenticationRequestDetails} with the authentication data based on given parameters,
      *         {@link Optional#empty()} if {@code authenticationRequestDto} is {@code null}.
      *
-     * @throws ConstraintViolationException if given {@link AuthenticationRequestCredentialsAndChallengeDto#getChallengeMethod()}
+     * @throws ConstraintViolationException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
      *                                      does not match with existing in {@link HashAlgorithm}
      */
     private Optional<AuthenticationRequestDetails> of(final String applicationClientId,
-                                                      final AuthenticationRequestCredentialsAndChallengeDto authenticationRequestDto)  {
+                                                      final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto)  {
         return ofNullable(authenticationRequestDto)
                 .map(ar ->
                         AuthenticationRequestDetails.builder()
@@ -129,18 +133,45 @@ public class AuthenticationRequestDetailsService {
                                         HashAlgorithm.getByAlgorithm(
                                                 ar.getChallengeMethod()
                                         )
-                                        .orElseThrow(() ->
-                                                new ConstraintViolationException(
-                                                        format("Given hash method: %s is not a valid one. The available algorithms are: %s",
-                                                                ar.getChallengeMethod(),
-                                                                HashAlgorithm.getAvailableAlgorithms()
-                                                        ),
-                                                        new HashSet<>()
-                                                )
-                                        )
+                                        .orElseThrow(() -> {
+                                            final String errorMessage = format("Given hash method: %s is not a valid one. The available algorithms are: %s",
+                                                    ar.getChallengeMethod(),
+                                                    HashAlgorithm.getAvailableAlgorithms()
+                                            );
+                                            return new ConstraintViolationException(
+                                                    errorMessage,
+                                                    CollectionUtil.toSet(
+                                                            buildConstraintViolation(
+                                                                    errorMessage,
+                                                                    AuthenticationController.class,
+                                                                    "authenticationRequestDto.challengeMethod"
+                                                            )
+                                                    )
+                                            );
+                                        })
                                 )
                                 .build()
                 );
+    }
+
+
+    private ConstraintViolation<?> buildConstraintViolation(final String errorMessage,
+                                                            final Class<?> rootBeanClass,
+                                                            final String rawPropertyPath) {
+        return ConstraintViolationImpl.forParameterValidation(
+                "",
+                new HashMap<>(),
+                new HashMap<>(),
+                errorMessage,
+                rootBeanClass,
+                null,
+                null,
+                null,
+                PathImpl.createPathFromString(rawPropertyPath),
+                null,
+                null,
+                null
+        );
     }
 
 }

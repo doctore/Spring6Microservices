@@ -1,6 +1,6 @@
 package com.security.custom.service;
 
-import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildAuthenticationRequestCredentialsAndChallenge;
+import static com.security.custom.TestDataFactory.buildAuthenticationRequestLoginAuthorizedDto;
 import static com.security.custom.TestDataFactory.buildAuthenticationRequestDetails;
 import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,12 +90,12 @@ public class AuthenticationRequestDetailsServiceTest {
 
     static Stream<Arguments> saveTestCases() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
-        AuthenticationRequestCredentialsAndChallengeDto invalidDto = buildAuthenticationRequestCredentialsAndChallenge(
+        AuthenticationRequestLoginAuthorizedDto invalidDto = buildAuthenticationRequestLoginAuthorizedDto(
                 "usernameValue",
                 "passwordValue",
                 "NotValid"
         );
-        AuthenticationRequestCredentialsAndChallengeDto validDto = buildAuthenticationRequestCredentialsAndChallenge(
+        AuthenticationRequestLoginAuthorizedDto validDto = buildAuthenticationRequestLoginAuthorizedDto(
                 "usernameValue",
                 "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
@@ -122,25 +122,25 @@ public class AuthenticationRequestDetailsServiceTest {
     @MethodSource("saveTestCases")
     @DisplayName("save: test cases")
     public void save_testCases(String applicationClientId,
-                               AuthenticationRequestCredentialsAndChallengeDto authenticationRequestCredentialsAndChallengeDto,
+                               AuthenticationRequestLoginAuthorizedDto authenticationRequestLoginAuthorizedDto,
                                Class<? extends Exception> expectedException,
                                Optional<AuthenticationRequestDetails> expectedResult) {
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
                 .thenReturn(true);
         if (null != expectedResult && expectedResult.isPresent()) {
-            when(mockEncryptorService.encrypt(eq(authenticationRequestCredentialsAndChallengeDto.getPassword())))
+            when(mockEncryptorService.encrypt(eq(authenticationRequestLoginAuthorizedDto.getPassword())))
                     .thenReturn("encrypted value");
         }
         if (null != expectedException) {
             assertThrows(
                     expectedException,
-                    () -> service.save(applicationClientId, authenticationRequestCredentialsAndChallengeDto)
+                    () -> service.save(applicationClientId, authenticationRequestLoginAuthorizedDto)
             );
         }
         else {
             Optional<AuthenticationRequestDetails> result = service.save(
                     applicationClientId,
-                    authenticationRequestCredentialsAndChallengeDto
+                    authenticationRequestLoginAuthorizedDto
             );
             assertNotNull(result);
             if (result.isPresent() && null != expectedResult && expectedResult.isPresent()) {

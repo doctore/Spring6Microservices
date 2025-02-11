@@ -4,8 +4,8 @@ import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
-import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
-import com.security.custom.dto.AuthenticationRequestCredentialsDto;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
+import com.security.custom.dto.AuthenticationRequestLoginDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
@@ -113,19 +113,19 @@ public class TestDataFactory {
     }
 
 
-    public static AuthenticationRequestCredentialsDto buildAuthenticationRequestCredentials(final String username,
-                                                                                            final String password) {
-        return new AuthenticationRequestCredentialsDto(
+    public static AuthenticationRequestLoginDto buildAuthenticationRequestLoginDto(final String username,
+                                                                                   final String password) {
+        return new AuthenticationRequestLoginDto(
                 username,
                 password
         );
     }
 
 
-    public static AuthenticationRequestCredentialsAndChallengeDto buildAuthenticationRequestCredentialsAndChallenge(final String username,
-                                                                                                                    final String password,
-                                                                                                                    final String challengeMethod) {
-        return new AuthenticationRequestCredentialsAndChallengeDto(
+    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String username,
+                                                                                                       final String password,
+                                                                                                       final String challengeMethod) {
+        return new AuthenticationRequestLoginAuthorizedDto(
                 username,
                 password,
                 "challenge test",

@@ -67,8 +67,7 @@ public class AuthorizationControllerTest extends BaseControllerTest {
     public void checkToken_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned() {
         ErrorResponseDto expectedResponse = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Main error was: checkToken.accessToken: size must be between 1 and 2147483647",
-                        "accessToken: size must be between 1 and 2147483647")
+                List.of("accessToken: size must be between 1 and 2147483647")
         );
 
         webTestClient.post()

@@ -18,7 +18,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 @NoArgsConstructor
 @Schema(description = "Required data to authenticate a user using flow with PKCE (second request)")
 @ToString(exclude = { "verifier" })
-public class AuthenticationRequestAuthorizationCodeAndVerifierDto {
+public class AuthenticationRequestLoginTokenDto {
 
     @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotNull

@@ -1,9 +1,9 @@
 package com.security.custom.controller;
 
 import com.security.custom.configuration.rest.RestRoutes;
-import com.security.custom.dto.AuthenticationRequestAuthorizationCodeAndVerifierDto;
-import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
-import com.security.custom.dto.AuthenticationRequestCredentialsDto;
+import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
+import com.security.custom.dto.AuthenticationRequestLoginDto;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
@@ -51,7 +51,7 @@ public class AuthenticationController extends BaseController {
      * data to extract the application is trying to log the provided user. This endpoint does not use PKCE flow.
      *
      * @param authenticationRequestDto
-     *    {@link AuthenticationRequestCredentialsDto}
+     *    {@link AuthenticationRequestLoginDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#BAD_REQUEST} otherwise.
@@ -107,7 +107,7 @@ public class AuthenticationController extends BaseController {
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN)
     @Transactional(readOnly = true)
-    public Mono<ResponseEntity<AuthenticationInformationDto>> login(@RequestBody @Valid final AuthenticationRequestCredentialsDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationDto>> login(@RequestBody @Valid final AuthenticationRequestLoginDto authenticationRequestDto) {
         log.info(
                 format("Requesting login with: %s",
                         authenticationRequestDto
@@ -141,7 +141,7 @@ public class AuthenticationController extends BaseController {
      * more specifically the first request.
      *
      * @param authenticationRequestDto
-     *    {@link AuthenticationRequestCredentialsAndChallengeDto}
+     *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationAuthorizationCodeDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#BAD_REQUEST} otherwise.
@@ -195,9 +195,9 @@ public class AuthenticationController extends BaseController {
             }
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
-    public Mono<ResponseEntity<AuthenticationInformationAuthorizationCodeDto>> loginAuthorized(@RequestBody @Valid final AuthenticationRequestCredentialsAndChallengeDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationAuthorizationCodeDto>> loginAuthorized(@RequestBody @Valid final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
         log.info(
-                format("Requesting login to get authorization code with: %s",
+                format("Requesting login authorized with: %s",
                         authenticationRequestDto
                 )
         );
@@ -223,12 +223,12 @@ public class AuthenticationController extends BaseController {
 
 
     /**
-     *    Generates the suitable {@link AuthenticationInformationDto} using the given {@link AuthenticationRequestAuthorizationCodeAndVerifierDto},
+     *    Generates the suitable {@link AuthenticationInformationDto} using the given {@link AuthenticationRequestLoginTokenDto},
      * the stored user's credentials information and Basic Auth data to extract the application is trying to log the user. This endpoint
      * is part of the PKCE flow, more specifically the second request.
      *
      * @param authenticationRequestDto
-     *    {@link AuthenticationRequestCredentialsAndChallengeDto}
+     *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#BAD_REQUEST} otherwise.
@@ -293,9 +293,9 @@ public class AuthenticationController extends BaseController {
             }
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
-    public Mono<ResponseEntity<AuthenticationInformationDto>> loginToken(@RequestBody @Valid final AuthenticationRequestAuthorizationCodeAndVerifierDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationDto>> loginToken(@RequestBody @Valid final AuthenticationRequestLoginTokenDto authenticationRequestDto) {
         log.info(
-                format("Requesting login using the authorization code: %s",
+                format("Requesting login token with: %s",
                         authenticationRequestDto
                 )
         );

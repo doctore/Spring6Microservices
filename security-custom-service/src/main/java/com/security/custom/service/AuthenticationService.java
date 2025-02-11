@@ -1,6 +1,6 @@
 package com.security.custom.service;
 
-import com.security.custom.dto.AuthenticationRequestCredentialsAndChallengeDto;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientMismatchException;
@@ -126,11 +126,11 @@ public class AuthenticationService {
      *
      * @return
      *
-     * @throws ConstraintViolationException if given {@link AuthenticationRequestCredentialsAndChallengeDto#getChallengeMethod()}
+     * @throws ConstraintViolationException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
      *                                      does not match with existing in {@link HashAlgorithm}
      */
     public Optional<AuthenticationInformationAuthorizationCodeDto> loginAuthorized(final String applicationClientId,
-                                                                                   final AuthenticationRequestCredentialsAndChallengeDto authenticationRequestDto) {
+                                                                                   final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
         return authenticationRequestDetailsService.save(
                 applicationClientId,
                 authenticationRequestDto
