@@ -4,10 +4,12 @@ import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,8 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildAuthenticationRequestLoginAuthorizedDto;
 import static com.security.custom.TestDataFactory.buildAuthenticationRequestDetails;
+import static com.security.custom.TestDataFactory.buildAuthenticationRequestLoginAuthorizedDto;
 import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,13 +89,77 @@ public class AuthenticationRequestDetailsServiceTest {
     }
 
 
-    static Stream<Arguments> saveTestCases() {
-        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+    @Test
+    @DisplayName("save: when no authenticationRequestDto is provided then empty Optional is returned")
+    public void save_whenNoAuthenticationRequestDtoIsProvided_thenEmptyOptionalIsReturned() {
+        Optional<AuthenticationRequestDetails> result = service.save(
+                "ItDoesNotCare",
+                null
+        );
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(mockEncryptorService, never())
+                .encrypt(anyString());
+
+        verify(mockCacheService, never())
+                .put(anyString(), any(AuthenticationRequestDetails.class));
+    }
+
+
+    @Test
+    @DisplayName("save: when given authenticationRequestDto is not valid then IllegalArgumentException is thrown")
+    public void save_whenGivenAuthenticationRequestDtoIsNotValid_thenIllegalArgumentExceptionIsThrown() {
         AuthenticationRequestLoginAuthorizedDto invalidDto = buildAuthenticationRequestLoginAuthorizedDto(
                 "usernameValue",
                 "passwordValue",
                 "NotValid"
         );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.save("ItDoesNotCare", invalidDto)
+        );
+
+        verify(mockEncryptorService, times(1))
+                .encrypt(eq(invalidDto.getPassword()));
+
+        verify(mockCacheService, never())
+                .put(anyString(), any(AuthenticationRequestDetails.class));
+    }
+
+
+    @Test
+    @DisplayName("save: when AuthenticationRequestDetails could not be stored then AuthenticationRequestDetailsNotSavedException is thrown")
+    public void save_whenAuthenticationRequestDetailsCouldNotBeStored_thenAuthenticationRequestDetailsNotSavedExceptionIsThrown() {
+        AuthenticationRequestLoginAuthorizedDto validDto = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+
+        when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
+                .thenReturn(false);
+
+        assertThrows(
+                AuthenticationRequestDetailsNotSavedException.class,
+                () -> service.save("ItDoesNotCare", validDto)
+        );
+
+        verify(mockEncryptorService, times(1))
+                .encrypt(eq(validDto.getPassword()));
+
+        verify(mockCacheService, times(1))
+                .put(anyString(), any(AuthenticationRequestDetails.class));
+    }
+
+
+
+    @Test
+    @DisplayName("save: when a valid authenticationRequestDto is provided and its related AuthenticationRequestDetails is saved then not empty Optional is returned")
+    public void save_whenAValidAuthenticationRequestDtoIsProvidedAndItsRelatedAuthenticationRequestDetailsIsSaved_thenNotEmptyOptionalIsReturned() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         AuthenticationRequestLoginAuthorizedDto validDto = buildAuthenticationRequestLoginAuthorizedDto(
                 "usernameValue",
                 "passwordValue",
@@ -107,52 +173,29 @@ public class AuthenticationRequestDetailsServiceTest {
                 validDto.getChallenge(),
                 HashAlgorithm.getByAlgorithm(validDto.getChallengeMethod()).get()
         );
-        return Stream.of(
-                //@formatter:off
-                //            applicationClientId,   authenticationRequestDto,   expectedException,                expectedResult
-                Arguments.of( null,                  null,                       null,                             empty() ),
-                Arguments.of( "ItDoesNotCare",       null,                       null,                             empty() ),
-                Arguments.of( "ItDoesNotCare",       invalidDto,                 IllegalArgumentException.class,   null ),
-                Arguments.of( applicationClientId,   validDto,                   null,                             of(expectedFromValidDto) )
-        ); //@formatter:on
-    }
 
-    @ParameterizedTest
-    @MethodSource("saveTestCases")
-    @DisplayName("save: test cases")
-    public void save_testCases(String applicationClientId,
-                               AuthenticationRequestLoginAuthorizedDto authenticationRequestLoginAuthorizedDto,
-                               Class<? extends Exception> expectedException,
-                               Optional<AuthenticationRequestDetails> expectedResult) {
+        when(mockEncryptorService.encrypt(eq(validDto.getPassword())))
+                .thenReturn("encrypted value");
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
                 .thenReturn(true);
-        if (null != expectedResult && expectedResult.isPresent()) {
-            when(mockEncryptorService.encrypt(eq(authenticationRequestLoginAuthorizedDto.getPassword())))
-                    .thenReturn("encrypted value");
-        }
-        if (null != expectedException) {
-            assertThrows(
-                    expectedException,
-                    () -> service.save(applicationClientId, authenticationRequestLoginAuthorizedDto)
-            );
-        }
-        else {
-            Optional<AuthenticationRequestDetails> result = service.save(
-                    applicationClientId,
-                    authenticationRequestLoginAuthorizedDto
-            );
-            assertNotNull(result);
-            if (result.isPresent() && null != expectedResult && expectedResult.isPresent()) {
-                compareAuthenticationRequestDetails(
-                        expectedResult.get(),
-                        result.get()
-                );
-            }
-            if (result.isPresent()) {
-                verify(mockCacheService, times(1))
-                        .put(anyString(), any(AuthenticationRequestDetails.class));
-            }
-        }
+
+        Optional<AuthenticationRequestDetails> result = service.save(
+                applicationClientId,
+                validDto
+        );
+
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        compareAuthenticationRequestDetails(
+                expectedFromValidDto,
+                result.get()
+        );
+
+        verify(mockEncryptorService, times(1))
+                .encrypt(eq(validDto.getPassword()));
+
+        verify(mockCacheService, times(1))
+                .put(anyString(), any(AuthenticationRequestDetails.class));
     }
 
 

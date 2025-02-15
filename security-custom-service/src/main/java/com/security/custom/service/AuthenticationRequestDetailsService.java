@@ -3,9 +3,11 @@ package com.security.custom.service;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
+@Log4j2
 @Service
 public class AuthenticationRequestDetailsService {
 
@@ -72,6 +75,8 @@ public class AuthenticationRequestDetailsService {
      * @return {@link Optional} of {@link AuthenticationRequestDetails} with the authentication data based on given parameters,
      *         {@link Optional#empty()} if {@code authenticationRequestDto} is {@code null}.
      *
+     * @throws AuthenticationRequestDetailsNotSavedException if the given {@link AuthenticationRequestLoginAuthorizedDto} could
+     *                                                       not be stored in the cache.
      * @throws IllegalArgumentException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
      *                                  does not match with existing in {@link HashAlgorithm}
      */
@@ -82,10 +87,14 @@ public class AuthenticationRequestDetailsService {
                 authenticationRequestDto
         )
         .map(aqd -> {
-            cacheService.put(
-                    aqd.getAuthorizationCode(),
-                    aqd
-            );
+            if (!cacheService.put(aqd.getAuthorizationCode(), aqd)) {
+                throw new AuthenticationRequestDetailsNotSavedException(
+                        format("It was not possible to store in the cache, the key: %s and value: %s",
+                                aqd.getApplicationClientId(),
+                                aqd
+                        )
+                );
+            }
             return aqd;
         });
     }

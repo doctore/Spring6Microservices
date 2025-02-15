@@ -13,11 +13,11 @@ import com.security.custom.interfaces.ApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.util.HashUtil;
+import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,18 +119,26 @@ public class AuthenticationService {
 
 
     /**
+     * TODO:
      *
      *
      * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authentication data to include
      * @param authenticationRequestDto
+     *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return
      *
-     * @throws ConstraintViolationException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
-     *                                      does not match with existing in {@link HashAlgorithm}
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} is {@code null} or empty.
+     * @throws IllegalArgumentException if given {@link AuthenticationRequestLoginAuthorizedDto#getChallengeMethod()}
+     *                                  does not match with existing in {@link HashAlgorithm}
      */
     public Optional<AuthenticationInformationAuthorizationCodeDto> loginAuthorized(final String applicationClientId,
                                                                                    final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
+        AssertUtil.hasText(
+                applicationClientId,
+                () -> new ApplicationClientNotFoundException("The application client id cannot be empty")
+        );
         return authenticationRequestDetailsService.save(
                 applicationClientId,
                 authenticationRequestDto
@@ -144,6 +152,8 @@ public class AuthenticationService {
 
 
     /**
+     * TODO:
+     *
      *
      *
      * @param applicationClientId

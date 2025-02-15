@@ -3,6 +3,7 @@ package com.security.custom.configuration.rest;
 import com.security.custom.exception.ApplicationClientMismatchException;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
+import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -148,6 +149,32 @@ public class GlobalErrorWebExceptionHandler {
                 List.of("Given invalid authorization code identifier"),
                 exchange,
                 UNAUTHORIZED.value()
+        );
+    }
+
+
+    /**
+     * Method used to manage when a Rest request throws a {@link AuthenticationRequestDetailsNotSavedException}.
+     *
+     * @param exchange
+     *    {@link ServerWebExchange} with the request information
+     * @param exception
+     *    {@link AuthenticationRequestDetailsNotSavedException} thrown
+     *
+     * @return {@link Mono} with the suitable response
+     */
+    @ExceptionHandler(AuthenticationRequestDetailsNotSavedException.class)
+    public Mono<Void> authenticationRequestDetailsNotSavedException(final ServerWebExchange exchange,
+                                                                    final AuthenticationRequestDetailsNotSavedException exception) {
+        log.error(
+                getErrorMessageUsingHttpRequest(exchange),
+                exception
+        );
+        return buildErrorResponse(
+                INTERNAL,
+                List.of("Internal error in the application"),
+                exchange,
+                INTERNAL_SERVER_ERROR.value()
         );
     }
 

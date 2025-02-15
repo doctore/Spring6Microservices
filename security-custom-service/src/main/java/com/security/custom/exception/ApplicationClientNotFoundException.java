@@ -6,7 +6,7 @@ import com.security.custom.service.ApplicationClientDetailsService;
 import java.io.Serial;
 
 /**
- * Thrown if is no {@link ApplicationClientDetails#getId()} matching with provided one.
+ * Thrown if no {@link ApplicationClientDetails#getId()} matching with provided one.
  *
  * @see ApplicationClientDetailsService
  */

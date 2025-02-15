@@ -8,7 +8,7 @@ import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.util.JweUtil;
 import com.security.custom.util.JwsUtil;
 import com.spring6microservices.common.core.util.AssertUtil;
-import com.spring6microservices.common.core.util.ObjectUtil;
+import com.spring6microservices.common.core.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class TokenService {
                                     final RawAuthenticationInformationDto rawAuthenticationInformation,
                                     final String tokenIdentifier) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        final String finalTokenIdentifier = ObjectUtil.getOrElse(
+        final String finalTokenIdentifier = StringUtil.getOrElse(
                 tokenIdentifier,
                 this.getNewIdentifier()
         );
@@ -96,7 +96,7 @@ public class TokenService {
                                      final RawAuthenticationInformationDto rawAuthenticationInformation,
                                      final String tokenIdentifier) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        final String finalTokenIdentifier = ObjectUtil.getOrElse(
+        final String finalTokenIdentifier = StringUtil.getOrElse(
                 tokenIdentifier,
                 this.getNewIdentifier()
         );

@@ -5,34 +5,34 @@ import com.security.custom.model.AuthenticationRequestDetails;
 import java.io.Serial;
 
 /**
- * Thrown if no {@link AuthenticationRequestDetails#getAuthorizationCode()} matching with provided one.
+ * Thrown if a {@link AuthenticationRequestDetails} could not be stored in the cache.
  *
  * @see AuthenticationRequestDetails
  */
-public class AuthenticationRequestDetailsNotFoundException extends RuntimeException {
+public class AuthenticationRequestDetailsNotSavedException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 449448360432566781L;
 
 
-    public AuthenticationRequestDetailsNotFoundException() {
+    public AuthenticationRequestDetailsNotSavedException() {
         super();
     }
 
-    public AuthenticationRequestDetailsNotFoundException(String message) {
+    public AuthenticationRequestDetailsNotSavedException(String message) {
         super(message);
     }
 
-    public AuthenticationRequestDetailsNotFoundException(String message,
+    public AuthenticationRequestDetailsNotSavedException(String message,
                                                          Throwable cause) {
         super(message, cause);
     }
 
-    public AuthenticationRequestDetailsNotFoundException(Throwable cause) {
+    public AuthenticationRequestDetailsNotSavedException(Throwable cause) {
         super(cause);
     }
 
-    protected AuthenticationRequestDetailsNotFoundException(String message,
+    protected AuthenticationRequestDetailsNotSavedException(String message,
                                                             Throwable cause,
                                                             boolean enableSuppression,
                                                             boolean writableStackTrace) {
