@@ -37,26 +37,31 @@ public class ExceptionUtilTest {
         String currentErrorMessageFormat = "The class of the exception is: %s with error message: %s";
         String rootErrorMessageFormat = ". The root cause was an exception of class: %s with error message: %s";
 
-        String errorMessageRootConnectionException = format(rootErrorMessageFormat,
+        String errorMessageRootConnectionException = format(
+                rootErrorMessageFormat,
                 connectException.getClass().getName(),
                 connectException.getMessage()
         );
 
-        String errorMessageConnectionException = format(currentErrorMessageFormat,
+        String errorMessageConnectionException = format(
+                currentErrorMessageFormat,
                 connectException.getClass().getName(),
                 connectException.getMessage()
         );
-        String errorMessageIllegalArgumentException = format(currentErrorMessageFormat,
+        String errorMessageIllegalArgumentException = format(
+                currentErrorMessageFormat,
                 illegalArgumentException.getClass().getName(),
                 illegalArgumentException.getMessage()
         ) + errorMessageRootConnectionException;
 
-        String errorMessageSecurityException = format(currentErrorMessageFormat,
+        String errorMessageSecurityException = format(
+                currentErrorMessageFormat,
                 securityException.getClass().getName(),
                 securityException.getMessage()
         ) + errorMessageRootConnectionException;
 
-        String errorMessageCyclicExceptionHierarchy = format(currentErrorMessageFormat,
+        String errorMessageCyclicExceptionHierarchy = format(
+                currentErrorMessageFormat,
                 exception1.getClass().getName(),
                 exception1.getMessage()
         );
@@ -95,11 +100,13 @@ public class ExceptionUtilTest {
         ExceptionWithCause cyclicExceptionHierarchy = new ExceptionWithCause(exception1);
 
         String errorMessageFormat = "The root cause was an exception of class: %s with error message: %s";
-        String errorMessageRootConnectionException = format(errorMessageFormat,
+        String errorMessageRootConnectionException = format(
+                errorMessageFormat,
                 connectException.getClass().getName(),
                 connectException.getMessage()
         );
-        String errorMessageCyclicExceptionHierarchy = format(errorMessageFormat,
+        String errorMessageCyclicExceptionHierarchy = format(
+                errorMessageFormat,
                 exception1.getClass().getName(),
                 exception1.getMessage()
         );

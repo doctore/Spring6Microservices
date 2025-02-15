@@ -671,7 +671,7 @@ public abstract class Validation<E, T> implements Serializable {
      * @throws IllegalArgumentException if {@code exceptionSupplier} is {@code null} and the current instance is a {@link Invalid} one
      * @throws X if is an {@link Invalid}
      */
-    public final <X extends Throwable> T getOrElseThrow(final Supplier<X> exceptionSupplier) throws X {
+    public final <X extends Throwable> T getOrElseThrow(final Supplier<? extends X> exceptionSupplier) throws X {
         if (isValid()) {
             return get();
         }

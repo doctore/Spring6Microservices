@@ -656,7 +656,7 @@ public abstract class Either<L, R> implements Serializable {
      * @throws IllegalArgumentException if {@code exceptionSupplier} is {@code null} and the current instance is a {@link Left} one
      * @throws X if is a {@link Left}
      */
-    public final <X extends Throwable> R getOrElseThrow(final Supplier<X> exceptionSupplier) throws X {
+    public final <X extends Throwable> R getOrElseThrow(final Supplier<? extends X> exceptionSupplier) throws X {
         if (isRight()) {
             return get();
         }
