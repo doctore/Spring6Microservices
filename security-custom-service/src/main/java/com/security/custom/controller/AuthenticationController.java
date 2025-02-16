@@ -54,7 +54,7 @@ public class AuthenticationController extends BaseController {
      *    {@link AuthenticationRequestLoginDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
-     *         {@link HttpStatus#BAD_REQUEST} otherwise.
+     *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
      * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
      */
@@ -144,7 +144,7 @@ public class AuthenticationController extends BaseController {
      *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationAuthorizationCodeDto} with {@link HttpStatus#OK},
-     *         {@link HttpStatus#BAD_REQUEST} otherwise.
+     *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
      * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
      */
@@ -231,7 +231,7 @@ public class AuthenticationController extends BaseController {
      *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
-     *         {@link HttpStatus#BAD_REQUEST} otherwise.
+     *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
      * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
      */

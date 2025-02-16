@@ -155,7 +155,6 @@ public class AuthenticationRequestDetailsServiceTest {
     }
 
 
-
     @Test
     @DisplayName("save: when a valid authenticationRequestDto is provided and its related AuthenticationRequestDetails is saved then not empty Optional is returned")
     public void save_whenAValidAuthenticationRequestDtoIsProvidedAndItsRelatedAuthenticationRequestDetailsIsSaved_thenNotEmptyOptionalIsReturned() {

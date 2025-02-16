@@ -2,8 +2,12 @@ package com.security.custom.controller;
 
 import com.security.custom.SecurityCustomServiceApplication;
 import com.security.custom.configuration.rest.RestRoutes;
+import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginDto;
+import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
+import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.service.AuthenticationService;
+import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import lombok.SneakyThrows;
@@ -25,8 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.security.custom.TestDataFactory.buildAuthenticationInformationDto;
-import static com.security.custom.TestDataFactory.buildAuthenticationRequestLoginDto;
+import static com.security.custom.TestDataFactory.*;
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -168,6 +171,292 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         applicationClientId,
                         authenticationRequestDto.getUsername(),
                         authenticationRequestDto.getPassword()
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("loginAuthorized: when no basic authentication is provided then unauthorized code is returned")
+    public void loginAuthorized_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
+        AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
+                .body(
+                        Mono.just(authenticationRequest),
+                        AuthenticationRequestLoginAuthorizedDto.class
+                )
+                .exchange()
+                .expectStatus().isUnauthorized();
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> loginAuthorized_invalidParametersTestCases() {
+        String longString = String.join("", Collections.nCopies(150, "a"));
+
+        AuthenticationRequestLoginAuthorizedDto nullUsernameRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                null,
+                "passwordValue",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto nullPasswordRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                null,
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto notValidUsernameRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                longString,
+                "passwordValue",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto notValidPasswordRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                longString,
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto nullChallengeRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                null,
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto emptyChallengeRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                "",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+        AuthenticationRequestLoginAuthorizedDto notFoundChallengeMethodRequest = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                "NotFound"
+        );
+
+        String nullUsernameRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'username' due to: must not be null";
+        String nullPasswordRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'password' due to: must not be null";
+        String notValidUsernameRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'username' due to: size must be between 1 and 64";
+        String notValidPasswordRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'password' due to: size must be between 1 and 128";
+        String nullChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: must not be null";
+        String emptyChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: size must be between 1 and 2147483647";
+        String notFoundChallengeMethodRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challengeMethod' due to: must be one of the values included in [SHA-256, SHA-384, SHA-512]";
+        return Stream.of(
+                //@formatter:off
+                //            invalidAuthenticationRequestDto,   expectedError
+                Arguments.of( nullUsernameRequest,               nullUsernameRequestError ),
+                Arguments.of( nullPasswordRequest,               nullPasswordRequestError ),
+                Arguments.of( notValidUsernameRequest,           notValidUsernameRequestError    ),
+                Arguments.of( notValidPasswordRequest,           notValidPasswordRequestError    ),
+                Arguments.of( nullChallengeRequest,              nullChallengeRequestError    ),
+                Arguments.of( emptyChallengeRequest,             emptyChallengeRequestError    ),
+                Arguments.of( notFoundChallengeMethodRequest,    notFoundChallengeMethodRequestError    )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("loginAuthorized_invalidParametersTestCases")
+    @DisplayName("loginAuthorized: when given parameters do not verify validations then bad request error is returned with validation errors")
+    @WithMockUser
+    public void loginAuthorized_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestLoginAuthorizedDto invalidAuthenticationRequestDto,
+                                                                                                                               String expectedErrors) {
+        ErrorResponseDto expectedResponse = new ErrorResponseDto(
+                VALIDATION,
+                List.of(expectedErrors)
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
+                .body(
+                        Mono.just(invalidAuthenticationRequestDto),
+                        AuthenticationRequestLoginAuthorizedDto.class
+                )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponseDto.class)
+                .isEqualTo(expectedResponse);
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> loginAuthorized_validParametersTestCases() {
+        AuthenticationInformationAuthorizationCodeDto authenticationInformation = buildAuthenticationInformationAuthorizationCodeDto(
+                "authorizationCodeValue"
+        );
+        return Stream.of(
+                //@formatter:off
+                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                Arguments.of( empty(),                         UNPROCESSABLE_ENTITY,     null ),
+                Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("loginAuthorized_validParametersTestCases")
+    @DisplayName("loginAuthorized: when given parameters verify the validations then the suitable Http code is returned")
+    @WithMockUser(username = "ItDoesNotCare")
+    public void loginAuthorized_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationAuthorizationCodeDto> authenticationInformation,
+                                                                                                    HttpStatus expectedResultHttpCode,
+                                                                                                    AuthenticationInformationAuthorizationCodeDto expectedBodyResult) {
+        String applicationClientId = "ItDoesNotCare";
+        AuthenticationRequestLoginAuthorizedDto authenticationRequestDto = buildAuthenticationRequestLoginAuthorizedDto(
+                "usernameValue",
+                "passwordValue",
+                HashAlgorithm.SHA_384.getAlgorithm()
+        );
+
+        when(mockAuthenticationService.loginAuthorized(applicationClientId, authenticationRequestDto))
+                .thenReturn(authenticationInformation);
+
+        WebTestClient.ResponseSpec response = webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
+                .body(
+                        Mono.just(authenticationRequestDto),
+                        AuthenticationRequestLoginAuthorizedDto.class
+                )
+                .exchange();
+
+        response.expectStatus().isEqualTo(expectedResultHttpCode);
+        if (null == expectedBodyResult) {
+            response.expectBody().isEmpty();
+        }
+        else {
+            response.expectBody(AuthenticationInformationAuthorizationCodeDto.class)
+                    .isEqualTo(expectedBodyResult);
+        }
+        verify(mockAuthenticationService, times(1))
+                .loginAuthorized(
+                        applicationClientId,
+                        authenticationRequestDto
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("loginToken: when no basic authentication is provided then unauthorized code is returned")
+    public void loginToken_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
+        AuthenticationRequestLoginTokenDto authenticationRequest = buildAuthenticationRequestLoginTokenDto(
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
+                .body(
+                        Mono.just(authenticationRequest),
+                        AuthenticationRequestLoginTokenDto.class
+                )
+                .exchange()
+                .expectStatus().isUnauthorized();
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> loginToken_invalidParametersTestCases() {
+        AuthenticationRequestLoginTokenDto nullAuthorizationCode = buildAuthenticationRequestLoginTokenDto(null, "verifierValue");
+        AuthenticationRequestLoginTokenDto emptyAuthorizationCode = buildAuthenticationRequestLoginTokenDto("", "verifierValue");
+        AuthenticationRequestLoginTokenDto nullVerifier = buildAuthenticationRequestLoginTokenDto("authorizationCodeValue", null);
+        AuthenticationRequestLoginTokenDto emptyVerifier = buildAuthenticationRequestLoginTokenDto("authorizationCodeValue", "");
+
+        String nullAuthorizationCodeRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'authorizationCode' due to: must not be null";
+        String emptyAuthorizationCodeRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'authorizationCode' due to: size must be between 1 and 2147483647";
+        String nullVerifierRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'verifier' due to: must not be null";
+        String emptyVerifierRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'verifier' due to: size must be between 1 and 2147483647";
+        return Stream.of(
+                //@formatter:off
+                //            invalidAuthenticationRequestDto,   expectedError
+                Arguments.of( nullAuthorizationCode,             nullAuthorizationCodeRequestError ),
+                Arguments.of( emptyAuthorizationCode,            emptyAuthorizationCodeRequestError ),
+                Arguments.of( nullVerifier,                      nullVerifierRequestError ),
+                Arguments.of( emptyVerifier,                     emptyVerifierRequestError )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("loginToken_invalidParametersTestCases")
+    @DisplayName("loginToken: when given parameters do not verify validations then bad request error is returned with validation errors")
+    @WithMockUser
+    public void loginToken_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(AuthenticationRequestLoginTokenDto invalidAuthenticationRequestDto,
+                                                                                                                          String expectedErrors) {
+        ErrorResponseDto expectedResponse = new ErrorResponseDto(
+                VALIDATION,
+                List.of(expectedErrors)
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
+                .body(
+                        Mono.just(invalidAuthenticationRequestDto),
+                        AuthenticationRequestLoginTokenDto.class
+                )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponseDto.class)
+                .isEqualTo(expectedResponse);
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> loginToken_validParametersTestCases() {
+        AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("test");
+        return Stream.of(
+                //@formatter:off
+                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                Arguments.of( empty(),                         UNPROCESSABLE_ENTITY,     null ),
+                Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("loginToken_validParametersTestCases")
+    @DisplayName("loginToken: when given parameters verify the validations then the suitable Http code is returned")
+    @WithMockUser(username = "ItDoesNotCare")
+    public void loginToken_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationInformation,
+                                                                                               HttpStatus expectedResultHttpCode,
+                                                                                               AuthenticationInformationDto expectedBodyResult) {
+        String applicationClientId = "ItDoesNotCare";
+        AuthenticationRequestLoginTokenDto authenticationRequestDto = buildAuthenticationRequestLoginTokenDto(
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+
+        when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequestDto.getAuthorizationCode(), authenticationRequestDto.getVerifier()))
+                .thenReturn(authenticationInformation);
+
+        WebTestClient.ResponseSpec response = webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
+                .body(
+                        Mono.just(authenticationRequestDto),
+                        AuthenticationRequestLoginTokenDto.class
+                )
+                .exchange();
+
+        response.expectStatus().isEqualTo(expectedResultHttpCode);
+        if (null == expectedBodyResult) {
+            response.expectBody().isEmpty();
+        }
+        else {
+            response.expectBody(AuthenticationInformationDto.class)
+                    .isEqualTo(expectedBodyResult);
+        }
+        verify(mockAuthenticationService, times(1))
+                .loginToken(
+                        applicationClientId,
+                        authenticationRequestDto.getAuthorizationCode(),
+                        authenticationRequestDto.getVerifier()
                 );
     }
 

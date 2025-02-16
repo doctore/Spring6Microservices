@@ -6,6 +6,7 @@ import com.security.custom.application.spring6microservice.model.enums.Permissio
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginDto;
+import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
@@ -14,6 +15,7 @@ import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
+import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import lombok.experimental.UtilityClass;
@@ -62,6 +64,13 @@ public class TestDataFactory {
     }
 
 
+    public static AuthenticationInformationAuthorizationCodeDto buildAuthenticationInformationAuthorizationCodeDto(final String authorizationCode) {
+        return AuthenticationInformationAuthorizationCodeDto.builder()
+                .authorizationCode(authorizationCode)
+                .build();
+    }
+
+
     public static AuthenticationInformationDto buildAuthenticationInformationDto(final String id) {
         return AuthenticationInformationDto.builder()
                 .id(id)
@@ -88,6 +97,19 @@ public class TestDataFactory {
         return new AuthenticationRequestDetails(
                 authorizationCode,
                 SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId(),
+                "username test",
+                "encryptedPassword test",
+                "challenge test",
+                HashAlgorithm.SHA_384
+        );
+    }
+
+
+    public static AuthenticationRequestDetails buildAuthenticationRequestDetails(final String authorizationCode,
+                                                                                 final String applicationClientId) {
+        return new AuthenticationRequestDetails(
+                authorizationCode,
+                applicationClientId,
                 "username test",
                 "encryptedPassword test",
                 "challenge test",
@@ -134,6 +156,28 @@ public class TestDataFactory {
     }
 
 
+    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String username,
+                                                                                                       final String password,
+                                                                                                       final String challenge,
+                                                                                                       final String challengeMethod) {
+        return new AuthenticationRequestLoginAuthorizedDto(
+                username,
+                password,
+                challenge,
+                challengeMethod
+        );
+    }
+
+
+    public static AuthenticationRequestLoginTokenDto buildAuthenticationRequestLoginTokenDto(final String authorizationCode,
+                                                                                             final String verifier) {
+        return new AuthenticationRequestLoginTokenDto(
+                authorizationCode,
+                verifier
+        );
+    }
+
+
     public static AuthorizationInformationDto buildAuthorizationInformationDto(final String username,
                                                                                final Set<String> authorities,
                                                                                final Map<String, Object> additionalInformation) {
@@ -144,29 +188,6 @@ public class TestDataFactory {
                 .username(username)
                 .authorities(authorities)
                 .additionalInformation(additionalInformation)
-                .build();
-    }
-
-
-    public static User buildUser(final String username,
-                                 final String password,
-                                 final boolean isActive) {
-        Role role = new Role(
-                1,
-                RoleEnum.ROLE_ADMIN.name()
-        );
-        role.addPermission(
-                PermissionEnum.CREATE_ORDER
-        );
-        return User.builder()
-                .id(1L)
-                .name("name value")
-                .username(username)
-                .password(password)
-                .active(isActive)
-                .roles(
-                        Set.of(role)
-                )
                 .build();
     }
 
@@ -189,6 +210,29 @@ public class TestDataFactory {
                         new LinkedHashMap<>() {{
                             put(NAME.getKey(), "name value");
                         }}
+                )
+                .build();
+    }
+
+
+    public static User buildUser(final String username,
+                                 final String password,
+                                 final boolean isActive) {
+        Role role = new Role(
+                1,
+                RoleEnum.ROLE_ADMIN.name()
+        );
+        role.addPermission(
+                PermissionEnum.CREATE_ORDER
+        );
+        return User.builder()
+                .id(1L)
+                .name("name value")
+                .username(username)
+                .password(password)
+                .active(isActive)
+                .roles(
+                        Set.of(role)
                 )
                 .build();
     }
