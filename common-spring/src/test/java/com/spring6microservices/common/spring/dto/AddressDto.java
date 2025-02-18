@@ -24,7 +24,6 @@ public class AddressDto {
     @ContainsAnyProvidedString(
             anyOf = { "Canarias", "Andalucia"}
     )
-
     @Size
     private String state;
 
