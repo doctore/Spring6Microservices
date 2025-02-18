@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PizzaDto {
 
-    @EnumHasInternalStringValue(enumClass= PizzaEnum.class)
+    @EnumHasInternalStringValue(
+            enumClass = PizzaEnum.class
+    )
     private String name;
 
     private Double cost;
+
 }
-
-

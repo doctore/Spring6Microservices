@@ -20,31 +20,46 @@ public class EnumHasInternalStringValueValidatorTest {
 
     private Validator validator;
 
+
     @BeforeEach
     public void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            validator = factory.getValidator();
+        }
     }
 
 
     @Test
     @DisplayName("isValid: when given string value is not in enum then validation fails")
     public void whenGivenStringValueIsNotInEnum_thenValidationFails() {
-        PizzaDto dto = new PizzaDto(CARBONARA.getInternalPropertyValue() + PizzaEnum.MARGUERITA.getInternalPropertyValue(), 5D);
+        PizzaDto dto = new PizzaDto(
+                CARBONARA.getInternalPropertyValue() + PizzaEnum.MARGUERITA.getInternalPropertyValue(),
+                5D
+        );
 
         Set<ConstraintViolation<PizzaDto>> violations = validator.validate(dto);
 
         assertEquals(1, violations.size());
         ConstraintViolation<PizzaDto> error = violations.iterator().next();
-        assertEquals("name", error.getPropertyPath().toString());
-        assertEquals("must be one of the values included in [Margherita, Carbonara]", error.getMessage());
+        assertEquals(
+                "name",
+                error.getPropertyPath().toString()
+        );
+        assertEquals(
+                "must be one of the values included in [Margherita, Carbonara]",
+                error.getMessage()
+        );
     }
 
 
     @Test
-    @DisplayName("isValid: when given string value is in enum then validation Succeeds")
+    @DisplayName("isValid: when given string value is in enum then validation succeeds")
     public void whenGivenStringValueIsInEnum_thenValidationSucceeds() {
-        PizzaDto dto = new PizzaDto(CARBONARA.getInternalPropertyValue(), 5D);
+        PizzaDto dto = new PizzaDto(
+                CARBONARA.getInternalPropertyValue(),
+                5D
+        );
+
         Set<ConstraintViolation<PizzaDto>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }

@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  *    Validates if the given {@link String} matches with one of the internal {@link String} property belonging to the
- * provided {@link Class} of {@link Enum}
+ * provided {@link Class} of {@link Enum}.
  */
 public class EnumHasInternalStringValueValidator implements ConstraintValidator<EnumHasInternalStringValue, String> {
 
@@ -25,9 +25,9 @@ public class EnumHasInternalStringValueValidator implements ConstraintValidator<
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void initialize(final EnumHasInternalStringValue hasInternalStringValue) {
+	public void initialize(final EnumHasInternalStringValue constraintAnnotation) {
 		enumValidValues = Arrays.stream(
-				        hasInternalStringValue.enumClass().getEnumConstants()
+						constraintAnnotation.enumClass().getEnumConstants()
 				)
 				.map(e ->
 						((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue()
@@ -35,8 +35,8 @@ public class EnumHasInternalStringValueValidator implements ConstraintValidator<
 				.collect(
 						toList()
 				);
-		constraintTemplate = hasInternalStringValue.message();
-		isNullAccepted = hasInternalStringValue.isNullAccepted();
+		constraintTemplate = constraintAnnotation.message();
+		isNullAccepted = constraintAnnotation.isNullAccepted();
 	}
 
 
@@ -47,7 +47,6 @@ public class EnumHasInternalStringValueValidator implements ConstraintValidator<
 				isNull(value)
 						? isNullAccepted
 						: enumValidValues.contains(value);
-
 		if (!isValid) {
 			HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
 			hibernateContext.disableDefaultConstraintViolation();
