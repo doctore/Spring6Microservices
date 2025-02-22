@@ -1,7 +1,6 @@
 package com.spring6microservices.common.spring.dto;
 
 import com.spring6microservices.common.spring.validator.string.ContainsAnyProvidedString;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +23,6 @@ public class AddressDto {
     @ContainsAnyProvidedString(
             anyOf = { "Canarias", "Andalucia"}
     )
-    @Size
     private String state;
 
 }

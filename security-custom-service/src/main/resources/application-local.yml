@@ -64,7 +64,7 @@ management:
 # API documentation
 # In local (dev profile) the URLs are:
 #   1. http://localhost:8180/security/custom/api-docs to get the information in JSON format
-#   2. http://localhost:8180/security/custom/webjars/swagger-ui/index.html to display the UI with all defined endpoints
+#   2. http://localhost:8180/security/custom/swagger-ui/index.html to display the UI with all defined endpoints
 springdoc:
   api-docs:
     # Path of the OpenAPI documentation in Json format
@@ -78,6 +78,7 @@ springdoc:
     authorization: Basic Auth
     schema: basic
   swagger-ui:
+    # To disable the swagger-ui default petstore url
+    disable-swagger-default-url: true
+    # Custom path of the swagger-ui HTML documentation
     path: /security/custom/swagger-ui.html
-  webjars:
-    prefix: /webjars

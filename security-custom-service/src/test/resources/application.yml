@@ -51,5 +51,3 @@ springdoc:
     schema: basic
   swagger-ui:
     path: testPath
-  webjars:
-    prefix: testPrefix

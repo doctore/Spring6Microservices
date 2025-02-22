@@ -59,7 +59,7 @@ public class HashUtil {
 
 
     /**
-     * Converts given {@code hash} in a {@link String}
+     * Converts given {@code hash} in a {@link String}.
      *
      * @param hash
      *    Byte array to convert

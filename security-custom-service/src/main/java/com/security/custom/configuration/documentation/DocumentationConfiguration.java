@@ -1,5 +1,6 @@
 package com.security.custom.configuration.documentation;
 
+import com.security.custom.configuration.rest.RestRoutes;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static org.springdoc.core.utils.Constants.SWAGGER_UI_PREFIX;
+
 @Configuration
 @Getter
 public class DocumentationConfiguration {
@@ -19,6 +22,13 @@ public class DocumentationConfiguration {
 
     @Value("${springdoc.swagger-ui.path}")
     private String apiUiUrl;
+
+    /**
+     *    Required to configure the String Security because SpringDoc does an internal redirection from
+     * {@link DocumentationConfiguration#apiUiUrl} to {@code http://server:port/context-path/}
+     * {@link org.springdoc.core.utils.Constants#SWAGGER_UI_PREFIX}
+     */
+    private final String internalApiUiPrefix = RestRoutes.ROOT + SWAGGER_UI_PREFIX;
 
     @Value("${springdoc.documentation.apiVersion}")
     private String apiVersion;
@@ -34,9 +44,6 @@ public class DocumentationConfiguration {
 
     @Value("${springdoc.security.schema}")
     private String securitySchema;
-
-    @Value("${springdoc.webjars.prefix}")
-    private String webjarsUrl;
 
 
     /**
