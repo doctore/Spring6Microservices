@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Validates if the given {@link String} matches with one of the provided array of {@link String}s.
  */
-public class ContainsAnyProvidedStringValidator implements ConstraintValidator<ContainsAnyProvidedString, String> {
+public final class ContainsAnyProvidedStringValidator implements ConstraintValidator<ContainsAnyProvidedString, String> {
 
     private static final String ERROR_MESSAGE_PARAMETER = "values";
 

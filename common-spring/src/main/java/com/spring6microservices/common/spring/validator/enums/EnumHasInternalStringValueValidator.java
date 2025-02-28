@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
  *    Validates if the given {@link String} matches with one of the internal {@link String} property belonging to the
  * provided {@link Class} of {@link Enum}.
  */
-public class EnumHasInternalStringValueValidator implements ConstraintValidator<EnumHasInternalStringValue, String> {
+public final class EnumHasInternalStringValueValidator implements ConstraintValidator<EnumHasInternalStringValue, String> {
 
 	private static final String ERROR_MESSAGE_PARAMETER = "values";
 
