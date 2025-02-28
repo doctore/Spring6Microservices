@@ -79,8 +79,10 @@ public interface PartialFunction<T, R> extends Function<T, R> {
     /**
      * Returns a {@link PartialFunction} with:
      * <p>
-     *  - {@link PartialFunction#isDefinedAt(Object)} always returns {@code true}
-     *  - {@link PartialFunction#apply(Object)} always returns its input argument
+     * <ul>
+     *     <li>{@link PartialFunction#isDefinedAt(Object)} always returns {@code true}.</li>
+     *     <li>{@link PartialFunction#apply(Object)} always returns its input argument.</li>
+     * </ul>
      *
      * @return {@link PartialFunction} that always returns its input argument
      */

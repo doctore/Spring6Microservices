@@ -284,8 +284,10 @@ public class StringUtil {
     /**
      * Returns a {@link String} after applying to {@code sourceCS}:
      * <p>
-     *  - Filter its {@link Character}s using {@code filterPredicate}
-     *  - Transform its filtered {@link Character}s using {@code mapFunction}
+     * <ul>
+     *     <li>Filter its {@link Character}s using {@code filterPredicate}.</li>
+     *     <li>Transform its filtered {@link Character}s using {@code mapFunction}.</li>
+     * </ul>
      *
      * @apiNote
      *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned. If {@code filterPredicate}
@@ -331,8 +333,10 @@ public class StringUtil {
     /**
      * Returns a {@link String} after applying to {@code sourceCS}:
      * <p>
-     *  - Filter its {@link Character}s using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}
-     *  - Transform its filtered {@link Character}s using {@link PartialFunction#apply(Object)} of {@code partialFunction}
+     * <ul>
+     *     <li>Filter its {@link Character}s using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}.</li>
+     *     <li>Transform its filtered {@link Character}s using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
+     * </ul>
      *
      * @apiNote
      *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned.

@@ -152,7 +152,6 @@ public class ObjectUtil {
      *    Return the given {@code sourceInstance} if is not {@code null}. Otherwise, returns the result of the {@link Supplier}
      * {@code defaultValue}.
      *
-     *
      * <pre>
      *    getOrElseGet(                  Result:
      *       23,                          23

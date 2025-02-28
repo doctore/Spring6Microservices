@@ -362,8 +362,10 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} after applying to {@code sourceMap}:
      * <p>
-     *  - Filter its elements using {@code filterPredicate}
-     *  - Transform its filtered elements using {@code mapFunction}
+     * <ul>
+     *     <li>Filter its elements using {@code filterPredicate}.</li>
+     *     <li>Transform its filtered elements using {@code mapFunction}.</li>
+     * </ul>
      *
      * @apiNote
      *    If {@code filterPredicate} is {@code null} then all elements will be transformed.
@@ -403,8 +405,10 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} after applying to {@code sourceMap}:
      * <p>
-     *  - Filter its elements using {@code filterPredicate}
-     *  - Transform its filtered elements using {@code mapFunction}
+     * <ul>
+     *     <li>Filter its elements using {@code filterPredicate}.</li>
+     *     <li>Transform its filtered elements using {@code mapFunction}.</li>
+     * </ul>
      *
      * @apiNote
      *    If {@code filterPredicate} is {@code null} then all elements will be transformed. If {@code mapFactory} is
@@ -457,8 +461,10 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} after applying to {@code sourceMap}:
      * <p>
-     *  - Filter its elements using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}
-     *  - Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}
+     * <ul>
+     *     <li>Filter its elements using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}.</li>
+     *     <li>Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
+     * </ul>
      *
      * <pre>
      *    collect(                                                   Result:
@@ -500,8 +506,10 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} after applying to {@code sourceMap}:
      * <p>
-     *  - Filter its elements using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}
-     *  - Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}
+     * <ul>
+     *     <li>Filter its elements using {@link PartialFunction#isDefinedAt(Object)} of {@code partialFunction}.</li>
+     *     <li>Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
+     * </ul>
      *
      * @apiNote
      *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.

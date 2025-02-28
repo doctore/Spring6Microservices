@@ -558,8 +558,10 @@ public abstract class Try<T> implements Serializable {
     /**
      * Returns {@code this} if:
      * <p>
-     *   1. Current instance is {@link Failure}
-     *   2. Current instance is {@link Success} and stored value verifies given {@link Predicate} (or {@code predicate} is {@code null})
+     * <ol>
+     *     <li>Current instance is {@link Failure}.</li>
+     *     <li>Current instance is {@link Success} and stored value verifies given {@link Predicate} (or {@code predicate} is {@code null}).</li>
+     * </ol>
      * <p>
      *    Otherwise, returns new {@link Failure} wrapping a {@link NoSuchElementException} instance. If given {@code mapper}
      * invocation returns an {@link Exception} is thrown then returned {@link Try} will a {@link Failure} one too.
@@ -696,11 +698,13 @@ public abstract class Try<T> implements Serializable {
     /**
      * Merge given {@code t} with the current one, managing the following use cases:
      * <p>
-     *   1. this = {@link Success}, t = {@link Success}  =>  return a {@link Success} instance applying {@code mapperSuccess}
-     *   2. this = {@link Success}, t = {@link Failure}  =>  return the {@link Failure}
-     *   3. this = {@link Failure}, t = {@link Success}  =>  return the {@link Failure}
-     *   4. this = {@link Failure}, t = {@link Failure}  =>  return a {@link Failure} instance applying {@code mapperLeft}
-     *
+     * <ol>
+     *     <li>this = {@link Success}, t = {@link Success}  =>  return a {@link Success} instance applying {@code mapperSuccess}</li>
+     *     <li>this = {@link Success}, t = {@link Failure}  =>  return the {@link Failure}</li>
+     *     <li>this = {@link Failure}, t = {@link Success}  =>  return the {@link Failure}</li>
+     *     <li>this = {@link Failure}, t = {@link Failure}  =>  return a {@link Failure} instance applying {@code mapperLeft}</li>
+     * </ol>
+     * <p>
      * If provided {@code t} is {@code null}, the current instance will be returned.
      *
      * @param t
@@ -979,8 +983,10 @@ public abstract class Try<T> implements Serializable {
     /**
      * Verifies in the current instance has no value, that is:
      * <p>
-     *    1. Is a {@link Failure} one.
-     *    2. Is an empty {@link Success} instance.
+     * <ol>
+     *     <li>Is a {@link Failure} one.</li>
+     *     <li>Is an empty {@link Success} instance.</li>
+     * </ol>
      *
      * @return {@code true} is the current instance is empty, {@code false} otherwise
      */

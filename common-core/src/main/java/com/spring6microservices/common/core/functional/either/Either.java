@@ -227,8 +227,10 @@ public abstract class Either<L, R> implements Serializable {
     /**
      * Filters the current {@link Either} returning {@link Optional#of(Object)} of this if:
      * <p>
-     *   1. Current instance is {@link Left}
-     *   2. Current instance is {@link Right} and stored value verifies given {@link Predicate} (or it is {@code null})
+     * <ol>
+     *     <li>Current instance is {@link Left}.</li>
+     *     <li>Current instance is {@link Right} and stored value verifies given {@link Predicate} (or it is {@code null}).</li>
+     * </ol>
      * <p>
      * {@link Optional#empty()} otherwise.
      *
@@ -250,9 +252,11 @@ public abstract class Either<L, R> implements Serializable {
     /**
      * Filters the current {@link Either} returning:
      * <p>
-     *   1. {@link Right} if this is a {@link Right} and its value matches given {@link Predicate} (or {@code predicate} is {@code null})
-     *   2. {@link Left} applying {@code zero} if this is {@link Right} but its value does not match given {@link Predicate}
-     *   3. {@link Left} with the existing value if this is a {@link Left}
+     * <ol>
+     *     <li>{@link Right} if this is a {@link Right} and its value matches given {@link Predicate} (or {@code predicate} is {@code null}).</li>
+     *     <li>{@link Left} applying {@code zero} if this is {@link Right} but its value does not match given {@link Predicate}.</li>
+     *     <li>{@link Left} with the existing value if this is a {@link Left}.</li>
+     * </ol>
      *
      * <pre>
      * Examples:
@@ -414,11 +418,13 @@ public abstract class Either<L, R> implements Serializable {
     /**
      * Merge given {@code either} with the current one, managing the following use cases:
      * <p>
-     *   1. this = {@link Right}, either = {@link Right}  =>  return a {@link Right} instance applying {@code mapperRight}
-     *   2. this = {@link Right}, either = {@link Left}   =>  return the {@link Left}
-     *   3. this = {@link Left},  either = {@link Right}  =>  return the {@link Left}
-     *   4. this = {@link Left},  either = {@link Left}   =>  return a {@link Left} instance applying {@code mapperLeft}
-     *
+     * <ol>
+     *     <li>this = {@link Right}, either = {@link Right}  =>  return a {@link Right} instance applying {@code mapperRight}</li>
+     *     <li>this = {@link Right}, either = {@link Left}   =>  return the {@link Left}</li>
+     *     <li>this = {@link Left},  either = {@link Right}  =>  return the {@link Left}</li>
+     *     <li>this = {@link Left},  either = {@link Left}   =>  return a {@link Left} instance applying {@code mapperLeft}</li>
+     * </ol>
+     * <p>
      * If provided {@code either} is {@code null}, the current instance will be returned.
      *
      * @param either
@@ -739,8 +745,10 @@ public abstract class Either<L, R> implements Serializable {
     /**
      * Verifies if the current instance has no value, that is:
      * <p>
-     *    1. Is a {@link Left} one.
-     *    2. Is an empty {@link Right} instance.
+     * <ol>
+     *     <li>Is a {@link Left} one.</li>
+     *     <li>Is an empty {@link Right} instance.</li>
+     * </ol>
      *
      * @return {@code true} is the current instance is empty, {@code false} otherwise
      */

@@ -96,8 +96,10 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Creates a {@link Validation} using the given {@link Either}, following the rules:
      * <p>
-     *  - If {@link Right} then new {@link Validation} instance will be {@link Valid}
-     *  - If {@link Left} or {@code null} then new {@link Validation} instance will be {@link Invalid}
+     * <ul>
+     *     <li>If {@link Right} then new {@link Validation} instance will be {@link Valid}.</li>
+     *     <li>If {@link Left} or {@code null} then new {@link Validation} instance will be {@link Invalid}.</li>
+     * </ul>
      *
      * @param either
      *    {@link Either} used as source
@@ -121,8 +123,10 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Creates a {@link Validation} using the given {@link Try}, following the rules:
      * <p>
-     *  - If {@link Success} then new {@link Validation} instance will be {@link Valid}
-     *  - If {@link Failure} or {@code null} then new {@link Validation} instance will be {@link Invalid}
+     * <ul>
+     *     <li>If {@link Success} then new {@link Validation} instance will be {@link Valid}.</li>
+     *     <li>If {@link Failure} or {@code null} then new {@link Validation} instance will be {@link Invalid}.</li>
+     * </ul>
      *
      * @param t
      *    {@link Try} used as source
@@ -257,8 +261,10 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Filters the current {@link Validation} returning {@code Optional.of(this)} if:
      * <p>
-     *   1. Current instance is {@link Invalid}
-     *   2. Current instance is {@link Valid} and stored value verifies given {@link Predicate} (or {@code predicate} is {@code null})
+     * <ol>
+     *     <li>Current instance is {@link Invalid}.</li>
+     *     <li>Current instance is {@link Valid} and stored value verifies given {@link Predicate} (or {@code predicate} is {@code null}).</li>
+     * </ol>
      * <p>
      * {@link Optional#empty()} otherwise.
      *
@@ -280,9 +286,11 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Filters the current {@link Validation} returning:
      * <p>
-     *   1. {@link Valid} if this is a {@link Valid} and its value matches given {@link Predicate} (or {@code predicate} is {@code null})
-     *   2. {@link Invalid} applying {@code mapper} if this is {@link Valid} but its value does not match given {@link Predicate}
-     *   3. {@link Invalid} with the existing value if this is a {@link Invalid}
+     * <ol>
+     *     <li>{@link Valid} if this is a {@link Valid} and its value matches given {@link Predicate} (or {@code predicate} is {@code null}).</li>
+     *     <li>{@link Invalid} applying {@code mapper} if this is {@link Valid} but its value does not match given {@link Predicate}.</li>
+     *     <li>{@link Invalid} with the existing value if this is a {@link Invalid}.</li>
+     * </ol>
      *
      * <pre>
      * Examples:
@@ -447,11 +455,13 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Merge given {@code validation} with the current one, managing the following use cases:
      * <p>
-     *   1. this = {@link Valid},   validation = {@link Valid}    =>  return a {@link Valid} instance with the value of {@code validation}
-     *   2. this = {@link Valid},   validation = {@link Invalid}  =>  return an {@link Invalid} instance with the errors of {@code validation}
-     *   3. this = {@link Invalid}, validation = {@link Valid}    =>  return an {@link Invalid} instance with the errors of {@code this}
-     *   4. this = {@link Invalid}, validation = {@link Invalid}  =>  return an {@link Invalid} instance with the errors of {@code this} and {@code validation}
-     *
+     * <ol>
+     *     <li>this = {@link Valid},   validation = {@link Valid}    =>  return a {@link Valid} instance with the value of {@code validation}</li>
+     *     <li>this = {@link Valid},   validation = {@link Invalid}  =>  return an {@link Invalid} instance with the errors of {@code validation}</li>
+     *     <li>this = {@link Invalid}, validation = {@link Valid}    =>  return an {@link Invalid} instance with the errors of {@code this}</li>
+     *     <li>this = {@link Invalid}, validation = {@link Invalid}  =>  return an {@link Invalid} instance with the errors of {@code this} and {@code validation}</li>
+     * </ol>
+     * <p>
      * If provided {@code validation} is {@code null}, the current instance will be returned.
      *
      * @param validation
@@ -742,8 +752,10 @@ public abstract class Validation<E, T> implements Serializable {
     /**
      * Verifies in the current instance has no value, that is:
      * <p>
-     *    1. Is a {@link Invalid} one.
-     *    2. Is an empty {@link Valid} instance.
+     * <ol>
+     *     <li>Is a {@link Invalid} one.</li>
+     *     <li>Is an empty {@link Valid} instance.</li>
+     * </ol>
      *
      * @return {@code true} is the current instance is empty, {@code false} otherwise
      */
