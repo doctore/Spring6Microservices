@@ -320,7 +320,7 @@ In the next pictures I will use the predefined one:
 
 This microservice provides 2 different authentication flows:
 
-* **Traditional:** the request contains the user's credentials and returns the full authentication response.
+* **Traditional:** the request contains the *user's credentials* and returns the full authentication response.
 * **[PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/)** with 2 requests:
   - The first one to send *challenge* data and receive the *authorization code*.
   - The second one to send *user's credentials*, *authorization code* and *verifier* and returns the full authentication response.
