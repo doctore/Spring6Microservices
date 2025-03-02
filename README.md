@@ -106,8 +106,8 @@ options defined in [TokenType](https://github.com/doctore/Spring6Microservices/b
 * ENCRYPTED_JWS
 * ENCRYPTED_JWE
 
-The provided algorithms to sign the JWT tokens, that is, to generate **JWS** or the internal one inside **ENCRYPTED_JWS** are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
-On the other hand, the available algorithms selecting **JWE** or **ENCRYPTED_JWE** are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
+The provided algorithms to sign the JWT tokens, that is, to generate `JWS` or the internal one inside `ENCRYPTED_JWS` are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
+On the other hand, the available algorithms selecting `JWE` or `ENCRYPTED_JWE` are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
 
 Every application will be able to manage its own token configuration/generation adding a new row in the database table: **security.application_client_details**
 and including/developing a new value in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
