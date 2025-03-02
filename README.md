@@ -98,19 +98,19 @@ microservices included in this proof of concept. This module contains a filter t
 ### [security-custom-service](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service)
 
 Based on JWT token, this module was created to centralize the management of authentication/authorization functionalities. Its main purpose is provided
-a completely multi-application platform to generate/manage their own access and refresh tokens (including additional information), choosing from the options
-defined in [TokenType](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenType.java):
+a completely multi-application platform to generate/manage their own access and refresh tokens (including additional information), choosing between the
+options defined in [TokenType](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenType.java):
 
 * JWS
 * JWE
 * ENCRYPTED_JWS
 * ENCRYPTED_JWE
 
-The provided algorithms to sign the JWT tokens, that is, generates **JWS** or the internal one inside **ENCRYPTED_JWS** are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
+The provided algorithms to sign the JWT tokens, that is, to generate **JWS** or the internal one inside **ENCRYPTED_JWS** are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
 On the other hand, the available algorithms selecting **JWE** or **ENCRYPTED_JWE** are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
 
 Every application will be able to manage its own token configuration/generation adding a new row in the database table: **security.application_client_details**
-and including/developing a new constants in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
+and including/developing a new value in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
 
 The technologies used are the following ones:
 
@@ -327,7 +327,7 @@ This microservice provides 2 different authentication flows:
 
 So, the list of web services is the following one: 
 
-**1.** Get the authentication information using *traditional* approach:
+**1.** Get the authentication information using **traditional** approach:
 
 ![Alt text](/documentation/SecurityCustomService_DirectLogin.png?raw=true "Direct Login")
 
