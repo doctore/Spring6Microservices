@@ -316,6 +316,7 @@ In the next pictures I will use the predefined one:
 [Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L4)
 
 ![Alt text](/documentation/SecurityCustomService_Credentials.png?raw=true "Basic Auth credentials")
+<br><br>
 
 This microservice provides 2 different authentication flows:
 
