@@ -180,8 +180,6 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @DisplayName("loginAuthorized: when no basic authentication is provided then unauthorized code is returned")
     public void loginAuthorized_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
         AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -199,60 +197,24 @@ public class AuthenticationControllerTest extends BaseControllerTest {
 
 
     static Stream<Arguments> loginAuthorized_invalidParametersTestCases() {
-        String longString = String.join("", Collections.nCopies(150, "a"));
-
-        AuthenticationRequestLoginAuthorizedDto nullUsernameRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                null,
-                "passwordValue",
-                HashAlgorithm.SHA_384.getAlgorithm()
-        );
-        AuthenticationRequestLoginAuthorizedDto nullPasswordRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                null,
-                HashAlgorithm.SHA_384.getAlgorithm()
-        );
-        AuthenticationRequestLoginAuthorizedDto notValidUsernameRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                longString,
-                "passwordValue",
-                HashAlgorithm.SHA_384.getAlgorithm()
-        );
-        AuthenticationRequestLoginAuthorizedDto notValidPasswordRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                longString,
-                HashAlgorithm.SHA_384.getAlgorithm()
-        );
         AuthenticationRequestLoginAuthorizedDto nullChallengeRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 null,
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
         AuthenticationRequestLoginAuthorizedDto emptyChallengeRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 "",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
         AuthenticationRequestLoginAuthorizedDto notFoundChallengeMethodRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 "NotFound"
         );
 
-        String nullUsernameRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'username' due to: must not be null";
-        String nullPasswordRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'password' due to: must not be null";
-        String notValidUsernameRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'username' due to: size must be between 1 and 64";
-        String notValidPasswordRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'password' due to: size must be between 1 and 128";
         String nullChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: must not be null";
         String emptyChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: size must be between 1 and 2147483647";
         String notFoundChallengeMethodRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challengeMethod' due to: must be one of the values included in [SHA-256, SHA-384, SHA-512]";
         return Stream.of(
                 //@formatter:off
                 //            invalidAuthenticationRequestDto,   expectedError
-                Arguments.of( nullUsernameRequest,               nullUsernameRequestError ),
-                Arguments.of( nullPasswordRequest,               nullPasswordRequestError ),
-                Arguments.of( notValidUsernameRequest,           notValidUsernameRequestError    ),
-                Arguments.of( notValidPasswordRequest,           notValidPasswordRequestError    ),
                 Arguments.of( nullChallengeRequest,              nullChallengeRequestError    ),
                 Arguments.of( emptyChallengeRequest,             emptyChallengeRequestError    ),
                 Arguments.of( notFoundChallengeMethodRequest,    notFoundChallengeMethodRequestError    )
@@ -308,8 +270,6 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                                                                                                     AuthenticationInformationAuthorizationCodeDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
         AuthenticationRequestLoginAuthorizedDto authenticationRequestDto = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -345,6 +305,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @DisplayName("loginToken: when no basic authentication is provided then unauthorized code is returned")
     public void loginToken_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
         AuthenticationRequestLoginTokenDto authenticationRequest = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
                 "authorizationCodeValue",
                 "verifierValue"
         );
@@ -363,11 +325,60 @@ public class AuthenticationControllerTest extends BaseControllerTest {
 
 
     static Stream<Arguments> loginToken_invalidParametersTestCases() {
-        AuthenticationRequestLoginTokenDto nullAuthorizationCode = buildAuthenticationRequestLoginTokenDto(null, "verifierValue");
-        AuthenticationRequestLoginTokenDto emptyAuthorizationCode = buildAuthenticationRequestLoginTokenDto("", "verifierValue");
-        AuthenticationRequestLoginTokenDto nullVerifier = buildAuthenticationRequestLoginTokenDto("authorizationCodeValue", null);
-        AuthenticationRequestLoginTokenDto emptyVerifier = buildAuthenticationRequestLoginTokenDto("authorizationCodeValue", "");
+        String longString = String.join("", Collections.nCopies(150, "a"));
 
+        AuthenticationRequestLoginTokenDto nullUsername = buildAuthenticationRequestLoginTokenDto(
+                null,
+                "passwordValue",
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto notValidUsername = buildAuthenticationRequestLoginTokenDto(
+                longString,
+                "passwordValue",
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto nullPassword = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                null,
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto notValidPassword = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                longString,
+                "authorizationCodeValue",
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto nullAuthorizationCode = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
+                null,
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto emptyAuthorizationCode = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
+                "",
+                "verifierValue"
+        );
+        AuthenticationRequestLoginTokenDto nullVerifier = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
+                "authorizationCodeValue",
+                null
+        );
+        AuthenticationRequestLoginTokenDto emptyVerifier = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
+                "authorizationCodeValue",
+                ""
+        );
+        String nullUsernameRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'username' due to: must not be null";
+        String notValidUsernameRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'username' due to: size must be between 1 and 64";
+        String nullPasswordRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'password' due to: must not be null";
+        String notValidPasswordRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'password' due to: size must be between 1 and 128";
         String nullAuthorizationCodeRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'authorizationCode' due to: must not be null";
         String emptyAuthorizationCodeRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'authorizationCode' due to: size must be between 1 and 2147483647";
         String nullVerifierRequestError = "Field error in object 'authenticationRequestLoginTokenDto' on field 'verifier' due to: must not be null";
@@ -375,6 +386,10 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         return Stream.of(
                 //@formatter:off
                 //            invalidAuthenticationRequestDto,   expectedError
+                Arguments.of( nullUsername,                      nullUsernameRequestError ),
+                Arguments.of( notValidUsername,                  notValidUsernameRequestError ),
+                Arguments.of( nullPassword,                      nullPasswordRequestError ),
+                Arguments.of( notValidPassword,                  notValidPasswordRequestError ),
                 Arguments.of( nullAuthorizationCode,             nullAuthorizationCodeRequestError ),
                 Arguments.of( emptyAuthorizationCode,            emptyAuthorizationCodeRequestError ),
                 Arguments.of( nullVerifier,                      nullVerifierRequestError ),
@@ -429,11 +444,13 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                                                                                                AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
         AuthenticationRequestLoginTokenDto authenticationRequestDto = buildAuthenticationRequestLoginTokenDto(
+                "usernameValue",
+                "passwordValue",
                 "authorizationCodeValue",
                 "verifierValue"
         );
 
-        when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequestDto.getAuthorizationCode(), authenticationRequestDto.getVerifier()))
+        when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequestDto))
                 .thenReturn(authenticationInformation);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
@@ -455,8 +472,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         verify(mockAuthenticationService, times(1))
                 .loginToken(
                         applicationClientId,
-                        authenticationRequestDto.getAuthorizationCode(),
-                        authenticationRequestDto.getVerifier()
+                        authenticationRequestDto
                 );
     }
 

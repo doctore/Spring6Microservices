@@ -14,7 +14,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 /**
  * Required data to authenticate a user not using flow with PKCE.
  *
- * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+ * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */
 @AllArgsConstructor
 @Data

@@ -34,17 +34,13 @@ public class AuthenticationRequestDetailsServiceTest {
     @Mock
     private AuthenticationRequestDetailsCacheService mockCacheService;
 
-    @Mock
-    private EncryptorService mockEncryptorService;
-
     private AuthenticationRequestDetailsService service;
 
 
     @BeforeEach
     public void init() {
         service = new AuthenticationRequestDetailsService(
-                mockCacheService,
-                mockEncryptorService
+                mockCacheService
         );
     }
 
@@ -100,9 +96,6 @@ public class AuthenticationRequestDetailsServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(mockEncryptorService, never())
-                .defaultEncrypt(anyString());
-
         verify(mockCacheService, never())
                 .put(anyString(), any(AuthenticationRequestDetails.class));
     }
@@ -112,8 +105,6 @@ public class AuthenticationRequestDetailsServiceTest {
     @DisplayName("save: when given authenticationRequestDto is not valid then IllegalArgumentException is thrown")
     public void save_whenGivenAuthenticationRequestDtoIsNotValid_thenIllegalArgumentExceptionIsThrown() {
         AuthenticationRequestLoginAuthorizedDto invalidDto = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 "NotValid"
         );
 
@@ -121,9 +112,6 @@ public class AuthenticationRequestDetailsServiceTest {
                 IllegalArgumentException.class,
                 () -> service.save("ItDoesNotCare", invalidDto)
         );
-
-        verify(mockEncryptorService, times(1))
-                .defaultEncrypt(eq(invalidDto.getPassword()));
 
         verify(mockCacheService, never())
                 .put(anyString(), any(AuthenticationRequestDetails.class));
@@ -134,8 +122,6 @@ public class AuthenticationRequestDetailsServiceTest {
     @DisplayName("save: when AuthenticationRequestDetails could not be stored then AuthenticationRequestDetailsNotSavedException is thrown")
     public void save_whenAuthenticationRequestDetailsCouldNotBeStored_thenAuthenticationRequestDetailsNotSavedExceptionIsThrown() {
         AuthenticationRequestLoginAuthorizedDto validDto = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -147,9 +133,6 @@ public class AuthenticationRequestDetailsServiceTest {
                 () -> service.save("ItDoesNotCare", validDto)
         );
 
-        verify(mockEncryptorService, times(1))
-                .defaultEncrypt(eq(validDto.getPassword()));
-
         verify(mockCacheService, times(1))
                 .put(anyString(), any(AuthenticationRequestDetails.class));
     }
@@ -160,21 +143,15 @@ public class AuthenticationRequestDetailsServiceTest {
     public void save_whenAValidAuthenticationRequestDtoIsProvidedAndItsRelatedAuthenticationRequestDetailsIsSaved_thenNotEmptyOptionalIsReturned() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         AuthenticationRequestLoginAuthorizedDto validDto = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
         AuthenticationRequestDetails expectedFromValidDto = buildAuthenticationRequestDetails(
                 "ItDoesNotCare",
                 applicationClientId,
-                validDto.getUsername(),
-                "encrypted value",
                 validDto.getChallenge(),
                 HashAlgorithm.getByAlgorithm(validDto.getChallengeMethod()).get()
         );
 
-        when(mockEncryptorService.defaultEncrypt(eq(validDto.getPassword())))
-                .thenReturn("encrypted value");
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
                 .thenReturn(true);
 
@@ -189,9 +166,6 @@ public class AuthenticationRequestDetailsServiceTest {
                 expectedFromValidDto,
                 result.get()
         );
-
-        verify(mockEncryptorService, times(1))
-                .defaultEncrypt(eq(validDto.getPassword()));
 
         verify(mockCacheService, times(1))
                 .put(anyString(), any(AuthenticationRequestDetails.class));
@@ -234,14 +208,6 @@ public class AuthenticationRequestDetailsServiceTest {
         assertEquals(
                 expected.getApplicationClientId(),
                 actual.getApplicationClientId()
-        );
-        assertEquals(
-                expected.getUsername(),
-                actual.getUsername()
-        );
-        assertEquals(
-                expected.getEncryptedPassword(),
-                actual.getEncryptedPassword()
         );
         assertEquals(
                 expected.getChallenge(),

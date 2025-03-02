@@ -4,6 +4,7 @@ import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthenticationService;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
+import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
@@ -69,9 +70,6 @@ public class AuthenticationServiceTest {
     private AuthorizationService mockAuthorizationService;
 
     @Mock
-    private EncryptorService mockEncryptorService;
-
-    @Mock
     private TokenService mockTokenService;
 
     private AuthenticationService service;
@@ -84,7 +82,6 @@ public class AuthenticationServiceTest {
                 mockApplicationClientDetailsService,
                 mockAuthenticationRequestDetailsService,
                 mockAuthorizationService,
-                mockEncryptorService,
                 mockTokenService
         );
     }
@@ -447,8 +444,6 @@ public class AuthenticationServiceTest {
     @DisplayName("loginAuthorized: when no applicationClientId is provided then ApplicationClientNotFoundException is thrown")
     public void loginAuthorized_whenNoApplicationClientIdIsProvided_thenApplicationClientNotFoundExceptionIsThrown() {
         AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -473,8 +468,6 @@ public class AuthenticationServiceTest {
     public void loginAuthorized_whenAuthenticationRequestCouldNotBeStored_thenAuthenticationRequestDetailsNotSavedExceptionIsThrown() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -520,8 +513,6 @@ public class AuthenticationServiceTest {
                                                            Optional<AuthenticationInformationAuthorizationCodeDto> expectedResult) {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
-                "usernameValue",
-                "passwordValue",
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
@@ -554,9 +545,28 @@ public class AuthenticationServiceTest {
 
 
     @Test
+    @DisplayName("loginToken: when given authenticationRequestLoginToken is null then IllegalArgumentException is thrown")
+    public void loginToken_whenGivenAuthenticationRequestLoginTokenIsNull_thenIllegalArgumentExceptionIsThrown() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.loginToken(
+                        "ItDoesNotCare",
+                        null
+                )
+        );
+    }
+
+
+    @Test
     @DisplayName("loginToken: when given authorizationCode does not exist in the cache then AuthenticationRequestDetailsNotFoundException is thrown")
     public void loginToken_whenGivenAuthorizationCodeDoesNotExistInTheCache_thenAuthenticationRequestDetailsNotFoundExceptionIsThrown() {
         String authorizationCode = "NotFound";
+        AuthenticationRequestLoginTokenDto authenticationRequestLoginToken = buildAuthenticationRequestLoginTokenDto(
+                "username value",
+                "password value",
+                authorizationCode,
+                "ItDoesNotCare"
+        );
 
         when(mockAuthenticationRequestDetailsService.findByAuthorizationCode(eq(authorizationCode)))
                 .thenThrow(
@@ -567,8 +577,7 @@ public class AuthenticationServiceTest {
                 AuthenticationRequestDetailsNotFoundException.class,
                 () -> service.loginToken(
                         "ItDoesNotCare",
-                        authorizationCode,
-                        "ItDoesNotCare"
+                        authenticationRequestLoginToken
                 )
         );
 
@@ -605,6 +614,12 @@ public class AuthenticationServiceTest {
     public void loginTokenApplicationClientMismatchException_testCases(String applicationClientId,
                                                                        AuthenticationRequestDetails authenticationRequestDetails) {
         String authorizationCode = "Found";
+        AuthenticationRequestLoginTokenDto authenticationRequestLoginToken = buildAuthenticationRequestLoginTokenDto(
+                "username value",
+                "password value",
+                authorizationCode,
+                "ItDoesNotCare"
+        );
 
         when(mockAuthenticationRequestDetailsService.findByAuthorizationCode(eq(authorizationCode)))
                 .thenReturn(
@@ -615,8 +630,7 @@ public class AuthenticationServiceTest {
                 ApplicationClientMismatchException.class,
                 () -> service.loginToken(
                         applicationClientId,
-                        authorizationCode,
-                        "ItDoesNotCare"
+                        authenticationRequestLoginToken
                 )
         );
     }
@@ -627,6 +641,12 @@ public class AuthenticationServiceTest {
     public void loginToken_whenGivenVerifierDoesNotMatchWithStoredChallenge_thenUnauthorizedExceptionIsThrown() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         String authorizationCode = "Found";
+        AuthenticationRequestLoginTokenDto authenticationRequestLoginToken = buildAuthenticationRequestLoginTokenDto(
+                "username value",
+                "password value",
+                authorizationCode,
+                "ItDoesNotMatch"
+        );
         AuthenticationRequestDetails authenticationRequestDetails = buildAuthenticationRequestDetails(
                 authorizationCode,
                 applicationClientId
@@ -641,8 +661,7 @@ public class AuthenticationServiceTest {
                 UnauthorizedException.class,
                 () -> service.loginToken(
                         applicationClientId,
-                        authorizationCode,
-                        "ItDoesNotMatch"
+                        authenticationRequestLoginToken
                 )
         );
 
@@ -681,11 +700,15 @@ public class AuthenticationServiceTest {
         String verifier = "verifier value";
         String username = "username value";
         String password = "password value";
+        AuthenticationRequestLoginTokenDto authenticationRequestLoginToken = buildAuthenticationRequestLoginTokenDto(
+                username,
+                password,
+                authorizationCode,
+                verifier
+        );
         AuthenticationRequestDetails authenticationRequestDetails = buildAuthenticationRequestDetails(
                 authorizationCode,
                 applicationClientId,
-                username,
-                "encryptedPassword test",
                 "f58dd405627d81b1bb902a0dac75848e8f9bc937f1f2f0f111ac781ba2c187f24c2611772b1ffc7a02efb1935958d673",
                 HashAlgorithm.SHA_384
         );
@@ -698,11 +721,6 @@ public class AuthenticationServiceTest {
         when(mockAuthenticationRequestDetailsService.findByAuthorizationCode(eq(authorizationCode)))
                 .thenReturn(
                         authenticationRequestDetails
-                );
-
-        when(mockEncryptorService.defaultDecrypt(anyString()))
-                .thenReturn(
-                        password
                 );
 
         when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
@@ -742,8 +760,7 @@ public class AuthenticationServiceTest {
 
         Optional<AuthenticationInformationDto> result = service.loginToken(
                 applicationClientId,
-                authorizationCode,
-                verifier
+                authenticationRequestLoginToken
         );
 
         int createTokensInvocations = 0;

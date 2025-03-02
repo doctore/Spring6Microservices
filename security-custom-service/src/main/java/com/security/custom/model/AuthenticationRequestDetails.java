@@ -15,8 +15,6 @@ public class AuthenticationRequestDetails {
 
     private String authorizationCode;
     private String applicationClientId;
-    private String username;
-    private String encryptedPassword;
     private String challenge;
     private HashAlgorithm challengeMethod;
 

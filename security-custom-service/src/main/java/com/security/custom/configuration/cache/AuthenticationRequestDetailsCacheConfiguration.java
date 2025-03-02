@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Used in the authentication flow with PKCE (Proof of Key Code Exchange).
  *
- * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+ * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */
 @Configuration
 @Getter

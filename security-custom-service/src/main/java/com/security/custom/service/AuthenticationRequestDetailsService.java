@@ -23,14 +23,10 @@ public class AuthenticationRequestDetailsService {
 
     private final AuthenticationRequestDetailsCacheService cacheService;
 
-    private final EncryptorService encryptorService;
-
 
     @Autowired
-    public AuthenticationRequestDetailsService(final AuthenticationRequestDetailsCacheService cacheService,
-                                               final EncryptorService encryptorService) {
+    public AuthenticationRequestDetailsService(final AuthenticationRequestDetailsCacheService cacheService) {
         this.cacheService = cacheService;
-        this.encryptorService = encryptorService;
     }
 
 
@@ -124,12 +120,6 @@ public class AuthenticationRequestDetailsService {
                                         UUID.randomUUID().toString()
                                 )
                                 .applicationClientId(applicationClientId)
-                                .username(ar.getUsername())
-                                .encryptedPassword(
-                                        encryptorService.defaultEncrypt(
-                                                ar.getPassword()
-                                        )
-                                )
                                 .challenge(ar.getChallenge())
                                 .challengeMethod(
                                         HashAlgorithm.getByAlgorithm(

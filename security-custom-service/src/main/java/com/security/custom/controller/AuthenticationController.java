@@ -56,7 +56,7 @@ public class AuthenticationController extends BaseController {
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
-     * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+     * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
      */
     @Operation(
             summary = "Logins a user in a given application",
@@ -146,7 +146,7 @@ public class AuthenticationController extends BaseController {
      * @return if there is no error, the {@link AuthenticationInformationAuthorizationCodeDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
-     * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+     * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
      */
     @Operation(
             summary = "Logins a user in a given application as part of the PKCE flow (first request)",
@@ -233,7 +233,7 @@ public class AuthenticationController extends BaseController {
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
      *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
      *
-     * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+     * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
      */
     @Operation(
             summary = "Logins a user in a given application as part of the PKCE flow (second request)",
@@ -303,8 +303,7 @@ public class AuthenticationController extends BaseController {
                 .map(applicationClientDetails ->
                         service.loginToken(
                                         applicationClientDetails.getUsername(),
-                                        authenticationRequestDto.getAuthorizationCode(),
-                                        authenticationRequestDto.getVerifier()
+                                        authenticationRequestDto
                                 )
                                 .map(ai ->
                                         new ResponseEntity<>(

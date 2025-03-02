@@ -11,7 +11,7 @@ import java.io.Serial;
  * as the second one.
  *
  * @see AuthenticationService
- * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+ * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */
 public class ApplicationClientMismatchException extends RuntimeException {
 

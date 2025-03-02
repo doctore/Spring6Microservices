@@ -100,8 +100,6 @@ public class TestDataFactory {
         return new AuthenticationRequestDetails(
                 authorizationCode,
                 SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId(),
-                "username test",
-                "encryptedPassword test",
                 "challenge test",
                 HashAlgorithm.SHA_384
         );
@@ -113,8 +111,6 @@ public class TestDataFactory {
         return new AuthenticationRequestDetails(
                 authorizationCode,
                 applicationClientId,
-                "username test",
-                "encryptedPassword test",
                 "challenge test",
                 HashAlgorithm.SHA_384
         );
@@ -123,15 +119,11 @@ public class TestDataFactory {
 
     public static AuthenticationRequestDetails buildAuthenticationRequestDetails(final String authorizationCode,
                                                                                  final String applicationClientId,
-                                                                                 final String username,
-                                                                                 final String encryptedPassword,
                                                                                  final String challenge,
                                                                                  final HashAlgorithm challengeMethod) {
         return new AuthenticationRequestDetails(
                 authorizationCode,
                 applicationClientId,
-                username,
-                encryptedPassword,
                 challenge,
                 challengeMethod
         );
@@ -147,34 +139,30 @@ public class TestDataFactory {
     }
 
 
-    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String username,
-                                                                                                       final String password,
-                                                                                                       final String challengeMethod) {
+    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String challengeMethod) {
         return new AuthenticationRequestLoginAuthorizedDto(
-                username,
-                password,
                 "challenge test",
                 challengeMethod
         );
     }
 
 
-    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String username,
-                                                                                                       final String password,
-                                                                                                       final String challenge,
+    public static AuthenticationRequestLoginAuthorizedDto buildAuthenticationRequestLoginAuthorizedDto(final String challenge,
                                                                                                        final String challengeMethod) {
         return new AuthenticationRequestLoginAuthorizedDto(
-                username,
-                password,
                 challenge,
                 challengeMethod
         );
     }
 
 
-    public static AuthenticationRequestLoginTokenDto buildAuthenticationRequestLoginTokenDto(final String authorizationCode,
+    public static AuthenticationRequestLoginTokenDto buildAuthenticationRequestLoginTokenDto(final String username,
+                                                                                             final String password,
+                                                                                             final String authorizationCode,
                                                                                              final String verifier) {
         return new AuthenticationRequestLoginTokenDto(
+                username,
+                password,
                 authorizationCode,
                 verifier
         );

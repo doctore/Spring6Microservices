@@ -12,25 +12,15 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 /**
  * Required data to authenticate a user using flow with PKCE (first request).
  *
- * @see <a href="http://google.com">https://oauth.net/2/pkce/</a>
+ * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(of = { "username" })
+@EqualsAndHashCode(of = { "challenge" })
 @NoArgsConstructor
 @Schema(description = "Required data to authenticate a user using flow with PKCE (first request)")
-@ToString(exclude = { "password" })
+@ToString
 public class AuthenticationRequestLoginAuthorizedDto {
-
-    @Schema(requiredMode = RequiredMode.REQUIRED)
-    @NotNull
-    @Size(min = 1, max = 64)
-    private String username;
-
-    @Schema(requiredMode = RequiredMode.REQUIRED)
-    @NotNull
-    @Size(min = 1, max = 128)
-    private String password;
 
     @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotNull
