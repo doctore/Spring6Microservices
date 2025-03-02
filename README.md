@@ -342,7 +342,7 @@ In the previous image, I have used for this example `admin/admin`, there is anot
 **3.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>):
 
 ![Alt text](/documentation/SecurityCustomService_LoginToken.png?raw=true "Get authentication information")
-<br>
+<br><br>
 
 **4.** Once the *access* token has expired, return new authentication information using *refresh* token:
 
