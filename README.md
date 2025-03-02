@@ -332,12 +332,12 @@ So, the list of web services is the following one:
 
 In the previous image, I have used for this example `admin/admin`, there is another option: `user/user`, included in the SQL file
 [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L35).
-<br>
+<br><br>
 
 **2.** Get the authorization token using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>):
 
 ![Alt text](/documentation/SecurityCustomService_LoginAuthorized.png?raw=true "Direct Login")
-<br>
+<br><br>
 
 **3.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>):
 
@@ -347,7 +347,7 @@ In the previous image, I have used for this example `admin/admin`, there is anot
 **4.** Once the *access* token has expired, return new authentication information using *refresh* token:
 
 ![Alt text](/documentation/SecurityCustomService_RefreshToken.png?raw=true "Refresh token")
-<br>
+<br><br>
 
 **5.** Get authorization information using *access* token:
 
