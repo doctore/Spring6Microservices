@@ -331,7 +331,7 @@ So, the list of web services is the following one:
 
 ![Alt text](/documentation/SecurityCustomService_DirectLogin.png?raw=true "Direct Login")
 
-In the previous image, I have used for this example `admin/admin`, there is another option: `user/user`, included in the SQL file
+In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file
 [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L35).
 <br><br>
 
