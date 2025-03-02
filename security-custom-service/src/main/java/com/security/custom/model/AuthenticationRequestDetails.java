@@ -5,6 +5,8 @@ import lombok.*;
 
 /**
  * Required data to authenticate a user using flow with PKCE.
+ *
+ * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */
 @AllArgsConstructor
 @Builder
