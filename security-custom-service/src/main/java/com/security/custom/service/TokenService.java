@@ -1,6 +1,8 @@
 package com.security.custom.service;
 
+import com.security.custom.configuration.security.EncryptionConfiguration;
 import com.security.custom.dto.RawAuthenticationInformationDto;
+import com.security.custom.enums.token.TokenType;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
@@ -20,17 +22,22 @@ import java.util.UUID;
 import static com.security.custom.enums.token.TokenKey.AUDIENCE;
 import static com.security.custom.enums.token.TokenKey.JWT_ID;
 import static com.security.custom.enums.token.TokenKey.REFRESH_JWT_ID;
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 @Log4j2
 @Service
 public class TokenService {
 
+    private final EncryptionConfiguration encryptionConfiguration;
+
     private final EncryptorService encryptorService;
 
 
     @Autowired
-    public TokenService(final EncryptorService encryptorService) {
+    public TokenService(final EncryptionConfiguration encryptionConfiguration,
+                        final EncryptorService encryptorService) {
+        this.encryptionConfiguration = encryptionConfiguration;
         this.encryptorService = encryptorService;
     }
 
@@ -46,9 +53,11 @@ public class TokenService {
      * @param tokenIdentifier
      *    Unique identifier of the access token
      *
-     * @return {@link String} with access token
+     * @return {@link String} with the access token
      *
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
+     *                                       and there was an error encrypting the token to return
      */
     public String createAccessToken(final ApplicationClientDetails applicationClientDetails,
                                     final RawAuthenticationInformationDto rawAuthenticationInformation,
@@ -88,9 +97,11 @@ public class TokenService {
      * @param tokenIdentifier
      *    Unique identifier of the refresh token
      *
-     * @return {@link String} with refresh token
+     * @return {@link String} with the refresh token
      *
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
+     *                                       and there was an error encrypting the token to return
      */
     public String createRefreshToken(final ApplicationClientDetails applicationClientDetails,
                                      final RawAuthenticationInformationDto rawAuthenticationInformation,
@@ -130,40 +141,47 @@ public class TokenService {
 
 
     /**
-     * Gets from the given JWS or JWE {@code token} its verified payload information.
+     *    Extracts from the given {@code token} its payload information. {@link ApplicationClientDetails#getTokenType()}
+     * will provide the type of token to be managed.
      *
      * @param applicationClientDetails
      *    {@link ApplicationClientDetails} with the details about how to get token's payload
      * @param token
-     *    {@link String} with the token of which to extract the payload
+     *    {@link String} with the token to extract the payload
      *
-     * @return {@link Map} with the {@code payload} of the given token
+     * @return {@link Map} with the {@code payload} of the given {@code token}
      *
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws TokenInvalidException if the given {@code token} is not a valid one
      * @throws TokenExpiredException if {@code token} is valid but has expired
      * @throws TokenException if there was a problem getting claims of {@code token}
+     * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
+     *                                       and there was an error decrypting the token to return
      */
     public Map<String, Object> getPayloadOfToken(final ApplicationClientDetails applicationClientDetails,
                                                  final String token) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        if (applicationClientDetails.useJwe()) {
-            return JweUtil.getAllClaimsFromToken(
-                    token,
-                    encryptorService.decrypt(
-                            applicationClientDetails.getEncryptionSecret()
-                    ),
-                    encryptorService.decrypt(
-                            applicationClientDetails.getSignatureSecret()
-                    )
-            );
-        }
-        return JwsUtil.getAllClaimsFromToken(
-                token,
-                encryptorService.decrypt(
-                        applicationClientDetails.getSignatureSecret()
-                )
-        );
+        TokenType tokenType = applicationClientDetails.getTokenType();
+        String finalToken = TokenType.getEncryptedTokenTypes().contains(tokenType)
+                ? decryptToken(token)
+                : token;
+
+        return TokenType.getRequiredEncryptionAlgorithm().contains(tokenType)
+                ? JweUtil.getAllClaimsFromToken(
+                        finalToken,
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getEncryptionSecret()
+                        ),
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getSignatureSecret()
+                        )
+                  )
+                : JwsUtil.getAllClaimsFromToken(
+                        finalToken,
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getSignatureSecret()
+                        )
+                  );
     }
 
 
@@ -245,7 +263,7 @@ public class TokenService {
 
 
     /**
-     * Generates the JWS or JWE token taking into account the value of {@link ApplicationClientDetails#getEncryptionAlgorithm()}.
+     * Generates the token taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
      *
      * @param informationToInclude
      *    {@link Map} with the information to include in the returned JWS token
@@ -255,33 +273,94 @@ public class TokenService {
      *    How many seconds the JWS/JWE token will be valid
      *
      * @return {@link String} with the JWS/JWE token
+     *
+     * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
+     *                                       and there was an error encrypting the token to return
      */
     private String generateToken(final Map<String, Object> informationToInclude,
                                  final ApplicationClientDetails applicationClientDetails,
                                  final int tokenValidityInSeconds) {
-        if (applicationClientDetails.useJwe()) {
-            return JweUtil.generateToken(
-                    informationToInclude,
-                    applicationClientDetails.getEncryptionAlgorithm(),
-                    applicationClientDetails.getEncryptionMethod(),
-                    encryptorService.decrypt(
-                            applicationClientDetails.getEncryptionSecret()
+        TokenType tokenType = applicationClientDetails.getTokenType();
+        String token = TokenType.getRequiredEncryptionAlgorithm().contains(tokenType)
+                ? JweUtil.generateToken(
+                        informationToInclude,
+                        applicationClientDetails.getEncryptionAlgorithm(),
+                        applicationClientDetails.getEncryptionMethod(),
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getEncryptionSecret()
+                        ),
+                        applicationClientDetails.getSignatureAlgorithm(),
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getSignatureSecret()
+                        ),
+                        tokenValidityInSeconds
+                  )
+                : JwsUtil.generateToken(
+                        informationToInclude,
+                        applicationClientDetails.getSignatureAlgorithm(),
+                        encryptorService.defaultDecrypt(
+                                applicationClientDetails.getSignatureSecret()
+                        ),
+                        tokenValidityInSeconds
+                  );
+
+        return TokenType.getEncryptedTokenTypes().contains(tokenType)
+                ? encryptToken(token)
+                : token;
+    }
+
+
+    /**
+     * Decrypts the given {@code encryptedToken}.
+     *
+     * @param encryptedToken
+     *    Token to decrypt
+     *
+     * @return {@link String} with the source (not encrypted) token
+     *
+     * @throws UnsupportedOperationException if there was an error decrypting provided {@code encryptedToken}
+     */
+    private String decryptToken(final String encryptedToken) {
+        try {
+            return encryptorService.decrypt(
+                    encryptedToken,
+                    encryptionConfiguration.getCustomKey()
+            );
+        } catch (Exception e) {
+            throw new UnsupportedOperationException(
+                    format("There was a problem decrypting the token: %s",
+                            encryptedToken
                     ),
-                    applicationClientDetails.getSignatureAlgorithm(),
-                    encryptorService.decrypt(
-                            applicationClientDetails.getSignatureSecret()
-                    ),
-                    tokenValidityInSeconds
+                    e
             );
         }
-        return JwsUtil.generateToken(
-                informationToInclude,
-                applicationClientDetails.getSignatureAlgorithm(),
-                encryptorService.decrypt(
-                        applicationClientDetails.getSignatureSecret()
-                ),
-                tokenValidityInSeconds
-        );
+    }
+
+
+    /**
+     * Encrypts the given {@code originalToken}.
+     *
+     * @param originalToken
+     *    Token to encrypt
+     *
+     * @return {@link String} with the encrypted token
+     *
+     * @throws UnsupportedOperationException if there was an error encrypting provided {@code originalToken}
+     */
+    private String encryptToken(final String originalToken) {
+        try {
+            return encryptorService.encrypt(
+                    originalToken,
+                    encryptionConfiguration.getCustomKey()
+            );
+        } catch (Exception e) {
+            throw new UnsupportedOperationException(
+                    format("There was a problem encrypting the token: %s",
+                            originalToken
+                    ),
+                    e
+            );
+        }
     }
 
 }

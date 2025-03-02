@@ -5,6 +5,7 @@ import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
+import com.security.custom.enums.token.TokenType;
 import com.security.custom.model.ApplicationClientDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,6 +48,7 @@ public class ApplicationClientDetailsRepositoryTest {
                 .signatureAlgorithm(TokenSignatureAlgorithm.HS256)
                 .signatureSecret("hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k")
                 .securityHandler(SecurityHandler.SPRING6_MICROSERVICES)
+                .tokenType(TokenType.JWE)
                 .encryptionAlgorithm(TokenEncryptionAlgorithm.DIR)
                 .encryptionMethod(TokenEncryptionMethod.A128CBC_HS256)
                 .encryptionSecret("dirEncryptionSecret##9991a2(jwe)")

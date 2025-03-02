@@ -20,6 +20,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
+# Encryption configuration
+encrypt:
+  customKey: onlyForTests
+
+
 # Disable eureka server connection request for testing
 eureka:
   client:

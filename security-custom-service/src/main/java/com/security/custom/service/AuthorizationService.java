@@ -214,7 +214,7 @@ public class AuthorizationService {
         );
         if (isAccessToken != tokenService.isPayloadRelatedWithAccessToken(payload)) {
             throw new TokenInvalidException(
-                    format("The given token: %s related with clientId: %s is not an " + (isAccessToken ? "access " : "refresh ") + "one",
+                    format("The given token: %s related with clientId: %s is not a " + (isAccessToken ? "access " : "refresh ") + "one",
                             token,
                             applicationClientDetails.getId()
                     )

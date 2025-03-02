@@ -101,7 +101,7 @@ public class AuthenticationRequestDetailsServiceTest {
         assertTrue(result.isEmpty());
 
         verify(mockEncryptorService, never())
-                .encrypt(anyString());
+                .defaultEncrypt(anyString());
 
         verify(mockCacheService, never())
                 .put(anyString(), any(AuthenticationRequestDetails.class));
@@ -123,7 +123,7 @@ public class AuthenticationRequestDetailsServiceTest {
         );
 
         verify(mockEncryptorService, times(1))
-                .encrypt(eq(invalidDto.getPassword()));
+                .defaultEncrypt(eq(invalidDto.getPassword()));
 
         verify(mockCacheService, never())
                 .put(anyString(), any(AuthenticationRequestDetails.class));
@@ -148,7 +148,7 @@ public class AuthenticationRequestDetailsServiceTest {
         );
 
         verify(mockEncryptorService, times(1))
-                .encrypt(eq(validDto.getPassword()));
+                .defaultEncrypt(eq(validDto.getPassword()));
 
         verify(mockCacheService, times(1))
                 .put(anyString(), any(AuthenticationRequestDetails.class));
@@ -173,7 +173,7 @@ public class AuthenticationRequestDetailsServiceTest {
                 HashAlgorithm.getByAlgorithm(validDto.getChallengeMethod()).get()
         );
 
-        when(mockEncryptorService.encrypt(eq(validDto.getPassword())))
+        when(mockEncryptorService.defaultEncrypt(eq(validDto.getPassword())))
                 .thenReturn("encrypted value");
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
                 .thenReturn(true);
@@ -191,7 +191,7 @@ public class AuthenticationRequestDetailsServiceTest {
         );
 
         verify(mockEncryptorService, times(1))
-                .encrypt(eq(validDto.getPassword()));
+                .defaultEncrypt(eq(validDto.getPassword()));
 
         verify(mockCacheService, times(1))
                 .put(anyString(), any(AuthenticationRequestDetails.class));

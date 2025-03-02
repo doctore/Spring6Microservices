@@ -2,11 +2,13 @@ package com.spring6microservices.common.core.functional.validation;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import static java.util.Optional.ofNullable;
 
 @Getter
 @EqualsAndHashCode
+@ToString
 public class ValidationError implements Comparable<ValidationError> {
 
     private final int priority;          // Greater means more priority

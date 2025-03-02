@@ -8,7 +8,7 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 
 /**
- * Allowed algorithms to encrypt a JWT token.
+ * Allowed algorithms to encrypt a JWS token.
  * <p>
  * Regarding how to generate a valid encryption keys according to the selected algorithm:
  * <p>

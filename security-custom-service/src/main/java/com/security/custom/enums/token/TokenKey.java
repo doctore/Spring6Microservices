@@ -1,10 +1,15 @@
 package com.security.custom.enums.token;
 
 import com.spring6microservices.common.core.util.EnumUtil;
+import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Claims added in the returned access and refresh tokens.
+ */
+@Getter
 public enum TokenKey {
 
     AUDIENCE("aud"),
@@ -22,11 +27,6 @@ public enum TokenKey {
 
     TokenKey(String key) {
         this.key = key;
-    }
-
-
-    public String getKey() {
-        return key;
     }
 
 

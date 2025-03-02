@@ -2,8 +2,12 @@ package com.security.custom.service;
 
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.model.validator.ApplicationClientDetailsValidator;
 import com.security.custom.repository.ApplicationClientDetailsRepository;
 import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
+import com.spring6microservices.common.core.functional.validation.Validation;
+import com.spring6microservices.common.core.functional.validation.ValidationError;
+import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -39,6 +43,8 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
      * @return {@link ApplicationClientDetails} if exists
      *
      * @throws ApplicationClientNotFoundException if the given {@code id} does not exist neither in database nor cache
+     * @throws UnsupportedOperationException if the returned {@link ApplicationClientDetails} is not a valid one
+     *                                       (it was not well configured)
      */
     public ApplicationClientDetails findById(final String id) {
         return ofNullable(id)
@@ -56,6 +62,7 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
                                                 .orElse(null)
                                     )
                 )
+                .map(this::validateApplicationClientDetailsOrThrow)
                 .orElseThrow(() ->
                         new ApplicationClientNotFoundException(
                                 format("The given id: %s was not found in database",
@@ -84,6 +91,36 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
         new AccountStatusUserDetailsChecker()
                 .check(userDetails);
         return Mono.just(userDetails);
+    }
+
+
+    /**
+     *    Returns the given {@code applicationClientDetails} if it was well configured, otherwise throws a
+     * {@link UnsupportedOperationException} containing them.
+     *
+     * @param applicationClientDetails
+     *    {@link ApplicationClientDetails} to verify
+     *
+     * @return {@code applicationClientDetails} if the instance was well configured,
+     *         throws {@link UnsupportedOperationException} otherwise
+     *
+     * @throws UnsupportedOperationException if {@code applicationClientDetails} was not well configured
+     */
+    private ApplicationClientDetails validateApplicationClientDetailsOrThrow(final ApplicationClientDetails applicationClientDetails) {
+        Validation<ValidationError, ApplicationClientDetails> validation = new ApplicationClientDetailsValidator()
+                .validate(applicationClientDetails);
+
+        if (validation.isValid()) {
+            return applicationClientDetails;
+        }
+        throw new UnsupportedOperationException(
+                format("The application client details: %s was not well configured. Error messages: %s",
+                        applicationClientDetails.getId(),
+                        StringUtil.join(
+                                validation.getErrors()
+                        )
+                )
+        );
     }
 
 }

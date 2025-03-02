@@ -1,6 +1,7 @@
 package com.security.custom.service;
 
 import com.spring6microservices.common.core.util.StringUtil;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -38,7 +39,7 @@ public class EncryptorServiceTest {
     }
 
 
-    static Stream<Arguments> decryptTestCases() {
+    static Stream<Arguments> defaultDecryptTestCases() {
         String decryptedText = "ItIsNotImportant";
         return Stream.of(
                 //@formatter:off
@@ -50,16 +51,16 @@ public class EncryptorServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("decryptTestCases")
-    @DisplayName("decrypt: test cases")
-    public void decrypt_testCases(String encryptedText,
-                                  String expectedResult) {
+    @MethodSource("defaultDecryptTestCases")
+    @DisplayName("defaultDecrypt: test cases")
+    public void defaultDecrypt_testCases(String encryptedText,
+                                         String expectedResult) {
         when(mockTextEncryptor.decrypt(anyString()))
                 .thenReturn(expectedResult);
 
         assertEquals(
                 expectedResult,
-                service.decrypt(encryptedText)
+                service.defaultDecrypt(encryptedText)
         );
         VerificationMode timesInvoked = null == encryptedText
                 ? times(0)
@@ -72,7 +73,7 @@ public class EncryptorServiceTest {
     }
 
 
-    static Stream<Arguments> encryptTestCases() {
+    static Stream<Arguments> defaultEncryptTestCases() {
         String encryptedText = "ItIsNotImportant";
         return Stream.of(
                 //@formatter:off
@@ -83,16 +84,16 @@ public class EncryptorServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("encryptTestCases")
-    @DisplayName("encrypt: test cases")
-    public void encrypt_testCases(String textToEncrypt,
-                                  String expectedResult) {
+    @MethodSource("defaultEncryptTestCases")
+    @DisplayName("defaultEncrypt: test cases")
+    public void defaultEncrypt_testCases(String textToEncrypt,
+                                         String expectedResult) {
         when(mockTextEncryptor.encrypt(eq(textToEncrypt)))
                 .thenReturn(expectedResult);
 
         assertEquals(
                 expectedResult,
-                service.encrypt(textToEncrypt)
+                service.defaultEncrypt(textToEncrypt)
         );
         VerificationMode timesInvoked = null == textToEncrypt
                 ? times(0)
@@ -102,6 +103,70 @@ public class EncryptorServiceTest {
                 .encrypt(
                         eq(textToEncrypt)
                 );
+    }
+
+
+    static Stream<Arguments> encryptTestCases() {
+        String toEncrypt = "Raw information to encrypt";
+        String password = "23Rhf(@_2-Poas";
+        return Stream.of(
+                //@formatter:off
+                //            toEncrypt,   password,   expectedException
+                Arguments.of( null,        null,       IllegalArgumentException.class ),
+                Arguments.of( toEncrypt,   null,       IllegalArgumentException.class ),
+                Arguments.of( toEncrypt,   password,   null )
+        ); //@formatter:on
+    }
+
+    @SneakyThrows
+    @ParameterizedTest
+    @MethodSource("encryptTestCases")
+    @DisplayName("encrypt: test cases")
+    public void encrypt_testCases(String toEncrypt,
+                                  String password,
+                                  Class<? extends Exception> expectedException) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> service.encrypt(toEncrypt, password)
+            );
+        } else {
+            assertNotNull(service.encrypt(toEncrypt, password));
+        }
+    }
+
+
+    static Stream<Arguments> decryptTestCases() {
+        String toDecrypt = "SGB2pnNj1NUZ7IKV6RpEes/cv76rwV/0fNopGgnIuVeyuy1wdOomylv4i0geFJBHQe0B4VAyjcWGD6gpCEtszrGwcDiu1w==";
+        String password = "23Rhf(@_2-Poas";
+        String decrypted = "Raw information to encrypt";
+        return Stream.of(
+                //@formatter:off
+                //            toDecrypt,   password,   expectedException,                expectedResult
+                Arguments.of( null,        null,       IllegalArgumentException.class,   null ),
+                Arguments.of( toDecrypt,   null,       IllegalArgumentException.class,   null ),
+                Arguments.of( toDecrypt,   password,   null,                             decrypted )
+        ); //@formatter:on
+    }
+
+    @SneakyThrows
+    @ParameterizedTest
+    @MethodSource("decryptTestCases")
+    @DisplayName("decrypt: test cases")
+    public void decrypt_testCases(String toDecrypt,
+                                  String password, Class<? extends Exception> expectedException,
+                                  String expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> service.decrypt(toDecrypt, password)
+            );
+        } else {
+            assertEquals(
+                    expectedResult,
+                    service.decrypt(toDecrypt, password)
+            );
+        }
     }
 
 }

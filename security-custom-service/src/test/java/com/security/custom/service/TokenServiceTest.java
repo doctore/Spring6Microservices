@@ -1,6 +1,8 @@
 package com.security.custom.service;
 
+import com.security.custom.configuration.security.EncryptionConfiguration;
 import com.security.custom.dto.RawAuthenticationInformationDto;
+import com.security.custom.enums.token.TokenType;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
 import com.security.custom.model.ApplicationClientDetails;
@@ -33,10 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class TokenServiceTest {
+
+    @Mock
+    private EncryptionConfiguration mockEncryptionConfiguration;
 
     @Mock
     private EncryptorService mockEncryptorService;
@@ -47,13 +52,15 @@ public class TokenServiceTest {
     @BeforeEach
     public void init() {
         service = new TokenService(
+                mockEncryptionConfiguration,
                 mockEncryptorService
         );
+        when(mockEncryptionConfiguration.getCustomKey())
+                .thenReturn("ItDoesNotCare");
     }
 
 
     static Stream<Arguments> createAccessTokenTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
         RawAuthenticationInformationDto rawAuthenticationInformation = buildRawAuthenticationInformationDto(
                 "ItDoesNotCare",
                 List.of()
@@ -61,15 +68,18 @@ public class TokenServiceTest {
         String tokenIdentifier = "ItDoesNotCare";
         return Stream.of(
                 //@formatter:off
-                //            applicationClientDetails,   rawAuthenticationInformation,   tokenIdentifier,   expectedException
-                Arguments.of( null,                       null,                           null,              IllegalArgumentException.class ),
-                Arguments.of( null,                       rawAuthenticationInformation,   null,              IllegalArgumentException.class ),
-                Arguments.of( null,                       null,                           tokenIdentifier,   IllegalArgumentException.class ),
-                Arguments.of( null,                       rawAuthenticationInformation,   tokenIdentifier,   IllegalArgumentException.class ),
-                Arguments.of( applicationClientDetails,   null,                           null,              null ),
-                Arguments.of( applicationClientDetails,   rawAuthenticationInformation,   null,              null ),
-                Arguments.of( applicationClientDetails,   null,                           tokenIdentifier,   null ),
-                Arguments.of( applicationClientDetails,   rawAuthenticationInformation,   tokenIdentifier,   null )
+                //            applicationClientDetails,                   rawAuthenticationInformation,   tokenIdentifier,   expectedException
+                Arguments.of( null,                                       null,                           null,              IllegalArgumentException.class ),
+                Arguments.of( null,                                       rawAuthenticationInformation,   null,              IllegalArgumentException.class ),
+                Arguments.of( null,                                       null,                           tokenIdentifier,   IllegalArgumentException.class ),
+                Arguments.of( null,                                       rawAuthenticationInformation,   tokenIdentifier,   IllegalArgumentException.class ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             null,                           null,              null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             rawAuthenticationInformation,   null,              null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             null,                           tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWS,             rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE,   rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS,   rawAuthenticationInformation,   tokenIdentifier,   null )
         ); //@formatter:on
     }
 
@@ -79,11 +89,16 @@ public class TokenServiceTest {
     public void createAccessToken_testCases(ApplicationClientDetails applicationClientDetails,
                                             RawAuthenticationInformationDto rawAuthenticationInformation,
                                             String tokenIdentifier,
-                                            Class<? extends Exception> expectedException) {
-        when(mockEncryptorService.decrypt(anyString()))
+                                            Class<? extends Exception> expectedException) throws Exception {
+        when(mockEncryptorService.defaultDecrypt(anyString()))
                 .then(
                         returnsFirstArg()
                 );
+        when(mockEncryptorService.encrypt(anyString(), anyString()))
+                .then(
+                        returnsFirstArg()
+                );
+
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -95,11 +110,12 @@ public class TokenServiceTest {
                     service.createAccessToken(applicationClientDetails, rawAuthenticationInformation, tokenIdentifier)
             );
         }
+
+        verifyEncryptInvocations(applicationClientDetails);
     }
 
 
     static Stream<Arguments> createRefreshTokenTestCases() {
-        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE("ItDoesNotCare");
         RawAuthenticationInformationDto rawAuthenticationInformation = buildRawAuthenticationInformationDto(
                 "ItDoesNotCare",
                 List.of()
@@ -107,15 +123,18 @@ public class TokenServiceTest {
         String tokenIdentifier = "ItDoesNotCare";
         return Stream.of(
                 //@formatter:off
-                //            applicationClientDetails,   rawAuthenticationInformation,   tokenIdentifier,   expectedException
-                Arguments.of( null,                       null,                           null,              IllegalArgumentException.class ),
-                Arguments.of( null,                       rawAuthenticationInformation,   null,              IllegalArgumentException.class ),
-                Arguments.of( null,                       null,                           tokenIdentifier,   IllegalArgumentException.class ),
-                Arguments.of( null,                       rawAuthenticationInformation,   tokenIdentifier,   IllegalArgumentException.class ),
-                Arguments.of( applicationClientDetails,   null,                           null,              null ),
-                Arguments.of( applicationClientDetails,   rawAuthenticationInformation,   null,              null ),
-                Arguments.of( applicationClientDetails,   null,                           tokenIdentifier,   null ),
-                Arguments.of( applicationClientDetails,   rawAuthenticationInformation,   tokenIdentifier,   null )
+                //            applicationClientDetails,                   rawAuthenticationInformation,   tokenIdentifier,   expectedException
+                Arguments.of( null,                                       null,                           null,              IllegalArgumentException.class ),
+                Arguments.of( null,                                       rawAuthenticationInformation,   null,              IllegalArgumentException.class ),
+                Arguments.of( null,                                       null,                           tokenIdentifier,   IllegalArgumentException.class ),
+                Arguments.of( null,                                       rawAuthenticationInformation,   tokenIdentifier,   IllegalArgumentException.class ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             null,                           null,              null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             rawAuthenticationInformation,   null,              null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             null,                           tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWS,             rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE,   rawAuthenticationInformation,   tokenIdentifier,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS,   rawAuthenticationInformation,   tokenIdentifier,   null )
         ); //@formatter:on
     }
 
@@ -125,11 +144,16 @@ public class TokenServiceTest {
     public void createRefreshToken_testCases(ApplicationClientDetails applicationClientDetails,
                                              RawAuthenticationInformationDto rawAuthenticationInformation,
                                              String tokenIdentifier,
-                                             Class<? extends Exception> expectedException) {
-        when(mockEncryptorService.decrypt(anyString()))
+                                             Class<? extends Exception> expectedException) throws Exception {
+        when(mockEncryptorService.defaultDecrypt(anyString()))
                 .then(
                         returnsFirstArg()
                 );
+        when(mockEncryptorService.encrypt(anyString(), anyString()))
+                .then(
+                        returnsFirstArg()
+                );
+
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -141,6 +165,8 @@ public class TokenServiceTest {
                     service.createRefreshToken(applicationClientDetails, rawAuthenticationInformation, tokenIdentifier)
             );
         }
+
+        verifyEncryptInvocations(applicationClientDetails);
     }
 
 
@@ -155,8 +181,6 @@ public class TokenServiceTest {
 
 
     static Stream<Arguments> getPayloadOfTokenTestCases() {
-        ApplicationClientDetails applicationClientDetailsJWE = buildApplicationClientDetailsJWE("JWE");
-        ApplicationClientDetails applicationClientDetailsJWS = buildApplicationClientDetailsJWS("JWS");
         Map<String, Object> expectedResultValidToken = new LinkedHashMap<>() {{
             put("name", "name value");
             put("exp", new Date(5000000000L * 1000));
@@ -167,15 +191,17 @@ public class TokenServiceTest {
         }};
         return Stream.of(
                 //@formatter:off
-                //            applicationClientDetails,      token,                                      expectedException,                expectedResult
-                Arguments.of( null,                          null,                                       IllegalArgumentException.class,   null ),
-                Arguments.of( null,                          "ItDoesNotCare",                            IllegalArgumentException.class,   null ),
-                Arguments.of( applicationClientDetailsJWE,   NOT_JWE_TOKEN,                              TokenInvalidException.class,      null ),
-                Arguments.of( applicationClientDetailsJWE,   EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,       TokenExpiredException.class,      null ),
-                Arguments.of( applicationClientDetailsJWE,   NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,   null,                             expectedResultValidToken ),
-                Arguments.of( applicationClientDetailsJWS,   NOT_JWS_TOKEN,                              TokenInvalidException.class,      null ),
-                Arguments.of( applicationClientDetailsJWS,   EXPIRED_JWS_TOKEN_HS256,                    TokenExpiredException.class,      null ),
-                Arguments.of( applicationClientDetailsJWS,   NOT_EXPIRED_JWS_TOKEN_HS256,                null,                             expectedResultValidToken )
+                //            applicationClientDetails,                   token,                                      expectedException,                expectedResult
+                Arguments.of( null,                                       null,                                       IllegalArgumentException.class,   null ),
+                Arguments.of( null,                                       "ItDoesNotCare",                            IllegalArgumentException.class,   null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             NOT_JWE_TOKEN,                              TokenInvalidException.class,      null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,       TokenExpiredException.class,      null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWE,             NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,   null,                             expectedResultValidToken ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWS,             NOT_JWS_TOKEN,                              TokenInvalidException.class,      null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWS,             EXPIRED_JWS_TOKEN_HS256,                    TokenExpiredException.class,      null ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_JWS,             NOT_EXPIRED_JWS_TOKEN_HS256,                null,                             expectedResultValidToken ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE,   NOT_EXPIRED_JWE_TOKEN_DIR__A128CBC_HS256,   null,                             expectedResultValidToken ),
+                Arguments.of( APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS,   NOT_EXPIRED_JWS_TOKEN_HS256,                null,                             expectedResultValidToken )
         ); //@formatter:on
     }
 
@@ -185,11 +211,16 @@ public class TokenServiceTest {
     public void getPayloadOfToken_testCases(ApplicationClientDetails applicationClientDetails,
                                             String token,
                                             Class<? extends Exception> expectedException,
-                                            Map<String, Object> expectedResult) {
-        when(mockEncryptorService.decrypt(anyString()))
+                                            Map<String, Object> expectedResult) throws Exception {
+        when(mockEncryptorService.defaultDecrypt(anyString()))
                 .then(
                         returnsFirstArg()
                 );
+        when(mockEncryptorService.decrypt(anyString(), anyString()))
+                .then(
+                        returnsFirstArg()
+                );
+
         if (null != expectedException) {
             assertThrows(
                     expectedException,
@@ -202,6 +233,8 @@ public class TokenServiceTest {
                     service.getPayloadOfToken(applicationClientDetails, token)
             );
         }
+
+        verifyDecryptInvocations(applicationClientDetails);
     }
 
 
@@ -236,6 +269,59 @@ public class TokenServiceTest {
         );
     }
 
+
+    private void verifyDecryptInvocations(ApplicationClientDetails applicationClientDetails) throws Exception {
+        if (null == applicationClientDetails || !TokenType.getEncryptedTokenTypes().contains(applicationClientDetails.getTokenType())) {
+            verify(mockEncryptorService, never())
+                    .decrypt(
+                            anyString(),
+                            anyString()
+                    );
+        }
+        if (null != applicationClientDetails && TokenType.getEncryptedTokenTypes().contains(applicationClientDetails.getTokenType())) {
+            verify(mockEncryptorService, times(1))
+                    .decrypt(
+                            anyString(),
+                            anyString()
+                    );
+        }
+    }
+
+
+    private void verifyEncryptInvocations(ApplicationClientDetails applicationClientDetails) throws Exception {
+        if (null == applicationClientDetails || !TokenType.getEncryptedTokenTypes().contains(applicationClientDetails.getTokenType())) {
+            verify(mockEncryptorService, never())
+                    .encrypt(
+                            anyString(),
+                            anyString()
+                    );
+        }
+        if (null != applicationClientDetails && TokenType.getEncryptedTokenTypes().contains(applicationClientDetails.getTokenType())) {
+            verify(mockEncryptorService, times(1))
+                    .encrypt(
+                            anyString(),
+                            anyString()
+                    );
+        }
+    }
+
+
+
+    private static final ApplicationClientDetails APPLICATION_CLIENT_DETAILS_JWE = buildApplicationClientDetailsJWE("JWE");
+
+    private static final ApplicationClientDetails APPLICATION_CLIENT_DETAILS_JWS = buildApplicationClientDetailsJWS("JWS");
+
+    private static final ApplicationClientDetails APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE;
+
+    private static final ApplicationClientDetails APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS;
+
+    static {
+        APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE = buildApplicationClientDetailsJWE("JWE");
+        APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWE.setTokenType(TokenType.ENCRYPTED_JWE);
+
+        APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS = buildApplicationClientDetailsJWS("JWS");
+        APPLICATION_CLIENT_DETAILS_ENCRYPTED_JWS.setTokenType(TokenType.ENCRYPTED_JWS);
+    }
 
     private static final String NOT_JWS_TOKEN = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..B5boNIFOF9N3QKNEX8CPDA.Xd3_abfHI-5CWvQy9AiGI"
             + "B6-1tZ_EUp5ZhrldrZrj49mX9IU7S09FXbPXTCW6r_E_DrhE1fVXoKBTbjEG2F-s-UcpGvpPOBJmQoK0qtAfuo8YlonXGHNDs8f-TtQG0E4lO"

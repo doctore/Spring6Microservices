@@ -6,6 +6,7 @@ INSERT INTO security.application_client_details (id
                                                 ,signature_algorithm
                                                 ,signature_secret
                                                 ,security_handler
+                                                ,token_type
                                                 ,encryption_algorithm
                                                 ,encryption_method
                                                 ,encryption_secret
@@ -16,6 +17,7 @@ VALUES ('Spring6Microservices'
        ,'HS256'
        ,'hs256SignatureSecret#secret#789(jwt)$3411781_GTDSAET-569016310k'
        ,'SPRING6_MICROSERVICES'
+       ,'JWE'
        ,'DIR'
        ,'A128CBC_HS256'
        ,'dirEncryptionSecret##9991a2(jwe)'

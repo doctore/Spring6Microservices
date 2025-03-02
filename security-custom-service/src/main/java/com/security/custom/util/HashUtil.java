@@ -14,7 +14,6 @@ import static java.lang.String.format;
 @UtilityClass
 public class HashUtil {
 
-
     /**
      * Verify if applying the given {@code hashAlgorithm} with the provided {@code sourceString}, the result is {@code hashedString}
      *

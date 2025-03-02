@@ -6,6 +6,7 @@ INSERT INTO security.application_client_details (id
                                                 ,signature_algorithm
                                                 ,signature_secret
                                                 ,security_handler
+                                                ,token_type
                                                 ,encryption_algorithm
                                                 ,encryption_method
                                                 ,encryption_secret
@@ -18,6 +19,7 @@ VALUES ('Spring6Microservices'
         -- Raw signature_secret: Spring5Microservices_999#secret#789(jwt)$3411781_GTDSAET-569016310k
        ,'{cipher}04f1b9a71d880569283849aa911e4f3f3373a2522cba355e25e17f7ac7e262cb63d41295ab8bca038823b884858f05457306159cdfe68eb11c616028d6213b719887c07750e8c4b60dfea4196b1ddaffdcd462180028abc1a2d1dda69b8ac4bf'
        ,'SPRING6_MICROSERVICES'
+       ,'ENCRYPTED_JWE'
        ,'DIR'
        ,'A128CBC_HS256'
         -- Raw encryption_secret: 841d8A6C80C#A4FcAf32D5367t1!C53b

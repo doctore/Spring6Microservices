@@ -700,7 +700,7 @@ public class AuthenticationServiceTest {
                         authenticationRequestDetails
                 );
 
-        when(mockEncryptorService.decrypt(anyString()))
+        when(mockEncryptorService.defaultDecrypt(anyString()))
                 .thenReturn(
                         password
                 );

@@ -4,33 +4,27 @@ import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
 import com.security.custom.enums.token.TokenSignatureAlgorithm;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.security.custom.enums.token.TokenType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 import static com.security.custom.configuration.Constants.DATABASE;
 
 @AllArgsConstructor
 @Builder
-@Data
 @Entity
-@EqualsAndHashCode(of = {"id"})
+@Getter
 @NoArgsConstructor
+@Setter
 @Table(
         name = DATABASE.TABLE.APPLICATION_CLIENT_DETAILS,
         schema = DATABASE.SCHEMA
@@ -61,20 +55,35 @@ public class ApplicationClientDetails implements UserDetails {
     private SecurityHandler securityHandler;
 
     /**
-     *    If {@code null} then only JWS token will be used. In this case: {@link ApplicationClientDetails#encryptionMethod}
-     * and {@link ApplicationClientDetails#encryptionSecret} must be {@code null} too.
+     *    {@link ApplicationClientDetails#encryptionAlgorithm}, {@link ApplicationClientDetails#encryptionMethod} and
+     * {@link ApplicationClientDetails#encryptionSecret} must be {@code null} if its value is:
+     * <ul>
+     *     <li>{@link TokenType#JWS}</li>
+     *     <li>{@link TokenType#ENCRYPTED_JWS}</li>
+     * </ul>
+     * <p>
+     *    {@link ApplicationClientDetails#encryptionAlgorithm}, {@link ApplicationClientDetails#encryptionMethod} and
+     * {@link ApplicationClientDetails#encryptionSecret} must be not {@code null} if its value is:
+     * <ul>
+     *     <li>{@link TokenType#JWE}</li>
+     *     <li>{@link TokenType#ENCRYPTED_JWE}</li>
+     * </ul>
      */
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
+
     @Enumerated(EnumType.STRING)
     private TokenEncryptionAlgorithm encryptionAlgorithm;
 
     /**
-     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}
+     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}.
      */
     @Enumerated(EnumType.STRING)
     private TokenEncryptionMethod encryptionMethod;
 
     /**
-     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}
+     * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}.
      */
     private String encryptionSecret;
 
@@ -127,8 +136,22 @@ public class ApplicationClientDetails implements UserDetails {
     }
 
 
-    public boolean useJwe() {
-        return null != encryptionAlgorithm;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ApplicationClientDetails that = (ApplicationClientDetails) o;
+        return Objects.equals(
+                id,
+                that.id
+        );
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
 }

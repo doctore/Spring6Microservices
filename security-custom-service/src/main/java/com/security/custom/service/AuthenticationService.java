@@ -218,7 +218,7 @@ public class AuthenticationService {
         return login(
                 applicationClientId,
                 authenticationRequestDetails.getUsername(),
-                encryptorService.decrypt(
+                encryptorService.defaultDecrypt(
                         authenticationRequestDetails.getEncryptedPassword()
                 )
         );

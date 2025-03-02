@@ -7,6 +7,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Allowed methods to encrypt a JWS token.
+ */
 @Getter
 public enum TokenEncryptionMethod {
 

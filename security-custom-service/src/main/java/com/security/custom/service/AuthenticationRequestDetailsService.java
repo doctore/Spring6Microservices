@@ -126,7 +126,7 @@ public class AuthenticationRequestDetailsService {
                                 .applicationClientId(applicationClientId)
                                 .username(ar.getUsername())
                                 .encryptedPassword(
-                                        encryptorService.encrypt(
+                                        encryptorService.defaultEncrypt(
                                                 ar.getPassword()
                                         )
                                 )
