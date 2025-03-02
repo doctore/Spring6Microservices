@@ -136,7 +136,7 @@ public class AuthenticationController extends BaseController {
 
 
     /**
-     *    Generates the suitable {@link AuthenticationInformationAuthorizationCodeDto} using the given user's login information
+     *    Generates the suitable {@link AuthenticationInformationAuthorizationCodeDto} using the given {@link AuthenticationRequestLoginAuthorizedDto}
      * and Basic Auth data to extract the application is trying to log the provided user. This endpoint is part of the PKCE flow,
      * more specifically the first request.
      *
@@ -223,9 +223,9 @@ public class AuthenticationController extends BaseController {
 
 
     /**
-     *    Generates the suitable {@link AuthenticationInformationDto} using the given {@link AuthenticationRequestLoginTokenDto},
-     * the stored user's credentials information and Basic Auth data to extract the application is trying to log the user. This endpoint
-     * is part of the PKCE flow, more specifically the second request.
+     *    Generates the suitable {@link AuthenticationInformationDto} using the given {@link AuthenticationRequestLoginTokenDto}
+     * and Basic Auth data to extract the application is trying to log the user. This endpoint is part of the PKCE flow,
+     * more specifically the second request.
      *
      * @param authenticationRequestDto
      *    {@link AuthenticationRequestLoginAuthorizedDto}
