@@ -118,7 +118,7 @@ public class AuthenticationService {
 
 
     /**
-     *     Builds the {@link AuthenticationInformationAuthorizationCodeDto} using the authentication information: {@code authenticationRequestDto}
+     *     Builds the {@link AuthenticationInformationAuthorizationCodeDto} using the authentication information: {@code authenticationRequest}
      * related with a {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}). This method is part of the
      * PKCE flow, more specifically the first request.
      *
@@ -128,7 +128,7 @@ public class AuthenticationService {
      *    {@link AuthenticationRequestLoginAuthorizedDto} with the credentials information
      *
      * @return {@link Optional} of {@link AuthenticationInformationAuthorizationCodeDto} with the authorization code after
-     *         saving in the cache the provided {@code authenticationRequestDto}. {@link Optional#empty()} if no information
+     *         saving in the cache the provided {@code authenticationRequest}. {@link Optional#empty()} if no information
      *         could be stored.
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} is {@code null} or empty.
@@ -179,7 +179,7 @@ public class AuthenticationService {
      * @throws IllegalArgumentException if {@code authenticationRequestLoginToken} is {@code null}
      * @throws UnauthorizedException if the provided {@code verifier} does not match with stored {@link AuthenticationRequestDetails#getChallenge()}
      *                               and {@link AuthenticationRequestDetails#getChallengeMethod()} of the first request.
-     *                               If the {@link AuthenticationRequestLoginTokenDto#getPassword()} does not match with exists one related with stored
+     *                               If the {@link AuthenticationRequestLoginTokenDto#getPassword()} does not match with existing one related with stored
      *                               {@link AuthenticationRequestLoginTokenDto#getUsername()}
      * @throws UsernameNotFoundException if {@link AuthenticationRequestLoginTokenDto#getUsername()} does not exist in database
      *
