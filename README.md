@@ -101,10 +101,10 @@ Based on JWT token, this module was created to centralize the management of auth
 a completely multi-application platform to generate/manage their own access and refresh tokens (including additional information), choosing from the options
 defined in [TokenType](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenType.java):
 
-* JWS.
-* JWE.
-* ENCRYPTED_JWS.
-* ENCRYPTED_JWE.
+* JWS
+* JWE
+* ENCRYPTED_JWS
+* ENCRYPTED_JWE
 
 The provided algorithms to sign the JWT tokens, that is, generates **JWS** or the internal one inside **ENCRYPTED_JWS** are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
 On the other hand, the available algorithms selecting **JWE** or **ENCRYPTED_JWE** are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
@@ -310,7 +310,9 @@ Regarding every microservice, in this section I will explain the web services pr
 ### security-custom-service endpoints
 
 Before enter in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* credentials, based in
-the application configured in the database table: **security.application_client_details**. In the next pictures I will use the predefined one:
+the application configured in the database table: **security.application_client_details**.
+
+In the next pictures I will use the predefined one:
 [Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L4)
 
 ![Alt text](/documentation/SecurityCustomService_Credentials.png?raw=true "Basic Auth credentials")
@@ -318,9 +320,9 @@ the application configured in the database table: **security.application_client_
 This microservice provides 2 different authentication flows:
 
 * **Traditional:** the request contains the user's credentials and returns the full authentication response.
-* **[PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/):** there are 2 requests:
-  - The first one to send challenge data and receive the authorization code.
-  - The second one to send user's credentials, authorization code and verifier and returns the full authentication response.
+* **[PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/)** with 2 requests:
+  - The first one to send *challenge* data and receive the *authorization code*.
+  - The second one to send *user's credentials*, *authorization code* and *verifier* and returns the full authentication response.
 
 So, the list of web services is the following one: 
 
@@ -331,19 +333,19 @@ So, the list of web services is the following one:
 In the previous image, I have used for this example `admin/admin`, there is another option: `user/user`, included in the SQL file
 [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L35).
 
-**2.** Get the authorization token using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (1st request):
+**2.** Get the authorization token using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>):
 
 ![Alt text](/documentation/SecurityCustomService_LoginAuthorized.png?raw=true "Direct Login")
 
-**3.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (2nd request):
+**3.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>):
 
 ![Alt text](/documentation/SecurityCustomService_LoginToken.png?raw=true "Get authentication information")
 
-**4.** Once the access token has expired, return new authentication information using refresh token:
+**4.** Once the *access* token has expired, return new authentication information using *refresh* token:
 
 ![Alt text](/documentation/SecurityCustomService_RefreshToken.png?raw=true "Refresh token")
 
-**5.** Get authorization information using access token:
+**5.** Get authorization information using *access* token:
 
 ![Alt text](/documentation/SecurityCustomService_CheckToken.png?raw=true "Authorization information")
 <br><br>
