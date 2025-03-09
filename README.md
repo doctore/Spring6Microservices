@@ -401,7 +401,7 @@ I have followed the instructions included in the [webpage](https://medium.com/@n
 
 In summary, the steps are:
 
-**1.** Unpack the JDK in `/usr/lib/jvm/java-21-graalvm-jdk-amd64`.
+**1.** Unpack the JDK in `/usr/lib/jvm/java-21-graalvm-jdk-amd64` and navigate to `/usr/lib/jvm/` to work on the next points. 
 <br>
 
 **2.** Create a symbolic link that points to the GraalVM JDK 21 directory:
