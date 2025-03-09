@@ -475,14 +475,14 @@ update-alternatives --install /usr/bin/jexec jexec /usr/lib/jvm/java-21-graalvm-
 ```
 ./java-21-graalvm-jdk-amd64_alternatives-install
 ```
-<br><br>
+<br>
 
 **6.** Switch to the brand new GraalVM JDK using the update-java-alternatives:
 
 ```
 update-java-alternatives -s java-1.21.0-graalvm-jdk-amd64
 ```
-<br><br>
+<br>
 
 If everything went well, then we should watch something like:
 
