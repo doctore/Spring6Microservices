@@ -504,7 +504,6 @@ file to include the specific configuration for native images.
 <br><br>
 
 **2.** Add the [configuration files](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/src/main/resources/META-INF/native-image) based on the project's functionality.
- 
 To know how to generate all the [configuration archives](https://stackoverflow.com/questions/76747716/how-to-register-method-for-runtime-reflection-with-graalvm):
 
 ```
@@ -514,9 +513,8 @@ java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./
 You can use all those files to include in the project only the required ones.
 <br><br>
 
-**3.** Update [pom.xml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/pom.xml) to add, at least, the **native** profile.
-
-Not all the dependencies are available to work with native images, you can check the list [here](https://github.com/oracle/graalvm-reachability-metadata/tree/master/metadata).
+**3.** Update [pom.xml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/pom.xml) to add, at least, the **native** profile. Not all the dependencies are available
+to work with native images, you can check the list [here](https://github.com/oracle/graalvm-reachability-metadata/tree/master/metadata).
 <br><br>
 
 **4.** Create a new [maven](https://maven.apache.org/) configuration to compile the project and generate the native image as executable file:
