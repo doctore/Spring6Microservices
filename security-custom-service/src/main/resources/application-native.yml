@@ -1,0 +1,97 @@
+# Server configuration
+server:
+  port: 8180
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server request to work provided values
+    config:
+      enabled: false
+    # Refresh scope is not supported with native images (used by Eureka)
+    refresh:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring6
+    username: spring6
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
+    # Raw password: spring6
+    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+# Encryption configuration
+encrypt:
+  # Defined symmetric (shared) key to encrypt/decrypt text:
+  #
+  #  1. Receiving encrypted property values from Config Server like:
+  #       spring.datasource.password: "{cipher}..."
+  #
+  #  2. Receiving encrypted column values from database like:
+  #       security.application_client_details.signature_secret = '{cipher}...'
+  #
+  # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
+  key: ${ENCRYPT_KEY:ENCRYPT_KEY}
+  # Raw encryptionSecret: 841d8A6C80C#A4FcAf32D5367t1!C53b
+  customKey: "{cipher}bf7c79f1a7cbd56cb1f10ccc0c8e6440ba552315e86789253ede14e62a4f007ea680136668b4b95ace78506e9c247bcf20b2a88da4baf5c111e6396e67c69236"
+
+
+# Disable eureka server connection request
+eureka:
+  client:
+    enabled: false
+
+
+# Internal caches used by the microservice
+cache:
+  # To manage the configuration of the applications included in the microservice
+  applicationClientDetails:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: applicationClientDetailsCache
+  # Used in the authentication flow with PKCE (Proof of Key Code Exchange)
+  authenticationRequestDetails:
+    entryCapacity: 10
+    expireInSeconds: 600
+    name: authenticationRequestsDetails
+
+
+# Main properties in Spring Boot to configure some general purpose services
+management:
+  endpoints:
+    web:
+      exposure:
+        # Actuator endpoints exposed: actuator/routes
+        include: health, info
+  tracing:
+    sampling:
+      # To log traceId and spanId in every request
+      probability: 1.0
+
+
+# API documentation
+# In local (dev profile) the URLs are:
+#   1. http://localhost:8180/security/custom/api-docs to get the information in JSON format
+#   2. http://localhost:8180/security/custom/swagger-ui/index.html to display the UI with all defined endpoints
+springdoc:
+  api-docs:
+    # Path of the OpenAPI documentation in Json format
+    path: /security/custom/api-docs
+  documentation:
+    apiVersion: 1.0
+    title: Security Custom Rest Api
+    description: Services related with authentication/authorization functionality
+  # Custom properties to define security configuration for documented API
+  security:
+    authorization: Basic Auth
+    schema: basic
+  swagger-ui:
+    # To disable the swagger-ui default petstore url
+    disable-swagger-default-url: true
+    # Custom path of the swagger-ui HTML documentation
+    path: /security/custom/swagger-ui.html

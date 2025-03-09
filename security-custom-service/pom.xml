@@ -25,7 +25,6 @@
         <flywaydb.version>11.3.3</flywaydb.version>
         <google-crypto-tink.verion>1.16.0</google-crypto-tink.verion>
         <hamcrest.version>3.0</hamcrest.version>
-        <hazelcast.version>5.5.0</hazelcast.version>
         <nimbus-jose-jwt.version>10.0.1</nimbus-jose-jwt.version>
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
@@ -185,6 +184,10 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
@@ -202,5 +205,47 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <spring.profiles.active>local</spring.profiles.active>
+                <hazelcast.version>5.5.0</hazelcast.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>native</id>
+            <properties>
+                <!-- 5.5.0 not compatible yet: HazelcastException NoSuchFieldException ARTIFACT_ID -->
+                <hazelcast.version>5.2.5</hazelcast.version>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>process-aot</id>
+                                    <configuration>
+                                        <profiles>native</profiles>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+                <hazelcast.version>5.5.0</hazelcast.version>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

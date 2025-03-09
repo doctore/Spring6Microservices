@@ -15,6 +15,9 @@
 - [Security services](#security-services)
   - [security-custom-service endpoints](#security-custom-service-endpoints) 
 - [Rest API documentation](#rest-api-documentation)
+- [Native images](#native-images)
+  - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
+  - [security-custom-service native](#security-custom-service-native)
 
 
 
@@ -374,3 +377,168 @@ In local (**dev** profile), the url to access them is `http://localhost:5555/swa
 
 ![Alt text](/documentation/Swagger.png?raw=true "Swagger documentation")
 <br><br>
+
+
+
+## Native images
+
+Native Image is a technology to compile Java code ahead-of-time to a binary – a native executable. A native executable includes only the code required at run time, that is the application classes,
+standard-library classes, the language runtime, and statically-linked native code from the JDK.
+
+An executable file produced by Native Image has several important advantages, in that it:
+
+* Uses a fraction of the resources required by the Java Virtual Machine, so is cheaper to run.
+* Starts in milliseconds
+* Delivers peak performance immediately, with no warmup.
+* Can be packaged into a lightweight container image for fast and efficient deployment.
+<br><br>
+
+
+### Install and configure GraalVM JDK 
+
+Download the required GraalVM JDK from [here](https://www.graalvm.org/downloads/), in this project I use Java 21. Although there are several options to manage different JDKs such as [SDKMAN](https://sdkman.io/),
+I have followed the instructions included in the [webpage](https://medium.com/@nickkalgin/installing-graalvm-jdk-on-ubuntu-ee787c19e0cf) to install and configure GraalVM JDK in Ubuntu.
+
+In summary, the steps are:
+
+**1.** Unpack the JDK in `/usr/lib/jvm/java-21-graalvm-jdk-amd64`.
+<br>
+
+**2.** Create a symbolic link that points to the GraalVM JDK 21 directory:
+
+```
+ln -s java-21-graalvm-jdk-amd64 /usr/lib/jvm/java-1.21.0-graalvm-jdk-amd64
+```
+<br>
+
+**3.** Prepare a descriptor file providing the information about binaries to the [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) utilities, creating the new file
+`.java-1.21.0-openjdk-amd64.jinfo` with:
+
+```
+name=java-21-graalvm-amd64
+alias=java-1.21.0-graalvm-amd64
+priority=2102
+section=main
+
+hl java /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/java
+hl jpackage /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jpackage
+hl keytool /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/keytool
+hl rmiregistry /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/rmiregistry
+hl jexec /usr/lib/jvm/java-21-graalvm-jdk-amd64/lib/jexec
+jdkhl jar /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jar
+jdkhl jarsigner /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jarsigner
+jdkhl javac /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/javac
+jdkhl javadoc /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/javadoc
+jdkhl javap /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/javap
+jdkhl jcmd /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jcmd
+jdkhl jdb /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jdb
+jdkhl jdeprscan /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jdeprscan
+jdkhl jdeps /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jdeps
+jdkhl jfr /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jfr
+jdkhl jimage /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jimage
+jdkhl jinfo /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jinfo
+jdkhl jlink /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jlink
+jdkhl jmap /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jmap
+jdkhl jmod /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jmod
+jdkhl jps /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jps
+jdkhl jrunscript /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jrunscript
+jdkhl jshell /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jshell
+jdkhl jstack /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jstack
+jdkhl jstat /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jstat
+jdkhl jstatd /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jstatd
+jdkhl jwebserver /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jwebserver
+jdkhl serialver /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/serialver
+jdkhl jhsdb /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jhsdb
+jdk jconsole /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/jconsole
+jdk native-image /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image
+jdk native-image-configure /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-configure
+jdk native-image-inspect /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-inspect
+```
+<br>
+
+**4.** Configure [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) to use executables from the GraalVM JDK, creating the new file
+`java-21-graalvm-jdk-amd64_alternatives-install` with:
+
+```
+for path in /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/*; do
+    name=$(basename $path)
+    update-alternatives --install /usr/bin/$name $name $path 2102 \
+    --slave /usr/share/man/man1/$name.1.gz $name.1.gz /usr/lib/jvm/java-21-graalvm-jdk-amd64/man/man1/$name.1
+done
+
+update-alternatives --install /usr/bin/jexec jexec /usr/lib/jvm/java-21-graalvm-jdk-amd64/lib/jexec 2102
+```
+<br>
+
+**5.** Invoke the new file:
+
+```
+./java-21-graalvm-jdk-amd64_alternatives-install
+```
+<br>
+
+**6.** Switch to the brand new GraalVM JDK using the update-java-alternatives:
+
+```
+update-java-alternatives -s java-1.21.0-graalvm-jdk-amd64
+```
+<br>
+
+If everything went well, then we should watch something like:
+
+```
+java --version
+java 21.0.6 2025-01-21 LTS
+Java(TM) SE Runtime Environment Oracle GraalVM 21.0.6+8.1 (build 21.0.6+8-LTS-jvmci-23.1-b55)
+Java HotSpot(TM) 64-Bit Server VM Oracle GraalVM 21.0.6+8.1 (build 21.0.6+8-LTS-jvmci-23.1-b55, mixed mode, sharing)
+```
+<br><br>
+
+
+### security-custom-service native
+
+Once we have configured the GraalVM JDK, the required changes/considerations in [security-custom-service](#security-custom-service) are:
+
+**1.** Create the new [application-native.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application-native.yml)
+file to include the specific configuration for native images.
+<br>
+
+**2.** Add the [configuration files](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/src/main/resources/META-INF/native-image) based on the project's functionality.
+ 
+To know how to generate all the [configuration archives](https://stackoverflow.com/questions/76747716/how-to-register-method-for-runtime-reflection-with-graalvm):
+
+```
+java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./native-config -jar target/security-custom-service-native-1.0.0.jar
+```
+
+You can use all those files to include in the project only the required ones.
+<br>
+
+**3.** Update [pom.xml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/pom.xml) to add, at least, the **native** profile.
+
+Not all the dependencies are available to work with native images, you can check the list [here](https://github.com/oracle/graalvm-reachability-metadata/tree/master/metadata).
+<br>
+
+**4.** Create a new [maven](https://maven.apache.org/) configuration to compile the project and generate the native image as executable file:
+
+![Alt text](/documentation/ConfigureNativeCompilationInSecurityCustomService.png?raw=true "Native image compilation")
+<br>
+
+**5.** Invoke the generated executable archive:
+
+```
+./target/security-custom-service --spring.profiles.active=native
+```
+<br>
+
+If everything went well, then the application will run smoothly and the endpoints will respond to the request normally. Comparing both options: **local** and **native**
+you will be able to notice an important improvement in the performance:
+
+* **local:**
+
+![Alt text](/documentation/SecurityCustomService_LocalProfile.png?raw=true "Local run")
+<br>
+
+* **native:**
+
+![Alt text](/documentation/SecurityCustomService_NativeProfile.png?raw=true "Native run")

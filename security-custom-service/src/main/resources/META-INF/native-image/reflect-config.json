@@ -1,0 +1,15 @@
+[
+  {
+    "name":"com.hazelcast.internal.partition.impl.MigrationStats",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "methods":[
+      {"name":"getElapsedDestinationCommitTimeNanoseconds","parameterTypes":[] },
+      {"name":"getElapsedMigrationOperationTimeNanoseconds","parameterTypes":[] },
+      {"name":"getElapsedMigrationTimeNanoseconds","parameterTypes":[] },
+      {"name":"getTotalElapsedDestinationCommitTimeNanoseconds","parameterTypes":[] },
+      {"name":"getTotalElapsedMigrationOperationTimeNanoseconds","parameterTypes":[] },
+      {"name":"getTotalElapsedMigrationTimeNanoseconds","parameterTypes":[] }
+    ]
+  }
+]
