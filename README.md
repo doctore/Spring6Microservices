@@ -492,7 +492,7 @@ java 21.0.6 2025-01-21 LTS
 Java(TM) SE Runtime Environment Oracle GraalVM 21.0.6+8.1 (build 21.0.6+8-LTS-jvmci-23.1-b55)
 Java HotSpot(TM) 64-Bit Server VM Oracle GraalVM 21.0.6+8.1 (build 21.0.6+8-LTS-jvmci-23.1-b55, mixed mode, sharing)
 ```
-<br><br>
+<br>
 
 
 ### security-custom-service native
