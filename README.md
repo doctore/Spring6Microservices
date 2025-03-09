@@ -409,7 +409,7 @@ In summary, the steps are:
 ```
 ln -s java-21-graalvm-jdk-amd64 /usr/lib/jvm/java-1.21.0-graalvm-jdk-amd64
 ```
-<br><br>
+<br>
 
 **3.** Prepare a descriptor file providing the information about binaries to the [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) utilities, creating the new file
 `.java-1.21.0-openjdk-amd64.jinfo` with:
@@ -454,7 +454,7 @@ jdk native-image /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image
 jdk native-image-configure /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-configure
 jdk native-image-inspect /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-inspect
 ```
-<br><br>
+<br>
 
 **4.** Configure [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) to use executables from the GraalVM JDK, creating the new file
 `java-21-graalvm-jdk-amd64_alternatives-install` with:
@@ -468,7 +468,7 @@ done
 
 update-alternatives --install /usr/bin/jexec jexec /usr/lib/jvm/java-21-graalvm-jdk-amd64/lib/jexec 2102
 ```
-<br><br>
+<br>
 
 **5.** Invoke the new file:
 
