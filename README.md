@@ -409,7 +409,7 @@ In summary, the steps are:
 ```
 ln -s java-21-graalvm-jdk-amd64 /usr/lib/jvm/java-1.21.0-graalvm-jdk-amd64
 ```
-<br>
+<br><br>
 
 **3.** Prepare a descriptor file providing the information about binaries to the [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) utilities, creating the new file
 `.java-1.21.0-openjdk-amd64.jinfo` with:
@@ -454,7 +454,7 @@ jdk native-image /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image
 jdk native-image-configure /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-configure
 jdk native-image-inspect /usr/lib/jvm/java-21-graalvm-jdk-amd64/bin/native-image-inspect
 ```
-<br>
+<br><br>
 
 **4.** Configure [update-alternative](https://man7.org/linux/man-pages/man1/update-alternatives.1.html) to use executables from the GraalVM JDK, creating the new file
 `java-21-graalvm-jdk-amd64_alternatives-install` with:
@@ -468,21 +468,21 @@ done
 
 update-alternatives --install /usr/bin/jexec jexec /usr/lib/jvm/java-21-graalvm-jdk-amd64/lib/jexec 2102
 ```
-<br>
+<br><br>
 
 **5.** Invoke the new file:
 
 ```
 ./java-21-graalvm-jdk-amd64_alternatives-install
 ```
-<br>
+<br><br>
 
 **6.** Switch to the brand new GraalVM JDK using the update-java-alternatives:
 
 ```
 update-java-alternatives -s java-1.21.0-graalvm-jdk-amd64
 ```
-<br>
+<br><br>
 
 If everything went well, then we should watch something like:
 
@@ -501,7 +501,7 @@ Once we have configured the GraalVM JDK, the required changes/considerations in 
 
 **1.** Create the new [application-native.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application-native.yml)
 file to include the specific configuration for native images.
-<br>
+<br><br>
 
 **2.** Add the [configuration files](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/src/main/resources/META-INF/native-image) based on the project's functionality.
  
@@ -512,17 +512,17 @@ java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./
 ```
 
 You can use all those files to include in the project only the required ones.
-<br>
+<br><br>
 
 **3.** Update [pom.xml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/pom.xml) to add, at least, the **native** profile.
 
 Not all the dependencies are available to work with native images, you can check the list [here](https://github.com/oracle/graalvm-reachability-metadata/tree/master/metadata).
-<br>
+<br><br>
 
 **4.** Create a new [maven](https://maven.apache.org/) configuration to compile the project and generate the native image as executable file:
 
 ![Alt text](/documentation/ConfigureNativeCompilationInSecurityCustomService.png?raw=true "Native image compilation")
-<br>
+<br><br>
 
 **5.** Invoke the generated executable archive:
 
@@ -534,11 +534,11 @@ Not all the dependencies are available to work with native images, you can check
 If everything went well, then the application will run smoothly and the endpoints will respond to the request normally. Comparing both options: **local** and **native**
 you will be able to notice an important improvement in the performance:
 
-* **local:**
+* **local:** more than 6 seconds.
 
 ![Alt text](/documentation/SecurityCustomService_LocalProfile.png?raw=true "Local run")
-<br>
+<br><br>
 
-* **native:**
+* **native:** less than 3 seconds.
 
 ![Alt text](/documentation/SecurityCustomService_NativeProfile.png?raw=true "Native run")
