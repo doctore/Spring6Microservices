@@ -212,9 +212,10 @@ Wrapper to manage a cache, regardless of the selected implementation:
 
 * [CacheService](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/service/CacheService.java)
 
-New validator using **Enums** to map database values in Hibernate POJOs, allowing to verify internal properties:
+New validators: 
 
-* [Enum validator](https://github.com/doctore/Spring6Microservices/tree/main/common-spring/src/main/java/com/spring6microservices/common/spring/validator/enums)
+* [EnumHasInternalStringValue](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/validator/enums/EnumHasInternalStringValue.java): using **Enums** to map database values in [Hibernate](https://hibernate.org/) POJOs, allowing to verify internal properties.
+* [ContainsAnyProvidedString](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/validator/string/ContainsAnyProvidedString.java): to verify if the given string matches with one of the provided ones inside the defined array.
 
 Common DTOs to send/receive authentication, authorization data and/or handle errors invoking endpoints:
 
