@@ -112,7 +112,7 @@ options defined in [TokenType](https://github.com/doctore/Spring6Microservices/b
 The provided algorithms to sign the JWT tokens, that is, to generate `JWS` or the internal one inside `ENCRYPTED_JWS` are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
 On the other hand, the available algorithms selecting `JWE` or `ENCRYPTED_JWE` are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
 
-Every application will be able to manage its own token configuration/generation adding a new row in the database table: **security.application_client_details**
+Every application will be able to manage its own token configuration/generation adding a new row in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql)
 and including/developing a new value in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
 
 The technologies used are the following ones:
@@ -224,7 +224,7 @@ Common DTOs to send/receive authentication, authorization data and/or handle err
 
 ### [sql](https://github.com/doctore/Spring6Microservices/tree/main/sql)
 
-With SQL files included in the database, just to expose the initial steps/changes needed to start working with these microservices.
+With SQL files included in the database, just to expose the initial steps to start working with these microservices.
 <br><br>
 
 
@@ -286,7 +286,8 @@ spring:
     password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
 ```
 
-And something similar in the database table `security.application_client_details`, in the column `signature_secret`.
+And something similar in the database table [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql),
+in the columns: `signature_secret` and `encryption_secret`.
 
 To do it:
 
@@ -313,7 +314,7 @@ Regarding every microservice, in this section I will explain the web services pr
 ### security-custom-service endpoints
 
 Before enter in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* credentials, based in
-the application configured in the database table: **security.application_client_details**.
+the application configured in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V1__create_schema_and_security_table.sql).
 
 In the next pictures I will use the predefined one:
 [Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L4)
