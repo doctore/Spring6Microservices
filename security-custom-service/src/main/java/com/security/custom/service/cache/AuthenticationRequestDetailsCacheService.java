@@ -5,12 +5,9 @@ import com.security.custom.model.AuthenticationRequestDetails;
 import com.spring6microservices.common.spring.service.CacheService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import static java.lang.String.format;
 
 @Log4j2
 @Service
