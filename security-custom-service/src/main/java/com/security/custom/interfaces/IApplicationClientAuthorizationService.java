@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Functionality related with the authorization process in every application.
  */
-public interface ApplicationClientAuthorizationService {
+public interface IApplicationClientAuthorizationService {
 
     /**
      *    Returns the additional information related to the current authorized user included in provided

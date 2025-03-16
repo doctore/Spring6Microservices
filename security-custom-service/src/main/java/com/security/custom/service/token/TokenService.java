@@ -1,14 +1,14 @@
-package com.security.custom.service;
+package com.security.custom.service.token;
 
-import com.security.custom.configuration.security.EncryptionConfiguration;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.token.TokenType;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
+import com.security.custom.exception.token.TokenTypeProviderException;
+import com.security.custom.interfaces.ITokenTypeProvider;
 import com.security.custom.model.ApplicationClientDetails;
-import com.security.custom.util.JweUtil;
-import com.security.custom.util.JwsUtil;
+import com.security.custom.service.token.provider.TokenTypeProviderRegistry;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
@@ -29,16 +29,12 @@ import static java.util.Optional.ofNullable;
 @Service
 public class TokenService {
 
-    private final EncryptionConfiguration encryptionConfiguration;
-
-    private final EncryptorService encryptorService;
+    private final TokenTypeProviderRegistry tokenTypeProviderRegistry;
 
 
     @Autowired
-    public TokenService(final EncryptionConfiguration encryptionConfiguration,
-                        final EncryptorService encryptorService) {
-        this.encryptionConfiguration = encryptionConfiguration;
-        this.encryptorService = encryptorService;
+    public TokenService(final TokenTypeProviderRegistry tokenTypeProviderRegistry) {
+        this.tokenTypeProviderRegistry = tokenTypeProviderRegistry;
     }
 
 
@@ -56,6 +52,7 @@ public class TokenService {
      * @return {@link String} with the access token
      *
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws TokenTypeProviderException if there is no a valid {@link ITokenTypeProvider} to handle the provided {@link ApplicationClientDetails#getTokenType()}
      * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
      *                                       and there was an error encrypting the token to return
      */
@@ -100,6 +97,7 @@ public class TokenService {
      * @return {@link String} with the refresh token
      *
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws TokenTypeProviderException if there is no a valid {@link ITokenTypeProvider} to handle the provided {@link ApplicationClientDetails#getTokenType()}
      * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
      *                                       and there was an error encrypting the token to return
      */
@@ -154,6 +152,7 @@ public class TokenService {
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws TokenInvalidException if the given {@code token} is not a valid one
      * @throws TokenExpiredException if {@code token} is valid but has expired
+     * @throws TokenTypeProviderException if there is no a valid {@link ITokenTypeProvider} to handle the provided {@link ApplicationClientDetails#getTokenType()}
      * @throws TokenException if there was a problem getting claims of {@code token}
      * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
      *                                       and there was an error decrypting the token to return
@@ -161,27 +160,13 @@ public class TokenService {
     public Map<String, Object> getPayloadOfToken(final ApplicationClientDetails applicationClientDetails,
                                                  final String token) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        TokenType tokenType = applicationClientDetails.getTokenType();
-        String finalToken = TokenType.getEncryptedTokenTypes().contains(tokenType)
-                ? decryptToken(token)
-                : token;
-
-        return TokenType.getRequiredEncryptionAlgorithm().contains(tokenType)
-                ? JweUtil.getAllClaimsFromToken(
-                        finalToken,
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getEncryptionSecret()
-                        ),
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getSignatureSecret()
-                        )
-                  )
-                : JwsUtil.getAllClaimsFromToken(
-                        finalToken,
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getSignatureSecret()
-                        )
-                  );
+        ITokenTypeProvider tokenTypeProvider = getTokenTypeProviderOrThrow(
+                applicationClientDetails.getTokenType()
+        );
+        return tokenTypeProvider.getPayloadOfToken(
+                applicationClientDetails,
+                token
+        );
     }
 
 
@@ -205,6 +190,30 @@ public class TokenService {
                         )
                 )
                 .orElse(true);
+    }
+
+
+    /**
+     * Returns the {@link ITokenTypeProvider} used to manage the given {@code tokenType}.
+     *
+     * @param tokenType
+     *    {@link TokenType} to search which {@link ITokenTypeProvider} is used to handle it
+     *
+     * @return {@link ITokenTypeProvider} used to manage the given {@link TokenType}
+     *
+     * @throws TokenTypeProviderException if there is no a valid {@link ITokenTypeProvider} to handle the provided {@code tokenType}
+     */
+    private ITokenTypeProvider getTokenTypeProviderOrThrow(final TokenType tokenType) {
+        return tokenTypeProviderRegistry.getTokenTypeProvider(
+                        tokenType
+                )
+                .orElseThrow(() ->
+                        new TokenTypeProviderException(
+                                format("Token type provider for token type: '%s' not found",
+                                        tokenType
+                                )
+                        )
+                );
     }
 
 
@@ -266,101 +275,29 @@ public class TokenService {
      * Generates the token taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
      *
      * @param informationToInclude
-     *    {@link Map} with the information to include in the returned JWS token
+     *    {@link Map} with the information to include in the returned token
      * @param applicationClientDetails
-     *    {@link ApplicationClientDetails} with the details about how to generate JWS/JWE tokens
+     *    {@link ApplicationClientDetails} with the details about how to generate the tokens
      * @param tokenValidityInSeconds
-     *    How many seconds the JWS/JWE token will be valid
+     *    How many seconds the token will be valid
      *
-     * @return {@link String} with the JWS/JWE token
+     * @return {@link String} with the token
      *
+     * @throws TokenTypeProviderException if there is no a valid {@link ITokenTypeProvider} to handle the provided {@link ApplicationClientDetails#getTokenType()}
      * @throws UnsupportedOperationException if {@link ApplicationClientDetails#getTokenType()} belongs to {@link TokenType#getEncryptedTokenTypes()}
      *                                       and there was an error encrypting the token to return
      */
     private String generateToken(final Map<String, Object> informationToInclude,
                                  final ApplicationClientDetails applicationClientDetails,
                                  final int tokenValidityInSeconds) {
-        TokenType tokenType = applicationClientDetails.getTokenType();
-        String token = TokenType.getRequiredEncryptionAlgorithm().contains(tokenType)
-                ? JweUtil.generateToken(
-                        informationToInclude,
-                        applicationClientDetails.getEncryptionAlgorithm(),
-                        applicationClientDetails.getEncryptionMethod(),
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getEncryptionSecret()
-                        ),
-                        applicationClientDetails.getSignatureAlgorithm(),
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getSignatureSecret()
-                        ),
-                        tokenValidityInSeconds
-                  )
-                : JwsUtil.generateToken(
-                        informationToInclude,
-                        applicationClientDetails.getSignatureAlgorithm(),
-                        encryptorService.defaultDecrypt(
-                                applicationClientDetails.getSignatureSecret()
-                        ),
-                        tokenValidityInSeconds
-                  );
-
-        return TokenType.getEncryptedTokenTypes().contains(tokenType)
-                ? encryptToken(token)
-                : token;
-    }
-
-
-    /**
-     * Decrypts the given {@code encryptedToken}.
-     *
-     * @param encryptedToken
-     *    Token to decrypt
-     *
-     * @return {@link String} with the source (not encrypted) token
-     *
-     * @throws UnsupportedOperationException if there was an error decrypting provided {@code encryptedToken}
-     */
-    private String decryptToken(final String encryptedToken) {
-        try {
-            return encryptorService.decrypt(
-                    encryptedToken,
-                    encryptionConfiguration.getCustomKey()
-            );
-        } catch (Exception e) {
-            throw new UnsupportedOperationException(
-                    format("There was a problem decrypting the token: %s",
-                            encryptedToken
-                    ),
-                    e
-            );
-        }
-    }
-
-
-    /**
-     * Encrypts the given {@code originalToken}.
-     *
-     * @param originalToken
-     *    Token to encrypt
-     *
-     * @return {@link String} with the encrypted token
-     *
-     * @throws UnsupportedOperationException if there was an error encrypting provided {@code originalToken}
-     */
-    private String encryptToken(final String originalToken) {
-        try {
-            return encryptorService.encrypt(
-                    originalToken,
-                    encryptionConfiguration.getCustomKey()
-            );
-        } catch (Exception e) {
-            throw new UnsupportedOperationException(
-                    format("There was a problem encrypting the token: %s",
-                            originalToken
-                    ),
-                    e
-            );
-        }
+        ITokenTypeProvider tokenTypeProvider = getTokenTypeProviderOrThrow(
+                applicationClientDetails.getTokenType()
+        );
+        return tokenTypeProvider.generateToken(
+                applicationClientDetails,
+                informationToInclude,
+                tokenValidityInSeconds
+        );
     }
 
 }

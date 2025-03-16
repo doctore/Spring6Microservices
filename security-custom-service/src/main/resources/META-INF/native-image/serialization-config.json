@@ -3,9 +3,12 @@
     "name": "com.security.custom.model.ApplicationClientDetails"
   },
   {
-    "name": "java.lang.Number"
+    "name": "com.security.custom.model.AuthenticationRequestDetails"
   },
   {
     "name": "java.lang.Integer"
+  },
+  {
+    "name": "java.lang.Number"
   }
 ]

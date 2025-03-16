@@ -11,5 +11,34 @@
       {"name":"getTotalElapsedMigrationOperationTimeNanoseconds","parameterTypes":[] },
       {"name":"getTotalElapsedMigrationTimeNanoseconds","parameterTypes":[] }
     ]
+  },
+  {
+    "name":"com.spring6microservices.common.spring.validator.enums.EnumHasInternalStringValueValidator",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicConstructors":true,
+    "methods":[
+      {"name":"<init>","parameterTypes":[] },
+      {"name":"initialize","parameterTypes":["java.lang.annotation.Annotation"] },
+      {"name":"isValid","parameterTypes":["java.lang.Object","jakarta.validation.ConstraintValidatorContext"] }
+    ]
+  },
+  {
+    "name":"com.spring6microservices.common.spring.dto.ErrorResponseDto",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[
+      {"name":"getCode","parameterTypes":[] },
+      {"name":"getErrors","parameterTypes":[] }
+    ]
+  },
+  {
+    "name":"com.spring6microservices.common.spring.enums.RestApiErrorCode",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "methods":[
+      {"name":"getValue","parameterTypes":[] }
+    ]
   }
 ]

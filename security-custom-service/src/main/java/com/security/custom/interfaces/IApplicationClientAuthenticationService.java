@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Functionality related with the authentication process in every application.
  */
-public interface ApplicationClientAuthenticationService extends UserDetailsService {
+public interface IApplicationClientAuthenticationService extends UserDetailsService {
 
     /**
      * Returns the data required for the authentication process.

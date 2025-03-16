@@ -3,7 +3,7 @@ package com.security.custom.exception.token;
 import java.io.Serial;
 
 /**
- * Parent class of the exceptions related with problem with the tokens.
+ * Parent class of the exceptions related with errors related with the tokens.
  */
 public class TokenException extends RuntimeException {
 

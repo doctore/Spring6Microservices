@@ -6,6 +6,7 @@ import com.security.custom.exception.AuthenticationRequestDetailsNotFoundExcepti
 import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
+import com.security.custom.exception.token.TokenTypeProviderException;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.enums.RestApiErrorCode;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
@@ -347,6 +348,32 @@ public class GlobalErrorWebExceptionHandler {
                 List.of("The provided token is invalid"),
                 exchange,
                 UNAUTHORIZED.value()
+        );
+    }
+
+
+    /**
+     * Method used to manage when a Rest request throws a {@link TokenTypeProviderException}.
+     *
+     * @param exchange
+     *    {@link ServerWebExchange} with the request information
+     * @param exception
+     *    {@link TokenTypeProviderException} thrown
+     *
+     * @return {@link Mono} with the suitable response
+     */
+    @ExceptionHandler(TokenTypeProviderException.class)
+    public Mono<Void> tokenTypeProviderException(final ServerWebExchange exchange,
+                                                final TokenTypeProviderException exception) {
+        log.error(
+                getErrorMessageUsingHttpRequest(exchange),
+                exception
+        );
+        return buildErrorResponse(
+                INTERNAL,
+                List.of("Internal error in the application"),
+                exchange,
+                INTERNAL_SERVER_ERROR.value()
         );
     }
 

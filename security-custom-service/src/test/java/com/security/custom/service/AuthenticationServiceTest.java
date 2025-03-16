@@ -13,9 +13,10 @@ import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.exception.token.TokenException;
-import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.security.custom.interfaces.IApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
+import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
@@ -105,7 +106,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, never())
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(IApplicationClientAuthenticationService.class)
                 );
         verify(mockApplicationClientDetailsService, never())
                 .findById(
@@ -121,7 +122,7 @@ public class AuthenticationServiceTest {
         String username = "username value";
         String password = "password value";
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenThrow(
                         NoSuchBeanDefinitionException.class
                 );
@@ -137,7 +138,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
     }
 
@@ -165,7 +166,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, never())
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(IApplicationClientAuthenticationService.class)
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -182,7 +183,7 @@ public class AuthenticationServiceTest {
         String password = "password value";
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -206,7 +207,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -227,7 +228,7 @@ public class AuthenticationServiceTest {
         String password = "password value";
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -251,7 +252,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -273,7 +274,7 @@ public class AuthenticationServiceTest {
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
         User user = buildUser(username, password + "V2", true);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -301,7 +302,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -351,7 +352,7 @@ public class AuthenticationServiceTest {
                 Spring6MicroserviceAuthenticationService.class
         );
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -406,7 +407,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -723,7 +724,7 @@ public class AuthenticationServiceTest {
                         authenticationRequestDetails
                 );
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -777,7 +778,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -827,7 +828,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, never())
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(IApplicationClientAuthenticationService.class)
                 );
         verify(mockApplicationClientDetailsService, never())
                 .findById(
@@ -842,7 +843,7 @@ public class AuthenticationServiceTest {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         String refreshToken = "ItDoesNotCare";
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenThrow(
                         NoSuchBeanDefinitionException.class
                 );
@@ -857,7 +858,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
     }
 
@@ -883,7 +884,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, never())
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(IApplicationClientAuthenticationService.class)
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -899,7 +900,7 @@ public class AuthenticationServiceTest {
         String refreshToken = "NotValidToken";
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mock(Spring6MicroserviceAuthenticationService.class)
                 );
@@ -922,7 +923,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -944,7 +945,7 @@ public class AuthenticationServiceTest {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
         Spring6MicroserviceAuthenticationService mockAuthenticationService = mock(Spring6MicroserviceAuthenticationService.class);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -967,7 +968,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -993,7 +994,7 @@ public class AuthenticationServiceTest {
                 .username(username)
                 .build();
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -1020,7 +1021,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -1050,7 +1051,7 @@ public class AuthenticationServiceTest {
                 .username(username)
                 .build();
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -1077,7 +1078,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -1137,7 +1138,7 @@ public class AuthenticationServiceTest {
                 Spring6MicroserviceAuthenticationService.class
         );
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()))
                 .thenReturn(
                         mockAuthenticationService
                 );
@@ -1191,7 +1192,7 @@ public class AuthenticationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthenticationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthenticationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(

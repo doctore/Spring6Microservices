@@ -1,7 +1,7 @@
 package com.security.custom.application.spring6microservice.service;
 
 import com.security.custom.application.spring6microservice.configuration.Spring6MicroserviceConstants;
-import com.security.custom.interfaces.ApplicationClientAuthorizationService;
+import com.security.custom.interfaces.IApplicationClientAuthorizationService;
 import com.spring6microservices.common.core.util.MapUtil;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import static com.security.custom.enums.token.TokenKey.USERNAME;
 import static java.util.Optional.ofNullable;
 
 @Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthorizationService")
-public class Spring6MicroserviceAuthorizationService implements ApplicationClientAuthorizationService {
+public class Spring6MicroserviceAuthorizationService implements IApplicationClientAuthorizationService {
 
     @Override
     public Map<String, Object> getAdditionalAuthorizationInformation(final Map<String, Object> rawAuthorizationInformation) {

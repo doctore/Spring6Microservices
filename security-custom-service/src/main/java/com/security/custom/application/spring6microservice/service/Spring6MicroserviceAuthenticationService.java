@@ -4,7 +4,7 @@ import com.security.custom.application.spring6microservice.configuration.Spring6
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.repository.UserRepository;
 import com.security.custom.dto.RawAuthenticationInformationDto;
-import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.security.custom.interfaces.IApplicationClientAuthenticationService;
 import com.spring6microservices.common.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
@@ -26,7 +26,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Service(value = Spring6MicroserviceConstants.SPRING6MICROSERVICE_APPLICATION_NAME + "AuthenticationService")
-public class Spring6MicroserviceAuthenticationService implements ApplicationClientAuthenticationService {
+public class Spring6MicroserviceAuthenticationService implements IApplicationClientAuthenticationService {
 
     private final UserRepository repository;
 

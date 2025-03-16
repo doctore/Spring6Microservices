@@ -11,9 +11,10 @@ import com.security.custom.exception.AuthenticationRequestDetailsNotSavedExcepti
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
-import com.security.custom.interfaces.ApplicationClientAuthenticationService;
+import com.security.custom.interfaces.IApplicationClientAuthenticationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
+import com.security.custom.service.token.TokenService;
 import com.security.custom.util.HashUtil;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
@@ -80,14 +81,14 @@ public class AuthenticationService {
      * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} is disabled
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthenticationService}
      * @throws UnauthorizedException if the given {@code password} does not match with exists one related with given {@code username}
      * @throws UsernameNotFoundException if provided {@code username} does not exist in database
      */
     public Optional<AuthenticationInformationDto> login(final String applicationClientId,
                                                         final String username,
                                                         final String password) {
-        ApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
+        IApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
                 applicationClientId
         );
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
@@ -175,7 +176,7 @@ public class AuthenticationService {
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
      * @throws AuthenticationRequestDetailsNotFoundException if the given {@code authorizationCode} does not exist in cache
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthenticationService}
      * @throws IllegalArgumentException if {@code authenticationRequestLoginToken} is {@code null}
      * @throws UnauthorizedException if the provided {@code verifier} does not match with stored {@link AuthenticationRequestDetails#getChallenge()}
      *                               and {@link AuthenticationRequestDetails#getChallengeMethod()} of the first request.
@@ -197,7 +198,8 @@ public class AuthenticationService {
             throw new ApplicationClientMismatchException(
                     format("The provided application identifier: %s does not match with stored one: %s",
                             applicationClientId,
-                            authenticationRequestDetails.getApplicationClientId())
+                            authenticationRequestDetails.getApplicationClientId()
+                    )
             );
         }
         // Checks provided verifier with stored: challenge & challengeMethod
@@ -234,7 +236,7 @@ public class AuthenticationService {
      * @throws AccountStatusException if the {@link UserDetails} related with the given {@code username} included in the token is disabled
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthenticationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthenticationService}
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username} or the included one does not exist in database
      * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
      * @throws TokenExpiredException if provided {@code refreshToken} has expired
@@ -242,7 +244,7 @@ public class AuthenticationService {
      */
     public Optional<AuthenticationInformationDto> refresh(final String applicationClientId,
                                                           final String refreshToken) {
-        ApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
+        IApplicationClientAuthenticationService applicationAuthenticationService = getApplicationClientAuthenticationService(
                 applicationClientId
         );
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
@@ -276,14 +278,14 @@ public class AuthenticationService {
      * @param applicationClientDetails
      *    {@link ApplicationClientDetails} with the details about how to generate authentication information
      * @param applicationAuthenticationService
-     *    {@link ApplicationClientAuthenticationService} used to know the authentication data to include
+     *    {@link IApplicationClientAuthenticationService} used to know the authentication data to include
      * @param userDetails
      *    {@link UserDetails} with the information about who is trying to authenticate
      *
      * @return {@link Optional} of {@link AuthenticationInformationDto}
      */
     private Optional<AuthenticationInformationDto> getAuthenticationInformation(final ApplicationClientDetails applicationClientDetails,
-                                                                                final ApplicationClientAuthenticationService applicationAuthenticationService,
+                                                                                final IApplicationClientAuthenticationService applicationAuthenticationService,
                                                                                 final UserDetails userDetails) {
         return applicationAuthenticationService.getRawAuthenticationInformation(userDetails)
                 .map(rawAuthenticationInformation -> {
@@ -320,17 +322,17 @@ public class AuthenticationService {
 
 
     /**
-     * Gets the {@link ApplicationClientAuthenticationService} related with provided {@link ApplicationClientDetails#getId()}).
+     * Gets the {@link IApplicationClientAuthenticationService} related with provided {@link ApplicationClientDetails#getId()}).
      *
      * @param applicationClientId
-     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link ApplicationClientAuthenticationService} instance
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link IApplicationClientAuthenticationService} instance
      *
-     * @return {@link ApplicationClientAuthenticationService}
+     * @return {@link IApplicationClientAuthenticationService}
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the instance of {@link ApplicationClientAuthenticationService}
+     * @throws BeansException if there was a problem getting the instance of {@link IApplicationClientAuthenticationService}
      */
-    private ApplicationClientAuthenticationService getApplicationClientAuthenticationService(final String applicationClientId) {
+    private IApplicationClientAuthenticationService getApplicationClientAuthenticationService(final String applicationClientId) {
         SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
         return applicationContext.getBean(
                 securityHandler.getAuthenticationServiceClass()

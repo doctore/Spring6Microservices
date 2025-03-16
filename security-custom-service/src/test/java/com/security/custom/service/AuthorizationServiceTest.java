@@ -5,9 +5,10 @@ import com.security.custom.application.spring6microservice.service.Spring6Micros
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.token.TokenException;
-import com.security.custom.interfaces.ApplicationClientAuthenticationService;
-import com.security.custom.interfaces.ApplicationClientAuthorizationService;
+import com.security.custom.interfaces.IApplicationClientAuthenticationService;
+import com.security.custom.interfaces.IApplicationClientAuthorizationService;
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +80,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthorizationService.class)
+                        eq(IApplicationClientAuthorizationService.class)
                 );
         verify(mockApplicationClientDetailsService, times(0))
                 .findById(
@@ -94,7 +95,7 @@ public class AuthorizationServiceTest {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
         String accessToken = "ItDoesNotCare";
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenThrow(
                         NoSuchBeanDefinitionException.class
                 );
@@ -109,7 +110,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
     }
 
@@ -135,7 +136,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthenticationService.class)
+                        eq(IApplicationClientAuthenticationService.class)
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -151,7 +152,7 @@ public class AuthorizationServiceTest {
         String accessToken = "NotValidToken";
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mock(Spring6MicroserviceAuthorizationService.class)
                 );
@@ -174,7 +175,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -197,7 +198,7 @@ public class AuthorizationServiceTest {
         Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
         Map<String, Object> tokenPayload = new HashMap<>();
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mockAuthorizationService
                 );
@@ -228,7 +229,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -271,7 +272,7 @@ public class AuthorizationServiceTest {
                 new HashMap<>()
         );
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mockAuthorizationService
                 );
@@ -310,7 +311,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockApplicationClientDetailsService, times(1))
                 .findById(
@@ -355,7 +356,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthorizationService.class)
+                        eq(IApplicationClientAuthorizationService.class)
                 );
     }
 
@@ -376,7 +377,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(0))
                 .getBean(
-                        eq(ApplicationClientAuthorizationService.class)
+                        eq(IApplicationClientAuthorizationService.class)
                 );
         verify(mockApplicationClientDetailsService, times(0))
                 .findById(
@@ -393,7 +394,7 @@ public class AuthorizationServiceTest {
         );
         String refreshToken = "ItDoesNotCare";
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenThrow(
                         NoSuchBeanDefinitionException.class
                 );
@@ -408,7 +409,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
     }
 
@@ -421,7 +422,7 @@ public class AuthorizationServiceTest {
         );
         String refreshToken = "NotValidToken";
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mock(Spring6MicroserviceAuthorizationService.class)
                 );
@@ -440,7 +441,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(
@@ -460,7 +461,7 @@ public class AuthorizationServiceTest {
         Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
         Map<String, Object> tokenPayload = new HashMap<>();
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mockAuthorizationService
                 );
@@ -487,7 +488,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(
@@ -527,7 +528,7 @@ public class AuthorizationServiceTest {
                 new HashMap<>()
         );
 
-        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()))
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
                 .thenReturn(
                         mockAuthorizationService
                 );
@@ -562,7 +563,7 @@ public class AuthorizationServiceTest {
 
         verify(mockApplicationContext, times(1))
                 .getBean(
-                        ArgumentMatchers.<Class<ApplicationClientAuthorizationService>>any()
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
                 );
         verify(mockTokenService, times(1))
                 .getPayloadOfToken(

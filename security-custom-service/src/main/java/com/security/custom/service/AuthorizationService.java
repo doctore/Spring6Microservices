@@ -5,8 +5,9 @@ import com.security.custom.exception.ApplicationClientNotFoundException;
 import com.security.custom.exception.token.TokenException;
 import com.security.custom.exception.token.TokenExpiredException;
 import com.security.custom.exception.token.TokenInvalidException;
-import com.security.custom.interfaces.ApplicationClientAuthorizationService;
+import com.security.custom.interfaces.IApplicationClientAuthorizationService;
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
@@ -60,7 +61,7 @@ public class AuthorizationService {
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthorizationService}
      * @throws UsernameNotFoundException if the {@code accessToken} does not contain a {@code username}
      * @throws TokenInvalidException if the given {@code accessToken} is not a valid one
      * @throws TokenExpiredException if provided {@code accessToken} is valid but has expired
@@ -68,7 +69,7 @@ public class AuthorizationService {
      */
     public AuthorizationInformationDto checkAccessToken(final String applicationClientId,
                                                         final String accessToken) {
-        ApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
+        IApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
                 applicationClientId
         );
         ApplicationClientDetails applicationClientDetails = applicationClientDetailsService.findById(
@@ -103,7 +104,7 @@ public class AuthorizationService {
      * @return {@link AuthorizationInformationDto} with the data of {@code refreshToken} based on {@link ApplicationClientDetails}
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientDetails} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthorizationService}
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username}
      * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
@@ -113,7 +114,7 @@ public class AuthorizationService {
     public AuthorizationInformationDto checkRefreshToken(final ApplicationClientDetails applicationClientDetails,
                                                          final String refreshToken) {
         AssertUtil.notNull(applicationClientDetails, "applicationClientDetails must be not null");
-        ApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
+        IApplicationClientAuthorizationService applicationAuthorizationService = getApplicationClientAuthorizationService(
                 applicationClientDetails.getId()
         );
         AuthorizationInformationDto result = this.getAuthorizationInformation(
@@ -140,7 +141,7 @@ public class AuthorizationService {
      * @param applicationClientDetails
      *    {@link ApplicationClientDetails} with the details about how to get token's payload
      * @param applicationAuthorizationService
-     *    {@link ApplicationClientAuthorizationService} to know how to get authorization data
+     *    {@link IApplicationClientAuthorizationService} to know how to get authorization data
      * @param token
      *    {@link String} with the token of which to extract the payload
      * @param isAccessToken
@@ -153,7 +154,7 @@ public class AuthorizationService {
      * @throws TokenException if there was a problem getting the content of {@code token}
      */
     private AuthorizationInformationDto getAuthorizationInformation(final ApplicationClientDetails applicationClientDetails,
-                                                                    final ApplicationClientAuthorizationService applicationAuthorizationService,
+                                                                    final IApplicationClientAuthorizationService applicationAuthorizationService,
                                                                     final String token,
                                                                     final boolean isAccessToken) {
         Map<String, Object> rawAuthorizationInformation = this.getRawAuthorizationInformation(
@@ -231,7 +232,7 @@ public class AuthorizationService {
      * @param applicationClientId
      *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authorization data to include
      * @param authorizationService
-     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
+     *    {@link IApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
@@ -240,7 +241,7 @@ public class AuthorizationService {
      * @throws UsernameNotFoundException if {@code rawAuthorizationInformation} does not contain a username value
      */
     private String getUsername(final String applicationClientId,
-                               final ApplicationClientAuthorizationService authorizationService,
+                               final IApplicationClientAuthorizationService authorizationService,
                                final Map<String, Object> rawAuthorizationInformation) {
         return authorizationService.getUsername(
                         rawAuthorizationInformation
@@ -265,13 +266,13 @@ public class AuthorizationService {
      * {@link ApplicationClientDetails} handles its authorization data.
      *
      * @param authorizationService
-     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
+     *    {@link IApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
      * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
      */
-    private Set<String> getAuthorities(final ApplicationClientAuthorizationService authorizationService,
+    private Set<String> getAuthorities(final IApplicationClientAuthorizationService authorizationService,
                                        final Map<String, Object> rawAuthorizationInformation) {
         return ofNullable(rawAuthorizationInformation)
                 .map(authorizationService::getAuthorities)
@@ -284,13 +285,13 @@ public class AuthorizationService {
      * the provided {@link ApplicationClientDetails} handles its authorization data.
      *
      * @param authorizationService
-     *    {@link ApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
+     *    {@link IApplicationClientAuthorizationService} with the details about how to get data in {@code rawAuthorizationInformation}
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
      * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
      */
-    private Map<String, Object> getAdditionalInformation(final ApplicationClientAuthorizationService authorizationService,
+    private Map<String, Object> getAdditionalInformation(final IApplicationClientAuthorizationService authorizationService,
                                                          final Map<String, Object> rawAuthorizationInformation) {
         return ofNullable(rawAuthorizationInformation)
                 .map(authorizationService::getAdditionalAuthorizationInformation)
@@ -299,17 +300,17 @@ public class AuthorizationService {
 
 
     /**
-     * Gets the {@link ApplicationClientAuthorizationService} related with provided {@link ApplicationClientDetails#getId()}).
+     * Gets the {@link IApplicationClientAuthorizationService} related with provided {@link ApplicationClientDetails#getId()}).
      *
      * @param applicationClientId
-     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link ApplicationClientAuthorizationService} instance
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the {@link IApplicationClientAuthorizationService} instance
      *
-     * @return {@link ApplicationClientAuthorizationService}
+     * @return {@link IApplicationClientAuthorizationService}
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} was not defined in {@link SecurityHandler}
-     * @throws BeansException if there was a problem getting the final class instance {@link ApplicationClientAuthorizationService}
+     * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthorizationService}
      */
-    private ApplicationClientAuthorizationService getApplicationClientAuthorizationService(final String applicationClientId) {
+    private IApplicationClientAuthorizationService getApplicationClientAuthorizationService(final String applicationClientId) {
         SecurityHandler securityHandler = SecurityHandler.getByApplicationClientId(applicationClientId);
         return applicationContext.getBean(
                 securityHandler.getAuthorizationServiceClass()

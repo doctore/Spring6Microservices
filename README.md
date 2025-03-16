@@ -506,13 +506,15 @@ file to include the specific configuration for native images.
 <br><br>
 
 **2.** Add the [configuration files](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/src/main/resources/META-INF/native-image) based on the project's functionality.
-To know how to generate all the [configuration archives](https://stackoverflow.com/questions/76747716/how-to-register-method-for-runtime-reflection-with-graalvm), in this microservice:
+
+To know how to generate all the [configuration archives](https://stackoverflow.com/questions/76747716/how-to-register-method-for-runtime-reflection-with-graalvm) in this microservice,
+package the project with maven and invoke:
 
 ```
-java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./native-config -jar target/security-custom-service-native-1.0.0.jar
+java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./native-config -jar target/security-custom-service-1.0.0.jar
 ```
 
-You can use all those files to include in the project only the required ones.
+You can use all the new files located in `native-config` folder, to include in the project only the required ones.
 <br><br>
 
 **3.** Update [pom.xml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/pom.xml) to add, at least, the **native** profile. Not all the dependencies are available

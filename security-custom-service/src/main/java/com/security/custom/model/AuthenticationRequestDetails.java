@@ -3,6 +3,9 @@ package com.security.custom.model;
 import com.security.custom.enums.HashAlgorithm;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Required data to authenticate a user using flow with PKCE.
  *
@@ -13,7 +16,10 @@ import lombok.*;
 @Data
 @EqualsAndHashCode(of = { "authorizationCode" })
 @NoArgsConstructor
-public class AuthenticationRequestDetails {
+public class AuthenticationRequestDetails implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -321365387728349369L;
 
     private String authorizationCode;
     private String applicationClientId;
