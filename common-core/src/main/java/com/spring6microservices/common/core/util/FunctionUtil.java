@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class FunctionUtil {
@@ -90,18 +91,38 @@ public class FunctionUtil {
 
 
     /**
-     * Helper method used in conflict resolution when old and new instance already exist, returning the new one.
+     *    {@link BinaryOperator} used in methods like {@link Collectors#toMap(Function, Function, BinaryOperator)} to resolve
+     * collisions between values associated with the same key. In this case, when old and new instance already exist, returns
+     * the new one.
      *
      * <pre>
      *   toMap(
      *      Map.Entry::getKey,
      *      Map.Entry::getValue,
-     *      overwriteWithNew()
+     *      resolveWithNew()
      *   )
      * </pre>
      */
-    public static <T> BinaryOperator<T> overwriteWithNew() {
+    public static <T> BinaryOperator<T> resolveWithNew() {
         return (oldInstance, newInstance) -> newInstance;
+    }
+
+
+    /**
+     *    {@link BinaryOperator} used in methods like {@link Collectors#toMap(Function, Function, BinaryOperator)} to resolve
+     * collisions between values associated with the same key. In this case, when old and new instance already exist, returns
+     * the old one.
+     *
+     * <pre>
+     *   toMap(
+     *      Map.Entry::getKey,
+     *      Map.Entry::getValue,
+     *      resolveWithOld()
+     *   )
+     * </pre>
+     */
+    public static <T> BinaryOperator<T> resolveWithOld() {
+        return (oldInstance, newInstance) -> oldInstance;
     }
 
 }

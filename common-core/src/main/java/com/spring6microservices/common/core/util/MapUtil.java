@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 import static com.spring6microservices.common.core.util.CollectorsUtil.getOrDefaultMapSupplier;
 import static com.spring6microservices.common.core.util.CollectorsUtil.toMapNullableValues;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionToMapEntryFunction;
-import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
+import static com.spring6microservices.common.core.util.FunctionUtil.resolveWithNew;
 import static com.spring6microservices.common.core.util.PredicateUtil.biAlwaysTrue;
 import static com.spring6microservices.common.core.util.PredicateUtil.fromBiPredicateToMapEntryPredicate;
 import static com.spring6microservices.common.core.util.PredicateUtil.getOrAlwaysTrue;
@@ -651,7 +651,7 @@ public class MapUtil {
     public static <T, E> Map<T, E> concat(final Map<? extends T, ? extends E> ...maps) {
         return concat(
                 LinkedHashMap::new,
-                overwriteWithNew(),
+                resolveWithNew(),
                 maps
         );
     }
@@ -682,7 +682,7 @@ public class MapUtil {
                                           final Map<? extends T, ? extends E> ...maps) {
         return concat(
                 mapFactory,
-                overwriteWithNew(),
+                resolveWithNew(),
                 maps
         );
     }
@@ -721,7 +721,7 @@ public class MapUtil {
         final Supplier<Map<T, E>> finalMapFactory = getOrDefaultMapSupplier(mapFactory);
         final BinaryOperator<E> finalMergeValueFunction = ObjectUtil.getOrElse(
                 mergeValueFunction,
-                overwriteWithNew()
+                resolveWithNew()
         );
         return ofNullable(maps)
                 .map(m ->
@@ -2657,7 +2657,7 @@ public class MapUtil {
                                         final Map<? extends T, ? extends E> ...maps) {
         return sort(
                 comparator,
-                overwriteWithNew(),
+                resolveWithNew(),
                 maps
         );
     }
@@ -2699,7 +2699,7 @@ public class MapUtil {
         AssertUtil.notNull(comparator, "comparator must be not null");
         final BinaryOperator<E> finalMergeValueFunction = ObjectUtil.getOrElse(
                 mergeValueFunction,
-                overwriteWithNew()
+                resolveWithNew()
         );
         return concat(
                   LinkedHashMap::new,

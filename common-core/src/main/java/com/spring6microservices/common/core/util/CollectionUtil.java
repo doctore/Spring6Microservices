@@ -37,7 +37,7 @@ import static com.spring6microservices.common.core.util.CollectorsUtil.toMapNull
 import static com.spring6microservices.common.core.util.ComparatorUtil.safeNaturalOrderNullFirst;
 import static com.spring6microservices.common.core.util.ComparatorUtil.safeNaturalOrderNullLast;
 import static com.spring6microservices.common.core.util.FunctionUtil.fromFunctionsToMapEntryFunction;
-import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
+import static com.spring6microservices.common.core.util.FunctionUtil.resolveWithNew;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static com.spring6microservices.common.core.util.PredicateUtil.alwaysTrue;
 import static com.spring6microservices.common.core.util.PredicateUtil.getOrAlwaysTrue;
@@ -3208,7 +3208,7 @@ public class CollectionUtil {
                 keyMapper,
                 Function.identity(),
                 alwaysTrue(),
-                overwriteWithNew(),
+                resolveWithNew(),
                 HashMap::new
         );
     }
@@ -3244,7 +3244,7 @@ public class CollectionUtil {
                 keyMapper,
                 valueMapper,
                 alwaysTrue(),
-                overwriteWithNew(),
+                resolveWithNew(),
                 HashMap::new
         );
     }
@@ -3285,7 +3285,7 @@ public class CollectionUtil {
                 keyMapper,
                 valueMapper,
                 filterPredicate,
-                overwriteWithNew(),
+                resolveWithNew(),
                 HashMap::new
         );
     }
@@ -3409,7 +3409,7 @@ public class CollectionUtil {
 
         final BinaryOperator<V> finalMergeValueFunction = getOrElse(
                 mergeValueFunction,
-                overwriteWithNew()
+                resolveWithNew()
         );
         return sourceCollection
                 .stream()

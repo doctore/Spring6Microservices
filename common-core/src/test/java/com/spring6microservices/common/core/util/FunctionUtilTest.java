@@ -14,10 +14,7 @@ import java.util.stream.Stream;
 
 import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
 import static com.spring6microservices.common.core.enums.PizzaEnum.MARGUERITA;
-import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionToMapEntryFunction;
-import static com.spring6microservices.common.core.util.FunctionUtil.fromBiFunctionsToMapEntriesFunction;
-import static com.spring6microservices.common.core.util.FunctionUtil.fromFunctionsToMapEntryFunction;
-import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
+import static com.spring6microservices.common.core.util.FunctionUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -171,7 +168,7 @@ public class FunctionUtilTest {
     }
 
 
-    static Stream<Arguments> overwriteWithNewTestCases() {
+    static Stream<Arguments> resolveWithNewTestCases() {
         PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
         PizzaDto marguerita = new PizzaDto(MARGUERITA.getDatabaseValue(), 15D);
         return Stream.of(
@@ -186,14 +183,41 @@ public class FunctionUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("overwriteWithNewTestCases")
-    @DisplayName("overwriteWithNew: test cases")
-    public <T> void overwriteWithNew_testCases(T oldInstance,
-                                               T newInstance,
-                                               T expectedResult) {
+    @MethodSource("resolveWithNewTestCases")
+    @DisplayName("resolveWithNew: test cases")
+    public <T> void resolveWithNew_testCases(T oldInstance,
+                                             T newInstance,
+                                             T expectedResult) {
         assertEquals(
                 expectedResult,
-                overwriteWithNew().apply(oldInstance, newInstance)
+                resolveWithNew().apply(oldInstance, newInstance)
+        );
+    }
+
+
+    static Stream<Arguments> resolveWithOldTestCases() {
+        PizzaDto carbonara = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+        PizzaDto marguerita = new PizzaDto(MARGUERITA.getDatabaseValue(), 15D);
+        return Stream.of(
+                //@formatter:off
+                //            oldInstance,   newInstance,   expectedResult
+                Arguments.of( null,          null,          null ),
+                Arguments.of( 11,            null,          11 ),
+                Arguments.of( null,          11,            null ),
+                Arguments.of( carbonara,     marguerita,    carbonara )
+
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("resolveWithOldTestCases")
+    @DisplayName("resolveWithOld: test cases")
+    public <T> void resolveWithOld_testCases(T oldInstance,
+                                             T newInstance,
+                                             T expectedResult) {
+        assertEquals(
+                expectedResult,
+                resolveWithOld().apply(oldInstance, newInstance)
         );
     }
 

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.spring6microservices.common.core.util.FunctionUtil.overwriteWithNew;
+import static com.spring6microservices.common.core.util.FunctionUtil.resolveWithNew;
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -84,7 +84,7 @@ public class CollectorsUtil {
         return toMapNullableValues(
                 keyMapper,
                 valueMapper,
-                overwriteWithNew(),
+                resolveWithNew(),
                 HashMap::new
         );
     }
@@ -162,7 +162,7 @@ public class CollectorsUtil {
         return toMapNullableValues(
                 keyMapper,
                 valueMapper,
-                overwriteWithNew(),
+                resolveWithNew(),
                 mapFactory
         );
     }
@@ -206,7 +206,7 @@ public class CollectorsUtil {
         AssertUtil.notNull(valueMapper, "valueMapper must be not null");
         final BinaryOperator<U> finalMergeFunction = ObjectUtil.getOrElse(
                 mergeFunction,
-                overwriteWithNew()
+                resolveWithNew()
         );
         final Supplier<Map<K, U>> finalMapFactory = ObjectUtil.getOrElse(
                 mapFactory,
