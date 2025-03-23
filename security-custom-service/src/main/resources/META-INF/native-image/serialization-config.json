@@ -10,5 +10,11 @@
   },
   {
     "name": "java.lang.Number"
+  },
+  {
+    "name":"java.time.LocalDateTime"
+  },
+  {
+    "name":"java.time.Ser"
   }
 ]

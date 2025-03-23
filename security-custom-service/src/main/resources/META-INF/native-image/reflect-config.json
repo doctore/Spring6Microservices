@@ -13,6 +13,30 @@
     ]
   },
   {
+    "name":"com.security.custom.model.ApplicationClientDetails",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[
+      {"name":"<init>","parameterTypes":[] },
+      {"name":"equals","parameterTypes":["java.lang.Object"] },
+      {"name":"getId","parameterTypes":[] },
+      {"name":"setAccessTokenValidityInSeconds","parameterTypes":["int"] },
+      {"name":"setApplicationClientSecret","parameterTypes":["java.lang.String"] },
+      {"name":"setCreatedAt","parameterTypes":["java.time.LocalDateTime"] },
+      {"name":"setEncryptionAlgorithm","parameterTypes":["com.security.custom.enums.token.TokenEncryptionAlgorithm"] },
+      {"name":"setEncryptionMethod","parameterTypes":["com.security.custom.enums.token.TokenEncryptionMethod"] },
+      {"name":"setEncryptionSecret","parameterTypes":["java.lang.String"] },
+      {"name":"setId","parameterTypes":["java.lang.String"] },
+      {"name":"setRefreshTokenValidityInSeconds","parameterTypes":["java.lang.Integer"] },
+      {"name":"setSecurityHandler","parameterTypes":["com.security.custom.enums.SecurityHandler"] },
+      {"name":"setSignatureAlgorithm","parameterTypes":["com.security.custom.enums.token.TokenSignatureAlgorithm"] },
+      {"name":"setSignatureSecret","parameterTypes":["java.lang.String"] },
+      {"name":"setTokenType","parameterTypes":["com.security.custom.enums.token.TokenType"] }
+    ]
+  },
+  {
     "name":"com.spring6microservices.common.spring.validator.enums.EnumHasInternalStringValueValidator",
     "allDeclaredFields":true,
     "queryAllDeclaredMethods":true,
