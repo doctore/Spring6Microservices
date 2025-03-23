@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -54,6 +55,9 @@ public class ApplicationClientDetailsRepositoryTest {
                 .encryptionSecret("dirEncryptionSecret##9991a2(jwe)")
                 .accessTokenValidityInSeconds(900)
                 .refreshTokenValidityInSeconds(3600)
+                .createdAt(
+                        LocalDateTime.now()
+                )
                 .build();
 
         return Stream.of(
@@ -80,7 +84,8 @@ public class ApplicationClientDetailsRepositoryTest {
             assertThat(
                     result.get(),
                     samePropertyValuesAs(
-                            expectedResult.get()
+                            expectedResult.get(),
+                            "createdAt"
                     )
             );
         }

@@ -24,6 +24,7 @@ public class UserRepository {
     public static String USER_NAME_COLUMN = "name";
     public static String USER_PASSWORD_COLUMN = "password";
     public static String USER_USERNAME_COLUMN = "username";
+    public static String USER_CREATED_AT_COLUMN = "createdAt";
     public static String ROLE_ID_COLUMN = "roleId";
     public static String ROLE_NAME_COLUMN = "roleName";
     public static String PERMISSION_NAME_COLUMN = "permissionName";
@@ -56,6 +57,7 @@ public class UserRepository {
                                      + ", u.username as " + USER_USERNAME_COLUMN
                                      + ", u.password as " + USER_PASSWORD_COLUMN
                                      + ", u.active as " + USER_ACTIVE_COLUMN
+                                     + ", u.created_at as " + USER_CREATED_AT_COLUMN
                                      + ", r.id as " + ROLE_ID_COLUMN
                                      + ", r.name as " + ROLE_NAME_COLUMN
                                      + ", p.name as " + PERMISSION_NAME_COLUMN + " "

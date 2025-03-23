@@ -11,7 +11,8 @@ INSERT INTO security.application_client_details (id
                                                 ,encryption_method
                                                 ,encryption_secret
                                                 ,access_token_validity_in_seconds
-                                                ,refresh_token_validity_in_seconds)
+                                                ,refresh_token_validity_in_seconds
+                                                ,created_at)
 VALUES ('Spring6Microservices'
        ,'Spring6Microservices-application_client_secret'
        ,'HS256'
@@ -22,4 +23,5 @@ VALUES ('Spring6Microservices'
        ,'A128CBC_HS256'
        ,'dirEncryptionSecret##9991a2(jwe)'
        ,900
-       ,3600);
+       ,3600
+       ,current_timestamp);

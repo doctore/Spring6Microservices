@@ -88,7 +88,8 @@ public class UserRepositoryTest {
             assertThat(
                     result.get(),
                     samePropertyValuesAs(
-                            expectedResult.get()
+                            expectedResult.get(),
+                            "createdAt"
                     )
             );
         }

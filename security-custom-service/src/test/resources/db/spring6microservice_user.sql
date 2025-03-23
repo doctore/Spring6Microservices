@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS security.spring6microservice_user (
     name            varchar(128)   not null,
     active          boolean        not null,
     password        varchar(128)   not null,
-    username        varchar(64)    not null
+    username        varchar(64)    not null,
+    created_at      timestamp      not null    default current_timestamp
 );
 
 CREATE UNIQUE INDEX spring6microservice_user_username_uindex ON security.spring6microservice_user(username);
@@ -17,7 +18,8 @@ CREATE UNIQUE INDEX spring6microservice_user_username_uindex ON security.spring6
 
 CREATE TABLE IF NOT EXISTS security.spring6microservice_role (
     id              serial         not null    constraint spring6microservice_role_pk primary key,
-    name 	        varchar(64)    not null
+    name 	        varchar(64)    not null,
+    created_at      timestamp      not null    default current_timestamp
 );
 
 CREATE UNIQUE INDEX spring6microservice_role_name_uindex ON security.spring6microservice_role(name);
@@ -25,7 +27,8 @@ CREATE UNIQUE INDEX spring6microservice_role_name_uindex ON security.spring6micr
 
 CREATE TABLE IF NOT EXISTS security.spring6microservice_permission (
     id              serial         not null    constraint spring6microservice_permission_pk primary key,
-    name 	        varchar(64)    not null
+    name 	        varchar(64)    not null,
+    created_at      timestamp      not null    default current_timestamp
 );
 
 CREATE UNIQUE INDEX spring6microservice_permission_name_uindex ON security.spring6microservice_permission(name);
@@ -50,22 +53,36 @@ INSERT INTO security.spring6microservice_user (id
                                               ,name
                                               ,active
                                               ,password
-                                              ,username)
+                                              ,username
+                                              ,created_at)
 VALUES (1
        ,'Test user name'
        ,true
        ,'Test user password'
-       ,'Test user username');
+       ,'Test user username'
+       ,current_timestamp);
 
 
-INSERT INTO security.spring6microservice_role (id, name)
-VALUES (1, 'ROLE_ADMIN')
-      ,(2, 'ROLE_USER');
+INSERT INTO security.spring6microservice_role (id
+                                              ,name
+                                              ,created_at)
+VALUES (1
+       ,'ROLE_ADMIN'
+       ,current_timestamp)
+      ,(2
+       ,'ROLE_USER'
+       ,current_timestamp);
 
 
-INSERT INTO security.spring6microservice_permission (id, name)
-VALUES (1, 'CREATE_ORDER')
-      ,(2, 'GET_ORDER');
+INSERT INTO security.spring6microservice_permission (id
+                                                    ,name
+                                                    ,created_at)
+VALUES (1
+       ,'CREATE_ORDER'
+       ,current_timestamp)
+      ,(2
+       ,'GET_ORDER'
+       ,current_timestamp);
 
 
 INSERT INTO security.spring6microservice_user_role (user_id

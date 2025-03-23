@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -92,6 +93,9 @@ public class ApplicationClientDetails implements UserDetails {
 
     @NotNull
     private Integer refreshTokenValidityInSeconds;
+
+    @NotNull
+    private LocalDateTime createdAt;
 
 
     @Override

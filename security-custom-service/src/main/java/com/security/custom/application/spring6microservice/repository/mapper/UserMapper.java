@@ -10,18 +10,12 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import static com.security.custom.application.spring6microservice.repository.UserRepository.PERMISSION_NAME_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.ROLE_ID_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.ROLE_NAME_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.USER_ACTIVE_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.USER_ID_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.USER_NAME_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.USER_PASSWORD_COLUMN;
-import static com.security.custom.application.spring6microservice.repository.UserRepository.USER_USERNAME_COLUMN;
+import static com.security.custom.application.spring6microservice.repository.UserRepository.*;
 import static java.util.Optional.ofNullable;
 
 @UtilityClass
@@ -45,6 +39,7 @@ public class UserMapper {
                         resultSet.getString(USER_USERNAME_COLUMN),
                         resultSet.getString(USER_PASSWORD_COLUMN),
                         resultSet.getBoolean(USER_ACTIVE_COLUMN),
+                        resultSet.getObject(USER_CREATED_AT_COLUMN, LocalDateTime.class),
                         new HashSet<>()
                 );
             }

@@ -11,7 +11,8 @@ INSERT INTO security.application_client_details (id
                                                 ,encryption_method
                                                 ,encryption_secret
                                                 ,access_token_validity_in_seconds
-                                                ,refresh_token_validity_in_seconds)
+                                                ,refresh_token_validity_in_seconds
+                                                ,created_at)
 VALUES ('Spring6Microservices'
         -- Raw application_client_secret: Spring6Microservices
        ,'{bcrypt}$2a$10$eb.2YmvPM6pOSPef5f2EXevru16Sb4UN6c.wHe2a3vwExV5/BY.vW'
@@ -25,7 +26,8 @@ VALUES ('Spring6Microservices'
         -- Raw encryption_secret: 841d8A6C80C#A4FcAf32D5367t1!C53b
        ,'{cipher}bf7c79f1a7cbd56cb1f10ccc0c8e6440ba552315e86789253ede14e62a4f007ea680136668b4b95ace78506e9c247bcf20b2a88da4baf5c111e6396e67c69236'
        ,600
-       ,1800);
+       ,1800
+       ,current_timestamp);
 
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -36,33 +38,48 @@ INSERT INTO security.spring6microservice_user (id
                                               ,name
                                               ,active
                                               ,password
-                                              ,username)
+                                              ,username
+                                              ,created_at)
 VALUES (1
        ,'Administrator'
        ,true
         -- Raw password: admin
        ,'{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO'
-       ,'admin')
+       ,'admin'
+       ,current_timestamp)
       ,(2
        ,'Normal user'
        ,true
         -- Raw password: user
        ,'{bcrypt}$2a$10$i7LFiCo1JRm87ERePQOS3OkZ3Srgub8F7GyoWu6NmUuCLDTPq8zMW'
-       ,'user');
+       ,'user'
+       ,current_timestamp);
 
 SELECT setval('security.spring6microservice_user_id_seq', (SELECT count(*) FROM security.spring6microservice_user));
 
 
-INSERT INTO security.spring6microservice_role (id, name)
-VALUES (1, 'ROLE_ADMIN')
-      ,(2, 'ROLE_USER');
+INSERT INTO security.spring6microservice_role (id
+                                              ,name
+                                              ,created_at)
+VALUES (1
+       ,'ROLE_ADMIN'
+       ,current_timestamp)
+      ,(2
+       ,'ROLE_USER'
+       ,current_timestamp);
 
 SELECT setval('security.spring6microservice_role_id_seq', (SELECT count(*) FROM security.spring6microservice_role));
 
 
-INSERT INTO security.spring6microservice_permission (id, name)
-VALUES (1, 'CREATE_ORDER')
-      ,(2, 'GET_ORDER');
+INSERT INTO security.spring6microservice_permission (id
+                                                    ,name
+                                                    ,created_at)
+VALUES (1
+       ,'CREATE_ORDER'
+       ,current_timestamp)
+      ,(2
+       ,'GET_ORDER'
+       ,current_timestamp);
 
 SELECT setval('security.spring6microservice_permission_id_seq', (SELECT count(*) FROM security.spring6microservice_permission));
 
