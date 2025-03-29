@@ -1,8 +1,11 @@
 package com.security.custom.controller;
 
 import com.security.custom.configuration.rest.RestRoutes;
+import com.security.custom.dto.ClearCacheRequestDto;
 import com.security.custom.model.ApplicationClientDetails;
+import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
+import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,11 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -31,25 +35,37 @@ public class CacheController extends BaseController {
 
     private final ApplicationClientDetailsCacheService applicationClientDetailsCacheService;
 
+    private final AuthenticationRequestDetailsCacheService authenticationRequestDetailsCacheService;
+
 
     @Autowired
-    public CacheController(final ApplicationClientDetailsCacheService applicationClientDetailsCacheService) {
+    public CacheController(final ApplicationClientDetailsCacheService applicationClientDetailsCacheService,
+                           final AuthenticationRequestDetailsCacheService authenticationRequestDetailsCacheService) {
         this.applicationClientDetailsCacheService = applicationClientDetailsCacheService;
+        this.authenticationRequestDetailsCacheService = authenticationRequestDetailsCacheService;
     }
 
 
     /**
-     * Clear the cache used to store {@link ApplicationClientDetails} information.
+     * Clear the internal caches used to store:
      *
-     * @return if it was possible to clear the cache: {@link HttpStatus#OK},
-     *         {@link HttpStatus#NOT_FOUND} otherwise.
+     * <ul>
+     *     <li>{@link ApplicationClientDetails}</li>
+     *     <li>{@link AuthenticationRequestDetails}</li>
+     * </ul>
+     *
+     * @param clearCacheRequestDto
+     *    {@link ClearCacheRequestDto}
+     *
+     * @return if it was possible to clear the caches: {@link HttpStatus#OK},
+     *         {@link HttpStatus#INTERNAL_SERVER_ERROR} if there was an error.
      */
     @Operation(summary = "Clear the cache")
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "The cache was cleared successfully"
+                            description = "The caches were cleared successfully"
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -58,10 +74,6 @@ public class CacheController extends BaseController {
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "The cache could not be cleared."
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -74,12 +86,30 @@ public class CacheController extends BaseController {
             }
     )
     @PutMapping(value = RestRoutes.CACHE.CLEAR)
-    public Mono<ResponseEntity<?>> clear() {
-        log.info("Cleaning cache related with ApplicationClientDetails data");
+    public Mono<ResponseEntity<?>> clear(@RequestBody final ClearCacheRequestDto clearCacheRequestDto) {
+        log.info(
+                format("Clearing the internal caches with: %s",
+                        clearCacheRequestDto
+                )
+        );
+        if (clearCacheRequestDto.isApplicationClientDetails()) {
+            log.info(
+                    format("The cache: %s was cleared: %s",
+                            applicationClientDetailsCacheService.getCacheName(),
+                            applicationClientDetailsCacheService.clear()
+                    )
+            );
+        }
+        if (clearCacheRequestDto.isAuthenticationRequestDetails()) {
+            log.info(
+                    format("The cache: %s was cleared: %s",
+                            authenticationRequestDetailsCacheService.getCacheName(),
+                            authenticationRequestDetailsCacheService.clear()
+                    )
+            );
+        }
         return Mono.just(
-                applicationClientDetailsCacheService.clear()
-                        ? new ResponseEntity<>(OK)
-                        : new ResponseEntity<>(NOT_FOUND)
+                new ResponseEntity<>(OK)
         );
     }
 

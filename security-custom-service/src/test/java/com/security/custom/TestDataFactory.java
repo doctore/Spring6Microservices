@@ -4,10 +4,7 @@ import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
-import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
-import com.security.custom.dto.AuthenticationRequestLoginDto;
-import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
-import com.security.custom.dto.RawAuthenticationInformationDto;
+import com.security.custom.dto.*;
 import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
@@ -180,6 +177,15 @@ public class TestDataFactory {
                 .authorities(authorities)
                 .additionalInformation(additionalInformation)
                 .build();
+    }
+
+
+    public static ClearCacheRequestDto buildClearCacheRequestDto(final boolean applicationClientDetails,
+                                                                 final boolean authenticationRequestDetails) {
+        return new ClearCacheRequestDto(
+                applicationClientDetails,
+                authenticationRequestDetails
+        );
     }
 
 

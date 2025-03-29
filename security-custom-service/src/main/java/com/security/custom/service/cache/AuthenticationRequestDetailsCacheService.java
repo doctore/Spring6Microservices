@@ -72,6 +72,16 @@ public class AuthenticationRequestDetailsCacheService {
 
 
     /**
+     * Returns the name of the internal cache managed by this service.
+     *
+     * @return {@link String} with the internal cache name
+     */
+    public String getCacheName() {
+        return cacheConfiguration.getCacheName();
+    }
+
+
+    /**
      * Include a pair of {@code authorizationCode} - {@link AuthenticationRequestDetails} inside the related cache.
      *
      * @param authorizationCode

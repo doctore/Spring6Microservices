@@ -3,8 +3,10 @@ package com.security.custom.service.cache;
 import com.security.custom.configuration.cache.AuthenticationRequestDetailsCacheConfiguration;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.spring6microservices.common.spring.service.CacheService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -128,6 +130,22 @@ public class AuthenticationRequestDetailsCacheServiceTest {
         assertEquals(
                 expectedResult,
                 operationResult
+        );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("getCacheName: then return the name of the internal cache")
+    public void getCacheName_thenReturnTheNameOfTheInternalCache() {
+        String cacheName = "CacheNameTest";
+
+        when(mockCacheConfiguration.getCacheName())
+                .thenReturn(cacheName);
+
+        assertEquals(
+                cacheName,
+                service.getCacheName()
         );
     }
 
