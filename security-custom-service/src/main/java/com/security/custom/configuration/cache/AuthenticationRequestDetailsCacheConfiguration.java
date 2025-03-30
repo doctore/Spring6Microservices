@@ -1,11 +1,12 @@
 package com.security.custom.configuration.cache;
 
+import com.security.custom.model.AuthenticationRequestDetails;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Used in the authentication flow with PKCE (Proof of Key Code Exchange).
+ * Used in the authentication flow with PKCE (Proof of Key Code Exchange), to store: {@link AuthenticationRequestDetails}
  *
  * @see <a href="https://oauth.net/2/pkce/">PKCE</a>
  */

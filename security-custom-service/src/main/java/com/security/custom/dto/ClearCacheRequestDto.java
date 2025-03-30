@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Schema(description = "Configuration about the internal cache to clean")
+@Schema(description = "Configuration about the internal caches to clear")
 public class ClearCacheRequestDto {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
