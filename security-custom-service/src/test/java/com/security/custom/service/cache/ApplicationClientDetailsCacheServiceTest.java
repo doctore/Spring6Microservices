@@ -125,6 +125,7 @@ public class ApplicationClientDetailsCacheServiceTest {
                               Optional<ApplicationClientDetails> expectedResult) {
         when(mockCacheService.get(anyString(), eq(id)))
                 .thenReturn((Optional)cacheServiceResult);
+
         Optional<ApplicationClientDetails> operationResult = service.get(id);
 
         assertEquals(

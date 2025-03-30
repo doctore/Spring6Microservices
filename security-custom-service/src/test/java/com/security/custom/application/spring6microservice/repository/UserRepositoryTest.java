@@ -4,7 +4,6 @@ import com.security.custom.application.spring6microservice.model.enums.Permissio
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.model.Role;
 import com.security.custom.application.spring6microservice.model.User;
-import com.security.custom.model.ApplicationClientDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -77,7 +76,7 @@ public class UserRepositoryTest {
     @MethodSource("findByUsernameTestCases")
     @DisplayName("findByUsername: test cases")
     public void findByUsername_testCases(String username,
-                                         Optional<ApplicationClientDetails> expectedResult) {
+                                         Optional<User> expectedResult) {
         Optional<User> result = repository.findByUsername(username);
         if (expectedResult.isEmpty()) {
             assertNotNull(result);

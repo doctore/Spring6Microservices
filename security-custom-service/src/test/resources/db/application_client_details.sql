@@ -1,6 +1,7 @@
 -------------------------------------------------------
 -- Required for ApplicationClientDetailsRepositoryTest
 -------------------------------------------------------
+
 INSERT INTO security.application_client_details (id
                                                 ,application_client_secret
                                                 ,signature_algorithm

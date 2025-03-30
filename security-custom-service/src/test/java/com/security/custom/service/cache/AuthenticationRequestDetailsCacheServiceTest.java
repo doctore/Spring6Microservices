@@ -125,6 +125,7 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                               Optional<AuthenticationRequestDetails> expectedResult) {
         when(mockCacheService.get(anyString(), eq(authorizationCode)))
                 .thenReturn((Optional)cacheServiceResult);
+
         Optional<AuthenticationRequestDetails> operationResult = service.get(authorizationCode);
 
         assertEquals(
