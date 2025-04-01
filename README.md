@@ -200,6 +200,7 @@ A common use of Either is as an alternative to scala.Option for dealing with pos
 
 Maven project that includes common code specifically related with Spring framework, used in several microservices. It contains different useful helper classes like:
 
+* [HashUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/util/HashUtil.java)
 * [HttpUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/util/HttpUtil.java)
 * [JsonUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-spring/src/main/java/com/spring6microservices/common/spring/util/JsonUtil.java)
 
