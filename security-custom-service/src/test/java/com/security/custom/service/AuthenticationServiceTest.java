@@ -6,7 +6,6 @@ import com.security.custom.application.spring6microservice.service.Spring6Micros
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
-import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientMismatchException;
 import com.security.custom.exception.ApplicationClientNotFoundException;
@@ -20,6 +19,7 @@ import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -5,11 +5,11 @@ import com.security.custom.configuration.rest.RestRoutes;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginDto;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
-import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -211,7 +211,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
 
         String nullChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: must not be null";
         String emptyChallengeRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challenge' due to: size must be between 1 and 2147483647";
-        String notFoundChallengeMethodRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challengeMethod' due to: must be one of the values included in [SHA-256, SHA-384, SHA-512]";
+        String notFoundChallengeMethodRequestError = "Field error in object 'authenticationRequestLoginAuthorizedDto' on field 'challengeMethod' due to: must be one of the values included in [MD5, SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512]";
         return Stream.of(
                 //@formatter:off
                 //            invalidAuthenticationRequestDto,   expectedError

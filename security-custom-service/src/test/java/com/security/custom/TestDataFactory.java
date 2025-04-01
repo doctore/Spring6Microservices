@@ -5,7 +5,6 @@ import com.security.custom.application.spring6microservice.model.User;
 import com.security.custom.application.spring6microservice.model.enums.PermissionEnum;
 import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.dto.*;
-import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
@@ -16,6 +15,7 @@ import com.security.custom.model.AuthenticationRequestDetails;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.experimental.UtilityClass;
 
 import java.util.LinkedHashMap;

@@ -1,12 +1,12 @@
 package com.security.custom.service;
 
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
-import com.security.custom.enums.HashAlgorithm;
 import com.security.custom.exception.AuthenticationRequestDetailsNotFoundException;
 import com.security.custom.exception.AuthenticationRequestDetailsNotSavedException;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

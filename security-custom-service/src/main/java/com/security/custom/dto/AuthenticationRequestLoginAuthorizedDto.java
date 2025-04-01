@@ -1,6 +1,6 @@
 package com.security.custom.dto;
 
-import com.security.custom.enums.HashAlgorithm;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import com.spring6microservices.common.spring.validator.enums.EnumHasInternalStringValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

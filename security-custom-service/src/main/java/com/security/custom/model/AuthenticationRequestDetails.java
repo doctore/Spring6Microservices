@@ -1,6 +1,6 @@
 package com.security.custom.model;
 
-import com.security.custom.enums.HashAlgorithm;
+import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.*;
 
 import java.io.Serial;
