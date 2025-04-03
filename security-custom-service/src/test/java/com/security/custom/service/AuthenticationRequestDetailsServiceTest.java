@@ -182,20 +182,23 @@ public class AuthenticationRequestDetailsServiceTest {
                     .put(any(), any());
 
         // Found AuthenticationRequestDetails in cache
-        } else if (null != cacheServiceResult) {
+        }
+        else if (null != cacheServiceResult) {
             verify(mockCacheService, times(1))
                     .get(eq(authorizationCode));
             verify(mockCacheService, times(0))
                     .put(any(), any());
 
         // Not found AuthenticationRequestDetails in cache
-        } else if (null == cacheServiceResult) {
+        }
+        else if (null == cacheServiceResult) {
             verify(mockCacheService, times(1))
                     .get(eq(authorizationCode));
             verify(mockCacheService, times(0))
                     .put(any(), any());
 
-        } else {
+        }
+        else {
             throw new RuntimeException("Not well managed use case");
         }
     }

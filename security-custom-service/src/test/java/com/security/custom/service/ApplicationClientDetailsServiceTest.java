@@ -211,7 +211,8 @@ public class ApplicationClientDetailsServiceTest {
                     .put(any(), any());
 
         // Found ApplicationClientDetails only in database
-        } else if (repositoryResult.isPresent() && null == cacheServiceResult) {
+        }
+        else if (repositoryResult.isPresent() && null == cacheServiceResult) {
             verify(mockRepository, times(1))
                     .findById(eq(id));
             verify(mockCacheService, times(1))
@@ -220,7 +221,8 @@ public class ApplicationClientDetailsServiceTest {
                     .put(eq(id), eq(repositoryResult.get()));
 
         // Found ApplicationClientDetails in cache
-        } else if (null != cacheServiceResult) {
+        }
+        else if (null != cacheServiceResult) {
             verify(mockRepository, times(0))
                     .findById(eq(id));
             verify(mockCacheService, times(1))
@@ -229,7 +231,8 @@ public class ApplicationClientDetailsServiceTest {
                     .put(any(), any());
 
         // Not found ApplicationClientDetails neither in cache nor database
-        } else if (repositoryResult.isEmpty() && null == cacheServiceResult) {
+        }
+        else if (repositoryResult.isEmpty() && null == cacheServiceResult) {
             verify(mockRepository, times(1))
                     .findById(eq(id));
             verify(mockCacheService, times(1))
@@ -237,7 +240,8 @@ public class ApplicationClientDetailsServiceTest {
             verify(mockCacheService, times(0))
                     .put(any(), any());
 
-        } else {
+        }
+        else {
             throw new RuntimeException("Not well managed use case");
         }
     }

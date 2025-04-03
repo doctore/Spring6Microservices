@@ -78,7 +78,8 @@ public class ApplicationClientDetailsRepositoryTest {
         if (expectedResult.isEmpty()) {
             assertNotNull(result);
             assertFalse(result.isPresent());
-        } else {
+        }
+        else {
             assertNotNull(result);
             assertTrue(result.isPresent());
             assertThat(

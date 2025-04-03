@@ -35,7 +35,8 @@ public class SecurityHandlerTest {
                     expectedException,
                     () -> getByApplicationClientId(applicationClientId)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getByApplicationClientId(applicationClientId)

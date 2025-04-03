@@ -130,7 +130,8 @@ public class EncryptorServiceTest {
                     expectedException,
                     () -> service.encrypt(toEncrypt, password)
             );
-        } else {
+        }
+        else {
             assertNotNull(service.encrypt(toEncrypt, password));
         }
     }
@@ -161,7 +162,8 @@ public class EncryptorServiceTest {
                     expectedException,
                     () -> service.decrypt(toDecrypt, password)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     service.decrypt(toDecrypt, password)

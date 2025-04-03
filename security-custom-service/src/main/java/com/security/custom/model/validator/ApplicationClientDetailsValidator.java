@@ -85,7 +85,8 @@ public final class ApplicationClientDetailsValidator implements Validate<Applica
             if (StringUtil.isBlank(applicationClientDetails.getEncryptionSecret())) {
                 errorMessages.add("encryptionSecret must be not null or empty");
             }
-        } else {
+        }
+        else {
             if (null != applicationClientDetails.getEncryptionAlgorithm()) {
                 errorMessages.add("encryptionAlgorithm must be null");
             }

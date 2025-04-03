@@ -396,7 +396,8 @@ public class AuthenticationServiceTest {
         int createTokensInvocations = 0;
         if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
-        } else {
+        }
+        else {
             assertTrue(result.isPresent());
             assertEquals(
                     expectedResult,
@@ -529,7 +530,8 @@ public class AuthenticationServiceTest {
 
         if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
-        } else {
+        }
+        else {
             assertTrue(result.isPresent());
             assertEquals(
                     expectedResult,
@@ -767,7 +769,8 @@ public class AuthenticationServiceTest {
         int createTokensInvocations = 0;
         if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
-        } else {
+        }
+        else {
             assertTrue(result.isPresent());
             assertEquals(
                     expectedResult,
@@ -1181,7 +1184,8 @@ public class AuthenticationServiceTest {
         int createTokensInvocations = 0;
         if (expectedResult.isEmpty()) {
             assertTrue(result.isEmpty());
-        } else {
+        }
+        else {
             assertTrue(result.isPresent());
             assertEquals(
                     expectedResult,
