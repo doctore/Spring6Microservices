@@ -198,7 +198,8 @@ public class ObjectUtilTest {
                     expectedException,
                     () -> getOrElseGet(sourceInstance, defaultValue)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getOrElseGet(sourceInstance, defaultValue)
@@ -243,7 +244,8 @@ public class ObjectUtilTest {
                     expectedException,
                     () -> getOrElseGet(sourceInstance, mapper, defaultValue)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getOrElseGet(sourceInstance, mapper, defaultValue)

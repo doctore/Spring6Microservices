@@ -91,7 +91,8 @@ public class MapUtilTest {
                                     sourceMap, firstMapper, secondMapper
                             )
             );
-        } else {
+        }
+        else {
             assertEquals(expectedResult,
                     andThen(
                             sourceMap, firstMapper, secondMapper
@@ -176,7 +177,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> andThen(sourceMap, firstMapper, secondMapper, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     andThen(sourceMap, firstMapper, secondMapper, mapFactory)
@@ -253,7 +255,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper)
@@ -347,7 +350,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceMap, filterPredicate, defaultMapper, orElseMapper, mapFactory)
@@ -412,7 +416,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceMap, partialFunction, orElseMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceMap, partialFunction, orElseMapper)
@@ -490,7 +495,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceMap, partialFunction, orElseMapper, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals
                     (expectedResult,
                     applyOrElse(sourceMap, partialFunction, orElseMapper, mapFactory)
@@ -549,7 +555,8 @@ public class MapUtilTest {
                                                                                Map<K2, V2> expectedResult) {
         if (null != expectedException) {
             assertThrows(expectedException, () -> collect(sourceMap, filterPredicate, mapFunction));
-        } else {
+        }
+        else {
             assertEquals(expectedResult, collect(sourceMap, filterPredicate, mapFunction));
         }
     }
@@ -619,7 +626,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> collect(sourceMap, filterPredicate, mapFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceMap, filterPredicate, mapFunction, mapFactory)
@@ -675,7 +683,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> collect(sourceMap, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceMap, partialFunction)
@@ -738,7 +747,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> collect(sourceMap, partialFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceMap, partialFunction, mapFactory)
@@ -792,7 +802,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> collectFirst(sourceMap, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collectFirst(sourceMap, partialFunction)
@@ -1437,7 +1448,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> flatten(sourceMap, flattener)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     flatten(sourceMap, flattener)
@@ -1498,7 +1510,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> flatten(sourceMap, flattener, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     flatten(sourceMap, flattener, collectionFactory)
@@ -1674,7 +1687,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> getOrElseGet(sourceMap, key, defaultValue)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getOrElseGet(sourceMap, key, defaultValue)
@@ -1751,7 +1765,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupBy(sourceMap, discriminatorKey)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceMap, discriminatorKey)
@@ -1829,7 +1844,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
@@ -1893,7 +1909,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupByMultiKey(sourceMap, discriminatorKey)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupByMultiKey(sourceMap, discriminatorKey)
@@ -1994,7 +2011,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupByMultiKey(sourceMap, discriminatorKey, mapResultFactory, mapValuesFactory)
@@ -2044,7 +2062,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMap(sourceMap, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceMap, discriminatorKey, valueMapper)
@@ -2106,7 +2125,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper)
@@ -2183,7 +2203,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceMap, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
@@ -2237,7 +2258,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMap(sourceMap, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceMap, partialFunction)
@@ -2304,7 +2326,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMap(sourceMap, partialFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceMap, partialFunction, collectionFactory)
@@ -2358,7 +2381,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapReduce(sourceMap, discriminatorKey, valueMapper, reduceValues)
@@ -2422,7 +2446,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> groupMapReduce(sourceMap, partialFunction, reduceValues)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapReduce(sourceMap, partialFunction, reduceValues)
@@ -2498,7 +2523,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> map(sourceMap, mapFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     map(sourceMap, mapFunction)
@@ -2556,7 +2582,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> map(sourceMap, mapFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     map(sourceMap, mapFunction, mapFactory)
@@ -2601,7 +2628,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> mapValues(sourceMap, mapFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     mapValues(sourceMap, mapFunction)
@@ -2655,7 +2683,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> mapValues(sourceMap, mapFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     mapValues(sourceMap, mapFunction, mapFactory)
@@ -2705,7 +2734,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> max(sourceMap, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     max(sourceMap, comparator)
@@ -2780,7 +2810,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> maxValue(sourceMap, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     maxValue(sourceMap, comparator)
@@ -2830,7 +2861,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> min(sourceMap, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     min(sourceMap, comparator)
@@ -2905,7 +2937,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> minValue(sourceMap, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     minValue(sourceMap, comparator)
@@ -3097,7 +3130,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> reduce(sourceMap, accumulator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     reduce(sourceMap, accumulator)
@@ -3170,7 +3204,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> slice(sourceMap, from, until)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     slice(sourceMap, from, until)
@@ -3650,7 +3685,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> toCollection(sourceMap, keyValueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toCollection(sourceMap, keyValueMapper)
@@ -3706,7 +3742,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> toCollection(sourceMap, keyValueMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toCollection(sourceMap, keyValueMapper, collectionFactory)
@@ -3773,7 +3810,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> toCollection(sourceMap, keyValueMapper, filterPredicate, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toCollection(sourceMap, keyValueMapper, filterPredicate, collectionFactory)
@@ -3839,7 +3877,8 @@ public class MapUtilTest {
                     expectedException,
                     () -> toCollection(sourceMap, partialFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toCollection(sourceMap, partialFunction, collectionFactory)
@@ -3902,12 +3941,14 @@ public class MapUtilTest {
         List<String> keys = new ArrayList<>();
         if (0 == k % 2) {
             keys.add("evenKey");
-        } else {
+        }
+        else {
             keys.add("oddKey");
         }
         if (10 > k) {
             keys.add("smaller10Key");
-        } else {
+        }
+        else {
             keys.add("greaterEqual10Key");
         }
         return keys;

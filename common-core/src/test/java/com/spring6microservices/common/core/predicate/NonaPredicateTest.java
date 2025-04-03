@@ -37,7 +37,10 @@ public class NonaPredicateTest {
                                                                     T9 t9,
                                                                     NonaPredicate<T1, T2, T3, T4, T5, T6, T7, T8, T9> predicate,
                                                                     boolean expectedResult) {
-        assertEquals(expectedResult, predicate.test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
+        assertEquals(
+                expectedResult,
+                predicate.test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+        );
     }
 
 
@@ -70,9 +73,16 @@ public class NonaPredicateTest {
                                                                    Class<? extends Exception> expectedException,
                                                                    Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
-        } else {
-            assertEquals(expectedResult, predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+            );
         }
     }
 
@@ -102,7 +112,10 @@ public class NonaPredicateTest {
                                                                       T9 t9,
                                                                       NonaPredicate<T1, T2, T3, T4, T5, T6, T7, T8, T9> predicate,
                                                                       boolean expectedResult) {
-        assertEquals(expectedResult, predicate.negate().test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
+        assertEquals(
+                expectedResult,
+                predicate.negate().test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+        );
     }
 
 
@@ -135,9 +148,16 @@ public class NonaPredicateTest {
                                                                   Class<? extends Exception> expectedException,
                                                                   Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
-        } else {
-            assertEquals(expectedResult, predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7, t8, t9)
+            );
         }
     }
 

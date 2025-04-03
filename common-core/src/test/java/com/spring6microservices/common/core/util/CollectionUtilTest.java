@@ -122,7 +122,8 @@ public class CollectionUtilTest {
                                     sourceCollection, firstMapper, secondMapper
                             )
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     andThen(
@@ -192,7 +193,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> andThen(sourceCollection, firstMapper, secondMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     andThen(sourceCollection, firstMapper, secondMapper, collectionFactory)
@@ -242,7 +244,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper)
@@ -306,7 +309,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceCollection, filterPredicate, defaultMapper, orElseMapper, collectionFactory)
@@ -347,7 +351,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceCollection, partialFunction, orElseMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceCollection, partialFunction, orElseMapper)
@@ -400,7 +405,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> applyOrElse(sourceCollection, partialFunction, orElseMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     applyOrElse(sourceCollection, partialFunction, orElseMapper, collectionFactory)
@@ -442,7 +448,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> collect(sourceCollection, filterPredicate, mapFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCollection, filterPredicate, mapFunction)
@@ -489,7 +496,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> collect(sourceCollection, filterPredicate, mapFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCollection, filterPredicate, mapFunction, collectionFactory)
@@ -530,7 +538,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> collect(sourceCollection, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCollection, partialFunction)
@@ -579,7 +588,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> collect(sourceCollection, partialFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCollection, partialFunction, collectionFactory)
@@ -620,7 +630,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> collectFirst(sourceCollection, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collectFirst(sourceCollection, partialFunction)
@@ -1480,7 +1491,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupBy(sourceCollection, discriminatorKey)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceCollection, discriminatorKey)
@@ -1534,7 +1546,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupBy(sourceCollection, discriminatorKey, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceCollection, discriminatorKey, collectionFactory)
@@ -1576,7 +1589,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupByMultiKey(sourceCollection, discriminatorKey)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupByMultiKey(sourceCollection, discriminatorKey)
@@ -1632,7 +1646,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupByMultiKey(sourceCollection, discriminatorKey, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupByMultiKey(sourceCollection, discriminatorKey, collectionFactory)
@@ -1675,7 +1690,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMap(sourceCollection, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceCollection, discriminatorKey, valueMapper)
@@ -1731,7 +1747,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMap(sourceCollection, filterPredicate, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceCollection, filterPredicate, discriminatorKey, valueMapper)
@@ -1806,7 +1823,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMap(sourceCollection, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceCollection, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
@@ -1853,7 +1871,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMap(sourceCollection, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceCollection, partialFunction)
@@ -1914,7 +1933,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMap(sourceCollection, partialFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMap(sourceCollection, partialFunction, collectionFactory)
@@ -1929,12 +1949,14 @@ public class CollectionUtilTest {
             List<String> keys = new ArrayList<>();
             if (0 == i % 2) {
                keys.add("evenKey");
-            } else {
+            }
+            else {
                keys.add("oddKey");
             }
             if (10 > i) {
                keys.add("smaller10Key");
-            } else {
+            }
+            else {
                keys.add("greaterEqual10Key");
             }
             return keys;
@@ -1972,7 +1994,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMapMultiKey(sourceCollection, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapMultiKey(sourceCollection, discriminatorKey, valueMapper)
@@ -1988,12 +2011,14 @@ public class CollectionUtilTest {
             List<String> keys = new ArrayList<>();
             if (0 == i % 2) {
                 keys.add("evenKey");
-            } else {
+            }
+            else {
                 keys.add("oddKey");
             }
             if (5 > i) {
                 keys.add("smaller5Key");
-            } else {
+            }
+            else {
                 keys.add("greaterEqual5Key");
             }
             return keys;
@@ -2040,7 +2065,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMapMultiKey(sourceCollection, filterPredicate, discriminatorKey, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapMultiKey(sourceCollection, filterPredicate, discriminatorKey, valueMapper)
@@ -2056,12 +2082,14 @@ public class CollectionUtilTest {
             List<String> keys = new ArrayList<>();
             if ("AEIOUaeiou".contains(s.substring(0, 1))) {
                 keys.add("startWithVowelKey");
-            } else {
+            }
+            else {
                 keys.add("notStartWithVowelKey");
             }
             if (3 > s.length()) {
                 keys.add("lengthSmaller3Key");
-            } else {
+            }
+            else {
                 keys.add("lengthGreaterEqual3Key");
             }
             return keys;
@@ -2131,7 +2159,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMapMultiKey(sourceCollection, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapMultiKey(sourceCollection, filterPredicate, discriminatorKey, valueMapper, collectionFactory)
@@ -2176,7 +2205,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMapReduce(sourceCollection, discriminatorKey, valueMapper, reduceValues)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapReduce(sourceCollection, discriminatorKey, valueMapper, reduceValues)
@@ -2229,7 +2259,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> groupMapReduce(sourceCollection, partialFunction, reduceValues)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupMapReduce(sourceCollection, partialFunction, reduceValues)
@@ -2291,7 +2322,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> iterate(initialValue, applyFunction, untilPredicate)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     iterate(initialValue, applyFunction, untilPredicate)
@@ -2327,7 +2359,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> map(sourceCollection, mapFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     map(sourceCollection, mapFunction)
@@ -2371,7 +2404,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> map(sourceCollection, mapFunction, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     map(sourceCollection, mapFunction, collectionFactory)
@@ -2447,7 +2481,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> mapMulti(sourceCollection, finalMapFunctions)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     mapMulti(sourceCollection, finalMapFunctions)
@@ -2523,7 +2558,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> mapMulti(sourceCollection, collectionFactory, finalMapFunctions)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     mapMulti(sourceCollection, collectionFactory, finalMapFunctions)
@@ -2587,7 +2623,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> max(sourceCollection, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     max(sourceCollection, comparator)
@@ -2654,7 +2691,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> min(sourceCollection, comparator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     min(sourceCollection, comparator)
@@ -2768,7 +2806,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> slice(sourceCollection, from, until)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     slice(sourceCollection, from, until)
@@ -2814,7 +2853,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> sliding(sourceCollection, size)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     sliding(sourceCollection, size)
@@ -2955,7 +2995,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> sort(comparator, collectionToSort1, collectionToSort2, collectionToSort3)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     sort(comparator, collectionToSort1, collectionToSort2, collectionToSort3)
@@ -3029,7 +3070,8 @@ public class CollectionUtilTest {
                     () -> sort(comparator, collectionFactory, collectionToSort1, collectionToSort2, collectionToSort3)
             );
 
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     sort(comparator, collectionFactory, collectionToSort1, collectionToSort2, collectionToSort3)
@@ -3074,7 +3116,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> split(sourceCollection, size)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceCollection, size)
@@ -3415,7 +3458,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> toMap(sourceCollection, keyMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toMap(sourceCollection, keyMapper)
@@ -3462,7 +3506,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> toMap(sourceCollection, keyMapper, valueMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toMap(sourceCollection, keyMapper, valueMapper)
@@ -3516,7 +3561,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> toMap(sourceCollection, keyMapper, valueMapper, filterPredicate)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toMap(sourceCollection, keyMapper, valueMapper, filterPredicate)
@@ -3589,7 +3635,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> toMap(sourceCollection, keyMapper, valueMapper, filterPredicate, mergeValueFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toMap(sourceCollection, keyMapper, valueMapper, filterPredicate, mergeValueFunction, mapFactory)
@@ -3655,7 +3702,8 @@ public class CollectionUtilTest {
                     expectedException,
                     () -> toMap(sourceCollection, partialFunction, mergeValueFunction, mapFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     toMap(sourceCollection, partialFunction, mergeValueFunction, mapFactory)
@@ -4077,12 +4125,14 @@ public class CollectionUtilTest {
         List<String> keys = new ArrayList<>();
         if (0 == i % 2) {
             keys.add("even");
-        } else {
+        }
+        else {
             keys.add("odd");
         }
         if (10 > i) {
             keys.add("smaller10");
-        } else {
+        }
+        else {
             keys.add("greaterEqual10");
         }
         return keys;

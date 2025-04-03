@@ -35,7 +35,10 @@ public class HeptaPredicateTest {
                                                             T7 t7,
                                                             HeptaPredicate<T1, T2, T3, T4, T5, T6, T7> predicate,
                                                             boolean expectedResult) {
-        assertEquals(expectedResult, predicate.test(t1, t2, t3, t4, t5, t6, t7));
+        assertEquals(
+                expectedResult,
+                predicate.test(t1, t2, t3, t4, t5, t6, t7)
+        );
     }
 
 
@@ -66,9 +69,16 @@ public class HeptaPredicateTest {
                                                            Class<? extends Exception> expectedException,
                                                            Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7));
-        } else {
-            assertEquals(expectedResult, predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.and(other).test(t1, t2, t3, t4, t5, t6, t7)
+            );
         }
     }
 
@@ -96,7 +106,10 @@ public class HeptaPredicateTest {
                                                               T7 t7,
                                                               HeptaPredicate<T1, T2, T3, T4, T5, T6, T7> predicate,
                                                               boolean expectedResult) {
-        assertEquals(expectedResult, predicate.negate().test(t1, t2, t3, t4, t5, t6, t7));
+        assertEquals(
+                expectedResult,
+                predicate.negate().test(t1, t2, t3, t4, t5, t6, t7)
+        );
     }
 
 
@@ -127,9 +140,16 @@ public class HeptaPredicateTest {
                                                           Class<? extends Exception> expectedException,
                                                           Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7));
-        } else {
-            assertEquals(expectedResult, predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.or(other).test(t1, t2, t3, t4, t5, t6, t7)
+            );
         }
     }
 

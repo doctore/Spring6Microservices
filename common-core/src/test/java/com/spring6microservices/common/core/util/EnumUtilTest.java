@@ -51,7 +51,8 @@ public class EnumUtilTest {
                                     enumClass, internalPropertyValueToSearch, mapper
                             )
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getByInternalProperty(
@@ -115,7 +116,8 @@ public class EnumUtilTest {
                                     enumClass, enumName
                             )
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getByNameIgnoreCaseOrThrow(

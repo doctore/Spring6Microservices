@@ -31,7 +31,10 @@ public class TriPredicateTest {
                                             T3 t3,
                                             TriPredicate<T1, T2, T3> predicate,
                                             boolean expectedResult) {
-        assertEquals(expectedResult, predicate.test(t1, t2, t3));
+        assertEquals(
+                expectedResult,
+                predicate.test(t1, t2, t3)
+        );
     }
 
 
@@ -58,9 +61,16 @@ public class TriPredicateTest {
                                            Class<? extends Exception> expectedException,
                                            Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.and(other).test(t1, t2, t3));
-        } else {
-            assertEquals(expectedResult, predicate.and(other).test(t1, t2, t3));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.and(other).test(t1, t2, t3)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.and(other).test(t1, t2, t3)
+            );
         }
     }
 
@@ -84,7 +94,10 @@ public class TriPredicateTest {
                                               T3 t3,
                                               TriPredicate<T1, T2, T3> predicate,
                                               boolean expectedResult) {
-        assertEquals(expectedResult, predicate.negate().test(t1, t2, t3));
+        assertEquals(
+                expectedResult,
+                predicate.negate().test(t1, t2, t3)
+        );
     }
 
 
@@ -111,9 +124,16 @@ public class TriPredicateTest {
                                           Class<? extends Exception> expectedException,
                                           Boolean expectedResult) {
         if (null != expectedException) {
-            assertThrows(expectedException, () -> predicate.or(other).test(t1, t2, t3));
-        } else {
-            assertEquals(expectedResult, predicate.or(other).test(t1, t2, t3));
+            assertThrows(
+                    expectedException,
+                    () -> predicate.or(other).test(t1, t2, t3)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    predicate.or(other).test(t1, t2, t3)
+            );
         }
     }
 

@@ -67,7 +67,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> abbreviate(sourceCS, maxLength)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     abbreviate(sourceCS, maxLength)
@@ -120,7 +121,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> abbreviate(sourceCS, maxLength, abbreviationString)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     abbreviate(sourceCS, maxLength, abbreviationString)
@@ -166,7 +168,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> abbreviateMiddle(sourceCS, maxLength)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     abbreviateMiddle(sourceCS, maxLength)
@@ -218,7 +221,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> abbreviateMiddle(sourceCS, maxLength, abbreviationString)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     abbreviateMiddle(sourceCS, maxLength, abbreviationString)
@@ -272,7 +276,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> collect(sourceCS, filterPredicate, mapFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCS, filterPredicate, mapFunction)
@@ -321,7 +326,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> collect(sourceCS, partialFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     collect(sourceCS, partialFunction)
@@ -837,7 +843,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> groupBy(sourceCS, discriminatorKey)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceCS, discriminatorKey)
@@ -906,7 +913,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> groupBy(sourceCS, discriminatorKey, filterPredicate)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     groupBy(sourceCS, discriminatorKey, filterPredicate)
@@ -952,7 +960,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> hideMiddle(sourceCS, maxLength)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     hideMiddle(sourceCS, maxLength)
@@ -1008,7 +1017,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> hideMiddle(sourceCS, maxLength, abbreviationString)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     hideMiddle(sourceCS, maxLength, abbreviationString)
@@ -1878,7 +1888,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, valueExtractor)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, valueExtractor)
@@ -1927,7 +1938,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, filterPredicate, valueExtractor)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, filterPredicate, valueExtractor)
@@ -1976,7 +1988,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, valueExtractor, separator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, valueExtractor, separator)
@@ -2038,7 +2051,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, filterPredicate, valueExtractor, separator)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, filterPredicate, valueExtractor, separator)
@@ -2130,7 +2144,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, filterPredicate, valueExtractor, separator, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, filterPredicate, valueExtractor, separator, collectionFactory)
@@ -2213,7 +2228,8 @@ public class StringUtilTest {
                     expectedException,
                     () -> split(sourceString, partialFunction, separator, collectionFactory)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     split(sourceString, partialFunction, separator, collectionFactory)

@@ -48,7 +48,8 @@ public class AssertUtilTest {
                     errorMessage,
                     thrown.getMessage()
             );
-        } else {
+        }
+        else {
             hasText(text, errorMessage);
         }
     }
@@ -86,13 +87,15 @@ public class AssertUtilTest {
                         "exceptionSupplier must be not null",
                         thrown.getMessage()
                 );
-            } else {
+            }
+            else {
                 assertEquals(
                         exceptionSupplier.get().getMessage(),
                         thrown.getMessage()
                 );
             }
-        } else {
+        }
+        else {
             hasText(text, exceptionSupplier);
         }
     }
@@ -125,7 +128,8 @@ public class AssertUtilTest {
                     errorMessage,
                     thrown.getMessage()
             );
-        } else {
+        }
+        else {
             isFalse(expression, errorMessage);
         }
     }
@@ -159,13 +163,15 @@ public class AssertUtilTest {
                         "exceptionSupplier must be not null",
                         thrown.getMessage()
                 );
-            } else {
+            }
+            else {
                 assertEquals(
                         exceptionSupplier.get().getMessage(),
                         thrown.getMessage()
                 );
             }
-        } else {
+        }
+        else {
             isFalse(expression, exceptionSupplier);
         }
     }
@@ -198,7 +204,8 @@ public class AssertUtilTest {
                     errorMessage,
                     thrown.getMessage()
             );
-        } else {
+        }
+        else {
             isTrue(expression, errorMessage);
         }
     }
@@ -232,13 +239,15 @@ public class AssertUtilTest {
                         "exceptionSupplier must be not null",
                         thrown.getMessage()
                 );
-            } else {
+            }
+            else {
                 assertEquals(
                         exceptionSupplier.get().getMessage(),
                         thrown.getMessage()
                 );
             }
-        } else {
+        }
+        else {
             isTrue(expression, exceptionSupplier);
         }
     }
@@ -271,7 +280,8 @@ public class AssertUtilTest {
                     errorMessage,
                     thrown.getMessage()
             );
-        } else {
+        }
+        else {
             notNull(argToVerify, errorMessage);
         }
     }
@@ -305,13 +315,15 @@ public class AssertUtilTest {
                         "exceptionSupplier must be not null",
                         thrown.getMessage()
                 );
-            } else {
+            }
+            else {
                 assertEquals(
                         exceptionSupplier.get().getMessage(),
                         thrown.getMessage()
                 );
             }
-        } else {
+        }
+        else {
             notNull(argToVerify, exceptionSupplier);
         }
     }

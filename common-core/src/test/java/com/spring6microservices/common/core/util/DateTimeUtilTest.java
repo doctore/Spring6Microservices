@@ -208,7 +208,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromDateToLocalDateTime(sourceDate)
@@ -253,7 +254,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromDateToLocalDateTime(sourceDate, zoneId)
@@ -372,7 +374,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromLocalDateTimeToDate(sourceLocalDateTime)
@@ -414,7 +417,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromLocalDateTimeToDate(sourceLocalDateTime, zoneId)
@@ -488,7 +492,8 @@ public class DateTimeUtilTest {
             );
             verifyCompareToResult(compareResultLeft, CompareToResult.ZERO);
             verifyCompareToResult(compareResultRight, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(expectedResult._1, result._1);
             assertEquals(expectedResult._2, result._2);
         }
@@ -593,7 +598,8 @@ public class DateTimeUtilTest {
             );
             verifyCompareToResult(compareResultLeft, CompareToResult.ZERO);
             verifyCompareToResult(compareResultRight, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(expectedResult._1, result._1);
             assertEquals(expectedResult._2, result._2);
         }
@@ -663,7 +669,8 @@ public class DateTimeUtilTest {
             );
             verifyCompareToResult(compareResultLeft, CompareToResult.ZERO);
             verifyCompareToResult(compareResultRight, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(expectedResult._1, result._1);
             assertEquals(expectedResult._2, result._2);
         }
@@ -763,7 +770,8 @@ public class DateTimeUtilTest {
             );
             verifyCompareToResult(compareResultLeft, CompareToResult.ZERO);
             verifyCompareToResult(compareResultRight, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(expectedResult._1, result._1);
             assertEquals(expectedResult._2, result._2);
         }
@@ -808,7 +816,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(expectedResult, minus(sourceDate, amountToSubtract, timeUnit));
         }
     }
@@ -873,7 +882,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     minus(sourceDate, amountToSubtract, timeUnit, zoneId)
@@ -920,7 +930,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     minus(sourceLocalDateTime, amountToSubtract, timeUnit)
@@ -984,7 +995,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     minus(sourceLocalDateTime, amountToSubtract, timeUnit, zoneId)
@@ -1031,7 +1043,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     plus(sourceDate, amountToAdd, timeUnit)
@@ -1099,7 +1112,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     plus(sourceDate, amountToAdd, timeUnit, zoneId)
@@ -1146,7 +1160,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     plus(sourceLocalDateTime, amountToAdd, timeUnit)
@@ -1210,7 +1225,8 @@ public class DateTimeUtilTest {
                     ChronoUnit.SECONDS
             );
             verifyCompareToResult(compareResult, CompareToResult.ZERO);
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     plus(sourceLocalDateTime, amountToAdd, timeUnit, zoneId)

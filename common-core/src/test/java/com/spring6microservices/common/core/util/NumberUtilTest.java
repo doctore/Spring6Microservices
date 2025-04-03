@@ -69,7 +69,8 @@ public class NumberUtilTest {
                     expectedException,
                     () -> NumberUtil.compare(one, two, numberOfDecimals)
             );
-        } else {
+        }
+        else {
             int result = NumberUtil.compare(one, two, numberOfDecimals);
             switch (expectedResult) {
                 case LESS_THAN_ZERO -> assertTrue(0 > result);
@@ -131,7 +132,8 @@ public class NumberUtilTest {
                     expectedException,
                     () -> NumberUtil.compare(one, two, numberOfDecimals, roundingMode)
             );
-        } else {
+        }
+        else {
             int result = NumberUtil.compare(one, two, numberOfDecimals, roundingMode);
             switch (expectedResult) {
                 case LESS_THAN_ZERO -> assertTrue(0 > result);
@@ -198,7 +200,8 @@ public class NumberUtilTest {
                     expectedException,
                     () -> NumberUtil.compare(one, two, epsilon)
             );
-        } else {
+        }
+        else {
             int result = NumberUtil.compare(one, two, epsilon);
             switch (expectedResult) {
                 case LESS_THAN_ZERO -> assertTrue(0 > result);

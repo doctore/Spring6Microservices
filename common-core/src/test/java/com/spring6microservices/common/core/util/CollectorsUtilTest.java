@@ -51,7 +51,8 @@ public class CollectorsUtilTest {
                     expectedResult.get().getClass(),
                     result.get().getClass()
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getOrDefaultListSupplier(collectionFactory)
@@ -84,7 +85,8 @@ public class CollectorsUtilTest {
                     expectedResult.get().getClass(),
                     result.get().getClass()
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     getOrDefaultMapSupplier(mapFactory)
@@ -147,7 +149,8 @@ public class CollectorsUtilTest {
                                     )
                             )
             );
-        } else {
+        }
+        else {
             Map<K, U> result =
                     originalCollection
                             .stream()
@@ -214,7 +217,8 @@ public class CollectorsUtilTest {
                                     )
                             )
             );
-        } else {
+        }
+        else {
             Map<K, U> result =
                     originalCollection
                             .stream()
@@ -282,7 +286,8 @@ public class CollectorsUtilTest {
                                     )
                             )
             );
-        } else {
+        }
+        else {
             Map<K, U> result =
                     originalCollection
                             .stream()
@@ -359,7 +364,8 @@ public class CollectorsUtilTest {
                                     )
                             )
             );
-        } else {
+        }
+        else {
             Map<K, U> result =
                     originalCollection
                             .stream()

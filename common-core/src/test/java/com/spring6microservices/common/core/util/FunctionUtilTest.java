@@ -53,7 +53,8 @@ public class FunctionUtilTest {
                         functionToApply.apply((Map.Entry<K, V>)entry);
                     }
             );
-        } else {
+        }
+        else {
             // Required because sometimes the Java compiler is stupid
             Function<Map.Entry<K, V>, T> functionToApply = fromBiFunctionToMapEntryFunction(
                     keyValueMapper
@@ -107,7 +108,8 @@ public class FunctionUtilTest {
                         functionToApply.apply((Map.Entry<K1, V1>)entry);
                     }
             );
-        } else {
+        }
+        else {
             // Required because sometimes the Java compiler is stupid
             Function<Map.Entry<K1, V1>, Map.Entry<K2, V2>> functionToApply = fromBiFunctionsToMapEntriesFunction(
                     keyMapper,
@@ -159,7 +161,8 @@ public class FunctionUtilTest {
                             )
                             .apply(t)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromFunctionsToMapEntryFunction(keyMapper, valueMapper).apply(t)
