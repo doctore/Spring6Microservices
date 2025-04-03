@@ -485,9 +485,8 @@ public abstract class Validation<E, T> implements Serializable {
             return invalid(
                     validation.getErrors()
             );
-
-        // This is an Invalid instance
         }
+        // This is an Invalid instance
         else {
             // Due to only this is Invalid, return only its errors
             if (validation.isValid()) {

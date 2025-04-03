@@ -740,9 +740,8 @@ public abstract class Try<T> implements Serializable {
             return failure(
                     t.getException()
             );
-
-        // This is a Failure instance
         }
+        // This is a Failure instance
         else {
             // Due to only this is Failure, returns this
             if (t.isSuccess()) {
