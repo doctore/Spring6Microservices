@@ -52,7 +52,8 @@ public class InvalidTest {
                     expectedException,
                     () -> Invalid.of(value)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Invalid.of(value)

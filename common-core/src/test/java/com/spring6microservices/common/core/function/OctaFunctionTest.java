@@ -77,7 +77,8 @@ public class OctaFunctionTest {
                     expectedException,
                     () -> function.andThen(afterFunction).apply(t1, t2, t3, t4, t5, t6, t7, t8)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     function.andThen(afterFunction).apply(t1, t2, t3, t4, t5, t6, t7, t8)

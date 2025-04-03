@@ -73,7 +73,8 @@ public class HexaFunctionTest {
                     expectedException,
                     () -> function.andThen(afterFunction).apply(t1, t2, t3, t4, t5, t6)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     function.andThen(afterFunction).apply(t1, t2, t3, t4, t5, t6)

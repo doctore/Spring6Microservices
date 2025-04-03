@@ -110,7 +110,8 @@ public class EitherTest {
                     expectedException,
                     () -> Either.combine(mapperLeft, mapperRight, eithers)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Either.combine(mapperLeft, mapperRight, eithers)
@@ -160,15 +161,19 @@ public class EitherTest {
                     expectedException,
                     () -> Either.combineGetFirstLeft(mapperRight, supplier1)
             );
-        } else {
+        }
+        else {
             Either<L, R> result;
             if (Objects.isNull(supplier1) && Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
                 result = Either.combineGetFirstLeft(mapperRight);
-            } else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
+            }
+            else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
                 result = Either.combineGetFirstLeft(mapperRight, supplier1);
-            } else if (Objects.isNull(supplier3)) {
+            }
+            else if (Objects.isNull(supplier3)) {
                 result = Either.combineGetFirstLeft(mapperRight, supplier1, supplier2);
-            } else {
+            }
+            else {
                 result = Either.combineGetFirstLeft(mapperRight, supplier1, supplier2, supplier3);
             }
             assertEquals(
@@ -271,7 +276,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.filterOrElse(predicate, zero)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.filterOrElse(predicate, zero)
@@ -305,7 +311,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.map(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.map(mapper)
@@ -343,7 +350,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.map(mapperLeft, mapperRight)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.map(mapperLeft, mapperRight)
@@ -378,7 +386,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.mapLeft(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.mapLeft(mapper)
@@ -413,7 +422,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.flatMap(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.flatMap(mapper)
@@ -462,7 +472,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.ap(eitherParam, mapperLeft, mapperRight)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.ap(eitherParam, mapperLeft, mapperRight)
@@ -503,7 +514,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.fold(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.fold(mapper)
@@ -543,7 +555,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.fold(mapperLeft, mapperRight)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.fold(mapperLeft, mapperRight)
@@ -696,7 +709,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.getOrElse(supplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.getOrElse(supplier)
@@ -734,7 +748,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.getOrElseThrow(exceptionSupplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.getOrElseThrow(exceptionSupplier)
@@ -778,7 +793,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.getOrElseThrow(exceptionFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.getOrElseThrow(exceptionFunction)
@@ -846,7 +862,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.orElse(supplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.orElse(supplier)
@@ -977,7 +994,8 @@ public class EitherTest {
                     expectedException,
                     () -> either.toTry(mapperLeft)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     either.toTry(mapperLeft)

@@ -47,7 +47,8 @@ public class ValidTest {
                     expectedException,
                     () -> Valid.of(value)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Valid.of(value)

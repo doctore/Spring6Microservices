@@ -47,7 +47,8 @@ public class LeftTest {
                     expectedException,
                     () -> Left.of(value)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Left.of(value)

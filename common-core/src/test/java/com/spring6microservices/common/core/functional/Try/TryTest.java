@@ -452,7 +452,8 @@ public class TryTest {
                     expectedException,
                     () -> Try.failure(exception)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Try.failure(exception)
@@ -521,7 +522,8 @@ public class TryTest {
                     expectedException,
                     () -> Try.combine(mapperFailure, mapperSuccess, tries)
             );
-        } else {
+        }
+        else {
             Try<T> result = Try.combine(mapperFailure, mapperSuccess, tries);
             compareTry(
                     expectedResult,
@@ -581,15 +583,19 @@ public class TryTest {
                     expectedException,
                     () -> Try.combineGetFirstFailure(mapperSuccess, supplier1)
             );
-        } else {
+        }
+        else {
             Try<T> result;
             if (Objects.isNull(supplier1) && Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
                 result = Try.combineGetFirstFailure(mapperSuccess);
-            } else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
+            }
+            else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
                 result = Try.combineGetFirstFailure(mapperSuccess, supplier1);
-            } else if (Objects.isNull(supplier3)) {
+            }
+            else if (Objects.isNull(supplier3)) {
                 result = Try.combineGetFirstFailure(mapperSuccess, supplier1, supplier2);
-            } else {
+            }
+            else {
                 result = Try.combineGetFirstFailure(mapperSuccess, supplier1, supplier2, supplier3);
             }
             compareTry(
@@ -631,7 +637,8 @@ public class TryTest {
                     UnsupportedOperationException.class
                     , result.getException().getClass()
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     result
@@ -714,7 +721,8 @@ public class TryTest {
                     expectedException,
                     () -> t.map(mapper)
             );
-        } else {
+        }
+        else {
             Try<U> result = t.map(mapper);
             compareTry(
                     expectedResult,
@@ -778,7 +786,8 @@ public class TryTest {
                     expectedException,
                     () -> t.map(mapperFailure, mapperSuccess)
             );
-        } else {
+        }
+        else {
             Try<U> result = t.map(mapperFailure, mapperSuccess);
             compareTry(
                     expectedResult,
@@ -828,7 +837,8 @@ public class TryTest {
                     expectedException,
                     () -> t.mapFailure((mapper))
             );
-        } else {
+        }
+        else {
             Try<T> result = t.mapFailure(mapper);
             compareTry(
                     expectedResult,
@@ -876,7 +886,8 @@ public class TryTest {
                     expectedException,
                     () -> t.flatMap(mapper)
             );
-        } else {
+        }
+        else {
             Try<U> result = t.flatMap(mapper);
             compareTry(
                     expectedResult,
@@ -942,7 +953,8 @@ public class TryTest {
                     expectedException,
                     () -> t.ap(tryParam, mapperFailure, mapperSuccess)
             );
-        } else {
+        }
+        else {
             Try<T> result = t.ap(tryParam, mapperFailure, mapperSuccess);
             compareTry(
                     expectedResult,
@@ -992,7 +1004,8 @@ public class TryTest {
                     expectedException,
                     () -> t.fold(mapperFailure, mapperSuccess)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     t.fold(mapperFailure, mapperSuccess)
@@ -1148,7 +1161,8 @@ public class TryTest {
                     expectedException,
                     () -> t.getOrElse(other)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     t.getOrElse(other)
@@ -1186,7 +1200,8 @@ public class TryTest {
                     expectedResult,
                     result
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     result
@@ -1234,7 +1249,8 @@ public class TryTest {
                     expectedException,
                     () -> t.orElse(supplier)
             );
-        } else {
+        }
+        else {
             Try<T> result = t.orElse(supplier);
             compareTry(
                     expectedResult,
@@ -1283,7 +1299,8 @@ public class TryTest {
                     expectedException,
                     () -> t.recover(mapperFailure)
             );
-        } else {
+        }
+        else {
             Try<T> result = t.recover(mapperFailure);
             compareTry(
                     expectedResult,
@@ -1332,7 +1349,8 @@ public class TryTest {
                     expectedException,
                     () -> t.recoverWith(mapperFailure)
             );
-        } else {
+        }
+        else {
             Try<T> result = t.recoverWith(mapperFailure);
             compareTry(
                     expectedResult,
@@ -1457,7 +1475,8 @@ public class TryTest {
                     result,
                     expectedResult
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     result

@@ -47,7 +47,8 @@ public class RightTest {
                     expectedException,
                     () -> Right.of(value)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Right.of(value)

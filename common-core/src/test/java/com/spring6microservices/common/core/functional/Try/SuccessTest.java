@@ -47,7 +47,8 @@ public class SuccessTest {
                     expectedException,
                     () -> Success.of(value)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Success.of(value)

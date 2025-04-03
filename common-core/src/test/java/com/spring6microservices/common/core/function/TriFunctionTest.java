@@ -67,7 +67,8 @@ public class TriFunctionTest {
                     expectedException,
                     () -> function.andThen(afterFunction).apply(t1, t2, t3)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     function.andThen(afterFunction).apply(t1, t2, t3)

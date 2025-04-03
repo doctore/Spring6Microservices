@@ -72,7 +72,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> PartialFunction.of(filterPredicate, mapFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<T, R> ofResult = PartialFunction.of(filterPredicate, mapFunction);
             assertEquals(
                     expectedApplyResult,
@@ -117,7 +118,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> PartialFunction.of(filterPredicate, keyMapper, valueMapper)
             );
-        } else {
+        }
+        else {
             PartialFunction<T, Map.Entry<K, V>> ofResult = PartialFunction.of(filterPredicate, keyMapper, valueMapper);
             assertEquals(
                     expectedApplyResult,
@@ -177,7 +179,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> PartialFunction.of(filterPredicate, mapFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<Map.Entry<K1, V1>, Map.Entry<K2, V2>> ofResult = PartialFunction.of(filterPredicate, mapFunction);
             assertEquals(
                     expectedApplyResult,
@@ -232,7 +235,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> PartialFunction.of(filterPredicate, keyMapper, valueMapper)
             );
-        } else {
+        }
+        else {
             PartialFunction<Map.Entry<K1, V1>, Map.Entry<K2, V2>> ofResult = PartialFunction.of(filterPredicate, keyMapper, valueMapper);
             assertEquals(
                     expectedApplyResult,
@@ -319,7 +323,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> partialFunction.andThen(afterFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<T, V> andThenResult = partialFunction.andThen(afterFunction);
             assertEquals(
                     expectedApplyResult,
@@ -360,7 +365,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> partialFunction.andThen(afterFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<T, V> andThenResult = partialFunction.andThen(afterFunction);
             assertEquals(
                     expectedApplyResult,
@@ -399,7 +405,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> partialFunction.applyOrElse(t, defaultFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     partialFunction.applyOrElse(t, defaultFunction)
@@ -435,7 +442,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> partialFunction.compose(beforeFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<V, R> composeResult = partialFunction.compose(beforeFunction);
             assertEquals(
                     expectedApplyResult,
@@ -476,7 +484,8 @@ public class PartialFunctionTest {
                     expectedException,
                     () -> partialFunction.compose(beforeFunction)
             );
-        } else {
+        }
+        else {
             PartialFunction<V, R> composeResult = partialFunction.compose(beforeFunction);
             assertEquals(
                     expectedApplyResult,

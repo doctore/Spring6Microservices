@@ -41,7 +41,8 @@ public class LazyTest {
                     expectedException,
                     () -> Lazy.of(supplier)
             );
-        } else {
+        }
+        else {
             Lazy<T> newLazy = Lazy.of(supplier);
             invokeInternalSupplier(newLazy);
             invokeInternalSupplier(expectedResult);
@@ -235,7 +236,8 @@ public class LazyTest {
                     expectedException,
                     () -> lazy.map(mapper)
             );
-        } else {
+        }
+        else {
             Lazy<U> mappedLazy = lazy.map(mapper);
             invokeInternalSupplier(mappedLazy);
             assertEquals(

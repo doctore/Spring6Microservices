@@ -39,7 +39,8 @@ public class FailureTest {
                     expectedException,
                     () -> Failure.of(exception)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     Failure.of(exception)

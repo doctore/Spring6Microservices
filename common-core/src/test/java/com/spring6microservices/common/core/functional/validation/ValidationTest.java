@@ -202,11 +202,14 @@ public class ValidationTest {
         Validation<E, T> result;
         if (Objects.isNull(supplier1) && Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
             result = Validation.combineGetFirstInvalid();
-        } else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
+        }
+        else if (Objects.isNull(supplier2) && Objects.isNull(supplier3)) {
             result = Validation.combineGetFirstInvalid(supplier1);
-        } else if (Objects.isNull(supplier3)) {
+        }
+        else if (Objects.isNull(supplier3)) {
             result = Validation.combineGetFirstInvalid(supplier1, supplier2);
-        } else {
+        }
+        else {
             result = Validation.combineGetFirstInvalid(supplier1, supplier2, supplier3);
         }
         assertEquals(
@@ -332,7 +335,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.filterOrElse(predicate, mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.filterOrElse(predicate, mapper)
@@ -366,7 +370,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.map(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.map(mapper)
@@ -404,7 +409,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.map(mapperInvalid, mapperValid)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.map(mapperInvalid, mapperValid)
@@ -439,7 +445,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.mapInvalid(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.mapInvalid(mapper)
@@ -474,7 +481,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.flatMap(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.flatMap(mapper)
@@ -556,7 +564,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.fold(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.fold(mapper)
@@ -596,7 +605,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.fold(mapperInvalid, mapperValid)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.fold(mapperInvalid, mapperValid)
@@ -749,7 +759,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.getOrElse(supplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.getOrElse(supplier)
@@ -787,7 +798,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.getOrElseThrow(exceptionSupplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.getOrElseThrow(exceptionSupplier)
@@ -834,7 +846,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.getOrElseThrow(exceptionFunction)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.getOrElseThrow(exceptionFunction)
@@ -902,7 +915,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.orElse(supplier)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.orElse(supplier)
@@ -1034,7 +1048,8 @@ public class ValidationTest {
                     expectedException,
                     () -> validation.toTry(mapperInvalid)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     validation.toTry(mapperInvalid)
