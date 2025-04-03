@@ -64,7 +64,8 @@ public class JsonUtilTest {
                     expectedException,
                     () -> fromJson(sourceJson, clazzToConvert)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromJson(sourceJson, clazzToConvert)
@@ -122,7 +123,8 @@ public class JsonUtilTest {
                     expectedException,
                     () -> fromJson(sourceJson, clazzToConvert, objectMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromJson(sourceJson, clazzToConvert, objectMapper)
@@ -174,7 +176,8 @@ public class JsonUtilTest {
             assertThrows(
                     expectedException, () -> fromJsonCollection(sourceJson, clazzOfElements)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromJsonCollection(sourceJson, clazzOfElements)
@@ -230,7 +233,8 @@ public class JsonUtilTest {
                     expectedException,
                     () -> fromJsonCollection(sourceJson, clazzOfElements, clazzOfCollection)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromJsonCollection(sourceJson, clazzOfElements, clazzOfCollection)
@@ -303,7 +307,8 @@ public class JsonUtilTest {
                     expectedException,
                     () -> fromJsonCollection(sourceJson, clazzOfElements, clazzOfCollection, objectMapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     fromJsonCollection(sourceJson, clazzOfElements, clazzOfCollection, objectMapper)

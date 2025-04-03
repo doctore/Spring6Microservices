@@ -45,7 +45,8 @@ public class HttpUtilTest {
                     expectedException,
                     () -> encodeBasicAuthentication(username, password)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     encodeBasicAuthentication(username, password)
@@ -86,7 +87,8 @@ public class HttpUtilTest {
                     expectedException,
                     () -> decodeBasicAuthentication(encodeBasicAuth)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     decodeBasicAuthentication(encodeBasicAuth)
