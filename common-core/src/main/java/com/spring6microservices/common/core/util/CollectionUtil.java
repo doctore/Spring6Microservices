@@ -1095,7 +1095,8 @@ public class CollectionUtil {
                                 collectionFactory
                         )
                 );
-            } else {
+            }
+            else {
                 result.add((T) elto);
             }
         }
@@ -1478,12 +1479,14 @@ public class CollectionUtil {
      *          List<String> keys = new ArrayList<>();        ("smaller10",  [1, 2, 3, 6])
      *          if (0 == i % 2) {                             ("greaterEqual10",  [11, 12])]
      *             keys.add("even");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("odd");
      *          }
      *          if (10 > i) {
      *             keys.add("smaller10");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10");
      *          }
      *          return keys;
@@ -1527,12 +1530,14 @@ public class CollectionUtil {
      *          List<String> keys = new ArrayList<>();        ("smaller10",  [1, 2, 3, 6])
      *          if (0 == i % 2) {                             ("greaterEqual10",  [11, 12])]
      *             keys.add("even");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("odd");
      *          }
      *          if (10 > i) {
      *             keys.add("smaller10");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10");
      *          }
      *          return keys;
@@ -1851,12 +1856,14 @@ public class CollectionUtil {
      *          List<String> keys = new ArrayList<>();        ("smaller10",  [1, 2, 3, 6])
      *          if (0 == i % 2) {                             ("greaterEqual10",  [11, 12])]
      *             keys.add("even");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("odd");
      *          }
      *          if (10 > i) {
      *             keys.add("smaller10");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10");
      *          }
      *          return keys;
@@ -1909,12 +1916,14 @@ public class CollectionUtil {
      *          List<String> keys = new ArrayList<>();        ("greaterEqual5",  [6])]
      *          if (0 == i % 2) {
      *             keys.add("even");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("odd");
      *          }
      *          if (10 > i) {
      *             keys.add("smaller10");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10");
      *          }
      *          return keys;
@@ -1972,12 +1981,14 @@ public class CollectionUtil {
      *          List<String> keys = new ArrayList<>();        ("greaterEqual5",  [6])]
      *          if (0 == i % 2) {
      *             keys.add("even");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("odd");
      *          }
      *          if (10 > i) {
      *             keys.add("smaller10");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10");
      *          }
      *          return keys;
@@ -3781,7 +3792,8 @@ public class CollectionUtil {
                 result.add(cloneQueue.poll());
             }
             return result;
-        } else {
+        }
+        else {
             return sourceCollection;
         }
     }

@@ -574,7 +574,8 @@ public abstract class Try<T> implements Serializable {
     public final Try<T> filter(final Predicate<? super T> predicate) {
         if (!isSuccess()) {
             return this;
-        } else {
+        }
+        else {
             return filterTry(
                     predicate,
                     () -> new NoSuchElementException("Predicate does not hold for " + get())
@@ -741,7 +742,8 @@ public abstract class Try<T> implements Serializable {
             );
 
         // This is a Failure instance
-        } else {
+        }
+        else {
             // Due to only this is Failure, returns this
             if (t.isSuccess()) {
                 return failure(
@@ -794,7 +796,8 @@ public abstract class Try<T> implements Serializable {
             } catch (Throwable t) {
                 return mapperFailure.apply(t);
             }
-        } else {
+        }
+        else {
             AssertUtil.notNull(mapperFailure, "mapperFailure must be not null");
             return mapperFailure.apply(getException());
         }
@@ -1055,7 +1058,8 @@ public abstract class Try<T> implements Serializable {
         try {
             if (null == predicate || predicate.test(get())) {
                 return this;
-            } else {
+            }
+            else {
                 return failure(
                         throwableSupplier.get()
                 );

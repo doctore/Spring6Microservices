@@ -117,7 +117,8 @@ public final class Tuple4<T1, T2, T3, T4> implements Tuple, Serializable {
             return null == o2
                     ? 0
                     : -1;
-        } else if (null == o2) {
+        }
+        else if (null == o2) {
             return 1;
         }
         final Tuple4<U1, U2, U3, U4> t1 = (Tuple4<U1, U2, U3, U4>) o1;

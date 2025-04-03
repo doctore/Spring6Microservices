@@ -155,7 +155,8 @@ public class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable {
             return null == o2
                     ? 0
                     : -1;
-        } else if (null == o2) {
+        }
+        else if (null == o2) {
             return 1;
         }
         final Tuple6<U1, U2, U3, U4, U5, U6> t1 = (Tuple6<U1, U2, U3, U4, U5, U6>) o1;

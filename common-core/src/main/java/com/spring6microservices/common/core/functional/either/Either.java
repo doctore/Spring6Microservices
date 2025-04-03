@@ -461,9 +461,9 @@ public abstract class Either<L, R> implements Serializable {
             return left(
                     either.getLeft()
             );
-
+        }
         // This is a Left instance
-        } else {
+        else {
             // Due to only this is Left, returns this
             if (either.isRight()) {
                 return left(

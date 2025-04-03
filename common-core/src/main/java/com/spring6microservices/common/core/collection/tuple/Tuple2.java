@@ -93,7 +93,8 @@ public final class Tuple2<T1, T2> implements Tuple, Serializable {
             return null == o2
                     ? 0
                     : -1;
-        } else if (null == o2) {
+        }
+        else if (null == o2) {
             return 1;
         }
         final Tuple2<U1, U2> t1 = (Tuple2<U1, U2>) o1;

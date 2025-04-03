@@ -390,7 +390,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map(mapper)
@@ -433,7 +434,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map(f1, f2, f3, f4)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map(f1, f2, f3, f4)
@@ -467,7 +469,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map1(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map1(mapper)
@@ -501,7 +504,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map2(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map2(mapper)
@@ -535,7 +539,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map3(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map3(mapper)
@@ -569,7 +574,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.map4(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map4(mapper)
@@ -609,7 +615,8 @@ public class Tuple4Test {
                     expectedException,
                     () -> tuple.apply(f)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.apply(f)

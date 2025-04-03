@@ -174,7 +174,8 @@ public class Tuple7<T1, T2, T3, T4, T5, T6, T7> implements Tuple, Serializable {
             return null == o2
                     ? 0
                     : -1;
-        } else if (null == o2) {
+        }
+        else if (null == o2) {
             return 1;
         }
         final Tuple7<U1, U2, U3, U4, U5, U6, U7> t1 = (Tuple7<U1, U2, U3, U4, U5, U6, U7>) o1;

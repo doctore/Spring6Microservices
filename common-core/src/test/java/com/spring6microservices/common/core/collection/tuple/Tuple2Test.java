@@ -373,7 +373,8 @@ public class Tuple2Test {
                     expectedException,
                     () -> tuple.map(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map(mapper)
@@ -410,7 +411,8 @@ public class Tuple2Test {
                     expectedException,
                     () -> tuple.map(f1, f2)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map(f1, f2)
@@ -444,7 +446,8 @@ public class Tuple2Test {
                     expectedException,
                     () -> tuple.map1(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map1(mapper)
@@ -478,7 +481,8 @@ public class Tuple2Test {
                     expectedException,
                     () -> tuple.map2(mapper)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.map2(mapper)
@@ -516,7 +520,8 @@ public class Tuple2Test {
                     expectedException,
                     () -> tuple.apply(f)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     tuple.apply(f)

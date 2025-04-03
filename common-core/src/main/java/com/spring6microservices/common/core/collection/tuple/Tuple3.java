@@ -98,7 +98,8 @@ public final class Tuple3<T1, T2, T3> implements Tuple, Serializable {
             return null == o2
                     ? 0
                     : -1;
-        } else if (null == o2) {
+        }
+        else if (null == o2) {
             return 1;
         }
         final Tuple3<U1, U2, U3> t1 = (Tuple3<U1, U2, U3>) o1;

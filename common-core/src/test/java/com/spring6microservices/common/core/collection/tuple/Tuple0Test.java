@@ -105,7 +105,8 @@ public class Tuple0Test {
                     expectedException,
                     () -> instance().apply(f)
             );
-        } else {
+        }
+        else {
             assertEquals(
                     expectedResult,
                     instance().apply(f)

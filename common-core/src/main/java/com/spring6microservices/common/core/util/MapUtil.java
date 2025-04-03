@@ -1483,12 +1483,14 @@ public class MapUtil {
      *          List<String> keys = new ArrayList<>();                 ("smaller10Key",  [(1, "Hi"), (2, "Hello")])
      *          if (0 == k % 2) {                                      ("greaterEqual10Key",  [(11, "World")])]
      *             keys.add("evenKey");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("oddKey");
      *          }
      *          if (10 > k) {
      *             keys.add("smaller10Key");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10Key");
      *          }
      *          return keys;
@@ -1531,12 +1533,14 @@ public class MapUtil {
      *          List<String> keys = new ArrayList<>();                 ("smaller10Key",  [(1, "Hi"), (2, "Hello")])
      *          if (0 == k % 2) {                                      ("greaterEqual10Key",  [(11, "World")])]
      *             keys.add("evenKey");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("oddKey");
      *          }
      *          if (10 > k) {
      *             keys.add("smaller10Key");
-     *          } else {
+     *          }
+     *          else {
      *             keys.add("greaterEqual10Key");
      *          }
      *          return keys;
@@ -2173,7 +2177,8 @@ public class MapUtil {
                         Map.Entry<T, E> currentElement = (Map.Entry<T, E>) entry;
                         if (null == largestElement) {
                             largestElement = currentElement;
-                        } else {
+                        }
+                        else {
                             largestElement =
                                     0 > comparator.compare(largestElement, currentElement)
                                             ? currentElement
@@ -2284,7 +2289,8 @@ public class MapUtil {
                         Map.Entry<T, E> currentElement = (Map.Entry<T, E>) entry;
                         if (null == smallestElement) {
                             smallestElement = currentElement;
-                        } else {
+                        }
+                        else {
                             smallestElement =
                                     0 < comparator.compare(smallestElement, currentElement)
                                             ? currentElement
