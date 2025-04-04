@@ -88,7 +88,7 @@ files, the dependency:
    <version>${spring-security-rsa.version}</version>
 </dependency>
 ```
-<br><br>
+<br>
 
 
 ### [gateway-server](https://github.com/doctore/Spring6Microservices/tree/main/gateway-server)
@@ -193,9 +193,6 @@ And functional programming structures and useful classes like:
 * [Tuple](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/collection/tuple) immutable objects that contains a fixed number of elements (by now up to 9).
 * [Validation](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/validation) to validate the given instance.
 <br><br>
-
-
-A common use of Either is as an alternative to scala.Option for dealing with possibly missing values.
 
 
 ### [common-spring](https://github.com/doctore/Spring6Microservices/tree/main/common-spring)
