@@ -112,7 +112,7 @@ options defined in [TokenType](https://github.com/doctore/Spring6Microservices/b
 The provided algorithms to sign the JWT tokens, that is, to generate `JWS` or the internal one inside `ENCRYPTED_JWS` are located in [TokenSignatureAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenSignatureAlgorithm.java).
 On the other hand, the available algorithms selecting `JWE` or `ENCRYPTED_JWE` are defined in [TokenEncryptionAlgorithm](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/token/TokenEncryptionAlgorithm.java) 
 
-Every application will be able to manage its own token configuration/generation adding a new row in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql)
+Every application will be able to manage its own token configuration/generation adding a new row in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql)
 and including/developing a new value in [SecurityHandler](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/java/com/security/custom/enums/SecurityHandler.java).
 
 The technologies used are the following ones:
@@ -288,7 +288,7 @@ spring:
     password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
 ```
 
-And something similar in the database table [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql),
+And something similar in the database table [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql),
 in the columns: `signature_secret` and `encryption_secret`.
 
 To do it:
@@ -316,10 +316,10 @@ Regarding every microservice, in this section I will explain the web services pr
 ### security-custom-service endpoints
 
 Before enter in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* credentials, based in
-the application configured in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V1__create_schema_and_security_table.sql).
+the application configured in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql).
 
 In the next pictures I will use the predefined one:
-[Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L4)
+[Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql#L19)
 
 ![Alt text](/documentation/SecurityCustomService_Credentials.png?raw=true "Basic Auth credentials")
 <br><br>
@@ -338,7 +338,7 @@ So, the list of web services is the following one:
 ![Alt text](/documentation/SecurityCustomService_DirectLogin.png?raw=true "Direct Login")
 
 In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file
-[security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/db/changelog/V3__security_schema_data.sql#L35).
+[security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V4__spring6microservice_security_data.sql#L2).
 <br><br>
 
 **2.** Get the authorization token using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>):
