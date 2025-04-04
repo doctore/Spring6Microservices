@@ -193,7 +193,7 @@
                 <configuration>
                     <configFiles>
                         <configFile>
-                            src/main/resources/db/flyway.conf
+                            src/main/resources/flyway.conf
                         </configFile>
                     </configFiles>
                 </configuration>

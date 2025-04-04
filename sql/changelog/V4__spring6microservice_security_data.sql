@@ -1,38 +1,3 @@
-------------------------------------------------------------------------------------------------------------------------
--- Global security data
-
-INSERT INTO security.application_client_details (id
-                                                ,application_client_secret
-                                                ,signature_algorithm
-                                                ,signature_secret
-                                                ,security_handler
-                                                ,token_type
-                                                ,encryption_algorithm
-                                                ,encryption_method
-                                                ,encryption_secret
-                                                ,access_token_validity_in_seconds
-                                                ,refresh_token_validity_in_seconds
-                                                ,created_at)
-VALUES ('Spring6Microservices'
-        -- Raw application_client_secret: Spring6Microservices
-       ,'{bcrypt}$2a$10$eb.2YmvPM6pOSPef5f2EXevru16Sb4UN6c.wHe2a3vwExV5/BY.vW'
-       ,'HS512'
-        -- Raw signature_secret: Spring5Microservices_999#secret#789(jwt)$3411781_GTDSAET-569016310k
-       ,'{cipher}04f1b9a71d880569283849aa911e4f3f3373a2522cba355e25e17f7ac7e262cb63d41295ab8bca038823b884858f05457306159cdfe68eb11c616028d6213b719887c07750e8c4b60dfea4196b1ddaffdcd462180028abc1a2d1dda69b8ac4bf'
-       ,'SPRING6_MICROSERVICES'
-       ,'ENCRYPTED_JWE'
-       ,'DIR'
-       ,'A128CBC_HS256'
-        -- Raw encryption_secret: 841d8A6C80C#A4FcAf32D5367t1!C53b
-       ,'{cipher}bf7c79f1a7cbd56cb1f10ccc0c8e6440ba552315e86789253ede14e62a4f007ea680136668b4b95ace78506e9c247bcf20b2a88da4baf5c111e6396e67c69236'
-       ,600
-       ,1800
-       ,current_timestamp);
-
-
-------------------------------------------------------------------------------------------------------------------------
--- Spring6Microservice data
-
 -- Master tables
 INSERT INTO security.spring6microservice_user (id
                                               ,name
@@ -53,7 +18,9 @@ VALUES (1
         -- Raw password: user
        ,'{bcrypt}$2a$10$i7LFiCo1JRm87ERePQOS3OkZ3Srgub8F7GyoWu6NmUuCLDTPq8zMW'
        ,'user'
-       ,current_timestamp);
+       ,current_timestamp)
+ON CONFLICT (username)
+DO NOTHING;
 
 SELECT setval('security.spring6microservice_user_id_seq', (SELECT count(*) FROM security.spring6microservice_user));
 
@@ -66,7 +33,9 @@ VALUES (1
        ,current_timestamp)
       ,(2
        ,'ROLE_USER'
-       ,current_timestamp);
+       ,current_timestamp)
+ON CONFLICT (name)
+DO NOTHING;
 
 SELECT setval('security.spring6microservice_role_id_seq', (SELECT count(*) FROM security.spring6microservice_role));
 
@@ -79,7 +48,9 @@ VALUES (1
        ,current_timestamp)
       ,(2
        ,'GET_ORDER'
-       ,current_timestamp);
+       ,current_timestamp)
+ON CONFLICT (name)
+DO NOTHING;
 
 SELECT setval('security.spring6microservice_permission_id_seq', (SELECT count(*) FROM security.spring6microservice_permission));
 
@@ -102,7 +73,9 @@ VALUES (
         ,(SELECT id
           FROM security.spring6microservice_role
           WHERE name = 'ROLE_USER')
-       );
+       )
+ON CONFLICT (user_id, role_id)
+DO NOTHING;
 
 
 INSERT INTO security.spring6microservice_role_permission (role_id,
@@ -114,7 +87,9 @@ VALUES (
         ,(SELECT id
           FROM security.spring6microservice_permission
           WHERE name = 'CREATE_ORDER')
-       );
+       )
+ON CONFLICT (role_id, permission_id)
+DO NOTHING;
 
 
 INSERT INTO security.spring6microservice_role_permission (role_id,
@@ -126,7 +101,9 @@ VALUES (
         ,(SELECT id
           FROM security.spring6microservice_permission
           WHERE name = 'GET_ORDER')
-       );
+       )
+ON CONFLICT (role_id, permission_id)
+DO NOTHING;
 
 
 INSERT INTO security.spring6microservice_role_permission (role_id,
@@ -138,4 +115,6 @@ VALUES (
         ,(SELECT id
           FROM security.spring6microservice_permission
           WHERE name = 'GET_ORDER')
-       );
+       )
+ON CONFLICT (role_id, permission_id)
+DO NOTHING;
