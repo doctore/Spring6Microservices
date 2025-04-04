@@ -154,6 +154,8 @@ So, if you want to manage it manually, you can create a new [maven](https://mave
 using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
 
 ![Alt text](/documentation/ConfigureFlywayInSecurityCustomService.png?raw=true "Configure Flyway")
+
+All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
 <br><br>
 
 
@@ -227,6 +229,9 @@ Common DTOs to send/receive authentication, authorization data and/or handle err
 ### [sql](https://github.com/doctore/Spring6Microservices/tree/main/sql)
 
 With SQL files included in the database, just to expose the initial steps to start working with these microservices.
+
+* [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog) contains all the SQL archives required by the microservices that
+use [Flyway](https://www.red-gate.com/products/flyway/) to manage their changes in database.
 <br><br>
 
 
