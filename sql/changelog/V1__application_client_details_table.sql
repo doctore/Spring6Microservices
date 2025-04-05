@@ -1,6 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS security;
 
-CREATE TABLE IF NOT EXISTS security.application_client_details (
+------------------------------------------------------------------------------------------------------------------------
+-- Definitions
+CREATE TABLE security.application_client_details (
     id                                  varchar(64)    not null    constraint application_client_details_pk primary key,
     application_client_secret           varchar(256)   not null,
     signature_algorithm                 varchar(16)    not null,
@@ -16,6 +18,9 @@ CREATE TABLE IF NOT EXISTS security.application_client_details (
 );
 
 
+
+------------------------------------------------------------------------------------------------------------------------
+-- Data
 INSERT INTO security.application_client_details (id
                                                 ,application_client_secret
                                                 ,signature_algorithm
@@ -42,6 +47,4 @@ VALUES ('Spring6Microservices'
        ,'{cipher}bf7c79f1a7cbd56cb1f10ccc0c8e6440ba552315e86789253ede14e62a4f007ea680136668b4b95ace78506e9c247bcf20b2a88da4baf5c111e6396e67c69236'
        ,600
        ,1800
-       ,current_timestamp)
-ON CONFLICT (id)
-DO NOTHING;
+       ,current_timestamp);

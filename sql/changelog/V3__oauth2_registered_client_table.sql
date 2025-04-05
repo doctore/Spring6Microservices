@@ -1,6 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS security;
 
-CREATE TABLE IF NOT EXISTS security.oauth2_registered_client (
+------------------------------------------------------------------------------------------------------------------------
+-- Definitions
+CREATE TABLE security.oauth2_registered_client (
     id                              varchar(100)    not null   constraint oauth2_registered_client_pk primary key,
     client_id                       varchar(100)    not null,
     client_id_issued_at             timestamp       not null   default current_timestamp,
@@ -17,6 +19,9 @@ CREATE TABLE IF NOT EXISTS security.oauth2_registered_client (
 );
 
 
+
+------------------------------------------------------------------------------------------------------------------------
+-- Data
 INSERT INTO security.oauth2_registered_client (id
                                               ,client_id
                                               ,client_id_issued_at
@@ -43,6 +48,4 @@ VALUES ('Spring6Microservices'
        ,'http://localhost:5555/security/oauth/post_logout'
        ,'read,write'
        ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.client.require-proof-key" : false, "settings.client.require-authorization-consent" : true }'
-       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.token.reuse-refresh-tokens" : true, "settings.token.x509-certificate-bound-access-tokens" : false, "settings.token.id-token-signature-algorithm" : [ "org.springframework.security.oauth2.jose.jws.SignatureAlgorithm", "RS256" ], "settings.token.access-token-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.access-token-format" : { "@class" : "org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat", "value" : "self-contained" }, "settings.token.refresh-token-time-to-live" : [ "java.time.Duration", 3600.0 ], "settings.token.authorization-code-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.device-code-time-to-live" : [ "java.time.Duration", 300.0 ] }')
-ON CONFLICT (id)
-DO NOTHING;
+       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.token.reuse-refresh-tokens" : true, "settings.token.x509-certificate-bound-access-tokens" : false, "settings.token.id-token-signature-algorithm" : [ "org.springframework.security.oauth2.jose.jws.SignatureAlgorithm", "RS256" ], "settings.token.access-token-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.access-token-format" : { "@class" : "org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat", "value" : "self-contained" }, "settings.token.refresh-token-time-to-live" : [ "java.time.Duration", 3600.0 ], "settings.token.authorization-code-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.device-code-time-to-live" : [ "java.time.Duration", 300.0 ] }');
