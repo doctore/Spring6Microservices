@@ -60,14 +60,14 @@ INSERT INTO security.spring6microservice_user (id
 VALUES (1
        ,'Administrator'
        ,true
-       -- Raw password: admin
+        -- Raw password: admin
        ,'{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO'
        ,'admin'
        ,current_timestamp)
       ,(2
        ,'Normal user'
        ,true
-       -- Raw password: user
+        -- Raw password: user
        ,'{bcrypt}$2a$10$i7LFiCo1JRm87ERePQOS3OkZ3Srgub8F7GyoWu6NmUuCLDTPq8zMW'
        ,'user'
        ,current_timestamp);

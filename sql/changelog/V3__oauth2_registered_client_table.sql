@@ -38,7 +38,7 @@ INSERT INTO security.oauth2_registered_client (id
 VALUES ('Spring6Microservices'
        ,'Spring6Microservices'
        ,current_timestamp
-           -- Raw application_client_secret: Spring6Microservices
+        -- Raw application_client_secret: Spring6Microservices
        ,'{bcrypt}$2a$10$eb.2YmvPM6pOSPef5f2EXevru16Sb4UN6c.wHe2a3vwExV5/BY.vW'
        ,'2050-01-01 00:00:00'
        ,'Spring6 microservices proof of concept'
