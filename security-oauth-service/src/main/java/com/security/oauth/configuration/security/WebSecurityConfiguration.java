@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
+    // TODO: Pending to customize
     /**
      * Spring Security filter chain for the <a href="https://docs.spring.io/spring-authorization-server/reference/protocol-endpoints.html">Protocol Endpoints</a>.
      *
@@ -64,6 +65,7 @@ public class WebSecurityConfiguration {
     }
 
 
+    // TODO: Pending to customize
     /**
      * Spring Security filter chain for <a href="https://docs.spring.io/spring-security/reference/servlet/authentication/index.html">authentication</a>.
      *
@@ -74,7 +76,6 @@ public class WebSecurityConfiguration {
      *
      * @throws Exception
      */
-    // TODO: REVIEW WITH WebSecurityConfiguration.securityWebFilterChain in security-custom-service
     @Bean
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(final HttpSecurity http) throws Exception {
