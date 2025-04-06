@@ -112,14 +112,13 @@ public class ApplicationClientDetailsService implements ReactiveUserDetailsServi
         Validation<ValidationError, ApplicationClientDetails> validation = new ApplicationClientDetailsValidator()
                 .validate(applicationClientDetails);
 
-        if (validation.isValid()) {
-            return applicationClientDetails;
-        }
-        throw new UnsupportedOperationException(
-                format("The application client details: %s was not well configured. Error messages: %s",
-                        applicationClientDetails.getId(),
-                        StringUtil.join(
-                                validation.getErrors()
+        return validation.getOrElseThrow(() ->
+                new UnsupportedOperationException(
+                        format("The application client details: %s was not well configured. Error messages: %s",
+                                applicationClientDetails.getId(),
+                                StringUtil.join(
+                                        validation.getErrors()
+                                )
                         )
                 )
         );
