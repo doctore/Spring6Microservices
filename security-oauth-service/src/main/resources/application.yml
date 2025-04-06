@@ -1,0 +1,6 @@
+# Spring framework configuration
+spring:
+  application:
+    name: security-oauth-service
+  flyway:
+    enabled: false

@@ -1,0 +1,34 @@
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server for testing
+    config:
+      enabled: false
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS security
+    username: sa
+    password:
+  # Disable Flyway for testing
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+# Internal caches used by the microservice
+cache:
+  registeredClient:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests
+
+
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false

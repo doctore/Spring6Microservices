@@ -1,0 +1,64 @@
+# Server configuration
+server:
+  port: 8181
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server request to work provided values
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring6
+    username: spring6
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
+    # Raw password: spring6
+    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+# Encryption configuration
+encrypt:
+  # Defined symmetric (shared) key to encrypt/decrypt text:
+  #
+  #  1. Receiving encrypted property values from Config Server like:
+  #       spring.datasource.password: "{cipher}..."
+  #
+  #  2. Receiving encrypted column values from database like:
+  #       security.application_client_details.signature_secret = '{cipher}...'
+  #
+  # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
+  key: ${ENCRYPT_KEY:ENCRYPT_KEY}
+
+
+# Disable eureka server connection request
+eureka:
+  client:
+    enabled: false
+
+
+# Internal caches used by the microservice
+cache:
+  # To manage the configuration of the applications included in the microservice
+  registeredClient:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: registeredClientCache
+
+
+# Main properties in Spring Boot to configure some general purpose services
+management:
+  endpoints:
+    web:
+      exposure:
+        # Actuator endpoints exposed: actuator/routes
+        include: health, info
+  tracing:
+    sampling:
+      # To log traceId and spanId in every request
+      probability: 1.0
