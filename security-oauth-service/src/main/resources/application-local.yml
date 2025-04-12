@@ -62,3 +62,27 @@ management:
     sampling:
       # To log traceId and spanId in every request
       probability: 1.0
+
+
+# API documentation
+# In local the URLs are:
+#   1. http://localhost:8181/security/oauth/api-docs to get the information in JSON format
+#   2. http://localhost:8181/security/oauth/swagger-ui/index.html to display the UI with all defined endpoints
+springdoc:
+  api-docs:
+    # Path of the OpenAPI documentation in Json format
+    path: /security/oauth/api-docs
+  documentation:
+    apiVersion: 1.0
+    title: Security Oauth Rest Api
+    description: Services related with authentication/authorization functionality
+  # Custom properties to define security configuration for documented API
+  security:
+    authorization: Basic Auth
+    schema: basic
+  show-oauth2-endpoints: true
+  swagger-ui:
+    # To disable the swagger-ui default petstore url
+    disable-swagger-default-url: true
+    # Custom path of the swagger-ui HTML documentation
+    path: /security/oauth/swagger-ui.html

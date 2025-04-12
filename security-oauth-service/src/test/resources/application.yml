@@ -32,3 +32,18 @@ cache:
 eureka:
   client:
     enabled: false
+
+
+# API documentation
+springdoc:
+  api-docs:
+    path: onlyForTests
+  documentation:
+    apiVersion: 1.0
+    title: Test Rest Api
+    description: Test description
+  security:
+    authorization: Basic Auth
+    schema: basic
+  swagger-ui:
+    path: testPath
