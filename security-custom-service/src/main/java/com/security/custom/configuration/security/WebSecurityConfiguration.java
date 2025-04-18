@@ -75,7 +75,7 @@ public class WebSecurityConfiguration {
                                                 serverAccessDeniedHandlerForUnauthorized()
                                         )
                 )
-                // Include our custom AuthenticationManager
+                // Include a custom AuthenticationManager
                 .authenticationManager(
                         this.authenticationManager
                 )
@@ -96,7 +96,8 @@ public class WebSecurityConfiguration {
         return (exchange, ex) ->
                 Mono.fromRunnable(
                         () ->
-                                exchange.getResponse().setStatusCode(UNAUTHORIZED)
+                                exchange.getResponse()
+                                        .setStatusCode(UNAUTHORIZED)
                 );
     }
 
@@ -110,7 +111,8 @@ public class WebSecurityConfiguration {
         return (exchange, ex) ->
                 Mono.fromRunnable(
                         () ->
-                                exchange.getResponse().setStatusCode(FORBIDDEN)
+                                exchange.getResponse()
+                                        .setStatusCode(FORBIDDEN)
                 );
     }
 

@@ -22,6 +22,24 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
+# Security configuration
+security:
+  # JWT configuration
+  jwk:
+    id: 'local-f57f-46a2-b502-8a24c308be7f'
+    public: classpath:/jwt/app.pub
+    private: classpath:/jwt/app.key
+
+
+# Configure the logs
+logging:
+  level:
+    org:
+      springframework:
+        # Set the level of the Spring Security package for debugging purpose
+        security: trace
+
+
 # Encryption configuration
 encrypt:
   # Defined symmetric (shared) key to encrypt/decrypt text:

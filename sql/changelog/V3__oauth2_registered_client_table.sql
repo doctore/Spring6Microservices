@@ -31,7 +31,6 @@ INSERT INTO security.oauth2_registered_client (id
                                               ,client_authentication_methods
                                               ,authorization_grant_types
                                               ,redirect_uris
-                                              ,post_logout_redirect_uris
                                               ,scopes
                                               ,client_settings
                                               ,token_settings)
@@ -44,8 +43,7 @@ VALUES ('Spring6Microservices'
        ,'Spring6 microservices proof of concept'
        ,'client_secret_basic'
        ,'authorization_code,client_credentials,refresh_token'
-       ,'http://localhost:5555/security/oauth/redirect'
-       ,'http://localhost:5555/security/oauth/post_logout'
-       ,'read,write'
-       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.client.require-proof-key" : false, "settings.client.require-authorization-consent" : true }'
+       ,'http://localhost:8181/security/oauth/authorized'
+       ,'openid,read,write'
+       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.client.require-proof-key" : true, "settings.client.require-authorization-consent" : true }'
        ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.token.reuse-refresh-tokens" : true, "settings.token.x509-certificate-bound-access-tokens" : false, "settings.token.id-token-signature-algorithm" : [ "org.springframework.security.oauth2.jose.jws.SignatureAlgorithm", "RS256" ], "settings.token.access-token-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.access-token-format" : { "@class" : "org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat", "value" : "self-contained" }, "settings.token.refresh-token-time-to-live" : [ "java.time.Duration", 3600.0 ], "settings.token.authorization-code-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.device-code-time-to-live" : [ "java.time.Duration", 300.0 ] }');

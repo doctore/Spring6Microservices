@@ -44,5 +44,5 @@ VALUES ('Spring6Microservices'
        ,'http://localhost:8181/redirect'
        ,'http://localhost:8181/post_logout'
        ,'read'
-       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.client.require-proof-key" : false, "settings.client.require-authorization-consent" : true }'
+       ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.client.require-proof-key" : true, "settings.client.require-authorization-consent" : true }'
        ,'{ "@class" : "java.util.Collections$UnmodifiableMap", "settings.token.reuse-refresh-tokens" : true, "settings.token.x509-certificate-bound-access-tokens" : false, "settings.token.id-token-signature-algorithm" : [ "org.springframework.security.oauth2.jose.jws.SignatureAlgorithm", "RS256" ], "settings.token.access-token-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.access-token-format" : { "@class" : "org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat", "value" : "self-contained" }, "settings.token.refresh-token-time-to-live" : [ "java.time.Duration", 3600.0 ], "settings.token.authorization-code-time-to-live" : [ "java.time.Duration", 300.0 ], "settings.token.device-code-time-to-live" : [ "java.time.Duration", 300.0 ] }');
