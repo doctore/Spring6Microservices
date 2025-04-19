@@ -31,15 +31,6 @@ security:
     private: classpath:/jwt/app.key
 
 
-# Configure the logs
-logging:
-  level:
-    org:
-      springframework:
-        # Set the level of the Spring Security package for debugging purpose
-        security: trace
-
-
 # Encryption configuration
 encrypt:
   # Defined symmetric (shared) key to encrypt/decrypt text:
@@ -69,6 +60,15 @@ cache:
     name: registeredClientCache
 
 
+# Configure the logs
+logging:
+  level:
+    org:
+      springframework:
+        # Set the level of the Spring Security package for debugging purpose
+        security: trace
+
+
 # Main properties in Spring Boot to configure some general purpose services
 management:
   endpoints:
@@ -88,7 +88,7 @@ management:
 #   2. http://localhost:8181/security/oauth/swagger-ui/index.html to display the UI with all defined endpoints
 springdoc:
   api-docs:
-    # Path of the OpenAPI documentation in Json format
+    # Path of the OpenAPI documentation in JSON format
     path: /security/oauth/api-docs
   documentation:
     apiVersion: 1.0

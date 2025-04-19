@@ -68,7 +68,10 @@ public class DocumentationConfiguration {
                                         .getFirst()
                                         .getArgs()
                                         .get(INTERNAL_PATH_KEY_OF_GATEWAY_FILTER)
-                                        .replace(ALLOW_ALL_ENDPOINTS, microServicesApiDocsPath);
+                                        .replace(
+                                                ALLOW_ALL_ENDPOINTS,
+                                                microServicesApiDocsPath
+                                        );
 
                                 AbstractSwaggerUiConfigProperties.SwaggerUrl swaggerUrl = new AbstractSwaggerUiConfigProperties.SwaggerUrl(
                                         rd.getId(),

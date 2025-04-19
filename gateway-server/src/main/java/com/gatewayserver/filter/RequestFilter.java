@@ -90,7 +90,7 @@ public class RequestFilter implements GlobalFilter {
         return ROUTE_ID_TO_LOG_BODY_REQUEST.contains(
                 getRouteId(exchange)
         ) &&
-                isRestMethodWithBody;
+        isRestMethodWithBody;
     }
 
 

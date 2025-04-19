@@ -26,8 +26,22 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 public class CircuitBreakerController {
 
     @RequestMapping(RestRoutes.CIRCUIT_BREAKER.SECURITY_CUSTOM_SERVICE)
-    public Mono<ResponseEntity<ErrorResponseDto>> securityServiceFailureRedirect() {
+    public Mono<ResponseEntity<ErrorResponseDto>> securityCustomServiceFailureRedirect() {
         String errorMessage = "Sorry, security custom service is down at this moment. Please try again later";
+        log.error(errorMessage);
+        return Mono.just(
+                buildErrorResponse(
+                        INTERNAL,
+                        errorMessage,
+                        SERVICE_UNAVAILABLE
+                )
+        );
+    }
+
+
+    @RequestMapping(RestRoutes.CIRCUIT_BREAKER.SECURITY_OAUTH_SERVICE)
+    public Mono<ResponseEntity<ErrorResponseDto>> securityOauthServiceFailureRedirect() {
+        String errorMessage = "Sorry, security oauth service is down at this moment. Please try again later";
         log.error(errorMessage);
         return Mono.just(
                 buildErrorResponse(

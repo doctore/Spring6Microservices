@@ -15,6 +15,7 @@ public final class RestRoutes {
         public static final String DEVICE_AUTHORIZATION = ROOT + "/device_authorization";
         public static final String DEVICE_VERIFICATION = ROOT + "/device_verification";
         public static final String JWK_SET = ROOT + "/jwks";
+        public static final String LOGIN = "/login";
         public static final String OIDC_CLIENT_REGISTRATION = ROOT + "/connect/register";
         public static final String OIDC_LOGOUT = ROOT + "/connect/logout";
         public static final String OIDC_USER_INFO = ROOT + "/userinfo";

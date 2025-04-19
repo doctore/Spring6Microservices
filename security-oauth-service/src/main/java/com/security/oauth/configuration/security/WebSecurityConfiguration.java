@@ -1,6 +1,7 @@
 package com.security.oauth.configuration.security;
 
 import com.security.oauth.configuration.documentation.DocumentationConfiguration;
+import com.security.oauth.configuration.rest.RestRoutes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -80,8 +81,7 @@ public class WebSecurityConfiguration {
                                         )
                                         /**
                                          * TODO: PENDING TO REMOVE AND INCLUDE IN README file
-                                         *
-                                         * Database:
+                                         * Request:
                                          *  1. http://localhost:8181/security/oauth/authorize?response_type=code&client_id=Spring6Microservices&scope=openid&redirect_uri=http://localhost:8181/security/oauth/authorized&code_challenge=jZae727K08KaOmKSgOaGzww_XVqGr_PKEgIMkjrcbJI&code_challenge_method=S256
                                          *
                                          *     Respuesta:
@@ -99,7 +99,7 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exceptions ->
                         exceptions.defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint(
-                                        "/login"
+                                        RestRoutes.OAUTH_ENDPOINTS.LOGIN
                                 ),
                                 new MediaTypeRequestMatcher(
                                         MediaType.TEXT_HTML

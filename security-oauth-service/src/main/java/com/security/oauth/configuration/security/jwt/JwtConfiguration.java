@@ -6,39 +6,22 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.proc.SecurityContext;
 
-import com.security.oauth.model.User;
-import com.spring6microservices.common.core.util.StringUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimNames;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 @Configuration
 @Getter
 public class JwtConfiguration {
 
     @Value("${security.jwk.id}")
-    private String id;
+    private String keyId;
 
     @Value("${security.jwk.public}")
     private RSAPublicKey publicKey;
@@ -57,7 +40,7 @@ public class JwtConfiguration {
     public JWKSource<SecurityContext> jwkSource() {
         RSAKey rsaKey = new RSAKey.Builder(this.publicKey)
                 .privateKey(this.privateKey)
-                .keyID(this.id)
+                .keyID(this.keyId)
                 .build();
         JWKSet jwkSet = new JWKSet(
                 rsaKey

@@ -1,8 +1,5 @@
 package com.security.oauth.configuration;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
  * Global values used in different part of the application
  */
@@ -22,8 +19,5 @@ public final class Constants {
             public static final String COMMON_SPRING = "com.spring6microservices.common.spring";
         }
     }
-
-    // Default charset
-    public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
 }

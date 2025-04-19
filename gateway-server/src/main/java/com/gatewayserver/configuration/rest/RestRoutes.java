@@ -7,6 +7,7 @@ public final class RestRoutes {
 
     public static final class MAIN_ROUTES {
         public static final String SECURITY_CUSTOM_SERVICE = "/security-custom-service";
+        public static final String SECURITY_OAUTH_SERVICE = "/security-oauth-service";
     }
 
 
@@ -15,6 +16,7 @@ public final class RestRoutes {
         public static final String REDIRECT = "/redirect";
 
         public static final String SECURITY_CUSTOM_SERVICE = MAIN_ROUTES.SECURITY_CUSTOM_SERVICE + REDIRECT;
+        public static final String SECURITY_OAUTH_SERVICE = MAIN_ROUTES.SECURITY_OAUTH_SERVICE + REDIRECT;
     }
 
 }
