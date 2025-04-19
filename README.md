@@ -396,8 +396,9 @@ The browser will redirect you to the login page:
 ![Alt text](/documentation/security-oauth-service/Login.png?raw=true "Login page")
 
 In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V2__spring6microservice_security_tables.sql#L54).
-We configured a no existing page as `redirect_uri` for that reason we receive a **404** as response after the successful login however,
-the [Spring Authorization Server](https://spring.io/projects/spring-authorization-server) returns a valid authorization code we will be able to use
+
+We configured a no existing page as `redirect_uri` for that reason we receive a **404** as response after the successful login however, the
+[Spring Authorization Server](https://spring.io/projects/spring-authorization-server) returns a valid authorization code we will be able to use
 in the second reques of [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/):
 
 ![Alt text](/documentation/security-oauth-service/AuthorizationCodeResponse.png?raw=true "Authorization code")
