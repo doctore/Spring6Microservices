@@ -399,12 +399,12 @@ In the previous image I used `admin/admin` however there is another option: `use
 
 We configured a no existing page as `redirect_uri` for that reason we receive a **404** as response after the successful login however, the
 [Spring Authorization Server](https://spring.io/projects/spring-authorization-server) returns a valid authorization code we will be able to use
-in the second reques of [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/):
+in the second request of [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/):
 
 ![Alt text](/documentation/security-oauth-service/AuthorizationCodeResponse.png?raw=true "Authorization code")
 <br><br>
 
-**2.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>, using above authorization code:
+**2.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>), using above authorization code:
 
 ![Alt text](/documentation/security-oauth-service/LoginToken.png?raw=true "Get authentication information")
 
@@ -413,7 +413,7 @@ Providing:
 * `client_id=Spring6Microservices` the client's identifier added in [security.oauth2_registered_client](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V3__oauth2_registered_client_table.sql).
 * `redirect_uri=http://localhost:8181/security/oauth/authorized` specifies the URI to which the authorization server will redirect after a successful authentication. This URI must be one of those previously configured for the current client.
 * `grant_type=authorization_code` shows which flow the client uses to request the access token.
-* `code=...` the value of the authorization code the authorization server provided to the client (returned by the previous request).
+* `code=...` the value of the authorization code the authorization server provided to the client (returned as `code` query parameter in the previous request).
 * `code_verifier=123456` the verifier based on which the challenge that the client sent at authorization was created (`code_challenge` & `code_challenge_method` parameters).
 <br><br>
 
