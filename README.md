@@ -503,7 +503,7 @@ we will be able to choose between all existing microservices.
 Using **dev** profile, the url to access them is `http://localhost:5555/swagger-ui/index.html`
 
 ![Alt text](/documentation/security-custom-service/SwaggerDocumentation.png?raw=true "Security Custom Service Swagger documentation")
-<br>
+<br><br>
 ![Alt text](/documentation/security-oauth-service/SwaggerDocumentation.png?raw=true "Security Oauth Service Swagger documentation")
 <br><br>
 
