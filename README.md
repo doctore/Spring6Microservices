@@ -7,13 +7,15 @@
     - [registry-server](#registry-server)
   - [config-server](#config-server)
   - [gateway-server](#gateway-server)
-  - [security-custom-service](#security-custom-service)
+  - [security-oauth-service](#security-oauth-service)
+  - [security-custom-service](#security-custom-service) 
   - [common-core](#common-core)
   - [common-spring](#common-spring)
   - [sql](#sql)
 - [Previous steps](#previous-steps)
 - [Security services](#security-services)
-  - [security-custom-service endpoints](#security-custom-service-endpoints) 
+  - [security-oauth-service endpoints](#security-oauth-service-endpoints) 
+  - [security-custom-service endpoints](#security-custom-service-endpoints)
 - [Rest API documentation](#rest-api-documentation)
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
@@ -78,7 +80,7 @@ spring:
           enabled: false
 ```
 
-sending the information encrypted and delegating in every microservice the labour of decrypt it. That is the reason to include in their *pom.xml*
+Sending the information encrypted and delegating in every microservice the labour of decrypt it. That is the reason to include in their *pom.xml*
 files, the dependency:
 
 ```
@@ -95,6 +97,51 @@ files, the dependency:
 
 Using [Spring Gateway](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html), this is the gateway implementation used by the other
 microservices included in this proof of concept. This module contains a filter to registry every web service invoked, helping to debug each request.
+<br><br>
+
+
+### [security-oauth-service](https://github.com/doctore/Spring6Microservices/tree/main/security-oauth-service)
+
+Full integration with Oauth 2.0 + Jwt functionality provided by [Spring Authorization Server](https://spring.io/projects/spring-authorization-server),
+used to be able to manage authentication/authorization functionalities through access and refresh tokens. With this microservice working as Oauth 2.0 Server,
+we will be able to configure the details of every allowed application using the database table: [security.oauth2_registered_client](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V3__oauth2_registered_client_table.sql).
+
+On the other hand, several customizations have been included to manage the creation of access JWT token and how to append additional information too.
+
+The technologies used are the following ones:
+
+* **[Spring Data JDBC](https://spring.io/projects/spring-data-jdbc)** to speed up data access, persistence, and management between Java objects and database queries.
+* **[Flyway](https://www.red-gate.com/products/flyway/)** as version control of database changes.
+* **[Lombok](https://projectlombok.org/features)** to reduce the code development in entities and DTOs.
+* **[Hazelcast](https://hazelcast.com)** as cache to reduce the invocations to the database.
+* **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
+
+In this microservice, the layer's division is:
+
+* **repository** layer used to access to the database.
+* **service** containing the business logic.
+
+On the other hand, there are other important folders:
+
+* **configuration** with several classes used to manage several areas such: security, documentation, database or cache.
+* **model** to store the entities.
+
+
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-oauth-service/src/main/resources/application.yml) the project has been configured to avoid invoking it
+when this microservice is launched or packaged:
+
+```
+spring:
+  flyway:
+    enabled: false
+```
+
+So, if you want to manage it manually, you can create a new [maven](https://maven.apache.org/) configuration. The next picture displays how to do it
+using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
+
+![Alt text](/documentation/security-oauth-service/ConfigureFlyway.png?raw=true "Configure Flyway")
+
+All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
 <br><br>
 
 
@@ -136,7 +183,7 @@ In this microservice, the layer's division is:
 
 On the other hand, there are other important folders:
 
-* **configuration** with several classes used to manage several areas such: security, exception handlers, cache, etc.
+* **configuration** with several classes used to manage several areas such: security, documentation, database, cache, exception handlers, etc.
 * **model** to store the entities.
 * **dto** custom objects to contain specific data.
 * **util** to manage the JWS/JWE functionality.
@@ -153,7 +200,7 @@ spring:
 So, if you want to manage it manually, you can create a new [maven](https://maven.apache.org/) configuration. The next picture displays how to do it
 using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
 
-![Alt text](/documentation/ConfigureFlywayInSecurityCustomService.png?raw=true "Configure Flyway")
+![Alt text](/documentation/security-custom-service/ConfigureFlyway.png?raw=true "Configure Flyway")
 
 All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
 <br><br>
@@ -299,7 +346,7 @@ To do it:
 
 - Encrypt required values using the provided endpoint for that purpose, as follows:
 
-![Alt text](/documentation/Encryption.png?raw=true "Encryption endpoint")
+![Alt text](/documentation/config-service/Encryption.png?raw=true "Encryption endpoint")
 
 - Overwrite current values by the provided ones.
 <br><br>
@@ -308,22 +355,88 @@ To do it:
 
 ## Security services
 
-As you read previously, there are two different microservices you can use to manage the authentication/authorization functionality: [security-oauth-service](#security-oauth-service) (*PENDING TO DEVELOP*)
+As you read previously, there are two different microservices you can use to manage the authentication/authorization functionality: [security-oauth-service](#security-oauth-service)
 and [security-custom-service](#security-custom-service).
 
-Regarding every microservice, in this section I will explain the web services provided by every one and how to use them, starting by [security-custom-service](#security-custom-service).
+Regarding every microservice, in this section I will explain the web services provided by every one and how to use them, starting by [security-oauth-service](#security-oauth-service).
+<br><br>
+
+
+### security-oauth-service endpoints
+
+Before entering in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* Oauth 2.0 credentials,
+based on the application configured in the database table: [security.oauth2_registered_client](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V3__oauth2_registered_client_table.sql).
+
+In the next pictures I will use the predefined one:
+[Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V3__oauth2_registered_client_table.sql#L25)
+
+![Alt text](/documentation/security-oauth-service/Credentials.png?raw=true "Basic Auth credentials")
+<br><br>
+
+So, the list of web services is the following one:
+
+**1.** Get the authorization code using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>), pasting in a browser
+a request similar to:
+
+```
+http://localhost:8181/security/oauth/authorize?response_type=code&client_id=Spring6Microservices&scope=openid&redirect_uri=http://localhost:8181/security/oauth/authorized&code_challenge=jZae727K08KaOmKSgOaGzww_XVqGr_PKEgIMkjrcbJI&code_challenge_method=S256
+```
+
+Providing:
+
+* `response_type=code` to specify to the authorization server that the client wants to use the authorization code grant type.
+* `client_id=Spring6Microservices` the client's identifier added in [security.oauth2_registered_client](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V3__oauth2_registered_client_table.sql).
+* `scope=openid` indicates which scope the client wants to be granted with this authentication attempt.
+* `redirect_uri=http://localhost:8181/security/oauth/authorized` specifies the URI to which the authorization server will redirect after a successful authentication. This URI must be one of those previously configured for the current client.
+* `code_challenge=jZae727K08KaOmKSgOaGzww_XVqGr_PKEgIMkjrcbJI` if using the authorization code enhanced with [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/), the hash value of the verifier that must be provided in the second request.
+* `code_challenge_method=S256` hashing method has been used to create the challenge from the verifier. In this case, S256 means [SHA-256](https://en.wikipedia.org/wiki/SHA-2).
+
+The browser will redirect you to the login page:
+
+![Alt text](/documentation/security-oauth-service/Login.png?raw=true "Login page")
+
+In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V2__spring6microservice_security_tables.sql#L54).
+We configured a no existing page as `redirect_uri` for that reason we receive a **404** as response after the successful login however,
+the [Spring Authorization Server](https://spring.io/projects/spring-authorization-server) returns a valid authorization code we will be able to use
+in the second reques of [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/):
+
+![Alt text](/documentation/security-oauth-service/AuthorizationCodeResponse.png?raw=true "Authorization code")
+<br><br>
+
+**2.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>, using above authorization code:
+
+![Alt text](/documentation/security-oauth-service/LoginToken.png?raw=true "Get authentication information")
+<br><br>
+
+**3.** Once the *access* token has expired, return new authentication information using *refresh* token:
+
+![Alt text](/documentation/security-oauth-service/RefreshToken.png?raw=true "Refresh token")
+<br><br>
+
+**4.** Get authorization information using *access* token:
+
+![Alt text](/documentation/security-oauth-service/IntrospectToken.png?raw=true "Introspect token")
+<br><br>
+
+**5.** Revoke the token using the *access* one:
+
+![Alt text](/documentation/security-oauth-service/RevokeToken.png?raw=true "Revoke token")
+
+So, if we try to get again its internal information, this is the new response:
+
+![Alt text](/documentation/security-oauth-service/IntrospectInvalidToken.png?raw=true "Introspect invalid token")
 <br><br>
 
 
 ### security-custom-service endpoints
 
-Before enter in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* credentials, based in
-the application configured in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql).
+Before entering in details about this security service, it is important to know that, for every request we have to include the *Basic Auth* credentials,
+based on the application configured in the database table: [security.application_client_details](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql).
 
 In the next pictures I will use the predefined one:
-[Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql#L19)
+[Spring6Microservices](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V1__application_client_details_table.sql#L24)
 
-![Alt text](/documentation/SecurityCustomService_Credentials.png?raw=true "Basic Auth credentials")
+![Alt text](/documentation/security-custom-service/Credentials.png?raw=true "Basic Auth credentials")
 <br><br>
 
 This microservice provides 2 different authentication flows:
@@ -337,39 +450,39 @@ So, the list of web services is the following one:
 
 **1.** Get the authentication information using **traditional** approach:
 
-![Alt text](/documentation/SecurityCustomService_DirectLogin.png?raw=true "Direct Login")
+![Alt text](/documentation/security-custom-service/DirectLogin.png?raw=true "Direct Login")
 
-In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file
-[security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V4__spring6microservice_security_data.sql#L2).
+In the previous image I used `admin/admin` however there is another option: `user/user`, included in the SQL file [security.spring6microservice_user](https://github.com/doctore/Spring6Microservices/blob/main/sql/changelog/V2__spring6microservice_security_tables.sql#L54).
 <br><br>
 
-**2.** Get the authorization token using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>):
+**2.** Get the authorization code using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>1st request</ins>):
 
-![Alt text](/documentation/SecurityCustomService_LoginAuthorized.png?raw=true "Direct Login")
+![Alt text](/documentation/security-custom-service/LoginAuthorized.png?raw=true "Direct Login")
 <br><br>
 
 **3.** Get the authentication information using [PKCE (Proof of Key Code Exchange)](https://oauth.net/2/pkce/) approach (<ins>2nd request</ins>):
 
-![Alt text](/documentation/SecurityCustomService_LoginToken.png?raw=true "Get authentication information")
+![Alt text](/documentation/security-custom-service/LoginToken.png?raw=true "Get authentication information")
 <br><br>
 
 **4.** Once the *access* token has expired, return new authentication information using *refresh* token:
 
-![Alt text](/documentation/SecurityCustomService_RefreshToken.png?raw=true "Refresh token")
+![Alt text](/documentation/security-custom-service/RefreshToken.png?raw=true "Refresh token")
 <br><br>
 
 **5.** Get authorization information using *access* token:
 
-![Alt text](/documentation/SecurityCustomService_CheckToken.png?raw=true "Authorization information")
+![Alt text](/documentation/security-custom-service/CheckToken.png?raw=true "Authorization information")
 <br><br>
 
 
 
 ## Rest API documentation
 
-The following microservices have a well documented Rest API:
+The following microservices have a well-documented Rest API:
 
 * [security-custom-service](#security-custom-service)
+* [security-oauth-service](#security-oauth-service)
 
 [Swagger](https://swagger.io) has been used in all cases, however for a better an easier integration with Spring Framework, the library used is:
 
@@ -378,9 +491,10 @@ The following microservices have a well documented Rest API:
 To facilitate access to this documentation, we can use the [gateway-server](#gateway-server) URL. On that way, using the upper selector: *Select a definition*,
 we will be able to choose between all existing microservices.
 
-In local (**dev** profile), the url to access them is `http://localhost:5555/swagger-ui/index.html`
+Using **dev** profile, the url to access them is `http://localhost:5555/swagger-ui/index.html`
 
-![Alt text](/documentation/Swagger.png?raw=true "Swagger documentation")
+![Alt text](/documentation/security-custom-service/SwaggerDocumentation.png?raw=true "Security Custom Service Swagger documentation")
+![Alt text](/documentation/security-oauth-service/SwaggerDocumentation.png?raw=true "Security Oauth Service Swagger documentation")
 <br><br>
 
 
@@ -526,7 +640,7 @@ to work with native images, you can check the list [here](https://github.com/ora
 
 **4.** Create a new [maven](https://maven.apache.org/) configuration to compile the project and generate the native image as executable file:
 
-![Alt text](/documentation/ConfigureNativeCompilationInSecurityCustomService.png?raw=true "Native image compilation")
+![Alt text](/documentation/security-custom-service/ConfigureNativeCompilation.png?raw=true "Native image compilation")
 <br><br>
 
 **5.** Invoke the generated executable archive:
@@ -541,9 +655,9 @@ you will be able to notice an important improvement in the performance:
 
 * **local:** more than 6 seconds.
 
-![Alt text](/documentation/SecurityCustomService_LocalProfile.png?raw=true "Local run")
+![Alt text](/documentation/security-custom-service/LocalProfile.png?raw=true "Local run")
 <br><br>
 
 * **native:** less than 3 seconds.
 
-![Alt text](/documentation/SecurityCustomService_NativeProfile.png?raw=true "Native run")
+![Alt text](/documentation/security-custom-service/NativeProfile.png?raw=true "Native run")

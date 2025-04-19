@@ -79,14 +79,6 @@ public class WebSecurityConfiguration {
                                                 // Enable OpenID Connect 1.0
                                                 Customizer.withDefaults()
                                         )
-                                        /**
-                                         * TODO: PENDING TO REMOVE AND INCLUDE IN README file
-                                         * Request:
-                                         *  1. http://localhost:8181/security/oauth/authorize?response_type=code&client_id=Spring6Microservices&scope=openid&redirect_uri=http://localhost:8181/security/oauth/authorized&code_challenge=jZae727K08KaOmKSgOaGzww_XVqGr_PKEgIMkjrcbJI&code_challenge_method=S256
-                                         *
-                                         *     Respuesta:
-                                         *       http://localhost:8181/security/oauth/authorized?code=hB22xqvoCRClqtXcDamHmi4J85ITkwNAQdK8WY2dVGZhUoGqwpy2wfnNbxlz1tUvgPNHHyL_cj_2fl_Tkos5pVKz0ZiQEpTb3y9hLqIFyou2vK-j4kICHvj939WWLzxn
-                                         */
                                         .registeredClientRepository(
                                                 this.registeredClientRepository
                                         )
