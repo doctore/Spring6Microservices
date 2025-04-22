@@ -2,7 +2,6 @@ package com.security.oauth.service;
 
 import com.security.oauth.model.User;
 import com.security.oauth.repository.UserRepository;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
-@Log4j2
 @Service
 public class UserService implements UserDetailsService {
 

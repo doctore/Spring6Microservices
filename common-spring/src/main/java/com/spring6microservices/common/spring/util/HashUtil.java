@@ -4,7 +4,6 @@ import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j2;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,7 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import static com.spring6microservices.common.core.util.StringUtil.getOrElse;
 import static java.lang.String.format;
 
-@Log4j2
 @UtilityClass
 public class HashUtil {
 

@@ -75,14 +75,20 @@ public class CacheConfiguration {
      */
     private MapConfig addRegisteredClientCache(final RegisteredClientCacheConfiguration cacheConfiguration) {
         return new MapConfig()
-                .setName(cacheConfiguration.getCacheName())
+                .setName(
+                        cacheConfiguration.getCacheName()
+                )
                 .setEvictionConfig(
                         new EvictionConfig()
                                 .setSize(
                                         cacheConfiguration.getCacheEntryCapacity()
                                 )
-                                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
-                                .setEvictionPolicy(EvictionPolicy.LRU)
+                                .setMaxSizePolicy(
+                                        MaxSizePolicy.FREE_HEAP_SIZE
+                                )
+                                .setEvictionPolicy(
+                                        EvictionPolicy.LRU
+                                )
                 )
                 .setTimeToLiveSeconds(
                         cacheConfiguration.getCacheExpireInSeconds()

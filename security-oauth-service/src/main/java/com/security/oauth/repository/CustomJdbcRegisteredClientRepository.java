@@ -4,7 +4,6 @@ import com.security.oauth.configuration.persistence.PersistenceConfiguration;
 import com.security.oauth.service.cache.RegisteredClientCacheService;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -22,7 +21,6 @@ import static java.lang.String.format;
 /**
  * Manages the Oauth client information, allowing to define a custom database table to store related data.
  */
-@Log4j2
 @Repository
 public class CustomJdbcRegisteredClientRepository extends JdbcRegisteredClientRepository {
 

@@ -1468,8 +1468,8 @@ public class TryTest {
     }
 
 
-    private <T> void compareTry(Try<T> expectedResult,
-                                Try<T> result) {
+    private <T> void compareTry(final Try<T> expectedResult,
+                                final Try<T> result) {
         if (!expectedResult.isSuccess()) {
             compareFailureTry(
                     result,
@@ -1485,8 +1485,8 @@ public class TryTest {
     }
 
 
-    private <T> void compareFailureTry(Try<T> expectedResult,
-                                       Try<T> result) {
+    private <T> void compareFailureTry(final Try<T> expectedResult,
+                                       final Try<T> result) {
         assertFalse(result.isSuccess());
         assertEquals(
                 expectedResult.isSuccess(),
