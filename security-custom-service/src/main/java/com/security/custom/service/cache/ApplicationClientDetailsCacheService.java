@@ -37,7 +37,7 @@ public class ApplicationClientDetailsCacheService {
 
 
     /**
-     * Check if exists the given {@link ApplicationClientDetails#getId()} inside the related cache.
+     * Checks if exists the given {@link ApplicationClientDetails#getId()} inside the related cache.
      *
      * @param id
      *    {@link ApplicationClientDetails#getId()} to search
@@ -54,7 +54,7 @@ public class ApplicationClientDetailsCacheService {
 
 
     /**
-     * Return the {@link ApplicationClientDetails} related with the given {@code id} inside the related cache.
+     * Returns the {@link ApplicationClientDetails} related with the given {@code id} inside the related cache.
      *
      * @param id
      *    {@link ApplicationClientDetails#getId()} to search
@@ -80,7 +80,7 @@ public class ApplicationClientDetailsCacheService {
 
 
     /**
-     * Include a pair of {@code id} - {@link ApplicationClientDetails} inside the related cache.
+     * Adds in the cache the given {@link ApplicationClientDetails} as value with {@code id} as related key.
      *
      * @param id
      *    {@link ApplicationClientDetails#getId()} used to identify the {@link ApplicationClientDetails} to store

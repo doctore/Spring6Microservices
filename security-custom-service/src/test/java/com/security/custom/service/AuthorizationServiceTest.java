@@ -10,6 +10,7 @@ import com.security.custom.interfaces.IApplicationClientAuthorizationService;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
+import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,7 @@ import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class AuthorizationServiceTest {
@@ -47,6 +45,9 @@ public class AuthorizationServiceTest {
 
     @Mock
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
+
+    @Mock
+    private ApplicationUserBlackListService mockApplicationUserBlackListService;
 
     @Mock
     private TokenService mockTokenService;
@@ -59,6 +60,7 @@ public class AuthorizationServiceTest {
         service = new AuthorizationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
+                mockApplicationUserBlackListService,
                 mockTokenService
         );
     }
@@ -252,6 +254,77 @@ public class AuthorizationServiceTest {
 
 
     @Test
+    @DisplayName("checkAccessToken: when ApplicationClientDetails's identifier and username in accessToken were blacklisted then UnauthorizedException is thrown")
+    public void checkAccessToken_whenApplicationClientDetailsIdentifierAndUsernameInAccessTokenWereBlacklisted_thenUnauthorizedExceptionIsThrown() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        String accessToken = "ItDoesNotCare";
+        String username = "username value";
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(applicationClientId);
+        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>();
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
+                .thenReturn(
+                        mockAuthorizationService
+                );
+        when(mockApplicationClientDetailsService.findById(eq(applicationClientId)))
+                .thenReturn(
+                        applicationClientDetails
+                );
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(accessToken)))
+                .thenReturn(
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        true
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenReturn(
+                        of(username)
+                );
+        doThrow(new UnauthorizedException())
+                .when(mockApplicationUserBlackListService)
+                .notBlackListedOrThrow(eq(applicationClientId), eq(username));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> service.checkAccessToken(
+                        applicationClientId,
+                        accessToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
+                );
+        verify(mockApplicationClientDetailsService, times(1))
+                .findById(
+                        eq(applicationClientId)
+                );
+        verify(mockTokenService, times(1))
+                .getPayloadOfToken(
+                        eq(applicationClientDetails),
+                        eq(accessToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(tokenPayload)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .notBlackListedOrThrow(
+                        eq(applicationClientId),
+                        eq(username)
+                );
+    }
+
+
+    @Test
     @DisplayName("checkAccessToken: no exception thrown test cases")
     public void checkAccessTokenNoExceptionThrown_testCases() {
         String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
@@ -337,6 +410,11 @@ public class AuthorizationServiceTest {
         verify(mockAuthorizationService, times(1))
                 .getAdditionalAuthorizationInformation(
                         eq(tokenPayload)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .notBlackListedOrThrow(
+                        eq(applicationClientId),
+                        eq(username)
                 );
     }
 
@@ -507,6 +585,70 @@ public class AuthorizationServiceTest {
 
 
     @Test
+    @DisplayName("checkRefreshToken: when ApplicationClientDetails's identifier and username in refreshToken were blacklisted then UnauthorizedException is thrown")
+    public void checkRefreshToken_whenApplicationClientDetailsIdentifierAndUsernameInRefreshTokenWereBlacklisted_thenUnauthorizedExceptionIsThrown() {
+        ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
+                SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId()
+        );
+        String refreshToken = "ItDoesNotCare";
+        String username = "username value";
+        Spring6MicroserviceAuthorizationService mockAuthorizationService = mock(Spring6MicroserviceAuthorizationService.class);
+        Map<String, Object> tokenPayload = new HashMap<>();
+
+        when(mockApplicationContext.getBean(ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()))
+                .thenReturn(
+                        mockAuthorizationService
+                );
+        when(mockTokenService.getPayloadOfToken(eq(applicationClientDetails), eq(refreshToken)))
+                .thenReturn(
+                        tokenPayload
+                );
+        when(mockTokenService.isPayloadRelatedWithAccessToken(eq(tokenPayload)))
+                .thenReturn(
+                        false
+                );
+        when(mockAuthorizationService.getUsername(eq(tokenPayload)))
+                .thenReturn(
+                        of(username)
+                );
+        doThrow(new UnauthorizedException())
+                .when(mockApplicationUserBlackListService)
+                .notBlackListedOrThrow(eq(applicationClientDetails.getId()), eq(username));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> service.checkRefreshToken(
+                        applicationClientDetails,
+                        refreshToken
+                )
+        );
+
+        verify(mockApplicationContext, times(1))
+                .getBean(
+                        ArgumentMatchers.<Class<IApplicationClientAuthorizationService>>any()
+                );
+        verify(mockTokenService, times(1))
+                .getPayloadOfToken(
+                        eq(applicationClientDetails),
+                        eq(refreshToken)
+                );
+        verify(mockTokenService, times(1))
+                .isPayloadRelatedWithAccessToken(
+                        eq(tokenPayload)
+                );
+        verify(mockAuthorizationService, times(1))
+                .getUsername(
+                        eq(tokenPayload)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .notBlackListedOrThrow(
+                        eq(applicationClientDetails.getId()),
+                        eq(username)
+                );
+    }
+
+
+    @Test
     @DisplayName("checkRefreshToken: no exception thrown test cases")
     public void checkRefreshTokenNoExceptionThrown_testCases() {
         ApplicationClientDetails applicationClientDetails = buildApplicationClientDetailsJWE(
@@ -585,6 +727,11 @@ public class AuthorizationServiceTest {
         verify(mockAuthorizationService, times(1))
                 .getAdditionalAuthorizationInformation(
                         eq(tokenPayload)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .notBlackListedOrThrow(
+                        eq(applicationClientDetails.getId()),
+                        eq(username)
                 );
     }
 

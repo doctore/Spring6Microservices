@@ -4,6 +4,7 @@ import com.security.custom.SecurityCustomServiceApplication;
 import com.security.custom.configuration.rest.RestRoutes;
 import com.security.custom.dto.ClearCacheRequestDto;
 import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
+import com.security.custom.service.cache.ApplicationUserBlackListCacheService;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,9 @@ public class CacheControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private ApplicationClientDetailsCacheService mockApplicationClientDetailsCacheService;
+
+    @MockitoBean
+    private ApplicationUserBlackListCacheService mockApplicationUserBlackListCacheService;
 
     @MockitoBean
     private AuthenticationRequestDetailsCacheService mockAuthenticationRequestDetailsCacheService;
@@ -65,27 +69,38 @@ public class CacheControllerTest extends BaseControllerTest {
     static Stream<Arguments> clear_validTestCases() {
         ClearCacheRequestDto clearNothingRequest = buildClearCacheRequestDto(
                 false,
+                false,
                 false
         );
         ClearCacheRequestDto clearOnlyApplicationClientDetailsCacheRequest = buildClearCacheRequestDto(
+                true,
+                false,
+                false
+        );
+        ClearCacheRequestDto clearOnlyApplicationUserBlackListCacheRequest = buildClearCacheRequestDto(
+                false,
                 true,
                 false
         );
         ClearCacheRequestDto clearOnlyAuthenticationRequestDetailsCacheRequest = buildClearCacheRequestDto(
                 false,
+                false,
                 true
         );
         ClearCacheRequestDto clearEverythingRequest = buildClearCacheRequestDto(
+                true,
                 true,
                 true
         );
         return Stream.of(
                 //@formatter:off
-                //            clearCacheRequestDto,                                cacheServiceResult,   expectedResultHttpCode
+                //            clearCacheRequest,                                   cacheServiceResult,   expectedResultHttpCode
                 Arguments.of( clearNothingRequest,                                 false,                OK ),
                 Arguments.of( clearNothingRequest,                                 true,                 OK ),
                 Arguments.of( clearOnlyApplicationClientDetailsCacheRequest,       false,                OK ),
                 Arguments.of( clearOnlyApplicationClientDetailsCacheRequest,       true,                 OK ),
+                Arguments.of( clearOnlyApplicationUserBlackListCacheRequest,       false,                OK ),
+                Arguments.of( clearOnlyApplicationUserBlackListCacheRequest,       true,                 OK ),
                 Arguments.of( clearOnlyAuthenticationRequestDetailsCacheRequest,   false,                OK ),
                 Arguments.of( clearOnlyAuthenticationRequestDetailsCacheRequest,   true,                 OK ),
                 Arguments.of( clearEverythingRequest,                              false,                OK ),
@@ -102,6 +117,9 @@ public class CacheControllerTest extends BaseControllerTest {
                                                                                boolean cacheServiceResult,
                                                                                HttpStatus expectedResultHttpCode) {
         when(mockApplicationClientDetailsCacheService.clear())
+                .thenReturn(cacheServiceResult);
+
+        when(mockApplicationUserBlackListCacheService.clear())
                 .thenReturn(cacheServiceResult);
 
         when(mockAuthenticationRequestDetailsCacheService.clear())
@@ -123,16 +141,23 @@ public class CacheControllerTest extends BaseControllerTest {
     }
 
 
-    private void verifyCacheServiceClearInvocations(ClearCacheRequestDto clearCacheRequestDto) {
-        int applicationClientDetailsCacheServiceInvocations = clearCacheRequestDto.isApplicationClientDetails()
+    private void verifyCacheServiceClearInvocations(final ClearCacheRequestDto clearCacheRequest) {
+        int applicationClientDetailsCacheServiceInvocations = clearCacheRequest.isApplicationClientDetails()
                 ? 1
                 : 0;
 
-        int authenticationRequestDetailsCacheService = clearCacheRequestDto.isAuthenticationRequestDetails()
+        int applicationUserBlackListCacheServiceInvocations = clearCacheRequest.isApplicationUserBlackList()
+                ? 1
+                : 0;
+
+        int authenticationRequestDetailsCacheService = clearCacheRequest.isAuthenticationRequestDetails()
                 ? 1
                 : 0;
 
         verify(mockApplicationClientDetailsCacheService, times(applicationClientDetailsCacheServiceInvocations))
+                .clear();
+
+        verify(mockApplicationUserBlackListCacheService, times(applicationUserBlackListCacheServiceInvocations))
                 .clear();
 
         verify(mockAuthenticationRequestDetailsCacheService, times(authenticationRequestDetailsCacheService))

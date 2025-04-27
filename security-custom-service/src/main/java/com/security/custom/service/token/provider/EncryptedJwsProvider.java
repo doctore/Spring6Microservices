@@ -6,7 +6,6 @@ import com.security.custom.interfaces.ITokenTypeProvider;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.service.EncryptorService;
 import com.security.custom.util.JwsUtil;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-@Log4j2
 @Service
 @TokenTypeProvider(TokenType.ENCRYPTED_JWS)
 public class EncryptedJwsProvider implements ITokenTypeProvider {

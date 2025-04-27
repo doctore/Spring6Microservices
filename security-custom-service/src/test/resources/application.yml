@@ -37,10 +37,14 @@ cache:
     entryCapacity: 0
     expireInSeconds: 0
     name: onlyForTests
-  authenticationRequestDetails:
+  applicationUserBlackList:
     entryCapacity: 0
     expireInSeconds: 0
     name: onlyForTests2
+  authenticationRequestDetails:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests3
 
 
 # API documentation

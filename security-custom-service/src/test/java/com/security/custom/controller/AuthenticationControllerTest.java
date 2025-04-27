@@ -5,6 +5,7 @@ import com.security.custom.configuration.rest.RestRoutes;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginDto;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
+import com.security.custom.dto.LogoutRequestDto;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
@@ -37,9 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(classes = SecurityCustomServiceApplication.class)
 public class AuthenticationControllerTest extends BaseControllerTest {
@@ -94,8 +93,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                 //            invalidAuthenticationRequestDto,   expectedError
                 Arguments.of( nullUsernameRequest,               nullUsernameRequestError ),
                 Arguments.of( nullPasswordRequest,               nullPasswordRequestError ),
-                Arguments.of( notValidUsernameRequest,           notValidUsernameRequestError    ),
-                Arguments.of( notValidPasswordRequest,           notValidPasswordRequestError    )
+                Arguments.of( notValidUsernameRequest,           notValidUsernameRequestError ),
+                Arguments.of( notValidPasswordRequest,           notValidPasswordRequestError )
         ); //@formatter:on
     }
 
@@ -130,7 +129,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("test");
         return Stream.of(
                 //@formatter:off
-                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                //            authenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
                 Arguments.of( empty(),                         UNPROCESSABLE_ENTITY,     null ),
                 Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
         ); //@formatter:on
@@ -141,19 +140,19 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("login_validParametersTestCases")
     @DisplayName("login: when given parameters verify the validations then the suitable Http code is returned")
     @WithMockUser(username = "ItDoesNotCare")
-    public void login_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationInformation,
+    public void login_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationServiceResult,
                                                                                           HttpStatus expectedResultHttpCode,
                                                                                           AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
-        AuthenticationRequestLoginDto authenticationRequestDto = buildAuthenticationRequestLoginDto("usernameValue", "passwordValue");
+        AuthenticationRequestLoginDto authenticationRequest = buildAuthenticationRequestLoginDto("usernameValue", "passwordValue");
 
-        when(mockAuthenticationService.login(applicationClientId, authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword()))
-                .thenReturn(authenticationInformation);
+        when(mockAuthenticationService.login(applicationClientId, authenticationRequest.getUsername(), authenticationRequest.getPassword()))
+                .thenReturn(authenticationServiceResult);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
                 .body(
-                        Mono.just(authenticationRequestDto),
+                        Mono.just(authenticationRequest),
                         AuthenticationRequestLoginDto.class
                 )
                 .exchange();
@@ -169,8 +168,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         verify(mockAuthenticationService, times(1))
                 .login(
                         applicationClientId,
-                        authenticationRequestDto.getUsername(),
-                        authenticationRequestDto.getPassword()
+                        authenticationRequest.getUsername(),
+                        authenticationRequest.getPassword()
                 );
     }
 
@@ -254,7 +253,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         );
         return Stream.of(
                 //@formatter:off
-                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                //            authenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
                 Arguments.of( empty(),                         UNPROCESSABLE_ENTITY,     null ),
                 Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
         ); //@formatter:on
@@ -265,21 +264,21 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("loginAuthorized_validParametersTestCases")
     @DisplayName("loginAuthorized: when given parameters verify the validations then the suitable Http code is returned")
     @WithMockUser(username = "ItDoesNotCare")
-    public void loginAuthorized_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationAuthorizationCodeDto> authenticationInformation,
+    public void loginAuthorized_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationAuthorizationCodeDto> authenticationServiceResult,
                                                                                                     HttpStatus expectedResultHttpCode,
                                                                                                     AuthenticationInformationAuthorizationCodeDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
-        AuthenticationRequestLoginAuthorizedDto authenticationRequestDto = buildAuthenticationRequestLoginAuthorizedDto(
+        AuthenticationRequestLoginAuthorizedDto authenticationRequest = buildAuthenticationRequestLoginAuthorizedDto(
                 HashAlgorithm.SHA_384.getAlgorithm()
         );
 
-        when(mockAuthenticationService.loginAuthorized(applicationClientId, authenticationRequestDto))
-                .thenReturn(authenticationInformation);
+        when(mockAuthenticationService.loginAuthorized(applicationClientId, authenticationRequest))
+                .thenReturn(authenticationServiceResult);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
                 .body(
-                        Mono.just(authenticationRequestDto),
+                        Mono.just(authenticationRequest),
                         AuthenticationRequestLoginAuthorizedDto.class
                 )
                 .exchange();
@@ -295,7 +294,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         verify(mockAuthenticationService, times(1))
                 .loginAuthorized(
                         applicationClientId,
-                        authenticationRequestDto
+                        authenticationRequest
                 );
     }
 
@@ -428,7 +427,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("test");
         return Stream.of(
                 //@formatter:off
-                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                //            authenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
                 Arguments.of( empty(),                         UNPROCESSABLE_ENTITY,     null ),
                 Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
         ); //@formatter:on
@@ -439,24 +438,24 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("loginToken_validParametersTestCases")
     @DisplayName("loginToken: when given parameters verify the validations then the suitable Http code is returned")
     @WithMockUser(username = "ItDoesNotCare")
-    public void loginToken_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationInformation,
+    public void loginToken_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationServiceResult,
                                                                                                HttpStatus expectedResultHttpCode,
                                                                                                AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
-        AuthenticationRequestLoginTokenDto authenticationRequestDto = buildAuthenticationRequestLoginTokenDto(
+        AuthenticationRequestLoginTokenDto authenticationRequest = buildAuthenticationRequestLoginTokenDto(
                 "usernameValue",
                 "passwordValue",
                 "authorizationCodeValue",
                 "verifierValue"
         );
 
-        when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequestDto))
-                .thenReturn(authenticationInformation);
+        when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequest))
+                .thenReturn(authenticationServiceResult);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
                 .body(
-                        Mono.just(authenticationRequestDto),
+                        Mono.just(authenticationRequest),
                         AuthenticationRequestLoginTokenDto.class
                 )
                 .exchange();
@@ -472,7 +471,112 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         verify(mockAuthenticationService, times(1))
                 .loginToken(
                         applicationClientId,
-                        authenticationRequestDto
+                        authenticationRequest
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("logout: when no basic authentication is provided then unauthorized code is returned")
+    public void logout_whenNoBasicAuthIsProvided_thenUnauthorizedHttpCodeIsReturned() {
+        LogoutRequestDto logoutRequest = buildLogoutRequestDto(
+                "usernameValue"
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGOUT)
+                .body(
+                        Mono.just(logoutRequest),
+                        LogoutRequestDto.class
+                )
+                .exchange()
+                .expectStatus().isUnauthorized();
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> logout_invalidParametersTestCases() {
+        String longString = String.join("", Collections.nCopies(150, "a"));
+
+        LogoutRequestDto nullUsernameRequest = buildLogoutRequestDto(null);
+        LogoutRequestDto notValidUsernameRequest = buildLogoutRequestDto(longString);
+
+        String nullUsernameRequestError = "Field error in object 'logoutRequestDto' on field 'username' due to: must not be null";
+        String notValidUsernameRequestError = "Field error in object 'logoutRequestDto' on field 'username' due to: size must be between 1 and 64";
+        return Stream.of(
+                //@formatter:off
+                //            invalidLogoutRequestDto,   expectedError
+                Arguments.of( nullUsernameRequest,       nullUsernameRequestError ),
+                Arguments.of( notValidUsernameRequest,   notValidUsernameRequestError )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("logout_invalidParametersTestCases")
+    @DisplayName("logout: when given parameters do not verify validations then bad request error is returned with validation errors")
+    @WithMockUser
+    public void logout_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(LogoutRequestDto invalidLogoutRequestDto,
+                                                                                                                      String expectedErrors) {
+        ErrorResponseDto expectedResponse = new ErrorResponseDto(
+                VALIDATION,
+                List.of(expectedErrors)
+        );
+
+        webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGOUT)
+                .body(
+                        Mono.just(invalidLogoutRequestDto),
+                        LogoutRequestDto.class
+                )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponseDto.class)
+                .isEqualTo(expectedResponse);
+
+        verifyNoInteractions(mockAuthenticationService);
+    }
+
+
+    static Stream<Arguments> logout_validParametersTestCases() {
+        return Stream.of(
+                //@formatter:off
+                //            authenticationServiceResult,   expectedResultHttpCode
+                Arguments.of( false,                         UNPROCESSABLE_ENTITY ),
+                Arguments.of( true,                          NO_CONTENT )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @MethodSource("logout_validParametersTestCases")
+    @DisplayName("logout: when given parameters verify the validations then the suitable Http code is returned")
+    @WithMockUser(username = "ItDoesNotCare")
+    public void logout_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(boolean authenticationServiceResult,
+                                                                                           HttpStatus expectedResultHttpCode) {
+        String applicationClientId = "ItDoesNotCare";
+        LogoutRequestDto logoutRequest = buildLogoutRequestDto("usernameValue");
+
+        when(mockAuthenticationService.logout(applicationClientId, logoutRequest))
+                .thenReturn(authenticationServiceResult);
+
+        WebTestClient.ResponseSpec response = webTestClient.post()
+                .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGOUT)
+                .body(
+                        Mono.just(logoutRequest),
+                        LogoutRequestDto.class
+                )
+                .exchange();
+
+        response.expectStatus().isEqualTo(expectedResultHttpCode);
+        response.expectBody().isEmpty();
+
+        verify(mockAuthenticationService, times(1))
+                .logout(
+                        applicationClientId,
+                        logoutRequest
                 );
     }
 
@@ -523,7 +627,7 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         AuthenticationInformationDto authenticationInformation = buildAuthenticationInformationDto("test");
         return Stream.of(
                 //@formatter:off
-                //            AuthenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
+                //            authenticationServiceResult,     expectedResultHttpCode,   expectedBodyResult
                 Arguments.of( empty(),                         UNAUTHORIZED,             null ),
                 Arguments.of( of(authenticationInformation),   OK,                       authenticationInformation )
         ); //@formatter:on
@@ -534,14 +638,14 @@ public class AuthenticationControllerTest extends BaseControllerTest {
     @MethodSource("refresh_validParametersTestCases")
     @DisplayName("refresh: when given parameters verify the validations then the suitable Http code is returned")
     @WithMockUser(username = "ItDoesNotCare")
-    public void refresh_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationInformation,
+    public void refresh_whenGivenParametersVerifyValidations_thenSuitableHttpCodeIsReturned(Optional<AuthenticationInformationDto> authenticationServiceResult,
                                                                                             HttpStatus expectedResultHttpCode,
                                                                                             AuthenticationInformationDto expectedBodyResult) {
         String applicationClientId = "ItDoesNotCare";
         String refreshToken = "refreshToken";
 
         when(mockAuthenticationService.refresh(applicationClientId, refreshToken))
-                .thenReturn(authenticationInformation);
+                .thenReturn(authenticationServiceResult);
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.REFRESH)

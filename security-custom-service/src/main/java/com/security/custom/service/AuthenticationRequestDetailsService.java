@@ -6,11 +6,13 @@ import com.security.custom.exception.AuthenticationRequestDetailsNotSavedExcepti
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
+import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,6 +80,15 @@ public class AuthenticationRequestDetailsService {
      */
     public Optional<AuthenticationRequestDetails> save(final String applicationClientId,
                                                        final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
+        log.info(
+                format("Saving the AuthenticationRequestDetails related with application identifier: %s and request: %s",
+                        applicationClientId,
+                        StringUtil.getOrElse(
+                                authenticationRequestDto,
+                                Objects::toString
+                        )
+                )
+        );
         return of(
                 applicationClientId,
                 authenticationRequestDto

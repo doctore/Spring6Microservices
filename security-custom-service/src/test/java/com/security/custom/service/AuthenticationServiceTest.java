@@ -5,6 +5,7 @@ import com.security.custom.application.spring6microservice.model.enums.RoleEnum;
 import com.security.custom.application.spring6microservice.service.Spring6MicroserviceAuthenticationService;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
+import com.security.custom.dto.LogoutRequestDto;
 import com.security.custom.dto.RawAuthenticationInformationDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientMismatchException;
@@ -21,6 +22,7 @@ import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
 import com.spring6microservices.common.spring.enums.HashAlgorithm;
 import com.spring6microservices.common.spring.exception.UnauthorizedException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,9 +49,7 @@ import java.util.stream.Stream;
 import static com.security.custom.TestDataFactory.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -63,6 +63,9 @@ public class AuthenticationServiceTest {
 
     @Mock
     private ApplicationClientDetailsService mockApplicationClientDetailsService;
+
+    @Mock
+    private ApplicationUserBlackListService mockApplicationUserBlackListService;
 
     @Mock
     private AuthenticationRequestDetailsService mockAuthenticationRequestDetailsService;
@@ -81,6 +84,7 @@ public class AuthenticationServiceTest {
         service = new AuthenticationService(
                 mockApplicationContext,
                 mockApplicationClientDetailsService,
+                mockApplicationUserBlackListService,
                 mockAuthenticationRequestDetailsService,
                 mockAuthorizationService,
                 mockTokenService
@@ -372,6 +376,11 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
+        when(mockApplicationUserBlackListService.remove(eq(applicationClientId), eq(username)))
+                .thenReturn(
+                        true
+                );
+
         if (expectedResult.isPresent()) {
             when(mockTokenService.getNewIdentifier())
                     .thenReturn(
@@ -426,6 +435,11 @@ public class AuthenticationServiceTest {
         verify(mockAuthenticationService, times(1))
                 .getRawAuthenticationInformation(
                         eq(user)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .remove(
+                        eq(applicationClientId),
+                        eq(username)
                 );
         verify(mockTokenService, times(createTokensInvocations))
                 .createAccessToken(
@@ -746,6 +760,11 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
+        when(mockApplicationUserBlackListService.remove(eq(applicationClientId), eq(username)))
+                .thenReturn(
+                        true
+                );
+
         if (expectedResult.isPresent()) {
             when(mockTokenService.getNewIdentifier())
                     .thenReturn(
@@ -800,6 +819,11 @@ public class AuthenticationServiceTest {
                 .getRawAuthenticationInformation(
                         eq(user)
                 );
+        verify(mockApplicationUserBlackListService, times(1))
+                .remove(
+                        eq(applicationClientId),
+                        eq(username)
+                );
         verify(mockTokenService, times(createTokensInvocations))
                 .createAccessToken(
                         eq(applicationClientDetails),
@@ -812,6 +836,55 @@ public class AuthenticationServiceTest {
                         any(),
                         anyString()
                 );
+    }
+
+
+    static Stream<Arguments> logoutTestCases() {
+        String applicationClientId = SecurityHandler.SPRING6_MICROSERVICES.getApplicationClientId();
+        LogoutRequestDto logoutRequestDto = buildLogoutRequestDto("username value");
+        return Stream.of(
+                //@formatter:off
+                //            applicationClientId,   logoutRequest,      expectedBlackListResult,   expectedException,                          expectedResult
+                Arguments.of( null,                  null,               false,                     ApplicationClientNotFoundException.class,   false ),
+                Arguments.of( null,                  logoutRequestDto,   false,                     ApplicationClientNotFoundException.class,   false ),
+                Arguments.of( applicationClientId,   null,               false,                     IllegalArgumentException.class,             false ),
+                Arguments.of( applicationClientId,   logoutRequestDto,   false,                     null,                                       false ),
+                Arguments.of( applicationClientId,   logoutRequestDto,   true,                      null,                                       true )
+        ); //@formatter:on
+    }
+
+    @SneakyThrows
+    @ParameterizedTest
+    @MethodSource("logoutTestCases")
+    @DisplayName("logout: test cases")
+    public void logout_testCases(String applicationClientId,
+                                 LogoutRequestDto logoutRequest,
+                                 boolean expectedBlackListResult,
+                                 Class<? extends Exception> expectedException,
+                                 boolean expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> service.logout(applicationClientId, logoutRequest)
+            );
+        }
+        else {
+            when(mockApplicationUserBlackListService.save(eq(applicationClientId), eq(logoutRequest.getUsername())))
+                .thenReturn(
+                        expectedBlackListResult
+                );
+
+            assertEquals(
+                    expectedResult,
+                    service.logout(applicationClientId, logoutRequest)
+            );
+
+            verify(mockApplicationUserBlackListService, times(1))
+                    .save(
+                            eq(applicationClientId),
+                            eq(logoutRequest.getUsername())
+                    );
+        }
     }
 
 
@@ -1161,6 +1234,11 @@ public class AuthenticationServiceTest {
                 .thenReturn(
                         rawAuthenticationInformation
                 );
+        when(mockApplicationUserBlackListService.remove(eq(applicationClientId), eq(username)))
+                .thenReturn(
+                        true
+                );
+
         if (expectedResult.isPresent()) {
             when(mockTokenService.getNewIdentifier())
                     .thenReturn(
@@ -1214,6 +1292,11 @@ public class AuthenticationServiceTest {
         verify(mockAuthenticationService, times(1))
                 .getRawAuthenticationInformation(
                         eq(user)
+                );
+        verify(mockApplicationUserBlackListService, times(1))
+                .remove(
+                        eq(applicationClientId),
+                        eq(username)
                 );
         verify(mockTokenService, times(createTokensInvocations))
                 .createAccessToken(

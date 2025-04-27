@@ -51,6 +51,11 @@ cache:
     entryCapacity: 2
     expireInSeconds: 3600
     name: applicationClientDetailsCache
+  # To handle the application-username pairs, not allowed making requests
+  applicationUserBlackList:
+    entryCapacity: 2
+    expireInSeconds: 1800
+    name: applicationUserBlackListCache
   # Used in the authentication flow with PKCE (Proof of Key Code Exchange)
   authenticationRequestDetails:
     entryCapacity: 10

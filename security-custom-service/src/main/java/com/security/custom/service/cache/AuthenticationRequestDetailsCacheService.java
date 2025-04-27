@@ -3,13 +3,11 @@ package com.security.custom.service.cache;
 import com.security.custom.configuration.cache.AuthenticationRequestDetailsCacheConfiguration;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.spring6microservices.common.spring.service.CacheService;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Log4j2
 @Service
 public class AuthenticationRequestDetailsCacheService {
 
@@ -39,7 +37,7 @@ public class AuthenticationRequestDetailsCacheService {
 
 
     /**
-     * Check if exists the given {@link AuthenticationRequestDetails#getAuthorizationCode()} inside the related cache.
+     * Checks if exists the given {@link AuthenticationRequestDetails#getAuthorizationCode()} inside the related cache.
      *
      * @param authorizationCode
      *    {@link AuthenticationRequestDetails#getAuthorizationCode()} to search
@@ -56,7 +54,7 @@ public class AuthenticationRequestDetailsCacheService {
 
 
     /**
-     * Return the {@link AuthenticationRequestDetails} related with the given {@code id} inside the related cache.
+     * Returns the {@link AuthenticationRequestDetails} related with the given {@code id} inside the related cache.
      *
      * @param authorizationCode
      *    {@link AuthenticationRequestDetails#getAuthorizationCode()} to search
@@ -82,7 +80,7 @@ public class AuthenticationRequestDetailsCacheService {
 
 
     /**
-     * Include a pair of {@code authorizationCode} - {@link AuthenticationRequestDetails} inside the related cache.
+     * Adds in the cache the given {@link AuthenticationRequestDetails} as value with {@code authorizationCode} as related key.
      *
      * @param authorizationCode
      *    {@link AuthenticationRequestDetails#getAuthorizationCode()} used to identify the {@link AuthenticationRequestDetails} to store

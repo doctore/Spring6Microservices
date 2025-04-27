@@ -18,7 +18,7 @@ import static java.lang.String.format;
 public interface ITokenTypeProvider {
 
     /**
-     * Generates the token taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
+     * Generates the token, taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
      *
      * @param applicationClientDetails
      *    {@link ApplicationClientDetails} with the details about how to generate the tokens

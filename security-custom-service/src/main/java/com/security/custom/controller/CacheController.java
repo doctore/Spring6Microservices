@@ -5,6 +5,7 @@ import com.security.custom.dto.ClearCacheRequestDto;
 import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.model.AuthenticationRequestDetails;
 import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
+import com.security.custom.service.cache.ApplicationUserBlackListCacheService;
 import com.security.custom.service.cache.AuthenticationRequestDetailsCacheService;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,13 +36,17 @@ public class CacheController extends BaseController {
 
     private final ApplicationClientDetailsCacheService applicationClientDetailsCacheService;
 
+    private final ApplicationUserBlackListCacheService applicationUserBlackListCacheService;
+
     private final AuthenticationRequestDetailsCacheService authenticationRequestDetailsCacheService;
 
 
     @Autowired
     public CacheController(final ApplicationClientDetailsCacheService applicationClientDetailsCacheService,
+                           final ApplicationUserBlackListCacheService applicationUserBlackListCacheService,
                            final AuthenticationRequestDetailsCacheService authenticationRequestDetailsCacheService) {
         this.applicationClientDetailsCacheService = applicationClientDetailsCacheService;
+        this.applicationUserBlackListCacheService = applicationUserBlackListCacheService;
         this.authenticationRequestDetailsCacheService = authenticationRequestDetailsCacheService;
     }
 
@@ -51,11 +56,12 @@ public class CacheController extends BaseController {
      *
      * <ul>
      *     <li>{@link ApplicationClientDetails}</li>
+     *     <li>Pair {@link ApplicationClientDetails#getId()} and user's identifier (username)</li>
      *     <li>{@link AuthenticationRequestDetails}</li>
      * </ul>
      *
-     * @param clearCacheRequestDto
-     *    {@link ClearCacheRequestDto}
+     * @param clearCacheRequest
+     *    {@link ClearCacheRequestDto} with the caches to clear
      *
      * @return if it was possible to clear the caches: {@link HttpStatus#OK},
      *         {@link HttpStatus#INTERNAL_SERVER_ERROR} if there was an error.
@@ -86,30 +92,41 @@ public class CacheController extends BaseController {
             }
     )
     @PutMapping(value = RestRoutes.CACHE.CLEAR)
-    public Mono<ResponseEntity<?>> clear(@RequestBody final ClearCacheRequestDto clearCacheRequestDto) {
+    public Mono<ResponseEntity<?>> clear(@RequestBody final ClearCacheRequestDto clearCacheRequest) {
         log.info(
                 format("Clearing the internal caches with: %s",
-                        clearCacheRequestDto
+                        clearCacheRequest
                 )
         );
-        if (clearCacheRequestDto.isApplicationClientDetails()) {
+        final String cleanedCacheMessage = "The cache: %s was cleared: %s";
+        if (clearCacheRequest.isApplicationClientDetails()) {
             log.info(
-                    format("The cache: %s was cleared: %s",
+                    format(cleanedCacheMessage,
                             applicationClientDetailsCacheService.getCacheName(),
                             applicationClientDetailsCacheService.clear()
                     )
             );
         }
-        if (clearCacheRequestDto.isAuthenticationRequestDetails()) {
+        if (clearCacheRequest.isApplicationUserBlackList()) {
             log.info(
-                    format("The cache: %s was cleared: %s",
+                    format(cleanedCacheMessage,
+                            applicationUserBlackListCacheService.getCacheName(),
+                            applicationUserBlackListCacheService.clear()
+                    )
+            );
+        }
+        if (clearCacheRequest.isAuthenticationRequestDetails()) {
+            log.info(
+                    format(cleanedCacheMessage,
                             authenticationRequestDetailsCacheService.getCacheName(),
                             authenticationRequestDetailsCacheService.clear()
                     )
             );
         }
         return Mono.just(
-                new ResponseEntity<>(OK)
+                new ResponseEntity<>(
+                        OK
+                )
         );
     }
 

@@ -175,8 +175,8 @@ public class Spring6MicroserviceAuthenticationServiceTest {
     }
 
 
-    private void checkRawAuthenticationInformation(RawAuthenticationInformationDto rawAuthenticationInformation,
-                                                   User user) {
+    private void checkRawAuthenticationInformation(final RawAuthenticationInformationDto rawAuthenticationInformation,
+                                                   final User user) {
         assertNotNull(rawAuthenticationInformation);
         assertNotNull(rawAuthenticationInformation.getAccessAuthenticationInformation());
         assertNotNull(rawAuthenticationInformation.getRefreshAuthenticationInformation());

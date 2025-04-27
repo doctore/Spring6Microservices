@@ -1235,8 +1235,8 @@ public class DateTimeUtilTest {
     }
 
 
-    private void verifyCompareToResult(int actualResult,
-                                       CompareToResult expectedResult) {
+    private void verifyCompareToResult(final int actualResult,
+                                       final CompareToResult expectedResult) {
         switch (expectedResult) {
             case LESS_THAN_ZERO -> assertTrue(0 > actualResult);
             case ZERO -> assertEquals(0, actualResult);

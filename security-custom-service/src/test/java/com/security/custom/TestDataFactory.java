@@ -181,10 +181,19 @@ public class TestDataFactory {
 
 
     public static ClearCacheRequestDto buildClearCacheRequestDto(final boolean applicationClientDetails,
+                                                                 final boolean applicationUserBlackList,
                                                                  final boolean authenticationRequestDetails) {
         return new ClearCacheRequestDto(
                 applicationClientDetails,
+                applicationUserBlackList,
                 authenticationRequestDetails
+        );
+    }
+
+
+    public static LogoutRequestDto buildLogoutRequestDto(final String username) {
+        return new LogoutRequestDto(
+                username
         );
     }
 

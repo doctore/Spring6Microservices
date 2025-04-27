@@ -4,6 +4,8 @@ import com.security.custom.configuration.rest.RestRoutes;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginDto;
+import com.security.custom.dto.LogoutRequestDto;
+import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.service.AuthenticationService;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationAuthorizationCodeDto;
 import com.spring6microservices.common.spring.dto.AuthenticationInformationDto;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Log4j2
@@ -50,7 +52,7 @@ public class AuthenticationController extends BaseController {
      *    Generates the suitable {@link AuthenticationInformationDto} using the given user's login information and Basic Auth
      * data to extract the application is trying to log the provided user. This endpoint does not use PKCE flow.
      *
-     * @param authenticationRequestDto
+     * @param authenticationRequest
      *    {@link AuthenticationRequestLoginDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
@@ -107,18 +109,18 @@ public class AuthenticationController extends BaseController {
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN)
     @Transactional(readOnly = true)
-    public Mono<ResponseEntity<AuthenticationInformationDto>> login(@RequestBody @Valid final AuthenticationRequestLoginDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationDto>> login(@RequestBody @Valid final AuthenticationRequestLoginDto authenticationRequest) {
         log.info(
                 format("Requesting login with: %s",
-                        authenticationRequestDto
+                        authenticationRequest
                 )
         );
         return getPrincipal()
                 .map(applicationClientDetails ->
                         service.login(
                                         applicationClientDetails.getUsername(),
-                                        authenticationRequestDto.getUsername(),
-                                        authenticationRequestDto.getPassword()
+                                        authenticationRequest.getUsername(),
+                                        authenticationRequest.getPassword()
                                 )
                                 .map(ai ->
                                         new ResponseEntity<>(
@@ -128,7 +130,7 @@ public class AuthenticationController extends BaseController {
                                 )
                                 .orElseGet(() ->
                                         new ResponseEntity<>(
-                                                HttpStatus.UNPROCESSABLE_ENTITY
+                                                UNPROCESSABLE_ENTITY
                                         )
                                 )
                 );
@@ -140,7 +142,7 @@ public class AuthenticationController extends BaseController {
      * and Basic Auth data to extract the application is trying to log the provided user. This endpoint is part of the PKCE flow,
      * more specifically the first request.
      *
-     * @param authenticationRequestDto
+     * @param authenticationRequest
      *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationAuthorizationCodeDto} with {@link HttpStatus#OK},
@@ -173,7 +175,7 @@ public class AuthenticationController extends BaseController {
                     @ApiResponse(
                             responseCode = "401",
                             description = "As part of the Basic Auth, the username (application) does not exists or the given password "
-                                    + "does not belongs to this one.",
+                                        + "does not belongs to this one.",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)
@@ -182,7 +184,7 @@ public class AuthenticationController extends BaseController {
                     @ApiResponse(
                             responseCode = "422",
                             description = "There is no error related with the security but was not possible to generate the response using "
-                                    + "the provided request"
+                                        + "the provided request"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -195,17 +197,17 @@ public class AuthenticationController extends BaseController {
             }
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
-    public Mono<ResponseEntity<AuthenticationInformationAuthorizationCodeDto>> loginAuthorized(@RequestBody @Valid final AuthenticationRequestLoginAuthorizedDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationAuthorizationCodeDto>> loginAuthorized(@RequestBody @Valid final AuthenticationRequestLoginAuthorizedDto authenticationRequest) {
         log.info(
                 format("Requesting login authorized with: %s",
-                        authenticationRequestDto
+                        authenticationRequest
                 )
         );
         return getPrincipal()
                 .map(applicationClientDetails ->
                         service.loginAuthorized(
                                         applicationClientDetails.getUsername(),
-                                        authenticationRequestDto
+                                        authenticationRequest
                                 )
                                 .map(ai ->
                                         new ResponseEntity<>(
@@ -215,7 +217,7 @@ public class AuthenticationController extends BaseController {
                                 )
                                 .orElseGet(() ->
                                         new ResponseEntity<>(
-                                                HttpStatus.UNPROCESSABLE_ENTITY
+                                                UNPROCESSABLE_ENTITY
                                         )
                                 )
                 );
@@ -227,7 +229,7 @@ public class AuthenticationController extends BaseController {
      * and Basic Auth data to extract the application is trying to log the user. This endpoint is part of the PKCE flow,
      * more specifically the second request.
      *
-     * @param authenticationRequestDto
+     * @param authenticationRequest
      *    {@link AuthenticationRequestLoginAuthorizedDto}
      *
      * @return if there is no error, the {@link AuthenticationInformationDto} with {@link HttpStatus#OK},
@@ -260,9 +262,9 @@ public class AuthenticationController extends BaseController {
                     @ApiResponse(
                             responseCode = "401",
                             description = "As part of the Basic Auth, the username (application) does not exists or the given password does "
-                                    + "not belongs to this one. Using the stored user's credentials, if he/she is not active or the password "
-                                    + "does not belongs to the username. Provided verifier does not match with stored challenge and challenge "
-                                    + "method of the first request",
+                                        + "not belongs to this one. Using the stored user's credentials, if he/she is not active or the password "
+                                        + "does not belongs to the username. Provided verifier does not match with stored challenge and challenge "
+                                        + "method of the first request",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)
@@ -271,7 +273,7 @@ public class AuthenticationController extends BaseController {
                     @ApiResponse(
                             responseCode = "403",
                             description = "As part of the Basic Auth, the username (application) of this second request does not match "
-                                    + "with the one stored as part of the first request",
+                                        + "with the one stored as part of the first request",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)
@@ -280,7 +282,7 @@ public class AuthenticationController extends BaseController {
                     @ApiResponse(
                             responseCode = "422",
                             description = "There is no error related with the security but was not possible to generate the response using "
-                                    + "the provided request"
+                                        + "the provided request"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -293,17 +295,17 @@ public class AuthenticationController extends BaseController {
             }
     )
     @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
-    public Mono<ResponseEntity<AuthenticationInformationDto>> loginToken(@RequestBody @Valid final AuthenticationRequestLoginTokenDto authenticationRequestDto) {
+    public Mono<ResponseEntity<AuthenticationInformationDto>> loginToken(@RequestBody @Valid final AuthenticationRequestLoginTokenDto authenticationRequest) {
         log.info(
                 format("Requesting login token with: %s",
-                        authenticationRequestDto
+                        authenticationRequest
                 )
         );
         return getPrincipal()
                 .map(applicationClientDetails ->
                         service.loginToken(
                                         applicationClientDetails.getUsername(),
-                                        authenticationRequestDto
+                                        authenticationRequest
                                 )
                                 .map(ai ->
                                         new ResponseEntity<>(
@@ -313,9 +315,87 @@ public class AuthenticationController extends BaseController {
                                 )
                                 .orElseGet(() ->
                                         new ResponseEntity<>(
-                                                HttpStatus.UNPROCESSABLE_ENTITY
+                                                UNPROCESSABLE_ENTITY
                                         )
                                 )
+                );
+    }
+
+
+    /**
+     *    Logs out the {@link LogoutRequestDto#getUsername()} related with authenticated {@link ApplicationClientDetails}
+     * (included in the request with Basic Auth).
+     *
+     * @param logoutRequest
+     *    {@link LogoutRequestDto} with the required information to complete the log-out
+     *
+     * @return {@link HttpStatus#NO_CONTENT} if there is no error,
+     *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise.
+     */
+    @Operation(
+            summary = "Logs out a user in a given application",
+            description = "Completes the logs out of a user in an application, any new request coming will be rejected until he/she logs in again"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful operation with no body in the response"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid information supplied in the body taking into account defined format validations",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "As part of the Basic Auth, the username (application) does not exists or the given password does "
+                                        + "not belongs to this one",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "There is no error related with the security but was not possible to generate the response using "
+                                        + "the provided request"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Any other internal server error",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    )
+            }
+    )
+    @PostMapping(value = RestRoutes.AUTHENTICATION.LOGOUT)
+    public Mono<ResponseEntity<Void>> logout(@RequestBody @Valid final LogoutRequestDto logoutRequest) {
+        log.info(
+                format("Logs out using the request: %s",
+                        logoutRequest
+                )
+        );
+        return getPrincipal()
+                .map(applicationClientDetails ->
+                        service.logout(
+                                applicationClientDetails.getUsername(),
+                                logoutRequest
+                        )
+                )
+                .map(logoutResult ->
+                        logoutResult
+                                ? new ResponseEntity<>(
+                                        NO_CONTENT
+                                  )
+                                : new ResponseEntity<>(
+                                        UNPROCESSABLE_ENTITY
+                                  )
                 );
     }
 
@@ -357,7 +437,8 @@ public class AuthenticationController extends BaseController {
                             description = "In the body, the user is not active, refresh token is not valid or not belongs "
                                         + "to given application included as username in the Basic Auth. As part of the "
                                         + "Basic Auth, the username (application) does not exists or the given password "
-                                        + "does not belongs to this one.",
+                                        + "does not belongs to this one. If the application and the user inside the refresh "
+                                        + "token were added in the blacklist",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)

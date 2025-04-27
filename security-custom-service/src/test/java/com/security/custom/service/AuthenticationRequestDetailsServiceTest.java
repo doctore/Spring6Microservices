@@ -172,8 +172,8 @@ public class AuthenticationRequestDetailsServiceTest {
     }
 
 
-    private void findByAuthorizationCodeVerifyInvocations(String authorizationCode,
-                                                          AuthenticationRequestDetails cacheServiceResult) {
+    private void findByAuthorizationCodeVerifyInvocations(final String authorizationCode,
+                                                          final AuthenticationRequestDetails cacheServiceResult) {
         // No authorizationCode value provided
         if (null == authorizationCode) {
             verify(mockCacheService, times(0))
@@ -204,8 +204,8 @@ public class AuthenticationRequestDetailsServiceTest {
     }
 
 
-    private void compareAuthenticationRequestDetails(AuthenticationRequestDetails expected,
-                                                     AuthenticationRequestDetails actual) {
+    private void compareAuthenticationRequestDetails(final AuthenticationRequestDetails expected,
+                                                     final AuthenticationRequestDetails actual) {
         assertNotNull(actual.getAuthorizationCode());
         assertFalse(actual.getAuthorizationCode().isEmpty());
         assertEquals(

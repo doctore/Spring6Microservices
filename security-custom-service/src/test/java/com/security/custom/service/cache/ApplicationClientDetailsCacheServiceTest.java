@@ -94,11 +94,11 @@ public class ApplicationClientDetailsCacheServiceTest {
         when(mockCacheService.contains(anyString(), eq(id)))
                 .thenReturn(cacheServiceResult);
 
-        boolean operationResult = service.contains(id);
+        boolean result = service.contains(id);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -126,11 +126,11 @@ public class ApplicationClientDetailsCacheServiceTest {
         when(mockCacheService.get(anyString(), eq(id)))
                 .thenReturn((Optional)cacheServiceResult);
 
-        Optional<ApplicationClientDetails> operationResult = service.get(id);
+        Optional<ApplicationClientDetails> result = service.get(id);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 
@@ -174,11 +174,11 @@ public class ApplicationClientDetailsCacheServiceTest {
         when(mockCacheService.put(anyString(), eq(id), eq(applicationClientDetails)))
                 .thenReturn(cacheServiceResult);
 
-        boolean operationResult = service.put(id, applicationClientDetails);
+        boolean result = service.put(id, applicationClientDetails);
 
         assertEquals(
                 expectedResult,
-                operationResult
+                result
         );
     }
 

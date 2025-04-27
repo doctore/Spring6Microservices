@@ -2,6 +2,7 @@ package com.security.custom.service;
 
 import com.security.custom.dto.AuthenticationRequestLoginAuthorizedDto;
 import com.security.custom.dto.AuthenticationRequestLoginTokenDto;
+import com.security.custom.dto.LogoutRequestDto;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.exception.ApplicationClientMismatchException;
 import com.security.custom.exception.ApplicationClientNotFoundException;
@@ -42,6 +43,8 @@ public class AuthenticationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
+    private final ApplicationUserBlackListService applicationUserBlackListService;
+
     private final AuthenticationRequestDetailsService authenticationRequestDetailsService;
 
     private final AuthorizationService authorizationService;
@@ -52,11 +55,13 @@ public class AuthenticationService {
     @Autowired
     public AuthenticationService(final ApplicationContext applicationContext,
                                  final ApplicationClientDetailsService applicationClientDetailsService,
+                                 final ApplicationUserBlackListService applicationUserBlackListService,
                                  final AuthenticationRequestDetailsService authenticationRequestDetailsService,
                                  final AuthorizationService authorizationService,
                                  final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
+        this.applicationUserBlackListService = applicationUserBlackListService;
         this.authenticationRequestDetailsService = authenticationRequestDetailsService;
         this.authorizationService = authorizationService;
         this.tokenService = tokenService;
@@ -82,7 +87,7 @@ public class AuthenticationService {
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
      * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthenticationService}
-     * @throws UnauthorizedException if the given {@code password} does not match with exists one related with given {@code username}
+     * @throws UnauthorizedException if the given {@code password} does not match with existing one related with given {@code username}
      * @throws UsernameNotFoundException if provided {@code username} does not exist in database
      */
     public Optional<AuthenticationInformationDto> login(final String applicationClientId,
@@ -110,6 +115,10 @@ public class AuthenticationService {
                         username
                 )
         );
+        applicationUserBlackListService.remove(
+                applicationClientId,
+                username
+        );
         return getAuthenticationInformation(
                 applicationClientDetails,
                 applicationAuthenticationService,
@@ -126,7 +135,7 @@ public class AuthenticationService {
      * @param applicationClientId
      *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authentication data to include
      * @param authenticationRequest
-     *    {@link AuthenticationRequestLoginAuthorizedDto} with the credentials information
+     *    {@link AuthenticationRequestLoginAuthorizedDto} with the credential information
      *
      * @return {@link Optional} of {@link AuthenticationInformationAuthorizationCodeDto} with the authorization code after
      *         saving in the cache the provided {@code authenticationRequest}. {@link Optional#empty()} if no information
@@ -144,7 +153,7 @@ public class AuthenticationService {
                                                                                    final AuthenticationRequestLoginAuthorizedDto authenticationRequest) {
         AssertUtil.hasText(
                 applicationClientId,
-                () -> new ApplicationClientNotFoundException("The application client id cannot be empty")
+                () -> new ApplicationClientNotFoundException("The applicationClientId cannot be empty")
         );
         return authenticationRequestDetailsService.save(
                 applicationClientId,
@@ -221,6 +230,34 @@ public class AuthenticationService {
 
 
     /**
+     *    Logs out the {@link LogoutRequestDto#getUsername()} related with provided {@code applicationClientId}, rejecting
+     * any request coming from the same user until he/she logs in again.
+     *
+     * @param applicationClientId
+     *    {@link ApplicationClientDetails#getId()} used to know how to get the specific authentication data to include
+     * @param logoutRequest
+     *   {@link LogoutRequestDto} with the required information to complete the log-out
+     *
+     * @return {@code true} if the logs out was successful, {@code false} otherwise.
+     *
+     * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} is {@code null} or empty.
+     * @throws IllegalArgumentException if {@code logoutRequest} is {@code null}
+     */
+    public boolean logout(final String applicationClientId,
+                          final LogoutRequestDto logoutRequest) {
+        AssertUtil.hasText(
+                applicationClientId,
+                () -> new ApplicationClientNotFoundException("The applicationClientId cannot be empty")
+        );
+        AssertUtil.notNull(logoutRequest, "logoutRequest must be not null");
+        return applicationUserBlackListService.save(
+                applicationClientId,
+                logoutRequest.getUsername()
+        );
+    }
+
+
+    /**
      *    Builds the {@link AuthenticationInformationDto} using the given {@code refreshToken}, based on the provided
      * {@code applicationClientId} (belonging to a {@link ApplicationClientDetails}).
      *
@@ -262,6 +299,10 @@ public class AuthenticationService {
                         applicationClientId,
                         authorizationInformation.getUsername()
                 )
+        );
+        applicationUserBlackListService.remove(
+                applicationClientId,
+                userDetails.getUsername()
         );
         return getAuthenticationInformation(
                 applicationClientDetails,

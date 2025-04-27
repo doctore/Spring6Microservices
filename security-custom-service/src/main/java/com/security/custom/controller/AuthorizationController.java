@@ -77,7 +77,8 @@ public class AuthorizationController extends BaseController {
                             description = "In the body, the user is not active, access token is not valid or not belongs "
                                         + "to given application included as username in the Basic Auth. As part of the "
                                         + "Basic Auth, the username (application) does not exists or the given password "
-                                        + "does not belongs to this one.",
+                                        + "does not belongs to this one. If the application and the user inside the access "
+                                        + "token were added in the blacklist",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponseDto.class)
@@ -106,10 +107,10 @@ public class AuthorizationController extends BaseController {
                 )
         );
         return getPrincipal()
-                .map(userDetails ->
+                .map(applicationClientDetails ->
                         new ResponseEntity<>(
                                 service.checkAccessToken(
-                                        userDetails.getUsername(),
+                                        applicationClientDetails.getUsername(),
                                         accessToken
                                 ),
                                 OK

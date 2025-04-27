@@ -11,7 +11,6 @@ import com.security.custom.model.ApplicationClientDetails;
 import com.security.custom.service.token.provider.TokenTypeProviderRegistry;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ import static com.security.custom.enums.token.TokenKey.REFRESH_JWT_ID;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
-@Log4j2
 @Service
 public class TokenService {
 
@@ -272,7 +270,7 @@ public class TokenService {
 
 
     /**
-     * Generates the token taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
+     * Generates the token, taking into account the value of {@link ApplicationClientDetails#getTokenType()}.
      *
      * @param informationToInclude
      *    {@link Map} with the information to include in the returned token

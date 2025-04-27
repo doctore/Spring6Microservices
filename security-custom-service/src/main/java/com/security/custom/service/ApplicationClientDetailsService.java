@@ -8,7 +8,6 @@ import com.security.custom.service.cache.ApplicationClientDetailsCacheService;
 import com.spring6microservices.common.core.functional.validation.Validation;
 import com.spring6microservices.common.core.functional.validation.ValidationError;
 import com.spring6microservices.common.core.util.StringUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -19,7 +18,6 @@ import reactor.core.publisher.Mono;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
-@Slf4j
 @Service
 public class ApplicationClientDetailsService implements ReactiveUserDetailsService {
 

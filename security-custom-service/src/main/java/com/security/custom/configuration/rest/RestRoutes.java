@@ -10,6 +10,7 @@ public final class RestRoutes {
     public static final class AUTHENTICATION {
         public static final String ROOT = RestRoutes.ROOT + "/authentication";
         public static final String LOGIN = "/login";
+        public static final String LOGOUT = "/logout";
         public static final String LOGIN_AUTHORIZED = AUTHENTICATION.LOGIN + "/authorized";
         public static final String LOGIN_TOKEN = AUTHENTICATION.LOGIN + "/token";
         public static final String REFRESH = "/refresh";

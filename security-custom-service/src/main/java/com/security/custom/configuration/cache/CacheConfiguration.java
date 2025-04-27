@@ -23,13 +23,17 @@ public class CacheConfiguration {
 
     private final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration;
 
+    private final ApplicationUserBlackListCacheConfiguration applicationUserBlackListCacheConfiguration;
+
     private final AuthenticationRequestDetailsCacheConfiguration authenticationRequestDetailsCacheConfiguration;
 
 
     @Autowired
     public CacheConfiguration(final ApplicationClientDetailsCacheConfiguration applicationClientDetailsCacheConfiguration,
+                              final ApplicationUserBlackListCacheConfiguration applicationUserBlackListCacheConfiguration,
                               final AuthenticationRequestDetailsCacheConfiguration authenticationRequestDetailsCacheConfiguration) {
         this.applicationClientDetailsCacheConfiguration = applicationClientDetailsCacheConfiguration;
+        this.applicationUserBlackListCacheConfiguration = applicationUserBlackListCacheConfiguration;
         this.authenticationRequestDetailsCacheConfiguration = authenticationRequestDetailsCacheConfiguration;
     }
 
@@ -71,6 +75,11 @@ public class CacheConfiguration {
                         )
                 )
                 .addMapConfig(
+                        addApplicationUserBlackListCache(
+                                this.applicationUserBlackListCacheConfiguration
+                        )
+                )
+                .addMapConfig(
                         addAuthenticationRequestsDetailsCache(
                                 this.authenticationRequestDetailsCacheConfiguration
                         )
@@ -88,14 +97,37 @@ public class CacheConfiguration {
      */
     private MapConfig addApplicationClientDetailsCache(final ApplicationClientDetailsCacheConfiguration cacheConfiguration) {
         return new MapConfig()
-                .setName(cacheConfiguration.getCacheName())
+                .setName(
+                        cacheConfiguration.getCacheName()
+                )
                 .setEvictionConfig(
-                        new EvictionConfig()
-                                .setSize(
-                                        cacheConfiguration.getCacheEntryCapacity()
-                                )
-                                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
-                                .setEvictionPolicy(EvictionPolicy.LRU)
+                        getEvictionConfig(
+                                cacheConfiguration.getCacheEntryCapacity()
+                        )
+                )
+                .setTimeToLiveSeconds(
+                        cacheConfiguration.getCacheExpireInSeconds()
+                );
+    }
+
+
+    /**
+     * Creates the {@link MapConfig} related with {@link ApplicationUserBlackListCacheConfiguration}.
+     *
+     * @param cacheConfiguration
+     *    {@link ApplicationUserBlackListCacheConfiguration} with its specific configuration values
+     *
+     * @return {@link MapConfig}
+     */
+    private MapConfig addApplicationUserBlackListCache(final ApplicationUserBlackListCacheConfiguration cacheConfiguration) {
+        return new MapConfig()
+                .setName(
+                        cacheConfiguration.getCacheName()
+                )
+                .setEvictionConfig(
+                        getEvictionConfig(
+                                cacheConfiguration.getCacheEntryCapacity()
+                        )
                 )
                 .setTimeToLiveSeconds(
                         cacheConfiguration.getCacheExpireInSeconds()
@@ -113,17 +145,38 @@ public class CacheConfiguration {
      */
     private MapConfig addAuthenticationRequestsDetailsCache(final AuthenticationRequestDetailsCacheConfiguration cacheConfiguration) {
         return new MapConfig()
-                .setName(cacheConfiguration.getCacheName())
+                .setName(
+                        cacheConfiguration.getCacheName()
+                )
                 .setEvictionConfig(
-                        new EvictionConfig()
-                                .setSize(
-                                        cacheConfiguration.getCacheEntryCapacity()
-                                )
-                                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
-                                .setEvictionPolicy(EvictionPolicy.LRU)
+                        getEvictionConfig(
+                                cacheConfiguration.getCacheEntryCapacity()
+                        )
                 )
                 .setTimeToLiveSeconds(
                         cacheConfiguration.getCacheExpireInSeconds()
+                );
+    }
+
+
+    /**
+     * Returns a new configuration for cache's eviction.
+     *
+     * @param cacheEntryCapacity
+     *    How many entries the cache will contain
+     *
+     * @return {@link EvictionConfig}
+     */
+    private EvictionConfig getEvictionConfig(final int cacheEntryCapacity) {
+        return new EvictionConfig()
+                .setSize(
+                        cacheEntryCapacity
+                )
+                .setMaxSizePolicy(
+                        MaxSizePolicy.FREE_HEAP_SIZE
+                )
+                .setEvictionPolicy(
+                        EvictionPolicy.LRU
                 );
     }
 

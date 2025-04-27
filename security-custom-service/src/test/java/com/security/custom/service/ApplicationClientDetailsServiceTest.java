@@ -198,9 +198,9 @@ public class ApplicationClientDetailsServiceTest {
     }
 
 
-    private void findByIdVerifyInvocations(String id,
-                                           Optional<ApplicationClientDetails> repositoryResult,
-                                           ApplicationClientDetails cacheServiceResult) {
+    private void findByIdVerifyInvocations(final String id,
+                                           final Optional<ApplicationClientDetails> repositoryResult,
+                                           final ApplicationClientDetails cacheServiceResult) {
         // No id value provided
         if (null == id) {
             verify(mockRepository, times(0))

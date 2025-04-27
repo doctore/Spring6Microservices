@@ -15,6 +15,9 @@ public class ClearCacheRequestDto {
     private boolean applicationClientDetails;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    private boolean applicationUserBlackList;
+
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean authenticationRequestDetails;
 
 }

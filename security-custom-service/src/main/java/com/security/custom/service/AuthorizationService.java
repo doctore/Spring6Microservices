@@ -11,6 +11,7 @@ import com.security.custom.service.token.TokenService;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.AuthorizationInformationDto;
+import com.spring6microservices.common.spring.exception.UnauthorizedException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,19 @@ public class AuthorizationService {
 
     private final ApplicationClientDetailsService applicationClientDetailsService;
 
+    private final ApplicationUserBlackListService applicationUserBlackListService;
+
     private final TokenService tokenService;
 
 
     @Autowired
     public AuthorizationService(final ApplicationContext applicationContext,
                                 final ApplicationClientDetailsService applicationClientDetailsService,
+                                final ApplicationUserBlackListService applicationUserBlackListService,
                                 final TokenService tokenService) {
         this.applicationContext = applicationContext;
         this.applicationClientDetailsService = applicationClientDetailsService;
+        this.applicationUserBlackListService = applicationUserBlackListService;
         this.tokenService = tokenService;
     }
 
@@ -62,6 +67,7 @@ public class AuthorizationService {
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} does not exist in database or
      *                                            was not defined in {@link SecurityHandler}
      * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthorizationService}
+     * @throws UnauthorizedException if the {@code applicationClientId} and the {@code username} added in the {@code accessToken} were blacklisted
      * @throws UsernameNotFoundException if the {@code accessToken} does not contain a {@code username}
      * @throws TokenInvalidException if the given {@code accessToken} is not a valid one
      * @throws TokenExpiredException if provided {@code accessToken} is valid but has expired
@@ -80,6 +86,10 @@ public class AuthorizationService {
                 applicationAuthorizationService,
                 accessToken,
                 true
+        );
+        this.applicationUserBlackListService.notBlackListedOrThrow(
+                applicationClientId,
+                result.getUsername()
         );
         log.info(
                 format("Regarding to the ApplicationClientDetails: %s, the authorize information of the username: %s "
@@ -106,6 +116,7 @@ public class AuthorizationService {
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientDetails} was not defined in {@link SecurityHandler}
      * @throws BeansException if there was a problem getting the final class instance {@link IApplicationClientAuthorizationService}
      * @throws IllegalArgumentException if {@code applicationClientDetails} is {@code null}
+     * @throws UnauthorizedException if the {@code applicationClientDetails}'s identifier and the {@code username} added in the {@code refreshToken} were blacklisted
      * @throws UsernameNotFoundException if the {@code refreshToken} does not contain a {@code username}
      * @throws TokenInvalidException if the given {@code refreshToken} is not a valid one
      * @throws TokenExpiredException if provided {@code refreshToken} is valid but has expired
@@ -122,6 +133,10 @@ public class AuthorizationService {
                 applicationAuthorizationService,
                 refreshToken,
                 false
+        );
+        this.applicationUserBlackListService.notBlackListedOrThrow(
+                applicationClientDetails.getId(),
+                result.getUsername()
         );
         log.info(
                 format("Regarding to the ApplicationClientDetails: %s, the authorize information of the username: %s "
@@ -270,7 +285,7 @@ public class AuthorizationService {
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
-     * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
+     * @return {@link Set} of {@link String} with the authority values contained in {@code rawAuthorizationInformation}
      */
     private Set<String> getAuthorities(final IApplicationClientAuthorizationService authorizationService,
                                        final Map<String, Object> rawAuthorizationInformation) {
@@ -289,7 +304,7 @@ public class AuthorizationService {
      * @param rawAuthorizationInformation
      *    {@link Map} containing all data related to the current authorized user
      *
-     * @return {@link Set} of {@link String} with the authorities values contained in {@code rawAuthorizationInformation}
+     * @return {@link Map} with the additional information contained in {@code rawAuthorizationInformation}
      */
     private Map<String, Object> getAdditionalInformation(final IApplicationClientAuthorizationService authorizationService,
                                                          final Map<String, Object> rawAuthorizationInformation) {
