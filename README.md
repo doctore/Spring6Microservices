@@ -484,6 +484,17 @@ In the previous image I used `admin/admin` however there is another option: `use
 ![Alt text](/documentation/security-custom-service/CheckToken.png?raw=true "Authorization information")
 <br><br>
 
+**6.** Logs out a user related with an application:
+
+![Alt text](/documentation/security-custom-service/Logout.png?raw=true "Log out")
+
+So, if we try to get again its internal information, this is the new response:
+
+![Alt text](/documentation/security-custom-service/CheckTokenOfBlacklisted.png?raw=true "Pair application-user were blacklisted")
+
+The user must complete any of the provided login flows to resubmit new requests.
+<br><br>
+
 
 
 ## Rest API documentation
