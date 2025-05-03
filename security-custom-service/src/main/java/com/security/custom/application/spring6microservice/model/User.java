@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private Long id;
 
     @NotNull
-    @Size(min =1 , max = 128)
+    @Size(min = 1, max = 128)
     private String name;
 
     @NotNull

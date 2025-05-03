@@ -27,7 +27,7 @@ public class Role implements Serializable {
     private Integer id;
 
     @NotNull
-    @Size(min =1 , max = 128)
+    @Size(min = 1, max = 128)
     private RoleEnum name;
 
     private Set<PermissionEnum> permissions;

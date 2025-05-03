@@ -82,7 +82,7 @@ management:
 #   2. http://localhost:8180/security/custom/swagger-ui/index.html to display the UI with all defined endpoints
 springdoc:
   api-docs:
-    # Path of the OpenAPI documentation in Json format
+    # Path of the OpenAPI documentation in JSON format
     path: /security/custom/api-docs
   documentation:
     apiVersion: 1.0

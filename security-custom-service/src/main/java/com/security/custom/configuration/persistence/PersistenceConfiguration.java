@@ -16,4 +16,10 @@ public class PersistenceConfiguration {
 
     public static final String REPOSITORY_PATH = "com.security.custom.repository";
 
+    public static final String SCHEMA = "security";
+
+    public static final class TABLE {
+        public static final String APPLICATION_CLIENT_DETAILS = "application_client_details";
+    }
+
 }

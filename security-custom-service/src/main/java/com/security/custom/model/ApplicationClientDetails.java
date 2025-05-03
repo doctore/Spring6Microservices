@@ -1,5 +1,6 @@
 package com.security.custom.model;
 
+import com.security.custom.configuration.persistence.PersistenceConfiguration;
 import com.security.custom.enums.SecurityHandler;
 import com.security.custom.enums.token.TokenEncryptionAlgorithm;
 import com.security.custom.enums.token.TokenEncryptionMethod;
@@ -18,8 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static com.security.custom.configuration.Constants.DATABASE;
-
 @AllArgsConstructor
 @Builder
 @Entity
@@ -27,8 +26,8 @@ import static com.security.custom.configuration.Constants.DATABASE;
 @NoArgsConstructor
 @Setter
 @Table(
-        name = DATABASE.TABLE.APPLICATION_CLIENT_DETAILS,
-        schema = DATABASE.SCHEMA
+        name = PersistenceConfiguration.TABLE.APPLICATION_CLIENT_DETAILS,
+        schema = PersistenceConfiguration.SCHEMA
 )
 public class ApplicationClientDetails implements UserDetails {
 

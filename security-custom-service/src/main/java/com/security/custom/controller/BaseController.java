@@ -28,7 +28,7 @@ public abstract class BaseController {
                 .cast(UserDetails.class)
                 .map(ud -> {
                     log.info(
-                            format("Getting security details of the authorized application client details: %s",
+                            format("Getting security data of the authorized application client details: %s",
                                     StringUtil.getOrElse(
                                             ud,
                                             UserDetails::getUsername
