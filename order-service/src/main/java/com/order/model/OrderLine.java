@@ -3,11 +3,15 @@ package com.order.model;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class OrderLine implements IModel, Serializable {
 
     @Serial

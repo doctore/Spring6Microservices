@@ -47,7 +47,7 @@ MERGE INTO main.order_line
         WHERE code = 'Order 1')
       ,'Keyboard'
       ,2
-      ,10.1000
+      ,10.1
     )
    ,(
        2

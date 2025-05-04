@@ -63,7 +63,7 @@ public class UserRepositoryTest {
 
         return Stream.of(
                 //@formatter:off
-                //            id,                           expectedResult
+                //            username,                     expectedResult
                 Arguments.of( null,                         empty() ),
                 Arguments.of( "ItDoesNotExist",             empty() ),
                 Arguments.of( existingUser.getUsername(),   of(existingUser) )
