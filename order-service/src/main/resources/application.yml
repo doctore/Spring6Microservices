@@ -1,0 +1,6 @@
+# Spring framework configuration
+spring:
+  application:
+    name: order-service
+  flyway:
+    enabled: false

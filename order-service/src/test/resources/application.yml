@@ -1,0 +1,35 @@
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server for testing
+    config:
+      enabled: false
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS main
+    username: sa
+    password:
+  # Disable Flyway for testing
+  flyway:
+    enabled: false
+
+
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false
+
+
+# API documentation
+springdoc:
+  api-docs:
+    path: onlyForTests
+  documentation:
+    apiVersion: 1.0
+    title: Test Rest Api
+    description: Test description
+  security:
+    authorization: Basic Auth
+    schema: basic
+  swagger-ui:
+    path: testPath
