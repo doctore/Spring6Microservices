@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import(UserRepository.class)
 @Sql(
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
-        value = "classpath:db/spring6microservice_user.sql"
+        value = "classpath:db/spring6microservice_security.sql"
 )
 public class UserRepositoryTest {
 

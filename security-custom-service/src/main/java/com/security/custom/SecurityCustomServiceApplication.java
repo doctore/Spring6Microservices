@@ -16,6 +16,7 @@ public class SecurityCustomServiceApplication {
         );
         // To automatically include traceId and spanId in the logs, using Micrometer Tracing
         Hooks.enableAutomaticContextPropagation();
+
         /*
         ConfigurableApplicationContext context = SpringApplication.run(SecurityCustomServiceApplication.class, args);
         UserRepository repository = context.getBean(UserRepository.class);
