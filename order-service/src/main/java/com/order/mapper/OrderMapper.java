@@ -47,11 +47,14 @@ public interface OrderMapper {
                             property = "orderLines",
                             // Column data that should be passed to the method referenced below
                             column = OrderLineMapper.ID_COLUMN,
-                            // What type is the variable referenced above?
+                            // The type of the variable referenced above
                             javaType = List.class,
-                            // @Many because there could be several OrderLines for each Order
+                            // There could be several OrderLines for each Order
                             many = @Many(
+                                    // Reference the method in the OrderLineMapper class that will return
+                                    // the orderLines based on the data the column specified above contains
                                     select = OrderLineMapper.ORDER_LINE_RESULT_MAP_METHOD,
+                                    // Lazy loaded of OrderLine
                                     fetchType = FetchType.LAZY
                             )
                     )
@@ -86,7 +89,7 @@ public interface OrderMapper {
             + ") "
             + "VALUES ("
                + "#{code}"
-               + ", #{created_at} "
+               + ", #{createdAt} "
             + ")"
     )
     @Options(

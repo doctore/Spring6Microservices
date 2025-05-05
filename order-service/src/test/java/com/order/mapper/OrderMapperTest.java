@@ -78,6 +78,53 @@ public class OrderMapperTest {
     }
 
 
+    static Stream<Arguments> findByCodeTestCases() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                Double.parseDouble("10.1")
+
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            code,              expectedResult
+                Arguments.of( null,              null ),
+                Arguments.of( "NotFound",        null ),
+                Arguments.of( order.getCode(),   order )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByCodeTestCases")
+    @DisplayName("findByCode: test cases")
+    public void findByCode_testCases(String code,
+                                     Order expectedResult) {
+        Order result = mapper.findByCode(code);
+        if (null == expectedResult) {
+            assertNull(result);
+        }
+        else {
+            assertNotNull(result);
+            compareOrders(
+                    expectedResult,
+                    result
+            );
+        }
+    }
+
+
     private void compareOrders(final Order expected,
                                final Order actual) {
         assertNotNull(expected);

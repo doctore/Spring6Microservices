@@ -42,9 +42,9 @@ public interface OrderLineMapper {
                             property = "order",
                             // Column data that should be passed to the method referenced below
                             column = ORDER_COLUMN,
-                            // What type is the variable referenced above?
+                            // The type of the variable referenced above
                             javaType = Order.class,
-                            // @One because there is only a single Order for each OrderLine
+                            // There is only a single Order for each OrderLine
                             one = @One(
                                     // Reference the method in the OrderMapper class that will return
                                     // an order based on the data the column specified above contains

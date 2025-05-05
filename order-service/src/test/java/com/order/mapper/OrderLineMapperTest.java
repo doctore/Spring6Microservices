@@ -79,6 +79,59 @@ public class OrderLineMapperTest {
     }
 
 
+    static Stream<Arguments> findByConceptTestCases() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                Double.parseDouble("10.1")
+
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            concept,                  expectedResult
+                Arguments.of( null,                     List.of() ),
+                Arguments.of( "NotFound",               List.of() ),
+                Arguments.of( orderLine.getConcept(),   List.of(orderLine) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByConceptTestCases")
+    @DisplayName("findByConcept: test cases")
+    public void findByConcept_testCases(String concept,
+                                        List<OrderLine> expectedResult) {
+        List<OrderLine> result = mapper.findByConcept(concept);
+        if (null == expectedResult) {
+            assertNull(result);
+        }
+        else {
+            assertNotNull(result);
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            for (int i = 0; i < expectedResult.size(); i++) {
+                compareOrderLines(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
+        }
+    }
+
+
     private void compareOrderLines(final OrderLine expected,
                                    final OrderLine actual) {
         assertNotNull(expected);

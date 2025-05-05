@@ -4,21 +4,25 @@
 
 ---------------------
 -- Tables definition
+CREATE SEQUENCE IF NOT EXISTS order_id_seq AS integer;
+
 CREATE TABLE IF NOT EXISTS main.order(
-    id                  serial              not null       constraint order_pk primary key,
-    code                varchar(64)         not null,
-    created_at          timestamp           not null       default current_timestamp
+    id              int                 not null     default nextval('order_id_seq')   constraint order_pk primary key,
+    code            varchar(64)         not null,
+    created_at      timestamp           not null     default current_timestamp
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS order_code_uindex ON main.order(code);
 
 
+CREATE SEQUENCE IF NOT EXISTS order_line_id_seq AS integer;
+
 CREATE TABLE IF NOT EXISTS main.order_line(
-    id                  serial              not null       constraint order_line_pk primary key,
-    order_id            int                 not null       constraint order_line_order_id_fk references main.order,
-    concept             varchar(255)        not null,
-    amount              int                 not null,
-    cost                double precision    not null
+    id              int                 not null     default nextval('order_line_id_seq')   constraint order_line_pk primary key,
+    order_id        int                 not null                                            constraint order_line_order_id_fk references main.order,
+    concept         varchar(255)        not null,
+    amount          int                 not null,
+    cost            double precision    not null
 );
 
 
@@ -36,6 +40,8 @@ MERGE INTO main.order
       ,'Order 2'
       ,current_timestamp
     );
+
+ALTER SEQUENCE order_id_seq RESTART WITH 3;
 
 
 MERGE INTO main.order_line
@@ -67,3 +73,5 @@ MERGE INTO main.order_line
       ,3
       ,11.5
     );
+
+ALTER SEQUENCE order_line_id_seq RESTART WITH 4;
