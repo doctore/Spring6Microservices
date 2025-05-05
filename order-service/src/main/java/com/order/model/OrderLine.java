@@ -60,6 +60,7 @@ public class OrderLine implements IModel, Serializable {
                   );
     }
 
+
     @Override
     public int hashCode() {
         return null == id

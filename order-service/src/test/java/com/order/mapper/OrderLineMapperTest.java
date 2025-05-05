@@ -33,24 +33,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                Double.parseDouble("10.1")
-
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        OrderLine orderLine = buildExistingOrderLine1();
         return Stream.of(
                 //@formatter:off
                 //            id,                  expectedResult
@@ -80,24 +63,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByConceptTestCases() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                Double.parseDouble("10.1")
-
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        OrderLine orderLine = buildExistingOrderLine1();
         return Stream.of(
                 //@formatter:off
                 //            concept,                  expectedResult
@@ -169,6 +135,30 @@ public class OrderLineMapperTest {
                     actual.getOrder().getOrderLines().size()
             );
         }
+    }
+
+
+
+    private static OrderLine buildExistingOrderLine1() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                Double.parseDouble("10.1")
+
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return orderLine;
     }
 
 }

@@ -32,24 +32,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                Double.parseDouble("10.1")
-
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        Order order = buildExistingOrder1();
         return Stream.of(
                 //@formatter:off
                 //            id,              expectedResult
@@ -79,24 +62,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByCodeTestCases() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                Double.parseDouble("10.1")
-
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        Order order = buildExistingOrder1();
         return Stream.of(
                 //@formatter:off
                 //            code,              expectedResult
@@ -164,6 +130,29 @@ public class OrderMapperTest {
                 );
             }
         }
+    }
+
+
+    private static Order buildExistingOrder1() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                Double.parseDouble("10.1")
+
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return order;
     }
 
 }
