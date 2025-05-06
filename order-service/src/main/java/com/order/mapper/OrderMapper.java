@@ -23,6 +23,24 @@ public interface OrderMapper {
     String ORDER_RESULT_MAP_METHOD = "com.order.mapper.OrderMapper.findById";
 
 
+    @Select("SELECT count(*) "
+          + "FROM " + TABLE
+    )
+    long count();
+
+
+    @Delete("DELETE FROM " + TABLE
+          + " WHERE " + ID_COLUMN + " = #{id}"
+    )
+    void deleteById(final Integer id);
+
+
+    @Delete("DELETE FROM " + TABLE
+          + " WHERE " + CODE_COLUMN + " = #{code}"
+    )
+    void deleteByCode(final String code);
+
+
     @Select("SELECT * "
           + "FROM " + TABLE
           + " WHERE " + ID_COLUMN + " = #{id}"
@@ -69,18 +87,6 @@ public interface OrderMapper {
     )
     @ResultMap(ORDER_RESULT_MAP_IDENTIFIER)
     Order findByCode(final String code);
-
-
-    @Delete("DELETE FROM " + TABLE
-          + " WHERE " + ID_COLUMN + " = #{id}"
-    )
-    void deleteById(final Integer id);
-
-
-    @Delete("DELETE FROM " + TABLE
-          + " WHERE " + CODE_COLUMN + " = #{code}"
-    )
-    void deleteByCode(final String code);
 
 
     @Insert("INSERT INTO " + TABLE + " ("

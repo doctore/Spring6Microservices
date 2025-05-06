@@ -26,6 +26,24 @@ public interface OrderLineMapper {
     String ORDER_LINE_RESULT_MAP_METHOD = "com.order.mapper.OrderLineMapper.findByOrderId";
 
 
+    @Select("SELECT count(*) "
+          + "FROM " + TABLE
+    )
+    long count();
+
+
+    @Delete("DELETE FROM " + TABLE
+          + " WHERE " + ID_COLUMN + " = #{id}"
+    )
+    void deleteById(final Integer id);
+
+
+    @Delete("DELETE FROM " + TABLE
+          + " WHERE " + ORDER_COLUMN + " = #{orderId}"
+    )
+    void deleteByOrderId(final Integer orderId);
+
+
     @Select("SELECT * "
           + "FROM " + TABLE
           + " WHERE " + ID_COLUMN + " = #{id}"
@@ -84,18 +102,6 @@ public interface OrderLineMapper {
     )
     @ResultMap(ORDER_LINE_RESULT_MAP_IDENTIFIER)
     List<OrderLine> findByOrderId(final Integer orderId);
-
-
-    @Delete("DELETE FROM " + TABLE
-          + " WHERE " + ID_COLUMN + " = #{id}"
-    )
-    void deleteById(final Integer id);
-
-
-    @Delete("DELETE FROM " + TABLE
-          + " WHERE " + ORDER_COLUMN + " = #{orderId}"
-    )
-    void deleteByOrderId(final Integer orderId);
 
 
     @Insert("INSERT INTO " + TABLE + " ("

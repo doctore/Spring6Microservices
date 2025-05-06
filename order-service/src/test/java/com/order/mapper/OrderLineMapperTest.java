@@ -3,12 +3,14 @@ package com.order.mapper;
 import com.order.model.Order;
 import com.order.model.OrderLine;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
@@ -30,6 +32,139 @@ public class OrderLineMapperTest {
 
     @Autowired
     private OrderLineMapper mapper;
+
+
+    @Test
+    @DisplayName("count: test cases")
+    public void count_testCases() {
+        long expectedResult = 3;
+
+        long result = mapper.count();
+
+        assertEquals(
+                expectedResult,
+                result
+        );
+    }
+
+
+    @Test
+    public void deleteById_whenIdIsNotFound_thenNoOneIsDeleted() {
+        int orderLineId = 22;
+
+        OrderLine orderLine = mapper.findById(orderLineId);
+        assertNull(orderLine);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteById(orderLineId);
+
+        orderLine = mapper.findById(orderLineId);
+        assertNull(orderLine);
+
+        count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+    }
+
+
+    @Test
+    @Rollback
+    public void deleteById_whenIdIsFound_thenRelatedOneIsDeleted() {
+        int orderLineId = 1;
+
+        OrderLine orderLine = mapper.findById(orderLineId);
+        assertNotNull(orderLine);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteById(orderLineId);
+
+        orderLine = mapper.findById(orderLineId);
+        assertNull(orderLine);
+
+        count = mapper.count();
+        assertEquals(
+                2,
+                count
+        );
+    }
+
+
+    @Test
+    public void deleteByOrderId_whenOrderIdIsNotFound_thenNoOneIsDeleted() {
+        int orderId = 22;
+
+        List<OrderLine> orderLines = mapper.findByOrderId(orderId);
+        assertNotNull(orderLines);
+        assertTrue(
+                orderLines.isEmpty()
+        );
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteByOrderId(orderId);
+
+        orderLines = mapper.findByOrderId(orderId);
+        assertNotNull(orderLines);
+        assertTrue(
+                orderLines.isEmpty()
+        );
+
+        count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+    }
+
+
+    @Test
+    @Rollback
+    public void deleteByOrderId_whenOrderIdIsFound_thenRelatedOneIsDeleted() {
+        int orderId = 2;
+
+        List<OrderLine> orderLines = mapper.findByOrderId(orderId);
+        assertNotNull(orderLines);
+        assertEquals(
+                2,
+                orderLines.size()
+        );
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteByOrderId(orderId);
+
+        orderLines = mapper.findByOrderId(orderId);
+        assertNotNull(orderLines);
+        assertTrue(
+                orderLines.isEmpty()
+        );
+
+        count = mapper.count();
+        assertEquals(
+                1,
+                count
+        );
+    }
 
 
     static Stream<Arguments> findByIdTestCases() {
@@ -98,6 +233,42 @@ public class OrderLineMapperTest {
     }
 
 
+    static Stream<Arguments> findByOrderIdTestCases() {
+        OrderLine orderLine = buildExistingOrderLine1();
+        return Stream.of(
+                //@formatter:off
+                //            orderId,                        expectedResult
+                Arguments.of( null,                           List.of() ),
+                Arguments.of( 22,                             List.of() ),
+                Arguments.of( orderLine.getOrder().getId(),   List.of(orderLine) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByOrderIdTestCases")
+    @DisplayName("findByOrderId: test cases")
+    public void findByOrderId_testCases(Integer orderId,
+                                        List<OrderLine> expectedResult) {
+        List<OrderLine> result = mapper.findByOrderId(orderId);
+        if (null == expectedResult) {
+            assertNull(result);
+        }
+        else {
+            assertNotNull(result);
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            for (int i = 0; i < expectedResult.size(); i++) {
+                compareOrderLines(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
+        }
+    }
+
+
     private void compareOrderLines(final OrderLine expected,
                                    final OrderLine actual) {
         assertNotNull(expected);
@@ -138,7 +309,6 @@ public class OrderLineMapperTest {
     }
 
 
-
     private static OrderLine buildExistingOrderLine1() {
         Order order = buildOrder(
                 1,
@@ -151,7 +321,6 @@ public class OrderLineMapperTest {
                 "Keyboard",
                 2,
                 Double.parseDouble("10.1")
-
         );
         order.setOrderLines(
                 List.of(

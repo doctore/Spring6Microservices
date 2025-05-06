@@ -39,9 +39,14 @@ MERGE INTO main.order
        2
       ,'Order 2'
       ,current_timestamp
+    )
+   ,(
+       3
+      ,'Order 3'
+      ,current_timestamp
     );
 
-ALTER SEQUENCE order_id_seq RESTART WITH 3;
+ALTER SEQUENCE order_id_seq RESTART WITH 4;
 
 
 MERGE INTO main.order_line

@@ -3,12 +3,14 @@ package com.order.mapper;
 import com.order.model.Order;
 import com.order.model.OrderLine;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
@@ -29,6 +31,126 @@ public class OrderMapperTest {
 
     @Autowired
     private OrderMapper mapper;
+
+
+    @Test
+    @DisplayName("count: test cases")
+    public void count_testCases() {
+        long expectedResult = 3;
+
+        long result = mapper.count();
+
+        assertEquals(
+                expectedResult,
+                result
+        );
+    }
+
+
+    @Test
+    public void deleteById_whenIdIsNotFound_thenNoOneIsDeleted() {
+        int orderId = 22;
+
+        Order order = mapper.findById(orderId);
+        assertNull(order);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteById(orderId);
+
+        order = mapper.findById(orderId);
+        assertNull(order);
+
+        count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+    }
+
+
+    @Test
+    @Rollback
+    public void deleteById_whenIdIsFound_thenRelatedOneIsDeleted() {
+        int orderId = 3;
+
+        Order order = mapper.findById(orderId);
+        assertNotNull(order);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteById(orderId);
+
+        order = mapper.findById(orderId);
+        assertNull(order);
+
+        count = mapper.count();
+        assertEquals(
+                2,
+                count
+        );
+    }
+
+
+    @Test
+    public void deleteByCode_whenCodeIsNotFound_thenNoOneIsDeleted() {
+        String code = "NotFound";
+
+        Order order = mapper.findByCode(code);
+        assertNull(order);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteByCode(code);
+
+        order = mapper.findByCode(code);
+        assertNull(order);
+
+        count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+    }
+
+
+    @Test
+    @Rollback
+    public void deleteByCode_whenCodeIsFound_thenRelatedOneIsDeleted() {
+        String code = "Order 3";
+
+        Order order = mapper.findByCode(code);
+        assertNotNull(order);
+
+        long count = mapper.count();
+        assertEquals(
+                3,
+                count
+        );
+
+        mapper.deleteByCode(code);
+
+        order = mapper.findByCode(code);
+        assertNull(order);
+
+        count = mapper.count();
+        assertEquals(
+                2,
+                count
+        );
+    }
 
 
     static Stream<Arguments> findByIdTestCases() {
@@ -145,7 +267,6 @@ public class OrderMapperTest {
                 "Keyboard",
                 2,
                 Double.parseDouble("10.1")
-
         );
         order.setOrderLines(
                 List.of(
