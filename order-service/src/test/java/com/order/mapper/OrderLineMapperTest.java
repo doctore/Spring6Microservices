@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -49,15 +50,18 @@ public class OrderLineMapperTest {
 
 
     @Test
+    @DisplayName("deleteById: when id is not found then no one is deleted")
     public void deleteById_whenIdIsNotFound_thenNoOneIsDeleted() {
         int orderLineId = 22;
+        int totalOrderLines = 3;
+        int expectedToBeDeleted = 0;
 
         OrderLine orderLine = mapper.findById(orderLineId);
         assertNull(orderLine);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines,
                 count
         );
 
@@ -68,7 +72,7 @@ public class OrderLineMapperTest {
 
         count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines - expectedToBeDeleted,
                 count
         );
     }
@@ -76,15 +80,18 @@ public class OrderLineMapperTest {
 
     @Test
     @Rollback
+    @DisplayName("deleteById: when id is found then related one is deleted")
     public void deleteById_whenIdIsFound_thenRelatedOneIsDeleted() {
         int orderLineId = 1;
+        int totalOrderLines = 3;
+        int expectedToBeDeleted = 1;
 
         OrderLine orderLine = mapper.findById(orderLineId);
         assertNotNull(orderLine);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines,
                 count
         );
 
@@ -95,15 +102,18 @@ public class OrderLineMapperTest {
 
         count = mapper.count();
         assertEquals(
-                2,
+                totalOrderLines - expectedToBeDeleted,
                 count
         );
     }
 
 
     @Test
+    @DisplayName("deleteByOrderId: when orderId is not found then no one is deleted")
     public void deleteByOrderId_whenOrderIdIsNotFound_thenNoOneIsDeleted() {
         int orderId = 22;
+        int totalOrderLines = 3;
+        int expectedToBeDeleted = 0;
 
         List<OrderLine> orderLines = mapper.findByOrderId(orderId);
         assertNotNull(orderLines);
@@ -113,7 +123,7 @@ public class OrderLineMapperTest {
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines,
                 count
         );
 
@@ -127,7 +137,7 @@ public class OrderLineMapperTest {
 
         count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines - expectedToBeDeleted,
                 count
         );
     }
@@ -135,8 +145,11 @@ public class OrderLineMapperTest {
 
     @Test
     @Rollback
+    @DisplayName("deleteByOrderId: when orderId is found then related one is deleted")
     public void deleteByOrderId_whenOrderIdIsFound_thenRelatedOneIsDeleted() {
         int orderId = 2;
+        int totalOrderLines = 3;
+        int expectedToBeDeleted = 2;
 
         List<OrderLine> orderLines = mapper.findByOrderId(orderId);
         assertNotNull(orderLines);
@@ -147,7 +160,7 @@ public class OrderLineMapperTest {
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrderLines,
                 count
         );
 
@@ -161,7 +174,7 @@ public class OrderLineMapperTest {
 
         count = mapper.count();
         assertEquals(
-                1,
+                totalOrderLines - expectedToBeDeleted,
                 count
         );
     }
@@ -269,6 +282,112 @@ public class OrderLineMapperTest {
     }
 
 
+    @Test
+    @DisplayName("insert: when null is provided then an exception is thrown")
+    public void insert_whenNullOrderLineIsProvided_thenAnExceptionIsThrown() {
+        assertThrows(
+                DataIntegrityViolationException.class,
+                () -> mapper.insert(null)
+        );
+    }
+
+
+    @Test
+    @Rollback
+    @DisplayName("insert: when a valid orderLine is provided then it is added in database")
+    public void insert_whenAValidOrderLineIsProvided_thenItIsAddedInDatabase() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                order,
+                "Test insert",
+                5,
+                15d
+        );
+        int totalOrderLines = 3;
+        int expectedToBeInserted = 1;
+
+        long count = mapper.count();
+        assertEquals(
+                totalOrderLines,
+                count
+        );
+        assertNull(orderLine.getId());
+
+        mapper.insert(orderLine);
+
+        assertNotNull(orderLine);
+        assertNotNull(orderLine.getId());
+
+        count = mapper.count();
+        assertEquals(
+                totalOrderLines + expectedToBeInserted,
+                count
+        );
+    }
+
+
+    @Test
+    @DisplayName("update: when null is provided then nothing happens")
+    public void update_whenNullOrderIsProvided_thenNothingHappens() {
+        mapper.update(null);
+    }
+
+
+    @Test
+    @Rollback
+    @DisplayName("update: when a valid orderLine is provided then it is updated")
+    public void update_whenAValidOrderLineIsProvided_thenItIsUpdated() {
+        Integer orderLineId = 2;
+        String oldConcept = "Trip to the Canary Islands";
+        String newConcept = "Trip to Gran Canaria";
+        Integer oldAmount = 1;
+        Integer newAmount = 2;
+        Double oldCost = 900d;
+        Double newCost = 750d;
+
+        OrderLine orderLine = mapper.findById(orderLineId);
+
+        assertNotNull(orderLine);
+        assertEquals(
+                oldConcept,
+                orderLine.getConcept()
+        );
+        assertEquals(
+                oldAmount,
+                orderLine.getAmount()
+        );
+        assertEquals(
+                oldCost,
+                orderLine.getCost()
+        );
+
+        orderLine.setConcept(newConcept);
+        orderLine.setAmount(newAmount);
+        orderLine.setCost(newCost);
+
+        mapper.update(orderLine);
+
+        orderLine = mapper.findById(orderLineId);
+
+        assertEquals(
+                newConcept,
+                orderLine.getConcept()
+        );
+        assertEquals(
+                newAmount,
+                orderLine.getAmount()
+        );
+        assertEquals(
+                newCost,
+                orderLine.getCost()
+        );
+    }
+
+
     private void compareOrderLines(final OrderLine expected,
                                    final OrderLine actual) {
         assertNotNull(expected);
@@ -320,7 +439,7 @@ public class OrderLineMapperTest {
                 order,
                 "Keyboard",
                 2,
-                Double.parseDouble("10.1")
+                10.1d
         );
         order.setOrderLines(
                 List.of(

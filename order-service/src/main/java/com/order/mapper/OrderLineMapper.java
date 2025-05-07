@@ -109,13 +109,13 @@ public interface OrderLineMapper {
                + ", " + CONCEPT_COLUMN
                + ", " + AMOUNT_COLUMN
                + ", " + COST_COLUMN
-            + ") "
-            + "VALUES ("
+          + ") "
+          + "VALUES ("
                + "#{order.id} "
                + ", #{concept} "
                + ", #{amount} "
                + ", #{cost} "
-            + ")"
+          + ")"
     )
     @Options(
             useGeneratedKeys = true,
@@ -126,11 +126,11 @@ public interface OrderLineMapper {
 
 
     @Update("UPDATE " + TABLE
-            + " SET "
+          + " SET "
                + CONCEPT_COLUMN + " = #{concept} "
                + ", " + AMOUNT_COLUMN + " = #{amount} "
                + ", " + COST_COLUMN + " = #{cost} "
-            + "WHERE id = #{id}"
+          + "WHERE id = #{id}"
     )
     void update(final OrderLine orderLine);
 

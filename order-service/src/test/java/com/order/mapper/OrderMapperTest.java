@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -48,15 +49,18 @@ public class OrderMapperTest {
 
 
     @Test
+    @DisplayName("deleteById: when id is not found then no one is deleted")
     public void deleteById_whenIdIsNotFound_thenNoOneIsDeleted() {
         int orderId = 22;
+        int totalOrders = 3;
+        int expectedToBeDeleted = 0;
 
         Order order = mapper.findById(orderId);
         assertNull(order);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrders,
                 count
         );
 
@@ -67,7 +71,7 @@ public class OrderMapperTest {
 
         count = mapper.count();
         assertEquals(
-                3,
+                totalOrders - expectedToBeDeleted,
                 count
         );
     }
@@ -75,15 +79,18 @@ public class OrderMapperTest {
 
     @Test
     @Rollback
+    @DisplayName("deleteById: when id is found then related one is deleted")
     public void deleteById_whenIdIsFound_thenRelatedOneIsDeleted() {
         int orderId = 3;
+        int totalOrders = 3;
+        int expectedToBeDeleted = 1;
 
         Order order = mapper.findById(orderId);
         assertNotNull(order);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrders,
                 count
         );
 
@@ -94,22 +101,25 @@ public class OrderMapperTest {
 
         count = mapper.count();
         assertEquals(
-                2,
+                totalOrders - expectedToBeDeleted,
                 count
         );
     }
 
 
     @Test
+    @DisplayName("deleteByCode: when code is not found then no one is deleted")
     public void deleteByCode_whenCodeIsNotFound_thenNoOneIsDeleted() {
         String code = "NotFound";
+        int totalOrders = 3;
+        int expectedToBeDeleted = 0;
 
         Order order = mapper.findByCode(code);
         assertNull(order);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrders,
                 count
         );
 
@@ -120,7 +130,7 @@ public class OrderMapperTest {
 
         count = mapper.count();
         assertEquals(
-                3,
+                totalOrders - expectedToBeDeleted,
                 count
         );
     }
@@ -128,15 +138,18 @@ public class OrderMapperTest {
 
     @Test
     @Rollback
+    @DisplayName("deleteByCode: when code is found then related one is deleted")
     public void deleteByCode_whenCodeIsFound_thenRelatedOneIsDeleted() {
         String code = "Order 3";
+        int totalOrders = 3;
+        int expectedToBeDeleted = 1;
 
         Order order = mapper.findByCode(code);
         assertNotNull(order);
 
         long count = mapper.count();
         assertEquals(
-                3,
+                totalOrders,
                 count
         );
 
@@ -147,7 +160,7 @@ public class OrderMapperTest {
 
         count = mapper.count();
         assertEquals(
-                2,
+                totalOrders - expectedToBeDeleted,
                 count
         );
     }
@@ -213,6 +226,78 @@ public class OrderMapperTest {
     }
 
 
+    @Test
+    @DisplayName("insert: when null is provided then an exception is thrown")
+    public void insert_whenNullOrderIsProvided_thenAnExceptionIsThrown() {
+        assertThrows(
+                DataIntegrityViolationException.class,
+                () -> mapper.insert(null)
+        );
+    }
+
+
+    @Test
+    @Rollback
+    @DisplayName("insert: when a valid order is provided then it is added in database")
+    public void insert_whenAValidOrderIsProvided_thenItIsAddedInDatabase() {
+        Order order = buildOrder(
+                "Order 4",
+                new ArrayList<>()
+        );
+        int totalOrders = 3;
+        int expectedToBeInserted = 1;
+
+        long count = mapper.count();
+        assertEquals(
+                totalOrders,
+                count
+        );
+        assertNull(order.getId());
+
+        mapper.insert(order);
+
+        assertNotNull(order);
+        assertNotNull(order.getId());
+
+        count = mapper.count();
+        assertEquals(
+                totalOrders + expectedToBeInserted,
+                count
+        );
+    }
+
+
+    @Test
+    @DisplayName("update: when null is provided then nothing happens")
+    public void update_whenNullOrderIsProvided_thenNothingHappens() {
+        mapper.update(null);
+    }
+
+
+    @Test
+    @Rollback
+    @DisplayName("update: when a valid order is provided then it is updated")
+    public void update_whenAValidOrderIsProvided_thenItIsUpdated() {
+        String oldCode = "Order 1";
+        String newCode = "New Order 1";
+
+        Order order = mapper.findByCode(oldCode);
+
+        assertNotNull(order);
+
+        order.setCode(newCode);
+
+        mapper.update(order);
+
+        assertNull(
+                mapper.findByCode(oldCode)
+        );
+        assertNotNull(
+                mapper.findByCode(newCode)
+        );
+    }
+
+
     private void compareOrders(final Order expected,
                                final Order actual) {
         assertNotNull(expected);
@@ -266,7 +351,7 @@ public class OrderMapperTest {
                 order,
                 "Keyboard",
                 2,
-                Double.parseDouble("10.1")
+                10.1d
         );
         order.setOrderLines(
                 List.of(

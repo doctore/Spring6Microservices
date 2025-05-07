@@ -82,8 +82,8 @@ public interface OrderMapper {
 
 
     @Select("SELECT * "
-            + "FROM " + TABLE
-            + " WHERE " + CODE_COLUMN + " = #{code}"
+          + "FROM " + TABLE
+          + " WHERE " + CODE_COLUMN + " = #{code}"
     )
     @ResultMap(ORDER_RESULT_MAP_IDENTIFIER)
     Order findByCode(final String code);
@@ -92,11 +92,11 @@ public interface OrderMapper {
     @Insert("INSERT INTO " + TABLE + " ("
                + CODE_COLUMN
                + ", " + CREATED_AT_COLUMN
-            + ") "
-            + "VALUES ("
+          + ") "
+          + "VALUES ("
                + "#{code}"
                + ", #{createdAt} "
-            + ")"
+          + ")"
     )
     @Options(
             useGeneratedKeys = true,
