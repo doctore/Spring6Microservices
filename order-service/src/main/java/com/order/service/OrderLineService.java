@@ -36,7 +36,38 @@ public class OrderLineService {
     }
 
 
-    // DELETEs
+    /**
+     * Deletes the {@link OrderLine} which identifier matches with to provided {@code id}.
+     *
+     * @param id
+     *    {@link OrderLine#getId()} to search
+     *
+     * @return {@code true} if the {@link OrderLine} was deleted,
+     *         {@code false} otherwise
+     */
+    public boolean deleteById(final Integer id) {
+        if (null == id) {
+            return false;
+        }
+        return 0 != mapper.deleteById(id);
+    }
+
+
+    /**
+     * Deletes the {@link OrderLine}s belonging to the given {@code orderId}.
+     *
+     * @param orderId
+     *    {@link OrderLine#getOrder()}'s identifier to search
+     *
+     * @return {@code true} if the {@link OrderLine}s were deleted,
+     *         {@code false} otherwise
+     */
+    public boolean deleteByOrderId(final Integer orderId) {
+        if (null == orderId) {
+            return false;
+        }
+        return 0 != mapper.deleteByOrderId(orderId);
+    }
 
 
     /**
@@ -53,9 +84,6 @@ public class OrderLineService {
         return ofNullable(id)
                 .map(mapper::findById);
     }
-
-
-    // FINDBYs
 
 
     /**

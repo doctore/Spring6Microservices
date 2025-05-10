@@ -243,7 +243,7 @@ public class OrderMapperTest {
 
 
     @Test
-    @DisplayName("insert: when null is provided then an exception is thrown")
+    @DisplayName("insert: when null order is provided then an exception is thrown")
     public void insert_whenNullOrderIsProvided_thenAnExceptionIsThrown() {
         assertThrows(
                 DataIntegrityViolationException.class,
@@ -288,7 +288,7 @@ public class OrderMapperTest {
 
 
     @Test
-    @DisplayName("update: when null is provided then nothing happens")
+    @DisplayName("update: when null order is provided then nothing happens")
     public void update_whenNullOrderIsProvided_thenNothingHappens() {
         int result = mapper.update(null);
 

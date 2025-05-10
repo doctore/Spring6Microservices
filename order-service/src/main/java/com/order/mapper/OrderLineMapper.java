@@ -90,7 +90,7 @@ public interface OrderLineMapper {
 
     @Select("SELECT * "
           + "FROM " + TABLE
-          + " WHERE " + CONCEPT_COLUMN + " = #{concept}"
+          + " WHERE " + CONCEPT_COLUMN + " ilike CONCAT('%', #{concept}, '%')"
     )
     @ResultMap(ORDER_LINE_RESULT_MAP_IDENTIFIER)
     List<OrderLine> findByConcept(final String concept);

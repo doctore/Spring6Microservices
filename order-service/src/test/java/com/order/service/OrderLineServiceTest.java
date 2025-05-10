@@ -58,6 +58,64 @@ public class OrderLineServiceTest {
     }
 
 
+    static Stream<Arguments> deleteByIdTestCases() {
+        OrderLine orderLine = buildExistingOrderLine();
+        return Stream.of(
+                //@formatter:off
+                //            id,                  mapperResult,   expectedResult
+                Arguments.of( null,                0,              false ),
+                Arguments.of( 1,                   0,              false ),
+                Arguments.of( orderLine.getId(),   1,              true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("deleteByIdTestCases")
+    @DisplayName("deleteById: test cases")
+    public void deleteById_testCases(Integer id,
+                                     int mapperResult,
+                                     boolean expectedResult) {
+        when(mockMapper.deleteById(id))
+                .thenReturn(mapperResult);
+
+        boolean result = service.deleteById(id);
+
+        assertEquals(
+                expectedResult,
+                result
+        );
+    }
+
+
+    static Stream<Arguments> deleteByOrderIdTestCases() {
+        OrderLine orderLine = buildExistingOrderLine();
+        return Stream.of(
+                //@formatter:off
+                //            orderId,                        mapperResult,   expectedResult
+                Arguments.of( null,                           0,              false ),
+                Arguments.of( 1,                              0,              false ),
+                Arguments.of( orderLine.getOrder().getId(),   1,              true )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("deleteByOrderIdTestCases")
+    @DisplayName("deleteByOrderId: test cases")
+    public void deleteByOrderId_testCases(Integer orderId,
+                                          int mapperResult,
+                                          boolean expectedResult) {
+        when(mockMapper.deleteByOrderId(orderId))
+                .thenReturn(mapperResult);
+
+        boolean result = service.deleteByOrderId(orderId);
+
+        assertEquals(
+                expectedResult,
+                result
+        );
+    }
+
+
     static Stream<Arguments> findByIdTestCases() {
         OrderLine orderLine = buildExistingOrderLine();
         return Stream.of(

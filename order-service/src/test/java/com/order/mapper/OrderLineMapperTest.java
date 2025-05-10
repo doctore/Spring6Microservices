@@ -226,38 +226,46 @@ public class OrderLineMapperTest {
     }
 
 
-    static Stream<Arguments> findByConceptTestCases() {
+    @Test
+    @DisplayName("findByConcept: when null concept is provided then all order lines are returned")
+    public void findByConcept_whenNullConceptIsProvided_thenAllOrderLinesAreReturned() {
+        List<OrderLine> result = mapper.findByConcept(null);
+
+        assertNotNull(result);
+        assertEquals(
+                mapper.count(),
+                result.size()
+        );
+    }
+
+
+    static Stream<Arguments> findByConceptNotNullConceptTestCases() {
         OrderLine orderLine = buildExistingOrderLine();
         return Stream.of(
                 //@formatter:off
                 //            concept,                  expectedResult
-                Arguments.of( null,                     List.of() ),
                 Arguments.of( "NotFound",               List.of() ),
                 Arguments.of( orderLine.getConcept(),   List.of(orderLine) )
         ); //@formatter:on
     }
 
     @ParameterizedTest
-    @MethodSource("findByConceptTestCases")
-    @DisplayName("findByConcept: test cases")
+    @MethodSource("findByConceptNotNullConceptTestCases")
+    @DisplayName("findByConcept: not null concept test cases")
     public void findByConcept_testCases(String concept,
                                         List<OrderLine> expectedResult) {
         List<OrderLine> result = mapper.findByConcept(concept);
-        if (null == expectedResult) {
-            assertNull(result);
-        }
-        else {
-            assertNotNull(result);
-            assertEquals(
-                    expectedResult.size(),
-                    result.size()
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.size(),
+                result.size()
+        );
+        for (int i = 0; i < expectedResult.size(); i++) {
+            compareOrderLines(
+                    expectedResult.get(i),
+                    result.get(i)
             );
-            for (int i = 0; i < expectedResult.size(); i++) {
-                compareOrderLines(
-                        expectedResult.get(i),
-                        result.get(i)
-                );
-            }
         }
     }
 
@@ -299,7 +307,7 @@ public class OrderLineMapperTest {
 
 
     @Test
-    @DisplayName("insert: when null is provided then an exception is thrown")
+    @DisplayName("insert: when null orderLine is provided then an exception is thrown")
     public void insert_whenNullOrderLineIsProvided_thenAnExceptionIsThrown() {
         assertThrows(
                 DataIntegrityViolationException.class,
@@ -351,8 +359,8 @@ public class OrderLineMapperTest {
 
 
     @Test
-    @DisplayName("update: when null is provided then nothing happens")
-    public void update_whenNullOrderIsProvided_thenNothingHappens() {
+    @DisplayName("update: when null orderLine is provided then nothing happens")
+    public void update_whenNullOrderLineIsProvided_thenNothingHappens() {
         int result = mapper.update(null);
 
         assertEquals(
