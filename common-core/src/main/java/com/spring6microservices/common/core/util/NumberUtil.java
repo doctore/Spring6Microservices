@@ -211,8 +211,7 @@ public class NumberUtil {
         }
         catch (Exception e) {
             return left(
-                    format(
-                            "There was an error trying to convert the string: %s to an instance of: %s. %s",
+                    format("There was an error trying to convert the string: %s to an instance of: %s. %s",
                             potentialNumber,
                             finalClazzReturnedInstance.getName(),
                             getFormattedRootError(e)

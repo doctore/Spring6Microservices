@@ -2613,7 +2613,8 @@ public class CollectionUtil {
         AssertUtil.isTrue(
                 from < until,
                 format("from: %d must be lower than to: %d",
-                        from, until
+                        from,
+                        until
                 )
         );
         if (isEmpty(sourceCollection) || from > sourceCollection.size() - 1) {

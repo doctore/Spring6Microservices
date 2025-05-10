@@ -2542,7 +2542,8 @@ public class MapUtil {
         AssertUtil.isTrue(
                 from < until,
                 format("from: %d must be lower than to: %d",
-                        from, until
+                        from,
+                        until
                 )
         );
         if (isEmpty(sourceMap) || from > sourceMap.size() - 1) {
