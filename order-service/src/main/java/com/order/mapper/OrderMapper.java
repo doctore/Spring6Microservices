@@ -32,13 +32,13 @@ public interface OrderMapper {
     @Delete("DELETE FROM " + TABLE
           + " WHERE " + ID_COLUMN + " = #{id}"
     )
-    void deleteById(final Integer id);
+    int deleteById(final Integer id);
 
 
     @Delete("DELETE FROM " + TABLE
           + " WHERE " + CODE_COLUMN + " = #{code}"
     )
-    void deleteByCode(final String code);
+    int deleteByCode(final String code);
 
 
     @Select("SELECT * "
@@ -103,7 +103,7 @@ public interface OrderMapper {
             keyColumn = ID_COLUMN,
             keyProperty = ID_COLUMN
     )
-    void insert(final Order order);
+    int insert(final Order order);
 
 
     @Update("UPDATE " + TABLE
@@ -111,6 +111,6 @@ public interface OrderMapper {
                + CODE_COLUMN + " = #{code} "
           + "WHERE id = #{id}"
     )
-    void update(final Order order);
+    int update(final Order order);
 
 }

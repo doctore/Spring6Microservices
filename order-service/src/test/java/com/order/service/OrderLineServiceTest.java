@@ -7,15 +7,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.order.TestDataFactory.buildOrder;
 import static com.order.TestDataFactory.buildOrderLine;
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +58,45 @@ public class OrderLineServiceTest {
     }
 
 
+    static Stream<Arguments> findByIdTestCases() {
+        OrderLine orderLine = buildExistingOrderLine();
+        return Stream.of(
+                //@formatter:off
+                //            id,                  mapperResult,   expectedResult
+                Arguments.of( null,                null,           empty() ),
+                Arguments.of( 1,                   null,           empty() ),
+                Arguments.of( orderLine.getId(),   orderLine,      of(orderLine) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByIdTestCases")
+    @DisplayName("findById: test cases")
+    public void findById_testCases(Integer id,
+                                   OrderLine mapperResult,
+                                   Optional<OrderLine> expectedResult) {
+        when(mockMapper.findById(id))
+                .thenReturn(mapperResult);
+
+        Optional<OrderLine> result = service.findById(id);
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareOrderLines(
+                    expectedResult.get(),
+                    result.get()
+            );
+        }
+    }
+
+
     @Test
     @DisplayName("save: when no model is given then empty is returned")
     public void save_whenNoModelIsGiven_thenEmptyIsReturned() {
@@ -66,22 +112,8 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("save: when new model is given then insert is invoked and non-empty is returned")
     public void save_whenNewModelIsGiven_thenInsertIsInvokedAndNonEmptyIsReturned() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                order,
-                "Trip to Canary Islands",
-                1,
-                900d
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        OrderLine orderLine = buildExistingOrderLine();
+        orderLine.setId(null);
         int newOrderLineId = 1;
 
         assertNull(orderLine.getId());
@@ -119,23 +151,7 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("save: when existing model is given then update is invoked and non-empty is returned")
     public void save_whenExistingModelIsGiven_thenUpdateIsInvokedAndNonEmptyIsReturned() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Trip to Canary Islands",
-                1,
-                900d
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
+        OrderLine orderLine = buildExistingOrderLine();
 
         Optional<OrderLine> result = service.save(orderLine);
 
@@ -149,6 +165,78 @@ public class OrderLineServiceTest {
         );
 
         verify(mockMapper, never())
+                .insert(
+                        any(OrderLine.class)
+                );
+        verify(mockMapper, times(1))
+                .update(
+                        any(OrderLine.class)
+                );
+    }
+
+
+    @Test
+    @DisplayName("saveAll: when no collection or empty one is given then empty list is returned")
+    public void saveAll_whenNoCollectionOrEmptyOneIsGiven_thenEmptyListIsReturned() {
+        assertTrue(
+                service.saveAll(null)
+                        .isEmpty()
+        );
+        assertTrue(
+                service.saveAll(new ArrayList<>())
+                        .isEmpty()
+        );
+    }
+
+
+    @Test
+    @DisplayName("saveAll: when a non-empty collection is given then a list with updated models is returned")
+    public void saveAll_whenANonEmptyCollectionIsGiven_thenAListWithUpdatedModelsIsReturned() {
+        OrderLine existingOrderLine = buildExistingOrderLine();
+        OrderLine newOrderLine = buildOrderLine(
+                existingOrderLine.getOrder(),
+                "Trip to Canary Islands",
+                1,
+                900d
+        );
+        existingOrderLine.getOrder().setOrderLines(
+                List.of(
+                        newOrderLine,
+                        existingOrderLine
+                )
+        );
+        int newOrderLineId = 2;
+        List<OrderLine> modelsToSave = asList(
+                newOrderLine,
+                existingOrderLine,
+                null
+        );
+
+        doAnswer(invocation -> {
+            OrderLine orderLineArg = invocation.getArgument(0);
+            orderLineArg.setId(newOrderLineId);
+            return null;
+        }).when(mockMapper)
+                .insert(any(OrderLine.class));
+
+        List<OrderLine> result = service.saveAll(modelsToSave);
+
+        assertNotNull(result);
+        assertEquals(
+                modelsToSave.size() - 1,
+                result.size()
+        );
+
+        assertNotNull(newOrderLine.getId());
+        compareOrderLines(
+                newOrderLine,
+                result.getFirst()
+        );
+        compareOrderLines(
+                existingOrderLine,
+                result.getLast()
+        );
+        verify(mockMapper, times(1))
                 .insert(
                         any(OrderLine.class)
                 );
@@ -196,6 +284,28 @@ public class OrderLineServiceTest {
                     actual.getOrder().getOrderLines().size()
             );
         }
+    }
+
+
+    private static OrderLine buildExistingOrderLine() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                10.1d
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return orderLine;
     }
 
 }

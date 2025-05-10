@@ -64,8 +64,12 @@ public class OrderMapperTest {
                 count
         );
 
-        mapper.deleteById(orderId);
+        int result = mapper.deleteById(orderId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         order = mapper.findById(orderId);
         assertNull(order);
 
@@ -94,8 +98,12 @@ public class OrderMapperTest {
                 count
         );
 
-        mapper.deleteById(orderId);
+        int result = mapper.deleteById(orderId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         order = mapper.findById(orderId);
         assertNull(order);
 
@@ -123,8 +131,12 @@ public class OrderMapperTest {
                 count
         );
 
-        mapper.deleteByCode(code);
+        int result = mapper.deleteByCode(code);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         order = mapper.findByCode(code);
         assertNull(order);
 
@@ -153,8 +165,12 @@ public class OrderMapperTest {
                 count
         );
 
-        mapper.deleteByCode(code);
+        int result = mapper.deleteByCode(code);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         order = mapper.findByCode(code);
         assertNull(order);
 
@@ -167,7 +183,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        Order order = buildExistingOrder1();
+        Order order = buildExistingOrder();
         return Stream.of(
                 //@formatter:off
                 //            id,              expectedResult
@@ -197,7 +213,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByCodeTestCases() {
-        Order order = buildExistingOrder1();
+        Order order = buildExistingOrder();
         return Stream.of(
                 //@formatter:off
                 //            code,              expectedResult
@@ -254,8 +270,12 @@ public class OrderMapperTest {
         );
         assertNull(order.getId());
 
-        mapper.insert(order);
+        int result = mapper.insert(order);
 
+        assertEquals(
+                expectedToBeInserted,
+                result
+        );
         assertNotNull(order);
         assertNotNull(order.getId());
 
@@ -270,7 +290,12 @@ public class OrderMapperTest {
     @Test
     @DisplayName("update: when null is provided then nothing happens")
     public void update_whenNullOrderIsProvided_thenNothingHappens() {
-        mapper.update(null);
+        int result = mapper.update(null);
+
+        assertEquals(
+                0,
+                result
+        );
     }
 
 
@@ -287,8 +312,12 @@ public class OrderMapperTest {
 
         order.setCode(newCode);
 
-        mapper.update(order);
+        int result = mapper.update(order);
 
+        assertEquals(
+                1,
+                result
+        );
         assertNull(
                 mapper.findByCode(oldCode)
         );
@@ -340,7 +369,7 @@ public class OrderMapperTest {
     }
 
 
-    private static Order buildExistingOrder1() {
+    private static Order buildExistingOrder() {
         Order order = buildOrder(
                 1,
                 "Order 1",

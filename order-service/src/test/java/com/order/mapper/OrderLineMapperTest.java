@@ -65,8 +65,12 @@ public class OrderLineMapperTest {
                 count
         );
 
-        mapper.deleteById(orderLineId);
+        int result = mapper.deleteById(orderLineId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         orderLine = mapper.findById(orderLineId);
         assertNull(orderLine);
 
@@ -95,8 +99,12 @@ public class OrderLineMapperTest {
                 count
         );
 
-        mapper.deleteById(orderLineId);
+        int result = mapper.deleteById(orderLineId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         orderLine = mapper.findById(orderLineId);
         assertNull(orderLine);
 
@@ -127,8 +135,12 @@ public class OrderLineMapperTest {
                 count
         );
 
-        mapper.deleteByOrderId(orderId);
+        int result = mapper.deleteByOrderId(orderId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         orderLines = mapper.findByOrderId(orderId);
         assertNotNull(orderLines);
         assertTrue(
@@ -164,8 +176,12 @@ public class OrderLineMapperTest {
                 count
         );
 
-        mapper.deleteByOrderId(orderId);
+        int result = mapper.deleteByOrderId(orderId);
 
+        assertEquals(
+                expectedToBeDeleted,
+                result
+        );
         orderLines = mapper.findByOrderId(orderId);
         assertNotNull(orderLines);
         assertTrue(
@@ -181,7 +197,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine1();
+        OrderLine orderLine = buildExistingOrderLine();
         return Stream.of(
                 //@formatter:off
                 //            id,                  expectedResult
@@ -211,7 +227,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByConceptTestCases() {
-        OrderLine orderLine = buildExistingOrderLine1();
+        OrderLine orderLine = buildExistingOrderLine();
         return Stream.of(
                 //@formatter:off
                 //            concept,                  expectedResult
@@ -247,7 +263,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByOrderIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine1();
+        OrderLine orderLine = buildExistingOrderLine();
         return Stream.of(
                 //@formatter:off
                 //            orderId,                        expectedResult
@@ -317,8 +333,12 @@ public class OrderLineMapperTest {
         );
         assertNull(orderLine.getId());
 
-        mapper.insert(orderLine);
+        int result = mapper.insert(orderLine);
 
+        assertEquals(
+                expectedToBeInserted,
+                result
+        );
         assertNotNull(orderLine);
         assertNotNull(orderLine.getId());
 
@@ -333,7 +353,12 @@ public class OrderLineMapperTest {
     @Test
     @DisplayName("update: when null is provided then nothing happens")
     public void update_whenNullOrderIsProvided_thenNothingHappens() {
-        mapper.update(null);
+        int result = mapper.update(null);
+
+        assertEquals(
+                0,
+                result
+        );
     }
 
 
@@ -369,10 +394,13 @@ public class OrderLineMapperTest {
         orderLine.setAmount(newAmount);
         orderLine.setCost(newCost);
 
-        mapper.update(orderLine);
+        int result = mapper.update(orderLine);
 
+        assertEquals(
+                1,
+                result
+        );
         orderLine = mapper.findById(orderLineId);
-
         assertEquals(
                 newConcept,
                 orderLine.getConcept()
@@ -428,7 +456,7 @@ public class OrderLineMapperTest {
     }
 
 
-    private static OrderLine buildExistingOrderLine1() {
+    private static OrderLine buildExistingOrderLine() {
         Order order = buildOrder(
                 1,
                 "Order 1",

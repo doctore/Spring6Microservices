@@ -35,13 +35,13 @@ public interface OrderLineMapper {
     @Delete("DELETE FROM " + TABLE
           + " WHERE " + ID_COLUMN + " = #{id}"
     )
-    void deleteById(final Integer id);
+    int deleteById(final Integer id);
 
 
     @Delete("DELETE FROM " + TABLE
           + " WHERE " + ORDER_COLUMN + " = #{orderId}"
     )
-    void deleteByOrderId(final Integer orderId);
+    int deleteByOrderId(final Integer orderId);
 
 
     @Select("SELECT * "
@@ -122,7 +122,7 @@ public interface OrderLineMapper {
             keyColumn = ID_COLUMN,
             keyProperty = ID_COLUMN
     )
-    void insert(final OrderLine orderLine);
+    int insert(final OrderLine orderLine);
 
 
     @Update("UPDATE " + TABLE
@@ -132,6 +132,6 @@ public interface OrderLineMapper {
                + ", " + COST_COLUMN + " = #{cost} "
           + "WHERE id = #{id}"
     )
-    void update(final OrderLine orderLine);
+    int update(final OrderLine orderLine);
 
 }
