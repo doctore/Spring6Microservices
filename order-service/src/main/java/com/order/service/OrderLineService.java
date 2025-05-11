@@ -87,6 +87,41 @@ public class OrderLineService {
 
 
     /**
+     *    Returns the {@link List} of {@link OrderLine} which {@link OrderLine#getConcept()} contains provided {@code concept}.
+     * The comparison is not case-sensitive, that is, searching "trAvel", for example, {@link OrderLine#getConcept()} like:
+     * "Travel to Canary Islands", "TRAVEL TO MALAGA" will be returned.
+     *
+     * @apiNote
+     *    If {@code concept} is {@code null} then an empty {@link List} will be returned.
+     *
+     * @param concept
+     *    {@link OrderLine#getConcept()} to search
+     *
+     * @return {@link List} of {@link OrderLine}s that contains the given {@code concept}
+     */
+    public List<OrderLine> findByConcept(final String concept) {
+        return ofNullable(concept)
+                .map(mapper::findByConcept)
+                .orElseGet(ArrayList::new);
+    }
+
+
+    /**
+     * Returns the {@link OrderLine}s belonging to the given {@code orderId}.
+     *
+     * @param orderId
+     *    {@link OrderLine#getOrder()}'s identifier to search
+     *
+     * @return {@link List} of {@link OrderLine} related with provided {@code orderId}
+     */
+    public List<OrderLine> findByOrderId(final Integer orderId) {
+        return ofNullable(orderId)
+                .map(mapper::findByOrderId)
+                .orElseGet(ArrayList::new);
+    }
+
+
+    /**
      *    Persists the information included in the given {@link OrderLine}, inserting if it is new or updating
      * when the {@code orderLine} exists.
      *

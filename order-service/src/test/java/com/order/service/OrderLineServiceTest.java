@@ -64,7 +64,7 @@ public class OrderLineServiceTest {
                 //@formatter:off
                 //            id,                  mapperResult,   expectedResult
                 Arguments.of( null,                0,              false ),
-                Arguments.of( 1,                   0,              false ),
+                Arguments.of( 21,                  0,              false ),
                 Arguments.of( orderLine.getId(),   1,              true )
         ); //@formatter:on
     }
@@ -93,7 +93,7 @@ public class OrderLineServiceTest {
                 //@formatter:off
                 //            orderId,                        mapperResult,   expectedResult
                 Arguments.of( null,                           0,              false ),
-                Arguments.of( 1,                              0,              false ),
+                Arguments.of( 21,                             0,              false ),
                 Arguments.of( orderLine.getOrder().getId(),   1,              true )
         ); //@formatter:on
     }
@@ -122,7 +122,7 @@ public class OrderLineServiceTest {
                 //@formatter:off
                 //            id,                  mapperResult,   expectedResult
                 Arguments.of( null,                null,           empty() ),
-                Arguments.of( 1,                   null,           empty() ),
+                Arguments.of( 21,                  null,           empty() ),
                 Arguments.of( orderLine.getId(),   orderLine,      of(orderLine) )
         ); //@formatter:on
     }
@@ -151,6 +151,82 @@ public class OrderLineServiceTest {
                     expectedResult.get(),
                     result.get()
             );
+        }
+    }
+
+
+    static Stream<Arguments> findByConceptTestCases() {
+        OrderLine orderLine = buildExistingOrderLine();
+        return Stream.of(
+                //@formatter:off
+                //            concept,                  mapperResult,         expectedResult
+                Arguments.of( null,                     null,                 List.of() ),
+                Arguments.of( "NotFound",               List.of(),            List.of() ),
+                Arguments.of( orderLine.getConcept(),   List.of(orderLine),   List.of(orderLine) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByConceptTestCases")
+    @DisplayName("findByConcept: test cases")
+    public void findByConcept_testCases(String concept,
+                                        List<OrderLine> mapperResult,
+                                        List<OrderLine> expectedResult) {
+        when(mockMapper.findByConcept(concept))
+                .thenReturn(mapperResult);
+
+        List<OrderLine> result = service.findByConcept(concept);
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.size(),
+                result.size()
+        );
+        if (!expectedResult.isEmpty()) {
+            for (int i = 0; i < expectedResult.size(); i++) {
+                compareOrderLines(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
+        }
+    }
+
+
+    static Stream<Arguments> findByOrderIdTestCases() {
+        OrderLine orderLine = buildExistingOrderLine();
+        return Stream.of(
+                //@formatter:off
+                //            orderId,                        mapperResult,         expectedResult
+                Arguments.of( null,                           null,                 List.of() ),
+                Arguments.of( 21,                             List.of(),            List.of() ),
+                Arguments.of( orderLine.getOrder().getId(),   List.of(orderLine),   List.of(orderLine) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByOrderIdTestCases")
+    @DisplayName("findByOrderId: test cases")
+    public void findByOrderId_testCases(Integer orderId,
+                                        List<OrderLine> mapperResult,
+                                        List<OrderLine> expectedResult) {
+        when(mockMapper.findByOrderId(orderId))
+                .thenReturn(mapperResult);
+
+        List<OrderLine> result = service.findByOrderId(orderId);
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.size(),
+                result.size()
+        );
+        if (!expectedResult.isEmpty()) {
+            for (int i = 0; i < expectedResult.size(); i++) {
+                compareOrderLines(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
         }
     }
 
