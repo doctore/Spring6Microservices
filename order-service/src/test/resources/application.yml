@@ -14,6 +14,15 @@ spring:
     enabled: false
 
 
+# Configure the logs
+logging:
+  level:
+    com:
+      order:
+        # Set the level of the mapper package for debugging purpose
+        mapper: trace
+
+
 # Disable eureka server connection request for testing
 eureka:
   client:

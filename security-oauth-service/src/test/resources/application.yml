@@ -34,6 +34,21 @@ eureka:
     enabled: false
 
 
+# Configure the logs
+logging:
+  level:
+    com:
+      security:
+        oauth:
+          # Set the level of the repository package for debugging purpose
+          repository: trace
+    org:
+      springframework:
+        jdbc:
+          # Set the level of the Spring JDBC package for debugging purpose
+          core: trace
+
+
 # API documentation
 springdoc:
   api-docs:

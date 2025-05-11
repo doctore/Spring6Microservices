@@ -47,6 +47,24 @@ cache:
     name: onlyForTests3
 
 
+# Configure the logs
+logging:
+  level:
+    com:
+      security:
+        custom:
+          # Set the level of the repository package for debugging purpose
+          application:
+            spring6microservice:
+              repository: trace
+          repository: trace
+    org:
+      springframework:
+        jdbc:
+          # Set the level of the Spring JDBC package for debugging purpose
+          core: trace
+
+
 # API documentation
 springdoc:
   api-docs:
