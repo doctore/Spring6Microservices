@@ -1,7 +1,7 @@
 package com.gatewayserver.filter;
 
-import com.gatewayserver.configuration.rest.RestRoutes;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.Route;
@@ -20,9 +20,9 @@ import reactor.core.scheduler.Schedulers;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -39,15 +39,11 @@ public class RequestFilter implements GlobalFilter {
     private final String NO_VALUE_FOUND = "no value found";
     private final String ALLOW_ORIGIN_VALUE = "*";
 
-    private final Set<String> ROUTE_ID_TO_LOG_BODY_REQUEST = Set.of(
-            RestRoutes.MAIN_ROUTES.SECURITY_CUSTOM_SERVICE.substring(1)
-    );
+    @Value("#{'${log.endpoints.body.httpMethods}'.split(',')}")
+    private List<HttpMethod> httpMethodsToLogBody;
 
-    private final Set<HttpMethod> REST_METHODS_TO_LOG_BODY_REQUEST = Set.of(
-            HttpMethod.PATCH,
-            HttpMethod.POST,
-            HttpMethod.PUT
-    );
+    @Value("#{'${log.endpoints.body.pathToAvoidLogBody}'.split(',')}")
+    private List<String> pathToAvoidLogBody;
 
 
     @Override
@@ -84,11 +80,11 @@ public class RequestFilter implements GlobalFilter {
      */
     private boolean shouldLogRequestBody(final ServerWebExchange exchange) {
         final boolean isRestMethodWithBody = getRequestMethod(exchange)
-                .map(REST_METHODS_TO_LOG_BODY_REQUEST::contains)
+                .map(httpMethodsToLogBody::contains)
                 .orElse(false);
 
-        return ROUTE_ID_TO_LOG_BODY_REQUEST.contains(
-                getRouteId(exchange)
+        return !pathToAvoidLogBody.contains(
+                getRequestPath(exchange)
         ) &&
         isRestMethodWithBody;
     }
@@ -182,7 +178,9 @@ public class RequestFilter implements GlobalFilter {
                             .map(ServerHttpResponse::getHeaders)
                             .ifPresent(h -> {
                                 if (null == h.getAccessControlAllowOrigin()) {
-                                    h.setAccessControlAllowOrigin(ALLOW_ORIGIN_VALUE);
+                                    h.setAccessControlAllowOrigin(
+                                            ALLOW_ORIGIN_VALUE
+                                    );
                                 }
                             });
                 });
@@ -259,6 +257,15 @@ public class RequestFilter implements GlobalFilter {
     }
 
 
+    private String getRequestPath(final ServerWebExchange exchange) {
+        return ofNullable(exchange)
+                .map(ServerWebExchange::getRequest)
+                .map(ServerHttpRequest::getPath)
+                .map(Objects::toString)
+                .orElse(NO_VALUE_FOUND);
+    }
+
+
     private Optional<ServerHttpResponse> getResponse(final ServerWebExchange exchange) {
         return ofNullable(exchange)
                 .map(ServerWebExchange::getResponse);
@@ -274,13 +281,17 @@ public class RequestFilter implements GlobalFilter {
     private <T> Optional<T> getServerWebExchangeAttribute(final ServerWebExchange exchange,
                                                           final String attribute) {
         return ofNullable(exchange)
-                .map(ex -> ex.getAttribute(attribute));
+                .map(ex ->
+                        ex.getAttribute(attribute)
+                );
     }
 
 
     private String getRouteId(final ServerWebExchange exchange) {
         return getServerWebExchangeAttribute(exchange, GATEWAY_ROUTE_ATTR)
-                .map(r -> ((Route) r).getId())
+                .map(r ->
+                        ((Route) r).getId()
+                )
                 .orElse(NO_VALUE_FOUND);
     }
 

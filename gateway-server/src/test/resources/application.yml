@@ -6,6 +6,16 @@ spring:
       enabled: false
 
 
+# Custom properties to manage how the internal filter should manage the data to include in the logs
+log:
+  endpoints:
+    body:
+      # Comma-separated HTTP methods to include the request body in logs
+      httpMethods: onlyForTests
+      # Comma-separated URLs (without: protocol, domain and port) whose body will not be added to the logs (mainly to avoid exposing sensitive data)
+      pathToAvoidLogBody: onlyForTests
+
+
 # Disable eureka server connection request for testing
 eureka:
   client:
