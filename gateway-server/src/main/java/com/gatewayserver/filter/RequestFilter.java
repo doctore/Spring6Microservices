@@ -42,8 +42,8 @@ public class RequestFilter implements GlobalFilter {
     @Value("#{'${log.endpoints.body.httpMethods}'.split(',')}")
     private List<HttpMethod> httpMethodsToLogBody;
 
-    @Value("#{'${log.endpoints.body.pathToAvoidLogBody}'.split(',')}")
-    private List<String> pathToAvoidLogBody;
+    @Value("#{'${log.endpoints.body.pathsToAvoidLogBody}'.split(',')}")
+    private List<String> pathsToAvoidLogBody;
 
 
     @Override
@@ -83,7 +83,7 @@ public class RequestFilter implements GlobalFilter {
                 .map(httpMethodsToLogBody::contains)
                 .orElse(false);
 
-        return !pathToAvoidLogBody.contains(
+        return !pathsToAvoidLogBody.contains(
                 getRequestPath(exchange)
         ) &&
         isRestMethodWithBody;

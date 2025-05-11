@@ -13,7 +13,7 @@ log:
       # Comma-separated HTTP methods to include the request body in logs
       httpMethods: onlyForTests
       # Comma-separated URLs (without: protocol, domain and port) whose body will not be added to the logs (mainly to avoid exposing sensitive data)
-      pathToAvoidLogBody: onlyForTests
+      pathsToAvoidLogBody: onlyForTests
 
 
 # Disable eureka server connection request for testing
