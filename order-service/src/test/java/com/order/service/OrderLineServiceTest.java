@@ -59,7 +59,7 @@ public class OrderLineServiceTest {
 
 
     static Stream<Arguments> deleteByIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         return Stream.of(
                 //@formatter:off
                 //            id,                  mapperResult,   expectedResult
@@ -88,7 +88,7 @@ public class OrderLineServiceTest {
 
 
     static Stream<Arguments> deleteByOrderIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         return Stream.of(
                 //@formatter:off
                 //            orderId,                        mapperResult,   expectedResult
@@ -117,7 +117,7 @@ public class OrderLineServiceTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         return Stream.of(
                 //@formatter:off
                 //            id,                  mapperResult,   expectedResult
@@ -151,12 +151,16 @@ public class OrderLineServiceTest {
                     expectedResult.get(),
                     result.get()
             );
+            verify(mockMapper, times(1))
+                    .findById(
+                            id
+                    );
         }
     }
 
 
     static Stream<Arguments> findByConceptTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         return Stream.of(
                 //@formatter:off
                 //            concept,                  mapperResult,         expectedResult
@@ -189,12 +193,16 @@ public class OrderLineServiceTest {
                         result.get(i)
                 );
             }
+            verify(mockMapper, times(1))
+                    .findByConcept(
+                            concept
+                    );
         }
     }
 
 
     static Stream<Arguments> findByOrderIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         return Stream.of(
                 //@formatter:off
                 //            orderId,                        mapperResult,         expectedResult
@@ -246,7 +254,7 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("save: when new model is given then insert is invoked and non-empty is returned")
     public void save_whenNewModelIsGiven_thenInsertIsInvokedAndNonEmptyIsReturned() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
         orderLine.setId(null);
         int newOrderLineId = 1;
 
@@ -285,7 +293,7 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("save: when existing model is given then update is invoked and non-empty is returned")
     public void save_whenExistingModelIsGiven_thenUpdateIsInvokedAndNonEmptyIsReturned() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildOrderLineWithOrder();
 
         Optional<OrderLine> result = service.save(orderLine);
 
@@ -326,7 +334,7 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("saveAll: when a non-empty collection is given then a list with updated models is returned")
     public void saveAll_whenANonEmptyCollectionIsGiven_thenAListWithUpdatedModelsIsReturned() {
-        OrderLine existingOrderLine = buildExistingOrderLine();
+        OrderLine existingOrderLine = buildOrderLineWithOrder();
         OrderLine newOrderLine = buildOrderLine(
                 existingOrderLine.getOrder(),
                 "Trip to Canary Islands",
@@ -421,7 +429,7 @@ public class OrderLineServiceTest {
     }
 
 
-    private static OrderLine buildExistingOrderLine() {
+    private static OrderLine buildOrderLineWithOrder() {
         Order order = buildOrder(
                 1,
                 "Order 1",
