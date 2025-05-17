@@ -1,5 +1,7 @@
 package com.order;
 
+import com.order.dto.OrderDto;
+import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
 import lombok.experimental.UtilityClass;
@@ -36,6 +38,21 @@ public class TestDataFactory {
     }
 
 
+    public static OrderDto buildOrderDto(final Integer id,
+                                         final String code,
+                                         final Collection<OrderLineDto> orderLines) {
+        return OrderDto.builder()
+                .id(id)
+                .code(code)
+                .orderLines(
+                        new ArrayList<>(
+                                orderLines
+                        )
+                )
+                .build();
+    }
+
+
     public static OrderLine buildOrderLine(final Order order,
                                            final String concept,
                                            final int amount,
@@ -62,6 +79,21 @@ public class TestDataFactory {
                 amount,
                 cost
         );
+    }
+
+
+    public static OrderLineDto buildOrderLineDto(final Integer id,
+                                                 final Integer orderId,
+                                                 final String concept,
+                                                 final int amount,
+                                                 final double cost) {
+        return OrderLineDto.builder()
+                .id(id)
+                .orderId(orderId)
+                .concept(concept)
+                .amount(amount)
+                .cost(cost)
+                .build();
     }
 
 }
