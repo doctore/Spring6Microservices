@@ -26,7 +26,7 @@ import static java.util.Optional.ofNullable;
 public interface OrderConverter extends BaseConverter<Order, OrderDto> {
 
     /**
-     * Create a new {@link Order} which properties match with the given {@link OrderDto}
+     * Creates a new {@link Order} which properties match with the given {@link OrderDto}
      *
      * @param orderDto
      *    {@link OrderDto} with the source information
@@ -46,7 +46,7 @@ public interface OrderConverter extends BaseConverter<Order, OrderDto> {
 
 
 /**
- * Overwrite default converter methods included in {@link OrderConverter}
+ * Overwrites default converter methods included in {@link OrderConverter}.
  */
 abstract class OrderConverterDecorator implements OrderConverter {
 
@@ -58,7 +58,7 @@ abstract class OrderConverterDecorator implements OrderConverter {
 
 
     /**
-     *    Create a new {@link Order} which properties match with the given {@link OrderDto}. The difference
+     *    Creates a new {@link Order} which properties match with the given {@link OrderDto}. The difference
      * with the default behavior is how to manage the bidirectional relation between {@link Order} and {@link OrderLine}.
      *
      * @param orderDto

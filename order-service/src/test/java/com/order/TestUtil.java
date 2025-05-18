@@ -162,4 +162,56 @@ public class TestUtil {
         );
     }
 
+
+    public static void verifyEmptyOrder(final Order order) {
+        assertNotNull(order);
+        assertNull(order.getId());
+        assertNull(order.getCode());
+        assertTrue(
+                order.getOrderLines().isEmpty()
+        );
+    }
+
+
+    public static void verifyEmptyOrderDto(final OrderDto order) {
+        assertNotNull(order);
+        assertNull(order.getId());
+        assertNull(order.getCode());
+        assertTrue(
+                order.getOrderLines().isEmpty()
+        );
+    }
+
+
+    public static void verifyEmptyOrderLine(final OrderLine orderLine) {
+        assertNotNull(orderLine);
+        assertNull(orderLine.getId());
+        assertNull(orderLine.getOrder());
+        assertNull(orderLine.getConcept());
+        assertEquals(
+                0,
+                orderLine.getAmount()
+        );
+        assertEquals(
+                0d,
+                orderLine.getCost()
+        );
+    }
+
+
+    public static void verifyEmptyOrderLineDto(final OrderLineDto orderLine) {
+        assertNotNull(orderLine);
+        assertNull(orderLine.getId());
+        assertNull(orderLine.getOrderId());
+        assertNull(orderLine.getConcept());
+        assertEquals(
+                0,
+                orderLine.getAmount()
+        );
+        assertEquals(
+                0d,
+                orderLine.getCost()
+        );
+    }
+
 }

@@ -1,16 +1,25 @@
 package com.order.util.converter;
 
+import com.order.dto.OrderDto;
 import com.order.dto.OrderLineDto;
+import com.order.model.Order;
 import com.order.model.OrderLine;
 import com.spring6microservices.common.core.converter.BaseConverter;
+import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Utility class to convert from {@link OrderLine} to {@link OrderLineDto} and vice versa.
  */
 @Mapper
+@DecoratedWith(
+        OrderLineConverterDecorator.class
+)
 public interface OrderLineConverter extends BaseConverter<OrderLine, OrderLineDto> {
 
     /**
@@ -35,7 +44,8 @@ public interface OrderLineConverter extends BaseConverter<OrderLine, OrderLineDt
      * Creates a new {@link OrderLineDto} which properties match with the given {@link OrderLine}.
      *
      * @apiNote
-     *    The functionality to set {@link OrderLine#getOrder()} is managed by the decorator added in {@link OrderConverter}.
+     *    The functionality to set {@link OrderLine#getOrder()} is managed by the decorator added in {@link OrderConverter}
+     * or the decorated method: {@link OrderLineConverterDecorator#fromDtoToModel(OrderLineDto)}.
      *
      * @param orderLine
      *    {@link OrderLine} with the source information
@@ -50,6 +60,49 @@ public interface OrderLineConverter extends BaseConverter<OrderLine, OrderLineDt
             )
     )
     OrderLine fromDtoToModel(final OrderLineDto orderLine);
+
+}
+
+
+/**
+ * Overwrite default converter methods included in {@link OrderLineConverter}.
+ */
+abstract class OrderLineConverterDecorator implements OrderLineConverter {
+
+    @Autowired
+    private OrderLineConverter converter;
+
+
+    /**
+     * Creates a new {@link OrderLine} which properties match with the given {@link OrderLineDto}.
+     *
+     * @apiNote
+     *    This method overwrites the default one, setting as {@link OrderLine#getOrder()} an empty {@link Order} with
+     * {@link OrderLineDto#getOrderId()} as identifier.
+     *
+     * @param orderLineDto
+     *    {@link OrderDto} with the source information
+     *
+     * @return {@link OrderLine}
+     */
+    @Override
+    public OrderLine fromDtoToModel(final OrderLineDto orderLineDto) {
+        return ofNullable(orderLineDto)
+                .map(dto -> {
+                    OrderLine model = converter.fromDtoToModel(dto);
+                    if (null != orderLineDto.getOrderId()) {
+                        Order order = new Order();
+                        order.setId(
+                                orderLineDto.getOrderId()
+                        );
+                        model.setOrder(
+                                order
+                        );
+                    }
+                    return model;
+                })
+                .orElse(null);
+    }
 
 }
 
