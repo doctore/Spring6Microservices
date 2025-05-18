@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import static com.order.TestDataFactory.buildOrder;
 import static com.order.TestDataFactory.buildOrderLine;
+import static com.order.TestUtil.compareOrders;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
@@ -324,48 +325,6 @@ public class OrderMapperTest {
         assertNotNull(
                 mapper.findByCode(newCode)
         );
-    }
-
-
-    private void compareOrders(final Order expected,
-                               final Order actual) {
-        assertNotNull(expected);
-        assertNotNull(actual);
-        assertEquals(
-                expected.getId(),
-                actual.getId()
-        );
-        assertEquals(
-                expected.getCode(),
-                actual.getCode()
-        );
-        if (null == expected.getOrderLines()) {
-            assertNull(actual.getOrderLines());
-        }
-        else {
-            assertEquals(
-                    expected.getOrderLines().size(),
-                    actual.getOrderLines().size()
-            );
-            for (int i = 0; i < expected.getOrderLines().size(); i++) {
-                assertEquals(
-                        expected.getOrderLines().get(i).getId(),
-                        actual.getOrderLines().get(i).getId()
-                );
-                assertEquals(
-                        expected.getOrderLines().get(i).getConcept(),
-                        actual.getOrderLines().get(i).getConcept()
-                );
-                assertEquals(
-                        expected.getOrderLines().get(i).getAmount(),
-                        actual.getOrderLines().get(i).getAmount()
-                );
-                assertEquals(
-                        expected.getOrderLines().get(i).getCost(),
-                        actual.getOrderLines().get(i).getCost()
-                );
-            }
-        }
     }
 
 

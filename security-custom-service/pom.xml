@@ -178,7 +178,7 @@
 
     <build>
         <plugins>
-            <!-- GraalVM dor native images -->
+            <!-- GraalVM for native images -->
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>

@@ -5,11 +5,12 @@ import com.order.model.Order;
 import com.order.model.OrderLine;
 import com.spring6microservices.common.core.converter.BaseConverter;
 import com.spring6microservices.common.core.util.CollectionUtil;
-import org.mapstruct.DecoratedWith;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static java.util.Optional.ofNullable;
 
@@ -80,9 +81,26 @@ abstract class OrderConverterDecorator implements OrderConverter {
                                         .toList()
                         );
                     }
+                    else {
+                        model.setOrderLines(
+                                List.of()
+                        );
+                    }
                     return model;
                 })
                 .orElse(null);
+    }
+
+
+    @Override
+    public List<Order> fromDtosToModels(final Collection<OrderDto> orderDtos) {
+        return ofNullable(orderDtos)
+                .map(dtos ->
+                        dtos.stream()
+                                .map(this::fromDtoToModel)
+                                .toList()
+                )
+                .orElseGet(ArrayList::new);
     }
 
 }

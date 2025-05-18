@@ -13,7 +13,6 @@ import org.mapstruct.Mappings;
 @Mapper
 public interface OrderLineConverter extends BaseConverter<OrderLine, OrderLineDto> {
 
-
     /**
      * Creates a new {@link OrderLineDto} which properties match with the given {@link OrderLine}.
      *

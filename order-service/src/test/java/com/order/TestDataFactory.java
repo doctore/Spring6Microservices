@@ -13,7 +13,6 @@ import java.util.Collection;
 @UtilityClass
 public class TestDataFactory {
 
-
     public static Order buildOrder(final String code,
                                    final Collection<OrderLine> orderLines) {
         return buildOrder(
@@ -44,6 +43,9 @@ public class TestDataFactory {
         return OrderDto.builder()
                 .id(id)
                 .code(code)
+                .createdAt(
+                        LocalDateTime.now()
+                )
                 .orderLines(
                         new ArrayList<>(
                                 orderLines

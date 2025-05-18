@@ -53,7 +53,9 @@ public interface BaseConverter<M, D> {
      *
      * @return {@link List} of equivalent models
      */
-    @IterableMapping(nullValueMappingStrategy=NullValueMappingStrategy.RETURN_DEFAULT)
+    @IterableMapping(
+            nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
+    )
     List<M> fromDtosToModels(final Collection<D> dtos);
 
     /**
@@ -90,7 +92,9 @@ public interface BaseConverter<M, D> {
      *
      * @return {@link List} of equivalent dtos
      */
-    @IterableMapping(nullValueMappingStrategy=NullValueMappingStrategy.RETURN_DEFAULT)
+    @IterableMapping(
+            nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
+    )
     List<D> fromModelsToDtos(final Collection<M> models);
 
 }

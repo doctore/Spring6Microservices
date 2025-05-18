@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import static com.order.TestDataFactory.buildOrder;
 import static com.order.TestDataFactory.buildOrderLine;
+import static com.order.TestUtil.compareOrderLines;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -386,46 +387,6 @@ public class OrderLineServiceTest {
                 .update(
                         any(OrderLine.class)
                 );
-    }
-
-
-    private void compareOrderLines(final OrderLine expected,
-                                   final OrderLine actual) {
-        assertNotNull(expected);
-        assertNotNull(actual);
-        assertEquals(
-                expected.getId(),
-                actual.getId()
-        );
-        assertEquals(
-                expected.getConcept(),
-                actual.getConcept()
-        );
-        assertEquals(
-                expected.getAmount(),
-                actual.getAmount()
-        );
-        assertEquals(
-                expected.getCost(),
-                actual.getCost()
-        );
-        if (null == expected.getOrder()) {
-            assertNull(actual.getOrder());
-        }
-        else {
-            assertEquals(
-                    expected.getOrder().getId(),
-                    actual.getOrder().getId()
-            );
-            assertEquals(
-                    expected.getOrder().getCode(),
-                    actual.getOrder().getCode()
-            );
-            assertEquals(
-                    expected.getOrder().getOrderLines().size(),
-                    actual.getOrder().getOrderLines().size()
-            );
-        }
     }
 
 
