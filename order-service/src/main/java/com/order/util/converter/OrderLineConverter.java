@@ -11,6 +11,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static java.util.Optional.ofNullable;
 
 /**
@@ -102,6 +106,18 @@ abstract class OrderLineConverterDecorator implements OrderLineConverter {
                     return model;
                 })
                 .orElse(null);
+    }
+
+
+    @Override
+    public List<OrderLine> fromDtosToModels(final Collection<OrderLineDto> orderDtos) {
+        return ofNullable(orderDtos)
+                .map(dtos ->
+                        dtos.stream()
+                                .map(this::fromDtoToModel)
+                                .toList()
+                )
+                .orElseGet(ArrayList::new);
     }
 
 }
