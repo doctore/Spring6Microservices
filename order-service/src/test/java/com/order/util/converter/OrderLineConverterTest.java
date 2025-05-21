@@ -234,9 +234,204 @@ public class OrderLineConverterTest {
     }
 
 
+    @Test
+    @DisplayName("fromModelToDto: when given model is null then null dto is returned")
+    public void fromModelToDto_whenGivenModelIsNull_thenNullIsReturned() {
+        assertNull(
+                converter.fromModelToDto(null)
+        );
+    }
 
-    // TODO: Pending fromModelToDto and related unit tests
 
+    @Test
+    @DisplayName("fromModelToDto: when given model is empty then empty dto is returned")
+    public void fromModelToDto_whenGivenModelIsEmpty_thenEmptyDtoIsReturned() {
+        OrderLineDto result = converter.fromModelToDto(
+                new OrderLine()
+        );
+
+        verifyEmptyOrderLineDto(
+                result
+        );
+    }
+
+
+    static Stream<Arguments> fromModelToDtoWithDataTestCases() {
+        OrderLine orderLineWithOrder = buildOrderLineWithOrder();
+        OrderLine orderLineWithoutOrder = buildOrderLine(
+                orderLineWithOrder.getId() + 1,
+                null,
+                orderLineWithOrder.getConcept() + ".v2",
+                orderLineWithOrder.getAmount() + 11,
+                orderLineWithOrder.getCost() + 19d
+        );
+        OrderLineDto expectedResultWithOrder = buildOrderLineDtoWithOrder();
+        OrderLineDto expectedResulWithoutOrder = buildOrderLineDto(
+                orderLineWithoutOrder.getId(),
+                null,
+                orderLineWithoutOrder.getConcept(),
+                orderLineWithoutOrder.getAmount(),
+                orderLineWithoutOrder.getCost()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            modelToConvert,          expectedResult
+                Arguments.of( orderLineWithOrder,      expectedResultWithOrder ),
+                Arguments.of( orderLineWithoutOrder,   expectedResulWithoutOrder )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("fromModelToDtoWithDataTestCases")
+    @DisplayName("fromModelToDto: when the given model contains data then the equivalent dto is returned")
+    public void fromModelToDto_whenGivenModelContainsData_thenEquivalentDtoIsReturned(OrderLine modelToConvert,
+                                                                                      OrderLineDto expectedResult) {
+        OrderLineDto result = converter.fromModelToDto(modelToConvert);
+
+        compareOrderLinesDtos(
+                expectedResult,
+                result
+        );
+    }
+
+
+    @Test
+    @DisplayName("fromModelToOptionalDto: when given model is null then empty Optional is returned")
+    public void fromModelToOptionalDto_whenGivenModelIsNull_thenEmptyOptionalIsReturned() {
+        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(null);
+
+        assertNotNull(result);
+        assertTrue(
+                result.isEmpty()
+        );
+    }
+
+
+    @Test
+    @DisplayName("fromModelToOptionalDto: when given model is empty then non-empty Optional with an empty dto is returned")
+    public void fromModelToOptionalDto_whenGivenModelIsEmpty_thenNonEmptyOptionalWithAnEmptyDtoIsReturned() {
+        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(
+                new OrderLine()
+        );
+
+        assertNotNull(result);
+        assertTrue(
+                result.isPresent()
+        );
+        verifyEmptyOrderLineDto(
+                result.get()
+        );
+    }
+
+
+    static Stream<Arguments> fromModelToOptionalDtoWithDataTestCases() {
+        OrderLine orderLineWithOrder = buildOrderLineWithOrder();
+        OrderLine orderLineWithoutOrder = buildOrderLine(
+                orderLineWithOrder.getId() + 1,
+                null,
+                orderLineWithOrder.getConcept() + ".v2",
+                orderLineWithOrder.getAmount() + 11,
+                orderLineWithOrder.getCost() + 19d
+        );
+        OrderLineDto expectedResultWithOrder = buildOrderLineDtoWithOrder();
+        OrderLineDto expectedResulWithoutOrder = buildOrderLineDto(
+                orderLineWithoutOrder.getId(),
+                null,
+                orderLineWithoutOrder.getConcept(),
+                orderLineWithoutOrder.getAmount(),
+                orderLineWithoutOrder.getCost()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            modelToConvert,          expectedResult
+                Arguments.of( orderLineWithOrder,      of(expectedResultWithOrder) ),
+                Arguments.of( orderLineWithoutOrder,   of(expectedResulWithoutOrder) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("fromModelToOptionalDtoWithDataTestCases")
+    @DisplayName("fromModelToOptionalDto: when the given model contains data then then Optional with equivalent dto is returned")
+    public void fromModelToOptionalDto_whenGivenModelContainsData_thenOptionalOfEquivalentDtoIsReturned(OrderLine modelToConvert,
+                                                                                                        Optional<OrderLineDto> expectedResult) {
+        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(modelToConvert);
+
+        assertNotNull(result);
+        assertTrue(
+                result.isPresent()
+        );
+        compareOrderLinesDtos(
+                expectedResult.get(),
+                result.get()
+        );
+    }
+
+
+    @Test
+    @DisplayName("fromModelsToDtos: when given collection is null then empty list is returned")
+    public void fromModelsToDtos_whenGivenCollectionIsNull_thenEmptyListIsReturned() {
+        assertTrue(
+                converter.fromModelsToDtos(null)
+                        .isEmpty()
+        );
+    }
+
+
+    @Test
+    @DisplayName("fromModelsToDtos: when given collection is empty then empty list is returned")
+    public void fromModelsToDtos_whenGivenCollectionIsEmpty_thenEmptyListIsReturned() {
+        assertTrue(
+                converter.fromModelsToDtos(List.of())
+                        .isEmpty()
+        );
+    }
+
+
+    static Stream<Arguments> fromModelsToDtosWithDataTestCases() {
+        OrderLine orderLineWithOrder = buildOrderLineWithOrder();
+        OrderLine orderLineWithoutOrder = buildOrderLine(
+                orderLineWithOrder.getId() + 1,
+                null,
+                orderLineWithOrder.getConcept() + ".v2",
+                orderLineWithOrder.getAmount() + 11,
+                orderLineWithOrder.getCost() + 19d
+        );
+        OrderLineDto expectedResultWithOrder = buildOrderLineDtoWithOrder();
+        OrderLineDto expectedResulWithoutOrder = buildOrderLineDto(
+                orderLineWithoutOrder.getId(),
+                null,
+                orderLineWithoutOrder.getConcept(),
+                orderLineWithoutOrder.getAmount(),
+                orderLineWithoutOrder.getCost()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            modelsToConvert,                  expectedResult
+                Arguments.of( List.of(orderLineWithOrder),      List.of(expectedResultWithOrder) ),
+                Arguments.of( List.of(orderLineWithoutOrder),   List.of(expectedResulWithoutOrder) )
+        ); //@formatter:on
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("fromModelsToDtosWithDataTestCases")
+    @DisplayName("fromModelsToDtos: when the given collection contains data then a List of equivalent dtos is returned")
+    public void fromModelsToDtos_whenGivenCollectionContainsData_thenEquivalentCollectionDtosIsIsReturned(Collection<OrderLine> modelsToConvert,
+                                                                                                          List<OrderLineDto> expectedResult) {
+        List<OrderLineDto> result = converter.fromModelsToDtos(modelsToConvert);
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.size(),
+                result.size()
+        );
+        for (int i = 0; i < result.size(); i++) {
+            compareOrderLinesDtos(
+                    expectedResult.get(i),
+                    result.get(i)
+            );
+        }
+    }
 
 
     private static OrderLine buildOrderLineWithOrder() {
