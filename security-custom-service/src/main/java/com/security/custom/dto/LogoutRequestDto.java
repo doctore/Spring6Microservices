@@ -12,12 +12,19 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Schema(description = "Required data to log out a user")
+@Schema(
+        description = "Required data to log out a user"
+)
 public class LogoutRequestDto {
 
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String username;
 
 }

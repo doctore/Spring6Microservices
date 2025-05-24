@@ -35,7 +35,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Log4j2
 @RestController
-@RequestMapping(value = RestRoutes.AUTHENTICATION.ROOT)
+@RequestMapping(
+        value = RestRoutes.AUTHENTICATION.ROOT
+)
 @Validated
 public class AuthenticationController extends BaseController {
 
@@ -107,8 +109,12 @@ public class AuthenticationController extends BaseController {
                     )
             }
     )
-    @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN)
-    @Transactional(readOnly = true)
+    @PostMapping(
+            value = RestRoutes.AUTHENTICATION.LOGIN
+    )
+    @Transactional(
+            readOnly = true
+    )
     public Mono<ResponseEntity<AuthenticationInformationDto>> login(@RequestBody @Valid final AuthenticationRequestLoginDto authenticationRequest) {
         log.info(
                 format("Requesting login with: %s",
@@ -196,7 +202,9 @@ public class AuthenticationController extends BaseController {
                     )
             }
     )
-    @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
+    @PostMapping(
+            value = RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED
+    )
     public Mono<ResponseEntity<AuthenticationInformationAuthorizationCodeDto>> loginAuthorized(@RequestBody @Valid final AuthenticationRequestLoginAuthorizedDto authenticationRequest) {
         log.info(
                 format("Requesting login authorized with: %s",
@@ -294,7 +302,9 @@ public class AuthenticationController extends BaseController {
                     )
             }
     )
-    @PostMapping(value = RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
+    @PostMapping(
+            value = RestRoutes.AUTHENTICATION.LOGIN_TOKEN
+    )
     public Mono<ResponseEntity<AuthenticationInformationDto>> loginToken(@RequestBody @Valid final AuthenticationRequestLoginTokenDto authenticationRequest) {
         log.info(
                 format("Requesting login token with: %s",
@@ -374,7 +384,9 @@ public class AuthenticationController extends BaseController {
                     )
             }
     )
-    @PostMapping(value = RestRoutes.AUTHENTICATION.LOGOUT)
+    @PostMapping(
+            value = RestRoutes.AUTHENTICATION.LOGOUT
+    )
     public Mono<ResponseEntity<Void>> logout(@RequestBody @Valid final LogoutRequestDto logoutRequest) {
         log.info(
                 format("Logs out using the request: %s",
@@ -458,8 +470,12 @@ public class AuthenticationController extends BaseController {
                     )
             }
     )
-    @PostMapping(value = RestRoutes.AUTHENTICATION.REFRESH)
-    @Transactional(readOnly = true)
+    @PostMapping(
+            value = RestRoutes.AUTHENTICATION.REFRESH
+    )
+    @Transactional(
+            readOnly = true
+    )
     public Mono<ResponseEntity<AuthenticationInformationDto>> refresh(@RequestBody @Size(min = 1) final String refreshToken) {
         log.info(
                 format("Requesting refresh action using the provided token: %s",

@@ -84,7 +84,17 @@ MERGE INTO security.spring6microservice_permission
     )
    ,(
        2
+      ,'DELETE_ORDER'
+      ,current_timestamp
+    )
+   ,(
+       3
       ,'GET_ORDER'
+      ,current_timestamp
+    )
+   ,(
+       4
+      ,'UPDATE_ORDER'
       ,current_timestamp
     );
 
@@ -117,5 +127,21 @@ MERGE INTO security.spring6microservice_role_permission
        WHERE name = 'ROLE_ADMIN'
       ,SELECT id
        FROM security.spring6microservice_permission
+       WHERE name = 'DELETE_ORDER'
+    )
+   ,(
+       SELECT id
+       FROM security.spring6microservice_role
+       WHERE name = 'ROLE_ADMIN'
+      ,SELECT id
+       FROM security.spring6microservice_permission
        WHERE name = 'GET_ORDER'
+    )
+   ,(
+       SELECT id
+       FROM security.spring6microservice_role
+       WHERE name = 'ROLE_ADMIN'
+      ,SELECT id
+       FROM security.spring6microservice_permission
+       WHERE name = 'UPDATE_ORDER'
     );

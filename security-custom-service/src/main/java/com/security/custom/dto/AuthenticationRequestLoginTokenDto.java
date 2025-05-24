@@ -14,30 +14,54 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
  */
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(of = { "authorizationCode" })
+@EqualsAndHashCode(
+        of = { "authorizationCode" }
+)
 @NoArgsConstructor
-@Schema(description = "Required data to authenticate a user using flow with PKCE (second request)")
-@ToString(exclude = { "password", "verifier" })
+@Schema(
+        description = "Required data to authenticate a user using flow with PKCE (second request)"
+)
+@ToString(
+        exclude = { "password", "verifier" }
+)
 public class AuthenticationRequestLoginTokenDto {
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String username;
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1, max = 128)
+    @Size(
+            min = 1,
+            max = 128
+    )
     private String password;
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1)
+    @Size(
+            min = 1
+    )
     private String authorizationCode;
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1)
+    @Size(
+            min = 1
+    )
     private String verifier;
 
 }

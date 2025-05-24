@@ -36,22 +36,32 @@ public class ApplicationClientDetails implements UserDetails {
 
     @Id
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String id;
 
     @NotNull
-    @Size(min = 1, max = 256)
+    @Size(
+            min = 1,
+            max = 256
+    )
     private String applicationClientSecret;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(
+            EnumType.STRING
+    )
     private TokenSignatureAlgorithm signatureAlgorithm;
 
     @NotNull
     private String signatureSecret;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(
+            EnumType.STRING
+    )
     private SecurityHandler securityHandler;
 
     /**
@@ -70,16 +80,22 @@ public class ApplicationClientDetails implements UserDetails {
      * </ul>
      */
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(
+            EnumType.STRING
+    )
     private TokenType tokenType;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(
+            EnumType.STRING
+    )
     private TokenEncryptionAlgorithm encryptionAlgorithm;
 
     /**
      * It must be {@code null} if {@link ApplicationClientDetails#encryptionAlgorithm} is {@code null}.
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(
+            EnumType.STRING
+    )
     private TokenEncryptionMethod encryptionMethod;
 
     /**

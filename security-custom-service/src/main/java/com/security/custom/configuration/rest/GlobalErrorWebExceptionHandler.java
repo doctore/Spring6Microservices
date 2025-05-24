@@ -47,7 +47,9 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
  */
 @RestControllerAdvice
 @Log4j2
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(
+        Ordered.HIGHEST_PRECEDENCE
+)
 public class GlobalErrorWebExceptionHandler {
 
     /**

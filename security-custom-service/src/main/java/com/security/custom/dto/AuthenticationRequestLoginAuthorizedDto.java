@@ -16,20 +16,30 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
  */
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(of = { "challenge" })
+@EqualsAndHashCode(
+        of = { "challenge" }
+)
 @NoArgsConstructor
-@Schema(description = "Required data to authenticate a user using flow with PKCE (first request)")
+@Schema(
+        description = "Required data to authenticate a user using flow with PKCE (first request)"
+)
 @ToString
 public class AuthenticationRequestLoginAuthorizedDto {
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
     @Size(min = 1)
     private String challenge;
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @EnumHasInternalStringValue(enumClass= HashAlgorithm.class)
+    @EnumHasInternalStringValue(
+            enumClass = HashAlgorithm.class
+    )
     private String challengeMethod;
 
 }

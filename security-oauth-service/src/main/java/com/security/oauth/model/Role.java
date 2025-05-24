@@ -17,7 +17,9 @@ import static com.spring6microservices.common.core.util.CollectionUtil.addIfNotN
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 
 @Data
-@EqualsAndHashCode(of = {"name"})
+@EqualsAndHashCode(
+        of = {"name"}
+)
 @NoArgsConstructor
 public class Role implements Serializable {
 
@@ -27,7 +29,10 @@ public class Role implements Serializable {
     private Integer id;
 
     @NotNull
-    @Size(min =1 , max = 128)
+    @Size(
+            min =1,
+            max = 128
+    )
     private RoleEnum name;
 
     private Set<PermissionEnum> permissions;

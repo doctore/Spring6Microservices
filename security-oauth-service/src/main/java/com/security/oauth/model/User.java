@@ -21,7 +21,9 @@ import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
 @AllArgsConstructor
 @Builder
 @Data
-@EqualsAndHashCode(of = {"username"})
+@EqualsAndHashCode(
+        of = {"username"}
+)
 @NoArgsConstructor
 public class User implements UserDetails {
 
@@ -31,15 +33,24 @@ public class User implements UserDetails {
     private Long id;
 
     @NotNull
-    @Size(min =1 , max = 128)
+    @Size(
+            min = 1,
+            max = 128
+    )
     private String name;
 
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String username;
 
     @NotNull
-    @Size(min = 1, max = 128)
+    @Size(
+            min = 1,
+            max = 128
+    )
     private String password;
 
     @NotNull

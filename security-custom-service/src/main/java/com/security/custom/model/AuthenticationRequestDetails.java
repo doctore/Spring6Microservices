@@ -14,7 +14,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Data
-@EqualsAndHashCode(of = { "authorizationCode" })
+@EqualsAndHashCode(
+        of = { "authorizationCode" }
+)
 @NoArgsConstructor
 public class AuthenticationRequestDetails implements Serializable {
 

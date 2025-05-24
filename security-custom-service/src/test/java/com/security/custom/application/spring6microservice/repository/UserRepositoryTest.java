@@ -48,7 +48,13 @@ public class UserRepositoryTest {
                 PermissionEnum.CREATE_ORDER
         );
         role.addPermission(
+                PermissionEnum.DELETE_ORDER
+        );
+        role.addPermission(
                 PermissionEnum.GET_ORDER
+        );
+        role.addPermission(
+                PermissionEnum.UPDATE_ORDER
         );
         User existingUser = User.builder()
                 .id(1L)

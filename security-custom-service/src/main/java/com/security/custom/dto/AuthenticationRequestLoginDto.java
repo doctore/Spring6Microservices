@@ -18,20 +18,36 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
  */
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(of = { "username" })
+@EqualsAndHashCode(
+        of = { "username" }
+)
 @NoArgsConstructor
-@Schema(description = "Required data to authenticate a user not using flow with PKCE")
-@ToString(exclude = { "password" })
+@Schema(
+        description = "Required data to authenticate a user not using flow with PKCE"
+)
+@ToString(
+        exclude = { "password" }
+)
 public class AuthenticationRequestLoginDto {
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String username;
 
-    @Schema(requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
-    @Size(min = 1, max = 128)
+    @Size(
+            min = 1,
+            max = 128
+    )
     private String password;
 
 }

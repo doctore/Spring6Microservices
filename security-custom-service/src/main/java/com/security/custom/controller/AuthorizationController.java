@@ -28,7 +28,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Log4j2
 @RestController
-@RequestMapping(value = RestRoutes.AUTHORIZATION.ROOT)
+@RequestMapping(
+        value = RestRoutes.AUTHORIZATION.ROOT
+)
 @Validated
 public class AuthorizationController extends BaseController {
 
@@ -98,8 +100,12 @@ public class AuthorizationController extends BaseController {
                     )
             }
     )
-    @PostMapping(RestRoutes.AUTHORIZATION.CHECK_TOKEN)
-    @Transactional(readOnly = true)
+    @PostMapping(
+            RestRoutes.AUTHORIZATION.CHECK_TOKEN
+    )
+    @Transactional(
+            readOnly = true
+    )
     public Mono<ResponseEntity<AuthorizationInformationDto>> checkToken(@RequestBody @Size(min = 1) final String accessToken) {
         log.info(
                 format("Checking the token: %s and getting its authorization information",

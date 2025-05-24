@@ -7,5 +7,7 @@ import com.security.custom.application.spring6microservice.model.Role;
  */
 public enum PermissionEnum {
     CREATE_ORDER,
-    GET_ORDER
+    DELETE_ORDER,
+    GET_ORDER,
+    UPDATE_ORDER
 }

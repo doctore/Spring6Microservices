@@ -30,7 +30,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Log4j2
 @RestController
-@RequestMapping(value = RestRoutes.CACHE.ROOT)
+@RequestMapping(
+        value = RestRoutes.CACHE.ROOT
+)
 @Validated
 public class CacheController extends BaseController {
 
@@ -66,7 +68,9 @@ public class CacheController extends BaseController {
      * @return if it was possible to clear the caches: {@link HttpStatus#OK},
      *         {@link HttpStatus#INTERNAL_SERVER_ERROR} if there was an error.
      */
-    @Operation(summary = "Clear the cache")
+    @Operation(
+            summary = "Clear the cache"
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -91,7 +95,9 @@ public class CacheController extends BaseController {
                     )
             }
     )
-    @PutMapping(value = RestRoutes.CACHE.CLEAR)
+    @PutMapping(
+            value = RestRoutes.CACHE.CLEAR
+    )
     public Mono<ResponseEntity<?>> clear(@RequestBody final ClearCacheRequestDto clearCacheRequest) {
         log.info(
                 format("Clearing the internal caches with: %s",

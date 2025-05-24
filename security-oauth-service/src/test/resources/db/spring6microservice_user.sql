@@ -81,7 +81,13 @@ VALUES (1
        ,'CREATE_ORDER'
        ,current_timestamp)
       ,(2
+       ,'DELETE_ORDER'
+       ,current_timestamp)
+      ,(3
        ,'GET_ORDER'
+       ,current_timestamp)
+      ,(4
+       ,'UPDATE_ORDER'
        ,current_timestamp);
 
 
@@ -97,19 +103,35 @@ VALUES (SELECT id
 
 INSERT INTO security.spring6microservice_role_permission (role_id,
                                                           permission_id)
-VALUES (SELECT id
-        FROM security.spring6microservice_role
-        WHERE name = 'ROLE_ADMIN'
-       ,SELECT id
-        FROM security.spring6microservice_permission
-        WHERE name = 'CREATE_ORDER');
-
-
-INSERT INTO security.spring6microservice_role_permission (role_id,
-                                                          permission_id)
-VALUES (SELECT id
-        FROM security.spring6microservice_role
-        WHERE name = 'ROLE_ADMIN'
-       ,SELECT id
-        FROM security.spring6microservice_permission
-        WHERE name = 'GET_ORDER');
+VALUES (
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'CREATE_ORDER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'DELETE_ORDER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'GET_ORDER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'UPDATE_ORDER'
+       );
