@@ -70,7 +70,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginDto.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthenticationService);
     }
@@ -117,7 +118,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginDto.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
@@ -189,7 +191,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginAuthorizedDto.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthenticationService);
     }
@@ -239,7 +242,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginAuthorizedDto.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
@@ -317,7 +321,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginTokenDto.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthenticationService);
     }
@@ -415,7 +420,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         AuthenticationRequestLoginTokenDto.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
@@ -491,7 +497,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         LogoutRequestDto.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthenticationService);
     }
@@ -532,7 +539,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         LogoutRequestDto.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
@@ -592,7 +600,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         String.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthenticationService);
     }
@@ -615,7 +624,8 @@ public class AuthenticationControllerTest extends BaseControllerTest {
                         String.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 

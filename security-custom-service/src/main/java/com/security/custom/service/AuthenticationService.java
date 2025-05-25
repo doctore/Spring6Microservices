@@ -238,7 +238,7 @@ public class AuthenticationService {
      * @param logoutRequest
      *   {@link LogoutRequestDto} with the required information to complete the log-out
      *
-     * @return {@code true} if the logs out was successful, {@code false} otherwise.
+     * @return {@code true} if the log-out was successful, {@code false} otherwise.
      *
      * @throws ApplicationClientNotFoundException if the given {@code applicationClientId} is {@code null} or empty.
      * @throws IllegalArgumentException if {@code logoutRequest} is {@code null}

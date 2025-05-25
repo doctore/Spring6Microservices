@@ -63,7 +63,9 @@ public class AuthorizationController extends BaseController {
                             description = "Successful operation with the authorization information in the response",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AuthorizationInformationDto.class)
+                                    schema = @Schema(
+                                            implementation = AuthorizationInformationDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -71,7 +73,9 @@ public class AuthorizationController extends BaseController {
                             description = "Given token does not verify included format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -83,7 +87,9 @@ public class AuthorizationController extends BaseController {
                                         + "token were added in the blacklist",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -95,7 +101,9 @@ public class AuthorizationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }

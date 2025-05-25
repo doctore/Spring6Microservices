@@ -54,7 +54,8 @@ public class AuthorizationControllerTest extends BaseControllerTest {
                         String.class
                 )
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
 
         verifyNoInteractions(mockAuthorizationService);
     }
@@ -77,7 +78,8 @@ public class AuthorizationControllerTest extends BaseControllerTest {
                         String.class
                 )
                 .exchange()
-                .expectStatus().isBadRequest()
+                .expectStatus()
+                .isBadRequest()
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
@@ -104,7 +106,8 @@ public class AuthorizationControllerTest extends BaseControllerTest {
                 .uri(RestRoutes.AUTHORIZATION.ROOT + RestRoutes.AUTHORIZATION.CHECK_TOKEN)
                 .body(Mono.just(accessToken), String.class)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBody(AuthorizationInformationDto.class)
                 .isEqualTo(authorizationInformation);
 

@@ -82,7 +82,9 @@ public class CacheController extends BaseController {
                             description = "As part of the Basic Auth, the username does not exists or the given password does not belongs to this one.",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -90,7 +92,9 @@ public class CacheController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }

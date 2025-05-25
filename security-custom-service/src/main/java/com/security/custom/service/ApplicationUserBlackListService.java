@@ -118,7 +118,7 @@ public class ApplicationUserBlackListService {
     public boolean save(final String applicationClientDetailsId,
                         final String username) {
         log.info(
-                format("Saving the application identifier: %s and username: %s from the blacklist",
+                format("Saving the application identifier: %s and username: %s in the blacklist",
                         applicationClientDetailsId,
                         username
                 )

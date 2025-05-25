@@ -73,7 +73,9 @@ public class AuthenticationController extends BaseController {
                             description = "Successful operation with the authentication information in the response",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AuthenticationInformationDto.class)
+                                    schema = @Schema(
+                                            implementation = AuthenticationInformationDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -81,7 +83,9 @@ public class AuthenticationController extends BaseController {
                             description = "Invalid information supplied in the body taking into account defined format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -91,7 +95,9 @@ public class AuthenticationController extends BaseController {
                                         + "to this one.",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -104,7 +110,9 @@ public class AuthenticationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }
@@ -167,7 +175,9 @@ public class AuthenticationController extends BaseController {
                             description = "Successful operation with the authorization code in the response",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AuthenticationInformationAuthorizationCodeDto.class)
+                                    schema = @Schema(
+                                            implementation = AuthenticationInformationAuthorizationCodeDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -175,7 +185,9 @@ public class AuthenticationController extends BaseController {
                             description = "Invalid information supplied in the body taking into account defined format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -184,7 +196,9 @@ public class AuthenticationController extends BaseController {
                                         + "does not belongs to this one.",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -197,7 +211,9 @@ public class AuthenticationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }
@@ -256,7 +272,9 @@ public class AuthenticationController extends BaseController {
                             description = "Successful operation with the authentication information in the response",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AuthenticationInformationDto.class)
+                                    schema = @Schema(
+                                            implementation = AuthenticationInformationDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -264,7 +282,9 @@ public class AuthenticationController extends BaseController {
                             description = "Invalid information supplied in the body taking into account defined format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -275,7 +295,9 @@ public class AuthenticationController extends BaseController {
                                         + "method of the first request",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -284,7 +306,9 @@ public class AuthenticationController extends BaseController {
                                         + "with the one stored as part of the first request",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -297,7 +321,9 @@ public class AuthenticationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }
@@ -357,7 +383,9 @@ public class AuthenticationController extends BaseController {
                             description = "Invalid information supplied in the body taking into account defined format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -366,7 +394,9 @@ public class AuthenticationController extends BaseController {
                                         + "not belongs to this one",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -379,7 +409,9 @@ public class AuthenticationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }
@@ -433,7 +465,9 @@ public class AuthenticationController extends BaseController {
                             description = "Successful operation with the authentication information in the response",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AuthenticationInformationDto.class)
+                                    schema = @Schema(
+                                            implementation = AuthenticationInformationDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -441,7 +475,9 @@ public class AuthenticationController extends BaseController {
                             description = "Given token does not verify defined format validations",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -453,7 +489,9 @@ public class AuthenticationController extends BaseController {
                                         + "token were added in the blacklist",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -465,7 +503,9 @@ public class AuthenticationController extends BaseController {
                             description = "Any other internal server error",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
                             )
                     )
             }
