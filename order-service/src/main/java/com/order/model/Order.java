@@ -11,9 +11,13 @@ import java.util.List;
 
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(of = {"code"})
+@EqualsAndHashCode(
+        of = {"code"}
+)
 @NoArgsConstructor
-@ToString(exclude = "orderLines")
+@ToString(
+        exclude = "orderLines"
+)
 public class Order implements IModel, Serializable {
 
     @Serial
@@ -22,7 +26,10 @@ public class Order implements IModel, Serializable {
     private Integer id;
 
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(
+            min = 1,
+            max = 64
+    )
     private String code;
 
     @NotNull

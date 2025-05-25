@@ -37,6 +37,16 @@ public class TestDataFactory {
     }
 
 
+    public static OrderDto buildOrderDto(final String code,
+                                         final Collection<OrderLineDto> orderLines) {
+        return buildOrderDto(
+                null,
+                code,
+                orderLines
+        );
+    }
+
+
     public static OrderDto buildOrderDto(final Integer id,
                                          final String code,
                                          final Collection<OrderLineDto> orderLines) {
@@ -77,6 +87,20 @@ public class TestDataFactory {
         return new OrderLine(
                 id,
                 order,
+                concept,
+                amount,
+                cost
+        );
+    }
+
+
+    public static OrderLineDto buildOrderLineDto(final Integer orderId,
+                                                 final String concept,
+                                                 final int amount,
+                                                 final double cost) {
+        return buildOrderLineDto(
+                null,
+                orderId,
                 concept,
                 amount,
                 cost

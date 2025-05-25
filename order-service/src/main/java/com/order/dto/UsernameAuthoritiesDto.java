@@ -11,7 +11,9 @@ import java.util.Set;
  * Class used to receive the authorization information related with logged users.
  */
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"username"})
+@EqualsAndHashCode(
+        of = {"username"}
+)
 @Data
 @NoArgsConstructor
 public class UsernameAuthoritiesDto {

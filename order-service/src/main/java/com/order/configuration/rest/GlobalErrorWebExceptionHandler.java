@@ -33,7 +33,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  */
 @RestControllerAdvice
 @Log4j2
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(
+        Ordered.HIGHEST_PRECEDENCE
+)
 public class GlobalErrorWebExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)

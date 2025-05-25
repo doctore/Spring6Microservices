@@ -2,6 +2,7 @@ package com.order.service;
 
 import com.order.mapper.OrderLineMapper;
 import com.order.model.OrderLine;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
+@Log4j2
 @Service
 public class OrderLineService {
 
@@ -135,11 +138,21 @@ public class OrderLineService {
         return ofNullable(orderLine)
                 .map(ol -> {
                     if (ol.isNew()) {
+                        log.info(
+                                format("Saving new orderLine with concept: %s",
+                                        orderLine.getConcept()
+                                )
+                        );
                         mapper.insert(
                                 ol
                         );
                     }
                     else {
+                        log.info(
+                                format("Updating existing orderLine: %s",
+                                        orderLine.getId()
+                                )
+                        );
                         mapper.update(
                                 ol
                         );

@@ -23,7 +23,10 @@ public class OrderLine implements IModel, Serializable {
     private Order order;
 
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(
+            min = 1,
+            max = 255
+    )
     private String concept;
 
     @NotNull

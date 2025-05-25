@@ -17,26 +17,46 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 @Builder
 @Data
 @NoArgsConstructor
-@Schema(description = "Information related with the lines of an order")
+@Schema(
+        description = "Information related with the lines of an order"
+)
 public class OrderLineDto {
 
-    @Schema(description = "Internal unique identifier", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Internal unique identifier",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private Integer id;
 
-    @Schema(description = "Related order", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Related order",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private Integer orderId;
 
     @NotNull
-    @Size(min = 1, max = 255)
-    @Schema(description = "The purchased item", requiredMode = RequiredMode.REQUIRED)
+    @Size(
+            min = 1,
+            max = 255
+    )
+    @Schema(
+            description = "The purchased item",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private String concept;
 
-    @Schema(description = "Number of items included as concept", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Number of items included as concept",
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
     @Positive
     private int amount;
 
-    @Schema(description = "Cost", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Cost",
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull
     @Positive
     private double cost;
