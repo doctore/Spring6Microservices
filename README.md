@@ -127,9 +127,8 @@ On the other hand, there are other important folders:
 * **configuration** with several classes used to manage several areas such: security, documentation, database or cache.
 * **model** to store the entities.
 
-
-Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-oauth-service/src/main/resources/application.yml) the project has been configured to avoid invoking it
-when this microservice is launched or packaged:
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-oauth-service/src/main/resources/application.yml) the project has been configured
+to avoid invoking it when this microservice is launched or packaged:
 
 ```
 spring:
@@ -180,7 +179,7 @@ In this microservice, the layer's division is:
 * **application** parent folder of the microservice groups whose authentication/authorization is managed by this one.
 * **repository** layer used to access to the database.
 * **service** containing the business logic.
-* **controller** REST Api using Webflux.
+* **controller** REST Api using Spring Webflux.
 
 On the other hand, there are other important folders:
 
@@ -189,8 +188,8 @@ On the other hand, there are other important folders:
 * **dto** custom objects to contain specific data.
 * **util** to manage the JWS/JWE functionality.
 
-Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application.yml) the project has been configured to avoid invoking it
-when this microservice is launched or packaged:
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/security-custom-service/src/main/resources/application.yml) the project has been configured
+to avoid invoking it when this microservice is launched or packaged:
 
 ```
 spring:
@@ -209,7 +208,45 @@ All the managed SQL files are located in the folder [changelog](https://github.c
 
 ### [order-service](https://github.com/doctore/Spring6Microservices/tree/main/order-service)
 
-**--- UNDER CONSTRUCTION ---**
+One order has several order lines and one order line mainly contains: concept, amount and cost. The main purpose of this microservice is the creation
+of a small one on which I am using the following technologies:
+
+* **[MyBatis](https://mybatis.org/mybatis-3/getting-started.html)** replacing the traditional pair Hibernate/JPA by adding more code to deal with the database but improving the performance.
+* **[Flyway](https://www.red-gate.com/products/flyway/)** as version control of database changes.
+* **[Lombok](https://projectlombok.org/features)** to reduce the code development in models and DTOs.
+* **[MapStruct](https://mapstruct.org)** used to easily convert between models and DTOs and vice versa.
+* **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
+* **[Spring OAuth 2.0 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)** to handle the security through the microservice [security-oauth-service](#security-oauth-service).
+* **[MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)** a traditional Spring MVC Rest API to manage the included requests.
+
+In this microservice, the layer's division is:
+
+* **mapper** layer used to access to the database.
+* **service** containing the business logic.
+* **controller** REST Api using Spring MVC.
+
+On the other hand, there are other important folders:
+
+* **configuration** with several classes used to manage several areas such: security, documentation, database, exception handlers, etc.
+* **model** to store the entities.
+* **dto** custom objects to contain specific data.
+* **util/converter** to translate from models to DTOs and vice versa.
+
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/resources/application.yml) the project has been configured
+to avoid invoking it when this microservice is launched or packaged:
+
+```
+spring:
+  flyway:
+    enabled: false
+```
+
+So, if you want to manage it manually, you can create a new [maven](https://maven.apache.org/) configuration. The next picture displays how to do it
+using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
+
+![Alt text](/documentation/order-service/ConfigureFlyway.png?raw=true "Configure Flyway")
+
+All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
 <br><br>
 
 
@@ -324,7 +361,7 @@ Once you've downloaded the zip files containing the JCE jars, you must do the fo
 
 ### Problems resolution
 
-If you receive some errors related with encryption like:
+If you receive some errors related to encryption like:
 
 ```
 IllegalStateException: Cannot decrypt: ...
@@ -365,7 +402,7 @@ To do it:
 As you read previously, there are two different microservices you can use to manage the authentication/authorization functionality: [security-oauth-service](#security-oauth-service)
 and [security-custom-service](#security-custom-service).
 
-Regarding every microservice, in this section I will explain the web services provided by every one and how to use them, starting by [security-oauth-service](#security-oauth-service).
+Regarding every microservice, in this section I will explain the web services provided by everyone and how to use them, starting by [security-oauth-service](#security-oauth-service).
 <br><br>
 
 
