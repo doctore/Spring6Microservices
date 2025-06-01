@@ -127,7 +127,9 @@ public class WebSecurityConfiguration {
                 exchange
                         // List of services do not require authentication
                         .pathMatchers(OPTIONS).permitAll()
-                        .pathMatchers(GET, allowedGetEndpoints()).permitAll()
+                        .pathMatchers(
+                                GET, allowedGetEndpoints()
+                        ).permitAll()
                         // Any other request must be authenticated
                         .anyExchange().authenticated();
     }

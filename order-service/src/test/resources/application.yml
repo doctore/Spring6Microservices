@@ -12,6 +12,16 @@ spring:
   # Disable Flyway for testing
   flyway:
     enabled: false
+  security:
+    # Oauth 2.0 configuration
+    oauth2:
+      # Custom Authorization Server
+      authorizationserver:
+        endpoint:
+          # Endpoint used to verify the tokens used for authorization
+          token-introspection-uri: TestIntrospectEndpoint
+          client-id: TestClientId
+          client-secret: TestClientSecret
 
 
 # Configure the logs

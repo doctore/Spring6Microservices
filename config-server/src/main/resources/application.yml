@@ -12,7 +12,7 @@ spring:
           enabled: false
         git:
           uri: https://github.com/doctore/Spring6Microservices_ConfigServerData.git
-          searchPaths: gateway-server,security-custom-service,security-oauth-service
+          searchPaths: gateway-server,order-service,security-custom-service,security-oauth-service
           defaultLabel: main
 
 

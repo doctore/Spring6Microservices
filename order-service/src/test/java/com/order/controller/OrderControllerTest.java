@@ -14,7 +14,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +36,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = OrderController.class)
-// TODO: PENDING TO CONFIGURE
-//@Import(WebSecurityConfiguration.class)
+@SpringBootTest
+@AutoConfigureMockMvc(
+        addFilters = false
+)
 public class OrderControllerTest extends BaseControllerTest {
 
     @MockitoBean
@@ -64,9 +66,7 @@ public class OrderControllerTest extends BaseControllerTest {
                                 )
                 )
                 .andExpect(
-                        status().isForbidden()
-                        // TODO: PENDING TO FIX (401 is the expected one)
-                        //status().isUnauthorized()
+                        status().isUnauthorized()
                 );
 
         verifyNoInteractions(mockConverter);
@@ -97,8 +97,6 @@ public class OrderControllerTest extends BaseControllerTest {
     }
 
 
-    // TODO: PENDING TO FIX (400 is the expected one but it's returning 403 because no security configuration has been set by now)
-    /*
     static Stream<Arguments> create_invalidParametersTestCases() {
         String longString = String.join("", Collections.nCopies(300, "a"));
 
@@ -122,27 +120,27 @@ public class OrderControllerTest extends BaseControllerTest {
 
         ErrorResponseDto responseDtoWithNoCode = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderDto' on field 'code' due to: must not be null")
+                List.of("Field error in object: orderDto on field: code due to: must not be null")
         );
         ErrorResponseDto responseDtoWithLongCode = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderDto' on field 'code' due to: size must be between 1 and 64")
+                List.of("Field error in object: orderDto on field: code due to: size must be between 1 and 64")
         );
         ErrorResponseDto responseDtoWithOrderLineWithoutConcept = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderLineDto' on field 'concept' due to: must not be null")
+                List.of("Field error in object: orderDto on field: orderLines[0].concept due to: must not be null")
         );
         ErrorResponseDto responseDtoWithOrderLineWithLongConcept = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderLineDto' on field 'concept' due to: size must be between 1 and 255")
+                List.of("Field error in object: orderDto on field: orderLines[0].concept due to: size must be between 1 and 255")
         );
         ErrorResponseDto responseDtoWithOrderLineWithNegativeAmount = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderLineDto' on field 'amount' due to: must be a positive value")
+                List.of("Field error in object: orderDto on field: orderLines[0].amount due to: must be greater than 0")
         );
         ErrorResponseDto responseDtoWithOrderLineWithNegativeCost = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'orderLineDto' on field 'cost' due to: must be a positive value")
+                List.of("Field error in object: orderDto on field: orderLines[0].cost due to: must be greater than 0")
         );
         return Stream.of(
                 //@formatter:off
@@ -185,7 +183,6 @@ public class OrderControllerTest extends BaseControllerTest {
         verifyNoInteractions(mockConverter);
         verifyNoInteractions(mockService);
     }
-     */
 
 
 

@@ -1,5 +1,7 @@
 package com.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.order.configuration.Constants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +47,9 @@ public class OrderDto {
             requiredMode = RequiredMode.REQUIRED
     )
     @NotNull
+    @JsonFormat(
+            pattern = Constants.DATETIME_FORMAT
+    )
     private LocalDateTime createdAt;
 
     @Schema(
