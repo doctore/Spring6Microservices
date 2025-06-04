@@ -4,6 +4,7 @@ import com.order.configuration.Constants;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
@@ -12,6 +13,8 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +32,10 @@ public class CustomAuthoritiesOpaqueTokenIntrospector implements OpaqueTokenIntr
     public CustomAuthoritiesOpaqueTokenIntrospector(@Lazy final OauthAuthorizationConfiguration oauthAuthorizationConfiguration) {
         this.delegate = new SpringOpaqueTokenIntrospector(
                 oauthAuthorizationConfiguration.getAuthorizationServerTokenIntrospectionUri(),
-                oauthAuthorizationConfiguration.getAuthorizationServerClientId(),
-                oauthAuthorizationConfiguration.getAuthorizationServerClientSecret()
+                createRestOperations(
+                        oauthAuthorizationConfiguration.getAuthorizationServerClientId(),
+                        oauthAuthorizationConfiguration.getAuthorizationServerClientSecret()
+                )
         );
     }
 
@@ -64,6 +69,31 @@ public class CustomAuthoritiesOpaqueTokenIntrospector implements OpaqueTokenIntr
                 scopes,
                 SimpleGrantedAuthority::new
         );
+    }
+
+
+    /**
+     *    Creates a {@link RestOperations} configured internally with Basic Authentication for the given {@code username}
+     * and {@code password}.
+     *
+     * @param username
+     *    The username to use
+     * @param password
+     *   The username to use
+     *
+     * @return {@link RestOperations} that uses Basic Authentication in the requests
+     */
+    private RestOperations createRestOperations(final String username,
+                                                final String password) {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors()
+                .add(
+                        new BasicAuthenticationInterceptor(
+                                username,
+                                password
+                        )
+                );
+        return restTemplate;
     }
 
 }
