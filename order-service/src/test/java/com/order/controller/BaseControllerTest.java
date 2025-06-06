@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class BaseControllerTest {
@@ -48,6 +49,50 @@ public abstract class BaseControllerTest {
                         ErrorResponseDto.class
                 )
         );
+    }
+
+
+    /**
+     * Checks the expected result in Controller layer related tests when the endpoint should return a body.
+     *
+     * @param webResult
+     *    {@link ResultActions} with the result of {@link MockMvc#perform(RequestBuilder)}
+     * @param expectedHttpCode
+     *    {@link HttpStatus} with expected returned Http code
+     * @param expectedBody
+     *    Body of the request
+     * @param bodyClass
+     *    {@link Class} of the given {@code expectedBody}
+     */
+    @SneakyThrows
+    protected <T> void thenBodyIsReturned(final ResultActions webResult,
+                                          final HttpStatus expectedHttpCode,
+                                          final T expectedBody,
+                                          final Class<T> bodyClass) {
+        webResult.andExpect(
+                status().is(
+                        expectedHttpCode.value()
+                )
+        );
+        String responseBody = webResult
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        if (null == expectedBody) {
+            assertTrue(
+                    responseBody.isEmpty()
+            );
+        }
+        else {
+            assertEquals(
+                    expectedBody,
+                    objectMapper.readValue(
+                            responseBody,
+                            bodyClass
+                    )
+            );
+        }
     }
 
 }

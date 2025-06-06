@@ -4,6 +4,8 @@ import com.order.configuration.Constants;
 import com.order.configuration.rest.RestRoutes;
 import com.order.dto.OrderDto;
 import com.order.dto.OrderLineDto;
+import com.order.model.Order;
+import com.order.model.OrderLine;
 import com.order.service.OrderService;
 import com.order.util.converter.OrderConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -28,9 +30,11 @@ import java.util.stream.Stream;
 
 import static com.order.TestDataFactory.*;
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -76,7 +80,9 @@ public class OrderControllerTest extends BaseControllerTest {
 
     @Test
     @SneakyThrows
-    @WithMockUser(authorities = { Constants.PERMISSIONS.GET_ORDER })
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
     @DisplayName("create: when no valid authority is given then forbidden Http code is returned")
     public void create_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
         OrderDto dto = buildNewOrderDtoWithOrderLine();
@@ -156,9 +162,11 @@ public class OrderControllerTest extends BaseControllerTest {
 
     @ParameterizedTest
     @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_ORDER }
+    )
     @MethodSource("create_invalidParametersTestCases")
     @DisplayName("create: when given parameters do not verify validations then bad request error is returned with validation errors")
-    @WithMockUser(authorities = { Constants.PERMISSIONS.CREATE_ORDER })
     public void create_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(OrderDto dtoToCreate,
                                                                                                                       ErrorResponseDto expectedResponse) {
         ResultActions result = mockMvc.perform(
@@ -167,9 +175,6 @@ public class OrderControllerTest extends BaseControllerTest {
                                 .content(
                                         objectMapper.writeValueAsString(dtoToCreate)
                                 )
-                )
-                .andExpect(
-                        status().isBadRequest()
                 )
                 .andExpect(
                         content().contentType(APPLICATION_JSON)
@@ -184,6 +189,123 @@ public class OrderControllerTest extends BaseControllerTest {
         verifyNoInteractions(mockService);
     }
 
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_ORDER }
+    )
+    @DisplayName("create: when given parameters verifies validations but service returns empty then Http code Unprocessable Entity is returned")
+    public void create_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeUnprocessableEntityIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine();
+        Order model = buildNewOrderWithOrderLine();
+
+        when(mockConverter.fromDtoToModel(dto))
+                .thenReturn(model);
+
+        when(mockService.save(model))
+                .thenReturn(empty());
+
+        ResultActions result = mockMvc.perform(
+                        post(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                );
+
+        thenBodyIsReturned(
+                result,
+                UNPROCESSABLE_ENTITY,
+                null,
+                OrderDto.class
+        );
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        dto
+                );
+        verify(mockService, times(1))
+                .save(
+                        model
+                );
+        verify(mockConverter, never())
+                .fromModelToDto(
+                        any(Order.class)
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_ORDER }
+    )
+    @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created is returned")
+    public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine();
+        Order model = buildNewOrderWithOrderLine();
+
+        when(mockConverter.fromDtoToModel(dto))
+                .thenReturn(model);
+
+        when(mockService.save(model))
+                .thenReturn(of(model));
+
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(dto);
+
+        ResultActions result = mockMvc.perform(
+                        post(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        content().contentType(APPLICATION_JSON)
+                );
+
+        thenBodyIsReturned(
+                result,
+                CREATED,
+                dto,
+                OrderDto.class
+        );
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        dto
+                );
+        verify(mockService, times(1))
+                .save(
+                        model
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
+
+
+    private static Order buildNewOrderWithOrderLine() {
+        Order order = buildOrder(
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                order,
+                "Keyboard",
+                2,
+                10.1d
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return order;
+    }
 
 
     private static OrderDto buildNewOrderDtoWithOrderLine() {
