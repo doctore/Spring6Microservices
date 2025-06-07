@@ -23,6 +23,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import static java.util.Optional.of;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -284,6 +286,231 @@ public class OrderControllerTest extends BaseControllerTest {
         verify(mockConverter, times(1))
                 .fromModelToDto(
                         model
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("deleteByCode: when no logged user is given then unauthorized Http code is returned")
+    public void deleteByCode_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        String orderCode = URLEncoder.encode(
+                "Order 1",
+                Constants.UTF_8
+        );
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isUnauthorized()
+                );
+
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("deleteByCode: when no valid authority is given then forbidden Http code is returned")
+    public void deleteByCode_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        String orderCode = URLEncoder.encode(
+                "Order 1",
+                Constants.UTF_8
+        );
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.DELETE_ORDER }
+    )
+    @DisplayName("deleteByCode: when based on provided parameters the service returns false then Http code Not Found is returned")
+    public void deleteByCode_whenBasedOnProvidedParametersTheServiceReturnsFalse_thenHttpCodeNotFoundIsReturned() {
+        String orderCode = URLEncoder.encode(
+                "Order 1",
+                Constants.UTF_8
+        );
+
+        when(mockService.deleteByCode(orderCode))
+                .thenReturn(false);
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isNotFound()
+                );
+
+        verify(mockService, times(1))
+                .deleteByCode(
+                        orderCode
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.DELETE_ORDER }
+    )
+    @DisplayName("deleteByCode: when based on provided parameters the service returns true then Http code No Content is returned")
+    public void deleteByCode_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeNoContentIsReturned() {
+        String orderCode = URLEncoder.encode(
+                "Order 1",
+                Constants.UTF_8
+        );
+
+        when(mockService.deleteByCode(orderCode))
+                .thenReturn(true);
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isNoContent()
+                );
+
+        verify(mockService, times(1))
+                .deleteByCode(
+                        orderCode
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("deleteById: when no logged user is given then unauthorized Http code is returned")
+    public void deleteById_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        int orderId = 1;
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isUnauthorized()
+                );
+
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("deleteById: when no valid authority is given then forbidden Http code is returned")
+    public void deleteById_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        int orderId = 1;
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+
+        verifyNoInteractions(mockService);
+    }
+
+
+    static Stream<Arguments> deleteById_invalidParametersTestCases() {
+        ErrorResponseDto responseInvalidOrderId = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Error in path: 'deleteById.id' due to: must be greater than 0")
+        );
+        return Stream.of(
+                //@formatter:off
+                //            orderId,   expectedResponse
+                Arguments.of( -1,        responseInvalidOrderId ),
+                Arguments.of( 0,         responseInvalidOrderId )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.DELETE_ORDER }
+    )
+    @MethodSource("deleteById_invalidParametersTestCases")
+    @DisplayName("deleteById: when given parameters do not verify validations then bad request error is returned with validation errors")
+    public void deleteById_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer orderId,
+                                                                                                                          ErrorResponseDto expectedResponse) {
+        ResultActions result = mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                );
+
+        thenHttpErrorIsReturned(
+                result,
+                BAD_REQUEST,
+                expectedResponse
+        );
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.DELETE_ORDER }
+    )
+    @DisplayName("deleteById: when based on provided parameters the service returns false then Http code Not Found is returned")
+    public void deleteById_whenBasedOnProvidedParametersTheServiceReturnsFalse_thenHttpCodeNotFoundIsReturned() {
+        Integer orderId = 1;
+
+        when(mockService.deleteById(orderId))
+                .thenReturn(false);
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isNotFound()
+                );
+
+        verify(mockService, times(1))
+                .deleteById(
+                        orderId
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.DELETE_ORDER }
+    )
+    @DisplayName("deleteById: when based on provided parameters the service returns true then Http code No Content is returned")
+    public void deleteById_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeNoContentIsReturned() {
+        Integer orderId = 1;
+
+        when(mockService.deleteById(orderId))
+                .thenReturn(true);
+
+        mockMvc.perform(
+                        delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isNoContent()
+                );
+
+        verify(mockService, times(1))
+                .deleteById(
+                        orderId
                 );
     }
 

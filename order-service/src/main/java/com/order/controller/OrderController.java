@@ -207,7 +207,7 @@ public class OrderController {
             }
     )
     @DeleteMapping(
-            RestRoutes.ORDER.BY_CODE
+            RestRoutes.ORDER.BY_CODE + "/{code}"
     )
     @Transactional(
             rollbackFor = Exception.class
@@ -287,13 +287,13 @@ public class OrderController {
             }
     )
     @DeleteMapping(
-            RestRoutes.ORDER.BY_ID
+            RestRoutes.ORDER.BY_ID + "/{id}"
     )
     @Transactional(
             rollbackFor = Exception.class
     )
     @DeleteOrderPermission
-    public ResponseEntity<Void> deleteById(@PathVariable @Size(min = 1) final Integer id) {
+    public ResponseEntity<Void> deleteById(@PathVariable @Positive final Integer id) {
         log.info(
                 format("Removing the order with id: %s",
                         id
@@ -373,7 +373,7 @@ public class OrderController {
             }
     )
     @GetMapping(
-            RestRoutes.ORDER.BY_CODE
+            RestRoutes.ORDER.BY_CODE + "/{code}"
     )
     @Transactional(
             readOnly = true
@@ -467,7 +467,7 @@ public class OrderController {
             }
     )
     @GetMapping(
-            RestRoutes.ORDER.BY_ID
+            RestRoutes.ORDER.BY_ID + "/{id}"
     )
     @Transactional(
             readOnly = true
