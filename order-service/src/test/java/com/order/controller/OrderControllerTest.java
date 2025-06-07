@@ -8,6 +8,7 @@ import com.order.model.Order;
 import com.order.model.OrderLine;
 import com.order.service.OrderService;
 import com.order.util.converter.OrderConverter;
+import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -294,9 +294,8 @@ public class OrderControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("deleteByCode: when no logged user is given then unauthorized Http code is returned")
     public void deleteByCode_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
-        String orderCode = URLEncoder.encode(
-                "Order 1",
-                Constants.UTF_8
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
         );
 
         mockMvc.perform(
@@ -317,9 +316,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("deleteByCode: when no valid authority is given then forbidden Http code is returned")
     public void deleteByCode_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
-        String orderCode = URLEncoder.encode(
-                "Order 1",
-                Constants.UTF_8
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
         );
 
         mockMvc.perform(
@@ -340,9 +338,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("deleteByCode: when based on provided parameters the service returns false then Http code Not Found is returned")
     public void deleteByCode_whenBasedOnProvidedParametersTheServiceReturnsFalse_thenHttpCodeNotFoundIsReturned() {
-        String orderCode = URLEncoder.encode(
-                "Order 1",
-                Constants.UTF_8
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
         );
 
         when(mockService.deleteByCode(orderCode))
@@ -369,9 +366,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("deleteByCode: when based on provided parameters the service returns true then Http code No Content is returned")
     public void deleteByCode_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeNoContentIsReturned() {
-        String orderCode = URLEncoder.encode(
-                "Order 1",
-                Constants.UTF_8
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
         );
 
         when(mockService.deleteByCode(orderCode))

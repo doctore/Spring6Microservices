@@ -1,15 +1,9 @@
 package com.order.configuration;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
  * Global values used in different part of the application
  */
 public final class Constants {
-
-    // Default charset
-    public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     // Format of datetime values
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
