@@ -3,6 +3,10 @@ package com.spring6microservices.common.core.util;
 import com.spring6microservices.common.core.functional.PartialFunction;
 import lombok.experimental.UtilityClass;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +34,8 @@ import static java.util.stream.Collectors.toCollection;
 public class StringUtil {
 
     public final String EMPTY_STRING = "";
+
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     private final String BLANK_SPACE = " ";
 
@@ -2455,6 +2461,98 @@ public class StringUtil {
                 .collect(
                         joining()
                 );
+    }
+
+
+    /**
+     *    Decodes a {@code application/x-www-form-urlencoded} {@link CharSequence} using the {@link Charset} {@link StringUtil#DEFAULT_CHARSET}.
+     * The supplied encoding is used to determine what characters are represented by any consecutive sequences of the form {@code "%xy"}.
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to decode
+     *
+     * @return the newly decoded {@link String}
+     */
+    public static String urlDecode(final CharSequence sourceCS) {
+        return urlDecode(
+                sourceCS,
+                DEFAULT_CHARSET
+        );
+    }
+
+
+    /**
+     *    Decodes a {@code application/x-www-form-urlencoded} {@link CharSequence} using the provided {@link Charset}. The
+     * supplied encoding is used to determine what characters are represented by any consecutive sequences of the form {@code "%xy"}.
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to decode
+     * @param charset
+     *    {@link Charset} to use
+     *
+     * @return the newly decoded {@link String}
+     *
+     * @throws IllegalArgumentException if {@code sourceCS} contains illegal characters
+     */
+    public static String urlDecode(final CharSequence sourceCS,
+                                   final Charset charset) {
+        if (isEmpty(sourceCS)) {
+            return EMPTY_STRING;
+        }
+        final String sourceCSToString = sourceCS.toString();
+        final Charset finalCharset = ObjectUtil.getOrElse(
+                charset,
+                DEFAULT_CHARSET
+        );
+        return URLDecoder.decode(
+                sourceCSToString,
+                finalCharset
+        );
+    }
+
+
+    /**
+     *    Translates the given {@link CharSequence} into {@code application/x-www-form-urlencoded} format using the {@link Charset}
+     * {@link StringUtil#DEFAULT_CHARSET}.
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to be translated
+     *
+     * @return the translated {@link String}
+     */
+    public static String urlEncode(final CharSequence sourceCS) {
+        return urlEncode(
+                sourceCS,
+                DEFAULT_CHARSET
+        );
+    }
+
+
+    /**
+     *    Translates the given {@link CharSequence} into {@code application/x-www-form-urlencoded} format using the provided
+     * {@link Charset}.
+     *
+     * @param sourceCS
+     *    {@link CharSequence} to be translated
+     * @param charset
+     *    {@link Charset} to use
+     *
+     * @return the translated {@link String}
+     */
+    public static String urlEncode(final CharSequence sourceCS,
+                                   final Charset charset) {
+        if (isEmpty(sourceCS)) {
+            return EMPTY_STRING;
+        }
+        final String sourceCSToString = sourceCS.toString();
+        final Charset finalCharset = ObjectUtil.getOrElse(
+                charset,
+                DEFAULT_CHARSET
+        );
+        return URLEncoder.encode(
+                sourceCSToString,
+                finalCharset
+        );
     }
 
 }

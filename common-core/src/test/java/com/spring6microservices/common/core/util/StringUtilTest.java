@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -2547,6 +2549,146 @@ public class StringUtilTest {
         assertEquals(
                 expectedResult,
                 takeWhile(sourceCS, filterPredicate)
+        );
+    }
+
+
+    static Stream<Arguments> urlDecodeWithSourceCSTestCases() {
+        StringBuffer nullBuffer = null;
+        StringBuilder notEmptyBuilder = new StringBuilder("abcdef");
+        String invalidString = "a%eq0c";
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,          expectedException,                expectedResult
+                Arguments.of( null,              null,                             "" ),
+                Arguments.of( nullBuffer,        null,                             "" ),
+                Arguments.of( notEmptyBuilder,   null,                             "abcdef" ),
+                Arguments.of( invalidString,     IllegalArgumentException.class,   "" ),
+                Arguments.of( "abc",             null,                             "abc" ),
+                Arguments.of( "ab c",            null,                             "ab c" ),
+                Arguments.of( "a+c",             null,                             "a c" ),
+                Arguments.of( "a%20c",           null,                             "a c" ),
+                Arguments.of( "a%25c",           null,                             "a%c" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlDecodeWithSourceCSTestCases")
+    @DisplayName("urlDecode: with source test cases")
+    public void urlDecodeWithSourceCSAndMaxLength_testCases(CharSequence sourceCS,
+                                                            Class<? extends Exception> expectedException,
+                                                            String expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> urlDecode(sourceCS)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    urlDecode(sourceCS)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> urlDecodeAllParametersTestCases() {
+        StringBuffer nullBuffer = null;
+        StringBuilder notEmptyBuilder = new StringBuilder("abcdef");
+        String invalidString = "a%eq0c";
+
+        Charset charset = StandardCharsets.UTF_8;
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,          charset,   expectedException,                expectedResult
+                Arguments.of( null,              charset,   null,                             "" ),
+                Arguments.of( nullBuffer,        charset,   null,                             "" ),
+                Arguments.of( notEmptyBuilder,   charset,   null,                             "abcdef" ),
+                Arguments.of( invalidString,     charset,   IllegalArgumentException.class,   "" ),
+                Arguments.of( "abc",             charset,   null,                             "abc" ),
+                Arguments.of( "ab c",            charset,   null,                             "ab c" ),
+                Arguments.of( "a+c",             charset,   null,                             "a c" ),
+                Arguments.of( "a%20c",           charset,   null,                             "a c" ),
+                Arguments.of( "a%25c",           charset,   null,                             "a%c" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlDecodeAllParametersTestCases")
+    @DisplayName("urlDecode: with all parameters test cases")
+    public void urlDecodeAllParameters_testCases(CharSequence sourceCS,
+                                                 Charset charset,
+                                                 Class<? extends Exception> expectedException,
+                                                 String expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> urlDecode(sourceCS, charset)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    urlDecode(sourceCS, charset)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> urlEncodeWithSourceCSTestCases() {
+        StringBuffer nullBuffer = null;
+        StringBuilder notEmptyBuilder = new StringBuilder("abcdef");
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,          expectedResult
+                Arguments.of( null,              "" ),
+                Arguments.of( nullBuffer,        "" ),
+                Arguments.of( notEmptyBuilder,   "abcdef" ),
+                Arguments.of( "abc",             "abc" ),
+                Arguments.of( "ab c",            "ab+c" ),
+                Arguments.of( "a%c",             "a%25c" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlEncodeWithSourceCSTestCases")
+    @DisplayName("urlEncode: with source test cases")
+    public void urlEncodeWithSourceCSAndMaxLength_testCases(CharSequence sourceCS,
+                                                            String expectedResult) {
+        assertEquals(
+                expectedResult,
+                urlEncode(sourceCS)
+        );
+    }
+
+
+    static Stream<Arguments> urlEncodeAllParametersTestCases() {
+        StringBuffer nullBuffer = null;
+        StringBuilder notEmptyBuilder = new StringBuilder("abcdef");
+
+        Charset charset = StandardCharsets.UTF_8;
+        return Stream.of(
+                //@formatter:off
+                //            sourceCS,          charset,   expectedResult
+                Arguments.of( null,              charset,   "" ),
+                Arguments.of( nullBuffer,        charset,   "" ),
+                Arguments.of( notEmptyBuilder,   charset,   "abcdef" ),
+                Arguments.of( "abc",             charset,   "abc" ),
+                Arguments.of( "ab c",            charset,   "ab+c" ),
+                Arguments.of( "a%c",             charset,   "a%25c" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlEncodeAllParametersTestCases")
+    @DisplayName("urlEncode: with all parameters test cases")
+    public void urlEncodeAllParameters_testCases(CharSequence sourceCS,
+                                                 Charset charset,
+                                                 String expectedResult) {
+        assertEquals(
+                expectedResult,
+                urlEncode(sourceCS, charset)
         );
     }
 
