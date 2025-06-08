@@ -37,8 +37,7 @@ import static java.util.Optional.of;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -243,8 +242,8 @@ public class OrderControllerTest extends BaseControllerTest {
     @WithMockUser(
             authorities = { Constants.PERMISSIONS.CREATE_ORDER }
     )
-    @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created is returned")
-    public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedIsReturned() {
+    @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created with the new Dto is returned")
+    public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedWithTheNewDtoIsReturned() {
         OrderDto dto = buildNewOrderDtoWithOrderLine();
         Order model = buildNewOrderWithOrderLine();
 
@@ -511,6 +510,530 @@ public class OrderControllerTest extends BaseControllerTest {
     }
 
 
+    @Test
+    @SneakyThrows
+    @DisplayName("findByCode: when no logged user is given then unauthorized Http code is returned")
+    public void findByCode_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
+        );
+
+        mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isUnauthorized()
+                );
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_ORDER }
+    )
+    @DisplayName("findByCode: when no valid authority is given then forbidden Http code is returned")
+    public void findByCode_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
+        );
+
+        mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("findByCode: when based on provided parameters the service returns empty then Http code Not Found is returned")
+    public void findByCode_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        String orderCode = StringUtil.urlEncode(
+                "Order 1"
+        );
+
+        when(mockService.findByCode(orderCode))
+                .thenReturn(empty());
+
+        ResultActions result = mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                )
+                .andExpect(
+                        status().isNotFound()
+                );
+
+        thenBodyIsReturned(
+                result,
+                NOT_FOUND,
+                null,
+                OrderDto.class
+        );
+
+        verify(mockService, times(1))
+                .findByCode(
+                        orderCode
+                );
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("findByCode: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
+    public void findByCode_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine();
+        Order model = buildNewOrderWithOrderLine();
+
+        when(mockService.findByCode(dto.getCode()))
+                .thenReturn(of(model));
+
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(dto);
+
+        ResultActions result = mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + dto.getCode())
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        content().contentType(APPLICATION_JSON)
+                );
+
+        thenBodyIsReturned(
+                result,
+                OK,
+                dto,
+                OrderDto.class
+        );
+
+        verify(mockService, times(1))
+                .findByCode(
+                        dto.getCode()
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("findById: when no logged user is given then unauthorized Http code is returned")
+    public void findById_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        int orderId = 1;
+
+        mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isUnauthorized()
+                );
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_ORDER }
+    )
+    @DisplayName("findById: when no valid authority is given then forbidden Http code is returned")
+    public void findById_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        int orderId = 1;
+
+        mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    static Stream<Arguments> findById_invalidParametersTestCases() {
+        ErrorResponseDto responseInvalidOrderId = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Error in path: 'findById.id' due to: must be greater than 0")
+        );
+        return Stream.of(
+                //@formatter:off
+                //            orderId,   expectedResponse
+                Arguments.of( -1,        responseInvalidOrderId ),
+                Arguments.of( 0,         responseInvalidOrderId )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @MethodSource("findById_invalidParametersTestCases")
+    @DisplayName("findById: when given parameters do not verify validations then bad request error is returned with validation errors")
+    public void findById_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer orderId,
+                                                                                                                        ErrorResponseDto expectedResponse) {
+        ResultActions result = mockMvc.perform(
+                get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+        );
+
+        thenHttpErrorIsReturned(
+                result,
+                BAD_REQUEST,
+                expectedResponse
+        );
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("findById: when based on provided parameters the service returns empty then Http code Not Found is returned")
+    public void findById_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        Integer orderId = 1;
+
+        when(mockService.findById(orderId))
+                .thenReturn(empty());
+
+        ResultActions result = mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                )
+                .andExpect(
+                        status().isNotFound()
+                );
+
+        thenBodyIsReturned(
+                result,
+                NOT_FOUND,
+                null,
+                OrderDto.class
+        );
+
+        verify(mockService, times(1))
+                .findById(
+                        orderId
+                );
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("findById: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
+    public void findById_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        Order model = buildNewOrderWithOrderLine(
+                dto.getId()
+        );
+
+        when(mockService.findById(dto.getId()))
+                .thenReturn(of(model));
+
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(dto);
+
+        ResultActions result = mockMvc.perform(
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + dto.getId())
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        content().contentType(APPLICATION_JSON)
+                );
+
+        thenBodyIsReturned(
+                result,
+                OK,
+                dto,
+                OrderDto.class
+        );
+
+        verify(mockService, times(1))
+                .findById(
+                        dto.getId()
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("update: when no logged user is given then unauthorized Http code is returned")
+    public void update_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine();
+
+        mockMvc.perform(
+                        put(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        status().isUnauthorized()
+                );
+
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_ORDER }
+    )
+    @DisplayName("update: when no valid authority is given then forbidden Http code is returned")
+    public void update_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine();
+
+        mockMvc.perform(
+                        put(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockService);
+    }
+
+
+    static Stream<Arguments> update_invalidParametersTestCases() {
+        String longString = String.join("", Collections.nCopies(300, "a"));
+
+        OrderDto dtoWithNoCode = buildNewOrderDtoWithOrderLine();
+        dtoWithNoCode.setCode(null);
+
+        OrderDto dtoWithLongCode = buildNewOrderDtoWithOrderLine();
+        dtoWithLongCode.setCode(longString);
+
+        OrderDto dtoWithOrderLineWithoutConcept = buildNewOrderDtoWithOrderLine();
+        dtoWithOrderLineWithoutConcept.getOrderLines().getFirst().setConcept(null);
+
+        OrderDto dtoWithOrderLineWithLongConcept = buildNewOrderDtoWithOrderLine();
+        dtoWithOrderLineWithLongConcept.getOrderLines().getFirst().setConcept(longString);
+
+        OrderDto dtoWithOrderLineWithNegativeAmount = buildNewOrderDtoWithOrderLine();
+        dtoWithOrderLineWithNegativeAmount.getOrderLines().getFirst().setAmount(-1);
+
+        OrderDto dtoWithOrderLineWithNegativeCost = buildNewOrderDtoWithOrderLine();
+        dtoWithOrderLineWithNegativeCost.getOrderLines().getFirst().setCost(-2d);
+
+        ErrorResponseDto responseDtoWithNoCode = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: code due to: must not be null")
+        );
+        ErrorResponseDto responseDtoWithLongCode = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: code due to: size must be between 1 and 64")
+        );
+        ErrorResponseDto responseDtoWithOrderLineWithoutConcept = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: orderLines[0].concept due to: must not be null")
+        );
+        ErrorResponseDto responseDtoWithOrderLineWithLongConcept = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: orderLines[0].concept due to: size must be between 1 and 255")
+        );
+        ErrorResponseDto responseDtoWithOrderLineWithNegativeAmount = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: orderLines[0].amount due to: must be greater than 0")
+        );
+        ErrorResponseDto responseDtoWithOrderLineWithNegativeCost = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: orderLines[0].cost due to: must be greater than 0")
+        );
+        return Stream.of(
+                //@formatter:off
+                //            dtoToCreate,                          expectedResponse
+                Arguments.of( dtoWithNoCode,                        responseDtoWithNoCode ),
+                Arguments.of( dtoWithLongCode,                      responseDtoWithLongCode ),
+                Arguments.of( dtoWithOrderLineWithoutConcept,       responseDtoWithOrderLineWithoutConcept ),
+                Arguments.of( dtoWithOrderLineWithLongConcept,      responseDtoWithOrderLineWithLongConcept ),
+                Arguments.of( dtoWithOrderLineWithNegativeAmount,   responseDtoWithOrderLineWithNegativeAmount ),
+                Arguments.of( dtoWithOrderLineWithNegativeCost,     responseDtoWithOrderLineWithNegativeCost )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.UPDATE_ORDER }
+    )
+    @MethodSource("update_invalidParametersTestCases")
+    @DisplayName("update: when given parameters do not verify validations then bad request error is returned with validation errors")
+    public void update_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(OrderDto dtoToCreate,
+                                                                                                                      ErrorResponseDto expectedResponse) {
+        ResultActions result = mockMvc.perform(
+                        put(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dtoToCreate)
+                                )
+                )
+                .andExpect(
+                        content().contentType(APPLICATION_JSON)
+                );
+
+        thenHttpErrorIsReturned(
+                result,
+                BAD_REQUEST,
+                expectedResponse
+        );
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.UPDATE_ORDER }
+    )
+    @DisplayName("update: when given parameters verifies validations but service returns empty then Http code Not Found is returned")
+    public void update_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        Order model = buildNewOrderWithOrderLine(
+                dto.getId()
+        );
+
+        when(mockConverter.fromDtoToModel(dto))
+                .thenReturn(model);
+
+        when(mockService.save(model))
+                .thenReturn(empty());
+
+        ResultActions result = mockMvc.perform(
+                put(RestRoutes.ORDER.ROOT)
+                        .contentType(APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(dto)
+                        )
+        );
+
+        thenBodyIsReturned(
+                result,
+                NOT_FOUND,
+                null,
+                OrderDto.class
+        );
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        dto
+                );
+        verify(mockService, times(1))
+                .save(
+                        model
+                );
+        verify(mockConverter, never())
+                .fromModelToDto(
+                        any(Order.class)
+                );
+    }
+
+
+    @Test
+    @SneakyThrows
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.UPDATE_ORDER }
+    )
+    @DisplayName("update: when given parameters verifies validations and service returns a model then Http code Ok with the updated Dto is returned")
+    public void update_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeOkdWithTheUpdatedDtoIsReturned() {
+        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        Order model = buildNewOrderWithOrderLine(
+                dto.getId()
+        );
+
+        when(mockConverter.fromDtoToModel(dto))
+                .thenReturn(model);
+
+        when(mockService.save(model))
+                .thenReturn(of(model));
+
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(dto);
+
+        ResultActions result = mockMvc.perform(
+                        put(RestRoutes.ORDER.ROOT)
+                                .contentType(APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(dto)
+                                )
+                )
+                .andExpect(
+                        content().contentType(APPLICATION_JSON)
+                );
+
+        thenBodyIsReturned(
+                result,
+                OK,
+                dto,
+                OrderDto.class
+        );
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        dto
+                );
+        verify(mockService, times(1))
+                .save(
+                        model
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
+
+
+    private static Order buildNewOrderWithOrderLine(final Integer orderId) {
+        Order order = buildNewOrderWithOrderLine();
+        order.setId(
+                orderId
+        );
+        return order;
+    }
+
+
     private static Order buildNewOrderWithOrderLine() {
         Order order = buildOrder(
                 "Order 1",
@@ -528,6 +1051,20 @@ public class OrderControllerTest extends BaseControllerTest {
                 )
         );
         return order;
+    }
+
+
+    private static OrderDto buildNewOrderDtoWithOrderLine(final Integer orderId) {
+        OrderDto orderDto = buildNewOrderDtoWithOrderLine();
+        orderDto.setId(
+                orderId
+        );
+        orderDto.getOrderLines()
+                .getFirst()
+                .setOrderId(
+                        orderId
+                );
+        return orderDto;
     }
 
 
