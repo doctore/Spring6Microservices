@@ -39,10 +39,23 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 )
 public class GlobalErrorWebExceptionHandler {
 
+    /**
+     * Method used to manage when a Rest request throws a {@link AccessDeniedException}.
+     *
+     * @param exception
+     *    {@link AccessDeniedException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> accessDeniedException(final AccessDeniedException exception,
                                                                   final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         return buildErrorResponse(
                 SECURITY,
                 List.of(exception.getMessage()),
@@ -51,10 +64,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link AuthenticationException}.
+     *
+     * @param exception
+     *    {@link AuthenticationException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponseDto> authenticationException(final AuthenticationException exception,
                                                                     final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         return buildErrorResponse(
                 SECURITY,
                 List.of(exception.getMessage()),
@@ -63,10 +89,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link ConstraintViolationException}.
+     *
+     * @param exception
+     *    {@link ConstraintViolationException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponseDto> constraintViolationException(final ConstraintViolationException exception,
                                                                          final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         List<String> errorMessages = getConstraintViolationExceptionErrorMessages(exception);
         return buildErrorResponse(
                 VALIDATION,
@@ -76,10 +115,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link HttpMessageNotReadableException}.
+     *
+     * @param exception
+     *    {@link HttpMessageNotReadableException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDto> httpMessageNotReadableException(final HttpMessageNotReadableException exception,
                                                                             final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         return buildErrorResponse(
                 VALIDATION,
                 List.of("The was a problem in the parameters of the current request"),
@@ -88,10 +140,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link MethodArgumentNotValidException}.
+     *
+     * @param exception
+     *    {@link MethodArgumentNotValidException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> methodArgumentNotValidException(final MethodArgumentNotValidException exception,
                                                                             final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         List<String> errorMessages = getMethodArgumentNotValidExceptionErrorMessages(exception);
         return buildErrorResponse(
                 VALIDATION,
@@ -101,10 +166,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link UnauthorizedException}.
+     *
+     * @param exception
+     *    {@link UnauthorizedException} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponseDto> unauthorizedException(final UnauthorizedException exception,
                                                                   final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         return buildErrorResponse(
                 SECURITY,
                 List.of(exception.getMessage()),
@@ -113,10 +191,23 @@ public class GlobalErrorWebExceptionHandler {
     }
 
 
+    /**
+     * Method used to manage when a Rest request throws a {@link Throwable}.
+     *
+     * @param exception
+     *    {@link Throwable} thrown
+     * @param request
+     *    {@link WebRequest} received
+     *
+     * @return {@link ResponseEntity} with the suitable {@link ErrorResponseDto}
+     */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponseDto> throwable(final Throwable exception,
                                                       final WebRequest request) {
-        log.error(getErrorMessageUsingHttpRequest(request), exception);
+        log.error(
+                getErrorMessageUsingHttpRequest(request),
+                exception
+        );
         return buildErrorResponse(
                 INTERNAL,
                 List.of("Internal error in the application"),
