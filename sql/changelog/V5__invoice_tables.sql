@@ -19,7 +19,7 @@ CREATE TABLE main.invoice(
     id                  serial              not null       constraint invoice_pk primary key,
     code                varchar(64)         not null,
     customer_id         int                 not null       constraint invoice_customer_id_fk references main.customer,
-    order_id            int                 not null       constraint order_line_order_id_fk references main.order,
+    order_id            int                 not null       constraint invoice_order_id_fk references main.order,
     cost                double precision    not null,
     created_at          timestamp           not null       default current_timestamp
 );
