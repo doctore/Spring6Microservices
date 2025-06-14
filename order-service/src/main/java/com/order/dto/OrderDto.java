@@ -51,7 +51,7 @@ public class OrderDto {
             min = 1,
             max = 64
     )
-    private String customer;
+    private String customerCode;
 
     @Schema(
             description = "When the order was created",

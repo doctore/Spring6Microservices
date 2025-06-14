@@ -9,7 +9,7 @@ CREATE SEQUENCE IF NOT EXISTS order_id_seq AS integer;
 CREATE TABLE IF NOT EXISTS main.order(
     id              int                 not null     default nextval('order_id_seq')   constraint order_pk primary key,
     code            varchar(64)         not null,
-    customer        varchar(64)         not null,
+    customer_code   varchar(64)         not null,
     created_at      timestamp           not null     default current_timestamp
 );
 

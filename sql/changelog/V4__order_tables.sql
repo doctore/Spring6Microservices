@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS main;
 CREATE TABLE main.order(
     id                  serial              not null       constraint order_pk primary key,
     code                varchar(64)         not null,
-    customer            varchar(64)         not null,
+    customer_code       varchar(64)         not null,
     created_at          timestamp           not null       default current_timestamp
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE main.order_line(
 -- Data
 INSERT INTO main.order (id
                        ,code
-                       ,customer
+                       ,customer_code
                        ,created_at)
 VALUES (1
        ,'Order 1'

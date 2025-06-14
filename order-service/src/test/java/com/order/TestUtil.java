@@ -25,8 +25,8 @@ public class TestUtil {
                 actual.getCode()
         );
         assertEquals(
-                expected.getCustomer(),
-                actual.getCustomer()
+                expected.getCustomerCode(),
+                actual.getCustomerCode()
         );
         if (null == expected.getOrderLines()) {
             assertNull(actual.getOrderLines());
@@ -71,8 +71,8 @@ public class TestUtil {
                 actual.getCode()
         );
         assertEquals(
-                expected.getCustomer(),
-                actual.getCustomer()
+                expected.getCustomerCode(),
+                actual.getCustomerCode()
         );
         if (null == expected.getOrderLines()) {
             assertNull(actual.getOrderLines());
@@ -137,8 +137,8 @@ public class TestUtil {
                     actual.getOrder().getCode()
             );
             assertEquals(
-                    expected.getOrder().getCustomer(),
-                    actual.getOrder().getCustomer()
+                    expected.getOrder().getCustomerCode(),
+                    actual.getOrder().getCustomerCode()
             );
             assertEquals(
                     expected.getOrder().getOrderLines().size(),

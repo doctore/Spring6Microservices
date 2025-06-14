@@ -37,7 +37,7 @@ public class Order implements IModel, Serializable {
             min = 1,
             max = 64
     )
-    private String customer;
+    private String customerCode;
 
     @NotNull
     private LocalDateTime createdAt;

@@ -54,7 +54,7 @@ public class TestDataFactory {
         return OrderDto.builder()
                 .id(id)
                 .code(code)
-                .customer("Customer" + (null == id ? "" : " " + id))
+                .customerCode("Customer" + (null == id ? "" : " " + id))
                 .createdAt(
                         LocalDateTime.now()
                 )
