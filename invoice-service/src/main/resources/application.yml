@@ -1,0 +1,6 @@
+# Spring framework configuration
+spring:
+  application:
+    name: invoice-service
+  flyway:
+    enabled: false

@@ -10,6 +10,7 @@
   - [security-oauth-service](#security-oauth-service)
   - [security-custom-service](#security-custom-service) 
   - [order-service](#order-service)
+  - [invoice-service](#invoice-service)
   - [common-core](#common-core)
   - [common-spring](#common-spring)
   - [sql](#sql)
@@ -247,6 +248,13 @@ using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
 ![Alt text](/documentation/order-service/ConfigureFlyway.png?raw=true "Configure Flyway")
 
 All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
+<br><br>
+
+
+### [invoice-service](https://github.com/doctore/Spring6Microservices/tree/main/invoice-service)
+
+**UNDER CONSTRUCTION**
+
 <br><br>
 
 
