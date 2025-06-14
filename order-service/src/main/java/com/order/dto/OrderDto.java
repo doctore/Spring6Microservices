@@ -43,6 +43,17 @@ public class OrderDto {
     private String code;
 
     @Schema(
+            description = "Customer identifier",
+            requiredMode = RequiredMode.REQUIRED
+    )
+    @NotNull
+    @Size(
+            min = 1,
+            max = 64
+    )
+    private String customer;
+
+    @Schema(
             description = "When the order was created",
             requiredMode = RequiredMode.REQUIRED
     )

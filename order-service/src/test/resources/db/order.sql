@@ -9,6 +9,7 @@ CREATE SEQUENCE IF NOT EXISTS order_id_seq AS integer;
 CREATE TABLE IF NOT EXISTS main.order(
     id              int                 not null     default nextval('order_id_seq')   constraint order_pk primary key,
     code            varchar(64)         not null,
+    customer        varchar(64)         not null,
     created_at      timestamp           not null     default current_timestamp
 );
 
@@ -33,16 +34,19 @@ MERGE INTO main.order
     VALUES (
        1
       ,'Order 1'
+      ,'Customer 1'
       ,current_timestamp
     )
    ,(
        2
       ,'Order 2'
+      ,'Customer 2'
       ,current_timestamp
     )
    ,(
        3
       ,'Order 3'
+      ,'Customer 3'
       ,current_timestamp
     );
 

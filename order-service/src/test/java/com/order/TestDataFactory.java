@@ -29,6 +29,7 @@ public class TestDataFactory {
         return new Order(
                 id,
                 code,
+                "Customer" + (null == id ? "" : " " + id),
                 LocalDateTime.now(),
                 new ArrayList<>(
                         orderLines
@@ -53,6 +54,7 @@ public class TestDataFactory {
         return OrderDto.builder()
                 .id(id)
                 .code(code)
+                .customer("Customer" + (null == id ? "" : " " + id))
                 .createdAt(
                         LocalDateTime.now()
                 )

@@ -5,6 +5,7 @@ CREATE SCHEMA IF NOT EXISTS main;
 CREATE TABLE main.order(
     id                  serial              not null       constraint order_pk primary key,
     code                varchar(64)         not null,
+    customer            varchar(64)         not null,
     created_at          timestamp           not null       default current_timestamp
 );
 
@@ -25,12 +26,15 @@ CREATE TABLE main.order_line(
 -- Data
 INSERT INTO main.order (id
                        ,code
+                       ,customer
                        ,created_at)
 VALUES (1
        ,'Order 1'
+       ,'Customer 1'
        ,current_timestamp)
       ,(2
        ,'Order 2'
+       ,'Customer 2'
        ,current_timestamp);
 
 SELECT setval('main.order_id_seq', (SELECT count(*) FROM main.order));

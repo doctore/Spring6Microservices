@@ -16,6 +16,7 @@ public interface OrderMapper {
     // Columns defined in the table of database
     String ID_COLUMN = "id";
     String CODE_COLUMN = "code";
+    String CUSTOMER_COLUMN = "customer";
     String CREATED_AT_COLUMN = "created_at";
 
     // Used to know how to manage raw results from database
@@ -57,6 +58,10 @@ public interface OrderMapper {
                             column = CODE_COLUMN
                     ),
                     @Result(
+                            property = "customer",
+                            column = CUSTOMER_COLUMN
+                    ),
+                    @Result(
                             property = "createdAt",
                             column = CREATED_AT_COLUMN
                     ),
@@ -91,10 +96,12 @@ public interface OrderMapper {
 
     @Insert("INSERT INTO " + TABLE + " ("
                + CODE_COLUMN
+               + ", " + CUSTOMER_COLUMN
                + ", " + CREATED_AT_COLUMN
           + ") "
           + "VALUES ("
                + "#{code}"
+               + ", #{customer} "
                + ", #{createdAt} "
           + ")"
     )
@@ -109,6 +116,7 @@ public interface OrderMapper {
     @Update("UPDATE " + TABLE
           + " SET "
                + CODE_COLUMN + " = #{code} "
+               + ", " + CUSTOMER_COLUMN + " = #{customer} "
           + "WHERE id = #{id}"
     )
     int update(final Order order);

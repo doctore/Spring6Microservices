@@ -33,6 +33,13 @@ public class Order implements IModel, Serializable {
     private String code;
 
     @NotNull
+    @Size(
+            min = 1,
+            max = 64
+    )
+    private String customer;
+
+    @NotNull
     private LocalDateTime createdAt;
 
     private List<OrderLine> orderLines;
