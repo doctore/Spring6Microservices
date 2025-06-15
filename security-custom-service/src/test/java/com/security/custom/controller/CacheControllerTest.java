@@ -29,7 +29,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
-@SpringBootTest(classes = SecurityCustomServiceApplication.class)
+@SpringBootTest(
+        classes = SecurityCustomServiceApplication.class
+)
 public class CacheControllerTest extends BaseControllerTest {
 
     @MockitoBean

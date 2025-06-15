@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS security.spring6microservice_role_permission (
 
 ---------------------
 -- Data
-MERGE INTO security.spring6microservice_user
+MERGE INTO security.spring6microservice_user (id, name, active, password, username, created_at)
     KEY (id)
     VALUES (
        1
@@ -61,7 +61,7 @@ MERGE INTO security.spring6microservice_user
     );
 
 
-MERGE INTO security.spring6microservice_role
+MERGE INTO security.spring6microservice_role (id, name, created_at)
     KEY (id)
     VALUES (
        1
@@ -75,7 +75,7 @@ MERGE INTO security.spring6microservice_role
     );
 
 
-MERGE INTO security.spring6microservice_permission
+MERGE INTO security.spring6microservice_permission (id, name, created_at)
     KEY (id)
     VALUES (
        1
@@ -114,7 +114,7 @@ MERGE INTO security.spring6microservice_permission
     );
 
 
-MERGE INTO security.spring6microservice_user_role
+MERGE INTO security.spring6microservice_user_role (user_id, role_id)
     KEY (user_id, role_id)
     VALUES (
        SELECT id
@@ -126,7 +126,7 @@ MERGE INTO security.spring6microservice_user_role
     );
 
 
-MERGE INTO security.spring6microservice_role_permission
+MERGE INTO security.spring6microservice_role_permission (role_id, permission_id)
     KEY (role_id, permission_id)
     VALUES (
        SELECT id

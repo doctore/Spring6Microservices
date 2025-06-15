@@ -27,9 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(
+        replace = AutoConfigureTestDatabase.Replace.NONE
+)
 @DataJdbcTest
-@Import(UserRepository.class)
+@Import(
+        UserRepository.class
+)
 @Sql(
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
         value = "classpath:db/spring6microservice_security.sql"

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS main.order_line(
 
 ---------------------
 -- Data
-MERGE INTO main.order
+MERGE INTO main.order (id, code, customer_code, created_at)
     KEY (id)
     VALUES (
        1
@@ -53,7 +53,7 @@ MERGE INTO main.order
 ALTER SEQUENCE order_id_seq RESTART WITH 4;
 
 
-MERGE INTO main.order_line
+MERGE INTO main.order_line (id, order_id, concept, amount, cost)
     KEY (id)
     VALUES (
        1

@@ -37,7 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(
+        SpringExtension.class
+)
 public class AuthorizationServiceTest {
 
     @Mock

@@ -27,7 +27,9 @@ import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(
+        SpringExtension.class
+)
 public class OrderServiceTest {
 
     @Mock

@@ -18,7 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(
+        SpringExtension.class
+)
 public class ApplicationUserBlackListServiceTest {
 
     @Mock

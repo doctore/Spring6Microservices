@@ -22,7 +22,9 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(
+        SpringExtension.class
+)
 public class Spring6MicroserviceAuthorizationServiceTest {
 
     private Spring6MicroserviceAuthorizationService service;

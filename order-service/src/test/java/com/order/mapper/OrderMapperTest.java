@@ -23,7 +23,9 @@ import static com.order.TestDataFactory.buildOrderLine;
 import static com.order.TestUtil.compareOrders;
 import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(
+        replace = AutoConfigureTestDatabase.Replace.NONE
+)
 @MybatisTest
 @Sql(
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,

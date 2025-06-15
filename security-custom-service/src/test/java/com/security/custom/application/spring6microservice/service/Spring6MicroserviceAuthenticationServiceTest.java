@@ -39,7 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(
+        SpringExtension.class
+)
 public class Spring6MicroserviceAuthenticationServiceTest {
 
     @Mock

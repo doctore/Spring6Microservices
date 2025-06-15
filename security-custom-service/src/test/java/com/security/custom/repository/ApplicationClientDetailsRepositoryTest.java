@@ -29,9 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(
+        replace = AutoConfigureTestDatabase.Replace.NONE
+)
 @DataJpaTest
-@Import(PersistenceConfiguration.class)
+@Import(
+        PersistenceConfiguration.class
+)
 @Sql(
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
         value = "classpath:db/application_client_details.sql"

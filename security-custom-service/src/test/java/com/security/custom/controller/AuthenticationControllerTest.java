@@ -40,7 +40,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.*;
 
-@SpringBootTest(classes = SecurityCustomServiceApplication.class)
+@SpringBootTest(
+        classes = SecurityCustomServiceApplication.class
+)
 public class AuthenticationControllerTest extends BaseControllerTest {
 
     @MockitoBean
