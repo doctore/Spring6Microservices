@@ -1,10 +1,15 @@
 package com.invoice;
 
+import com.invoice.dto.page.PageDto;
+import com.invoice.dto.page.SortDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
+import com.spring6microservices.common.core.util.CollectionUtil;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @UtilityClass
 public class TestDataFactory {
@@ -41,6 +46,30 @@ public class TestDataFactory {
                 .createdAt(
                         LocalDateTime.now()
                 )
+                .build();
+    }
+
+
+    public static PageDto buildPageDto(final int page,
+                                       final int size,
+                                       final Collection<SortDto> sortDtos) {
+        return PageDto.builder()
+                .page(page)
+                .size(size)
+                .sort(
+                        CollectionUtil.isEmpty(sortDtos)
+                                ? new ArrayList<>()
+                                : new ArrayList<>(sortDtos)
+                )
+                .build();
+    }
+
+
+    public static SortDto buildSortDto(final String property,
+                                       final boolean isAscending) {
+        return SortDto.builder()
+                .property(property)
+                .isAscending(isAscending)
                 .build();
     }
 

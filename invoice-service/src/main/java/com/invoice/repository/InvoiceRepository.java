@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,10 +44,12 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
         );
         Predicate costPredicate = criteriaBuilder.and(
                 criteriaBuilder.ge(
-                        invoiceRoot.get(COST_COLUMN), costGreaterOrEqual
+                        invoiceRoot.get(COST_COLUMN),
+                        costGreaterOrEqual
                 ),
                 criteriaBuilder.le(
-                        invoiceRoot.get(COST_COLUMN), costLessOrEqual
+                        invoiceRoot.get(COST_COLUMN),
+                        costLessOrEqual
                 )
         );
         criteriaQuery.where(costPredicate);
