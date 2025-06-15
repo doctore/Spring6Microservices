@@ -9,5 +9,8 @@ public enum PermissionEnum {
     CREATE_ORDER,
     DELETE_ORDER,
     GET_ORDER,
-    UPDATE_ORDER
+    UPDATE_ORDER,
+    CREATE_INVOICE,
+    GET_INVOICE,
+    GET_CUSTOMER
 }

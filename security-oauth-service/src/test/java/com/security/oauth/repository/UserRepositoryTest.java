@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -42,17 +43,10 @@ public class UserRepositoryTest {
                 1,
                 RoleEnum.ROLE_ADMIN.name()
         );
-        role.addPermission(
-                PermissionEnum.CREATE_ORDER
-        );
-        role.addPermission(
-                PermissionEnum.DELETE_ORDER
-        );
-        role.addPermission(
-                PermissionEnum.GET_ORDER
-        );
-        role.addPermission(
-                PermissionEnum.UPDATE_ORDER
+        Arrays.stream(
+                PermissionEnum.values()
+        ).forEach(
+                role::addPermission
         );
         User existingUser = User.builder()
                 .id(1L)
