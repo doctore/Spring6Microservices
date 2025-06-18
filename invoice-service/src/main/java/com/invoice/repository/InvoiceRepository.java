@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +24,10 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
     /**
      * Gets the {@link Invoice}s whose cost is among those provided.
      *
+     * @apiNote
+     *    If {@code costGreaterOrEqual} and {@code costLessOrEqual} are {@code null} then all the {@link Invoice}s will
+     * be returned.
+     *
      * @param costGreaterOrEqual
      *    Lower limit to compare {@link Invoice#getCost()}
      * @param costLessOrEqual
@@ -33,8 +36,11 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
      * @return {@link Invoice}s with cost greater than or equal to {@code costGreaterOrEqual} and
      *         less than or equal to {@code costLessOrEqual}
      */
-    default List<Invoice> findByCostRange(final double costGreaterOrEqual,
-                                          final double costLessOrEqual) {
+    default List<Invoice> findByCostRange(final Double costGreaterOrEqual,
+                                          final Double costLessOrEqual) {
+        if (null == costGreaterOrEqual && null == costLessOrEqual) {
+            return findAll();
+        }
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(
                 Invoice.class
@@ -42,16 +48,31 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
         Root<Invoice> invoiceRoot = criteriaQuery.from(
                 Invoice.class
         );
-        Predicate costPredicate = criteriaBuilder.and(
-                criteriaBuilder.ge(
-                        invoiceRoot.get(COST_COLUMN),
-                        costGreaterOrEqual
-                ),
-                criteriaBuilder.le(
-                        invoiceRoot.get(COST_COLUMN),
-                        costLessOrEqual
-                )
-        );
+        Predicate costPredicate;
+        if (null != costGreaterOrEqual && null != costLessOrEqual) {
+            costPredicate = criteriaBuilder.and(
+                    criteriaBuilder.ge(
+                            invoiceRoot.get(COST_COLUMN),
+                            costGreaterOrEqual
+                    ),
+                    criteriaBuilder.le(
+                            invoiceRoot.get(COST_COLUMN),
+                            costLessOrEqual
+                    )
+            );
+        }
+        else if (null == costGreaterOrEqual) {
+            costPredicate = criteriaBuilder.le(
+                    invoiceRoot.get(COST_COLUMN),
+                    costLessOrEqual
+            );
+        }
+        else {
+            costPredicate = criteriaBuilder.ge(
+                    invoiceRoot.get(COST_COLUMN),
+                    costGreaterOrEqual
+            );
+        }
         criteriaQuery.where(costPredicate);
         criteriaQuery.orderBy(
                 criteriaBuilder.asc(

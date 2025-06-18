@@ -63,17 +63,20 @@ public class InvoiceRepositoryTest {
         return Stream.of(
                 //@formatter:off
                 //            costGreaterOrEqual,   costLessOrEqual,   expectedResult
-                Arguments.of( 0,                    10,                List.of() ),
-                Arguments.of( 10,                   20,                List.of(invoice1) ),
-                Arguments.of( 10,                   1000,              List.of(invoice1, invoice2) )
+                Arguments.of( null,                 null,              List.of(invoice1, invoice2) ),
+                Arguments.of( 12d,                  null,              List.of(invoice2) ),
+                Arguments.of( null,                 12d,               List.of(invoice1) ),
+                Arguments.of( 0d,                   10d,               List.of() ),
+                Arguments.of( 10d,                  20d,               List.of(invoice1) ),
+                Arguments.of( 10d,                  1000d,             List.of(invoice1, invoice2) )
         ); //@formatter:on
     }
 
     @ParameterizedTest
     @MethodSource("findByCostRangeTestCases")
     @DisplayName("findById: test cases")
-    public void findByCostRange_testCases(double costGreaterOrEqual,
-                                          double costLessOrEqual,
+    public void findByCostRange_testCases(Double costGreaterOrEqual,
+                                          Double costLessOrEqual,
                                           List<Invoice> expectedResult) {
         List<Invoice> result = repository.findByCostRange(
                 costGreaterOrEqual,

@@ -40,6 +40,7 @@ public class PageDtoTest {
 
 
     @Test
+    @DisplayName("toPageable: when not null sort is given then it will be included in the result")
     public void toPageable_whenNotNullSortIsGiven_thenItWillBeIncludedInPageRequest() {
         SortDto sortDto = buildSortDto(
                 "property1",
