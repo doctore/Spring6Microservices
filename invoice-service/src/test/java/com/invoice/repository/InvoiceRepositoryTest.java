@@ -68,7 +68,8 @@ public class InvoiceRepositoryTest {
                 Arguments.of( null,                 12d,               List.of(invoice1) ),
                 Arguments.of( 0d,                   10d,               List.of() ),
                 Arguments.of( 10d,                  20d,               List.of(invoice1) ),
-                Arguments.of( 10d,                  1000d,             List.of(invoice1, invoice2) )
+                Arguments.of( 10d,                  1000d,             List.of(invoice1, invoice2) ),
+                Arguments.of( 1000d,                2000d,             List.of() )
         ); //@formatter:on
     }
 

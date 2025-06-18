@@ -73,7 +73,9 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
                     costGreaterOrEqual
             );
         }
-        criteriaQuery.where(costPredicate);
+        criteriaQuery.where(
+                costPredicate
+        );
         criteriaQuery.orderBy(
                 criteriaBuilder.asc(
                         invoiceRoot.get(COST_COLUMN)
@@ -84,7 +86,9 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
                         criteriaQuery
                 );
         LOG.info(
-                getHQLQuery(query)
+                getHQLQuery(
+                        query
+                )
         );
         return query.getResultList();
     }
