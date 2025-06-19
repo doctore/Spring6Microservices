@@ -13,6 +13,7 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.query.sqm.internal.QuerySqmImpl;
 import org.hibernate.query.sqm.tree.SqmVisitableNode;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -132,6 +134,26 @@ public class ExtendedJpaRepositoryImpl<T, ID extends Serializable> extends Simpl
                                 .collect(toList())
                 )
                 .orElseGet(ArrayList::new);
+    }
+
+
+    @Override
+    public String buildRawOrder(final Sort sort) {
+        return ofNullable(sort)
+                .map(s ->
+                                s.stream().map(
+                                        o ->
+                                                o.getProperty() + " " + o.getDirection().name()
+                                        )
+                                        .collect(
+                                                joining(
+                                                        RAW_SQL_SEPARATOR
+                                                )
+                                        )
+                )
+                .orElse(
+                        StringUtil.EMPTY_STRING
+                );
     }
 
 }

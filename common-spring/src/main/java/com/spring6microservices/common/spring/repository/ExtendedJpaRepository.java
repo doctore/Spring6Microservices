@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -26,6 +27,9 @@ import java.util.Optional;
  */
 @NoRepositoryBean
 public interface ExtendedJpaRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
+
+    String RAW_SQL_SEPARATOR = ",";
+
 
     /**
      * Return the internal {@link EntityManager} to provide more functionality to the repositories.
@@ -107,5 +111,16 @@ public interface ExtendedJpaRepository<T, ID extends Serializable> extends JpaRe
      */
     List<Order> buildOrdersBy(final CriteriaBuilder criteriaBuilder,
                               final Tuple2<Expression<String>, Boolean>... sourcePathAndIsAsc);
+
+
+    /**
+     * Returns the {@code order} clause of a SQL sentence, based on provided {@link Sort}.
+     *
+     * @param sort
+     *    {@link Sort} used to create the SQL order clause
+     *
+     * @return {@link String} with SQL order clause
+     */
+    String buildRawOrder(final Sort sort);
 
 }

@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -317,6 +318,42 @@ public class ExtendedJpaRepositoryImplTest {
                         repository.getEntityManager()
                                 .createQuery(criteriaQuery)
                 )
+        );
+    }
+
+
+    static Stream<Arguments> buildRawOrderTestCases() {
+        Sort sortOneOrder = Sort.by(
+                Sort.Direction.ASC,
+                "id"
+        );
+        Sort sortSeveralOrders = Sort.by(
+                Sort.Order.asc(
+                        "id"
+                ),
+                Sort.Order.desc(
+                        "description"
+                )
+        );
+        String expectedResultSortOneOrder = "id ASC";
+        String expectedResultSeveralOrders = "id ASC,description DESC";
+        return Stream.of(
+                //@formatter:off
+                //            sort,                expectedResult
+                Arguments.of( null,                StringUtil.EMPTY_STRING ),
+                Arguments.of( sortOneOrder,        expectedResultSortOneOrder ),
+                Arguments.of( sortSeveralOrders,   expectedResultSeveralOrders )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildRawOrderTestCases")
+    @DisplayName("buildRawOrder: test cases")
+    public void buildRawOrder_testCases(Sort sort,
+                                        String expectedResult) {
+        assertEquals(
+                expectedResult,
+                repository.buildRawOrder(sort)
         );
     }
 
