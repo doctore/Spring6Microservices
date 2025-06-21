@@ -1,7 +1,6 @@
 package com.order.mapper;
 
 import com.order.model.Order;
-import com.order.model.OrderLine;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,11 +14,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
-import static com.order.TestDataFactory.buildOrder;
-import static com.order.TestDataFactory.buildOrderLine;
+import static com.order.TestDataFactory.*;
 import static com.order.TestUtil.compareOrders;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -186,7 +183,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        Order order = buildExistingOrder();
+        Order order = buildExistingOrderInDatabase();
         return Stream.of(
                 //@formatter:off
                 //            id,              expectedResult
@@ -216,7 +213,7 @@ public class OrderMapperTest {
 
 
     static Stream<Arguments> findByCodeTestCases() {
-        Order order = buildExistingOrder();
+        Order order = buildExistingOrderInDatabase();
         return Stream.of(
                 //@formatter:off
                 //            code,              expectedResult
@@ -327,28 +324,6 @@ public class OrderMapperTest {
         assertNotNull(
                 mapper.findByCode(newCode)
         );
-    }
-
-
-    private static Order buildExistingOrder() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                10.1d
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
-        return order;
     }
 
 }

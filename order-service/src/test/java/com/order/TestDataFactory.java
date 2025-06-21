@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @UtilityClass
 public class TestDataFactory {
@@ -35,6 +36,28 @@ public class TestDataFactory {
                         orderLines
                 )
         );
+    }
+
+
+    public static Order buildExistingOrderInDatabase() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                10.1d
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return order;
     }
 
 
@@ -93,6 +116,28 @@ public class TestDataFactory {
                 amount,
                 cost
         );
+    }
+
+
+    public static OrderLine buildExistingOrderLineInDatabase() {
+        Order order = buildOrder(
+                1,
+                "Order 1",
+                new ArrayList<>()
+        );
+        OrderLine orderLine = buildOrderLine(
+                1,
+                order,
+                "Keyboard",
+                2,
+                10.1d
+        );
+        order.setOrderLines(
+                List.of(
+                        orderLine
+                )
+        );
+        return orderLine;
     }
 
 

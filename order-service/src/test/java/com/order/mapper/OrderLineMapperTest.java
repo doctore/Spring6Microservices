@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.order.TestDataFactory.buildOrder;
-import static com.order.TestDataFactory.buildOrderLine;
+import static com.order.TestDataFactory.*;
 import static com.order.TestUtil.compareOrderLines;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -200,7 +199,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildExistingOrderLineInDatabase();
         return Stream.of(
                 //@formatter:off
                 //            id,                  expectedResult
@@ -243,7 +242,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByConceptNotNullConceptTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildExistingOrderLineInDatabase();
         return Stream.of(
                 //@formatter:off
                 //            concept,                  expectedResult
@@ -274,7 +273,7 @@ public class OrderLineMapperTest {
 
 
     static Stream<Arguments> findByOrderIdTestCases() {
-        OrderLine orderLine = buildExistingOrderLine();
+        OrderLine orderLine = buildExistingOrderLineInDatabase();
         return Stream.of(
                 //@formatter:off
                 //            orderId,                        expectedResult
@@ -424,28 +423,6 @@ public class OrderLineMapperTest {
                 newCost,
                 orderLine.getCost()
         );
-    }
-
-
-    private static OrderLine buildExistingOrderLine() {
-        Order order = buildOrder(
-                1,
-                "Order 1",
-                new ArrayList<>()
-        );
-        OrderLine orderLine = buildOrderLine(
-                1,
-                order,
-                "Keyboard",
-                2,
-                10.1d
-        );
-        order.setOrderLines(
-                List.of(
-                        orderLine
-                )
-        );
-        return orderLine;
     }
 
 }
