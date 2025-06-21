@@ -97,8 +97,9 @@ files, the dependency:
 
 ### [gateway-server](https://github.com/doctore/Spring6Microservices/tree/main/gateway-server)
 
-Using [Spring Gateway](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html), this is the gateway implementation used by the other
-microservices included in this proof of concept. This module contains a filter to registry every web service invoked, helping to debug each request.
+Using [Spring Gateway Server WebFlux](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux.html), this is the gateway
+implementation used by the other microservices included in this proof of concept. This module contains a filter to registry every web service invoked, helping
+to debug each request.
 <br><br>
 
 
@@ -698,7 +699,7 @@ file to include the specific configuration for native images.
 **2.** Add the [configuration files](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/src/main/resources/META-INF/native-image) based on the project's functionality.
 
 To know how to generate all the [configuration archives](https://stackoverflow.com/questions/76747716/how-to-register-method-for-runtime-reflection-with-graalvm) in this microservice,
-package the project with maven and invoke:
+package the project with maven using **native** profile and invoke:
 
 ```
 java -Dspring.aot.enabled=true -agentlib:native-image-agent=config-output-dir=./native-config -jar target/security-custom-service-1.0.0.jar
