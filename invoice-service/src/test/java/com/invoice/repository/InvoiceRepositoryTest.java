@@ -1,8 +1,6 @@
 package com.invoice.repository;
 
-import com.invoice.TestDataFactory;
 import com.invoice.configuration.persistence.PersistenceConfiguration;
-import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,13 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static com.invoice.TestDataFactory.buildExistingInvoice1InDatabase;
+import static com.invoice.TestDataFactory.buildExistingInvoice2InDatabase;
+import static com.invoice.TestUtil.compareInvoices;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(
@@ -39,27 +39,8 @@ public class InvoiceRepositoryTest {
 
 
     static Stream<Arguments> findByCostRangeTestCases() {
-        Customer customer = TestDataFactory.buildCustomer(
-                1,
-                "Customer 1",
-                "Address of customer 1",
-                "(+34) 123456789",
-                "customer1@email.es"
-        );
-        Invoice invoice1 = TestDataFactory.buildInvoice(
-                1,
-                "Invoice 1",
-                customer,
-                1,
-                10.1d
-        );
-        Invoice invoice2 = TestDataFactory.buildInvoice(
-                2,
-                "Invoice 2",
-                customer,
-                2,
-                911.5
-        );
+        Invoice invoice1 = buildExistingInvoice1InDatabase();
+        Invoice invoice2 = buildExistingInvoice2InDatabase();
         return Stream.of(
                 //@formatter:off
                 //            costGreaterOrEqual,   costLessOrEqual,   expectedResult
@@ -96,15 +77,85 @@ public class InvoiceRepositoryTest {
                     result.size()
             );
             for (int i = 0; i < result.size(); i++) {
-                assertThat(
+                compareInvoices(
                         result.get(i),
-                        samePropertyValuesAs(
-                                expectedResult.get(i),
-                                "createdAt",
-                                "customer"
-                        )
+                        expectedResult.get(i)
                 );
             }
+        }
+    }
+
+
+    static Stream<Arguments> findAllNoMemoryPaginationTestCases() {
+        Invoice invoice1 = buildExistingInvoice1InDatabase();
+        Invoice invoice2 = buildExistingInvoice2InDatabase();
+
+        PageRequest defaultSortPageable = PageRequest.of(
+                0,
+                5
+        );
+        PageRequest mostExpensivePageable = PageRequest.of(
+                0,
+                1,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        Invoice.COST_COLUMN
+                )
+        );
+
+        Page<Invoice> expectedResultNullPageable = new PageImpl<>(
+                List.of(
+                        invoice1,
+                        invoice2
+                )
+        );
+        Page<Invoice> expectedResultDefaultSortPageable = new PageImpl<>(
+                List.of(
+                        invoice2,
+                        invoice1
+                ),
+                defaultSortPageable,
+                2
+        );
+        Page<Invoice> expectedResultMostExpensivePageable = new PageImpl<>(
+                List.of(
+                        invoice2
+                ),
+                mostExpensivePageable,
+                2
+        );
+        return Stream.of(
+                //@formatter:off
+                //            pageable,                expectedResult
+                Arguments.of( null,                    expectedResultNullPageable ),
+                Arguments.of( defaultSortPageable,     expectedResultDefaultSortPageable ),
+                Arguments.of( mostExpensivePageable,   expectedResultMostExpensivePageable )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findAllNoMemoryPaginationTestCases")
+    @DisplayName("findAllNoMemoryPagination: test cases")
+    public void findAllNoMemoryPagination_testCases(Pageable pageable,
+                                                    Page<Invoice> expectedResult) {
+        Page<Invoice> result = repository.findAllNoMemoryPagination(
+                pageable
+        );
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.getTotalElements(),
+                result.getTotalElements()
+        );
+        assertEquals(
+                expectedResult.getNumberOfElements(),
+                result.getNumberOfElements()
+        );
+        for (int i = 0; i < result.getContent().size(); i++) {
+            compareInvoices(
+                    result.getContent().get(i),
+                    expectedResult.getContent().get(i)
+            );
         }
     }
 

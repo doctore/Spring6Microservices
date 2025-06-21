@@ -32,6 +32,28 @@ public class TestDataFactory {
     }
 
 
+    public static Customer buildExistingCustomer1InDatabase() {
+        return buildCustomer(
+                1,
+                "Customer 1",
+                "Address of customer 1",
+                "(+34) 123456789",
+                "customer1@email.es"
+        );
+    }
+
+
+    public static Customer buildExistingCustomer2InDatabase() {
+        return buildCustomer(
+                2,
+                "Customer 2",
+                "Address of customer 2",
+                "(+34) 987654321",
+                "customer2@email.es"
+        );
+    }
+
+
     public static Invoice buildInvoice(final Integer id,
                                        final String code,
                                        final Customer customer,
@@ -47,6 +69,28 @@ public class TestDataFactory {
                         LocalDateTime.now()
                 )
                 .build();
+    }
+
+
+    public static Invoice buildExistingInvoice1InDatabase() {
+        return buildInvoice(
+                1,
+                "Invoice 1",
+                buildExistingCustomer1InDatabase(),
+                1,
+                10.1d
+        );
+    }
+
+
+    public static Invoice buildExistingInvoice2InDatabase() {
+        return buildInvoice(
+                2,
+                "Invoice 2",
+                buildExistingCustomer2InDatabase(),
+                2,
+                911.5
+        );
     }
 
 

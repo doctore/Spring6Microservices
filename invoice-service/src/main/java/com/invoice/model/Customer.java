@@ -25,6 +25,23 @@ public class Customer implements Serializable {
     @Serial
     private static final long serialVersionUID = -161419389728211353L;
 
+    // Properties defined in the POJO
+    public static final String ID_PROPERTY = "id";
+    public static final String CODE_PROPERTY = "code";
+    public static final String ADDRESS_PROPERTY = "address";
+    public static final String PHONE_PROPERTY = "phone";
+    public static final String EMAIL_PROPERTY = "email";
+    public static final String CREATED_AT_PROPERTY = "createdAt";
+
+    // Columns defined in the table of database
+    public static final String ID_COLUMN = ID_PROPERTY;
+    public static final String CODE_COLUMN = CODE_PROPERTY;
+    public static final String ADDRESS_COLUMN = ADDRESS_PROPERTY;
+    public static final String PHONE_COLUMN = PHONE_PROPERTY;
+    public static final String EMAIL_COLUMN = EMAIL_PROPERTY;
+    public static final String CREATED_AT_COLUMN = "created_at";
+
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
