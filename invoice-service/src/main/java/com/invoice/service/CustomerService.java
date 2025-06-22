@@ -1,10 +1,15 @@
 package com.invoice.service;
 
+import com.invoice.model.Customer;
 import com.invoice.repository.CustomerRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 @Log4j2
 @Service
@@ -16,6 +21,38 @@ public class CustomerService {
     @Autowired
     public CustomerService(@Lazy final CustomerRepository repository) {
         this.repository = repository;
+    }
+
+
+    /**
+     *    Returns an {@link Optional} with the {@link Customer} if there is one which {@link Customer#getCode()}
+     * matches with {@code code}, {@link Optional#empty()} otherwise.
+     *
+     * @param code
+     *    {@link Customer#getCode()} to find
+     *
+     * @return {@link Optional} with the {@link Customer} which code matches with the given one.
+     *         {@link Optional#empty()} otherwise
+     */
+    public Optional<Customer> findByCode(final String code) {
+        return ofNullable(code)
+                .flatMap(repository::findByCode);
+    }
+
+
+    /**
+     *    Returns an {@link Optional} with the {@link Customer} if there is one which {@link Customer#getId()}
+     * matches with {@code id}, {@link Optional#empty()} otherwise.
+     *
+     * @param id
+     *    {@link Customer#getId()} to find
+     *
+     * @return {@link Optional} with the {@link Customer} which identifier matches with the given one.
+     *         {@link Optional#empty()} otherwise
+     */
+    public Optional<Customer> findById(final Integer id) {
+        return ofNullable(id)
+                .flatMap(repository::findById);
     }
 
 }

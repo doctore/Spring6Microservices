@@ -85,7 +85,9 @@ public class OrderServiceTest {
         when(mockMapper.deleteById(id))
                 .thenReturn(mapperResult);
 
-        boolean result = service.deleteById(id);
+        boolean result = service.deleteById(
+                id
+        );
 
         assertEquals(
                 expectedResult,
@@ -130,7 +132,9 @@ public class OrderServiceTest {
         when(mockMapper.deleteById(anyInt()))
                 .thenReturn(mapperDeleteResult);
 
-        boolean result = service.deleteByCode(code);
+        boolean result = service.deleteByCode(
+                code
+        );
 
         assertEquals(
                 expectedResult,
@@ -175,7 +179,9 @@ public class OrderServiceTest {
         when(mockMapper.findById(id))
                 .thenReturn(mapperResult);
 
-        Optional<Order> result = service.findById(id);
+        Optional<Order> result = service.findById(
+                id
+        );
 
         if (expectedResult.isEmpty()) {
             assertTrue(
@@ -218,7 +224,9 @@ public class OrderServiceTest {
         when(mockMapper.findByCode(code))
                 .thenReturn(mapperResult);
 
-        Optional<Order> result = service.findByCode(code);
+        Optional<Order> result = service.findByCode(
+                code
+        );
 
         if (expectedResult.isEmpty()) {
             assertTrue(
@@ -244,7 +252,9 @@ public class OrderServiceTest {
     @Test
     @DisplayName("save: when no model is given then empty is returned")
     public void save_whenNoModelIsGiven_thenEmptyIsReturned() {
-        Optional<Order> result = service.save(null);
+        Optional<Order> result = service.save(
+                null
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -269,7 +279,9 @@ public class OrderServiceTest {
         }).when(mockMapper)
                 .insert(any(Order.class));
 
-        Optional<Order> result = service.save(order);
+        Optional<Order> result = service.save(
+                order
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -301,7 +313,9 @@ public class OrderServiceTest {
     public void save_whenExistingModelIsGiven_thenUpdateIsInvokedAndNonEmptyIsReturned() {
         Order order = buildOrderWithOrderLine();
 
-        Optional<Order> result = service.save(order);
+        Optional<Order> result = service.save(
+                order
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -363,7 +377,9 @@ public class OrderServiceTest {
         }).when(mockMapper)
                 .insert(any(Order.class));
 
-        List<Order> result = service.saveAll(modelsToSave);
+        List<Order> result = service.saveAll(
+                modelsToSave
+        );
 
         assertNotNull(result);
         assertEquals(

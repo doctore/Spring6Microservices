@@ -81,7 +81,9 @@ public class OrderLineServiceTest {
         when(mockMapper.deleteById(id))
                 .thenReturn(mapperResult);
 
-        boolean result = service.deleteById(id);
+        boolean result = service.deleteById(
+                id
+        );
 
         assertEquals(
                 expectedResult,
@@ -110,7 +112,9 @@ public class OrderLineServiceTest {
         when(mockMapper.deleteByOrderId(orderId))
                 .thenReturn(mapperResult);
 
-        boolean result = service.deleteByOrderId(orderId);
+        boolean result = service.deleteByOrderId(
+                orderId
+        );
 
         assertEquals(
                 expectedResult,
@@ -139,7 +143,9 @@ public class OrderLineServiceTest {
         when(mockMapper.findById(id))
                 .thenReturn(mapperResult);
 
-        Optional<OrderLine> result = service.findById(id);
+        Optional<OrderLine> result = service.findById(
+                id
+        );
 
         if (expectedResult.isEmpty()) {
             assertTrue(
@@ -182,7 +188,9 @@ public class OrderLineServiceTest {
         when(mockMapper.findByConcept(concept))
                 .thenReturn(mapperResult);
 
-        List<OrderLine> result = service.findByConcept(concept);
+        List<OrderLine> result = service.findByConcept(
+                concept
+        );
 
         assertNotNull(result);
         assertEquals(
@@ -224,7 +232,9 @@ public class OrderLineServiceTest {
         when(mockMapper.findByOrderId(orderId))
                 .thenReturn(mapperResult);
 
-        List<OrderLine> result = service.findByOrderId(orderId);
+        List<OrderLine> result = service.findByOrderId(
+                orderId
+        );
 
         assertNotNull(result);
         assertEquals(
@@ -245,7 +255,9 @@ public class OrderLineServiceTest {
     @Test
     @DisplayName("save: when no model is given then empty is returned")
     public void save_whenNoModelIsGiven_thenEmptyIsReturned() {
-        Optional<OrderLine> result = service.save(null);
+        Optional<OrderLine> result = service.save(
+                null
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -270,7 +282,9 @@ public class OrderLineServiceTest {
         }).when(mockMapper)
                 .insert(any(OrderLine.class));
 
-        Optional<OrderLine> result = service.save(orderLine);
+        Optional<OrderLine> result = service.save(
+                orderLine
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -298,7 +312,9 @@ public class OrderLineServiceTest {
     public void save_whenExistingModelIsGiven_thenUpdateIsInvokedAndNonEmptyIsReturned() {
         OrderLine orderLine = buildOrderLineWithOrder();
 
-        Optional<OrderLine> result = service.save(orderLine);
+        Optional<OrderLine> result = service.save(
+                orderLine
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -364,7 +380,9 @@ public class OrderLineServiceTest {
         }).when(mockMapper)
                 .insert(any(OrderLine.class));
 
-        List<OrderLine> result = service.saveAll(modelsToSave);
+        List<OrderLine> result = service.saveAll(
+                modelsToSave
+        );
 
         assertNotNull(result);
         assertEquals(

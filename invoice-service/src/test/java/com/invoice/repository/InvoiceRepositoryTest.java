@@ -14,11 +14,14 @@ import org.springframework.data.domain.*;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.invoice.TestDataFactory.buildExistingInvoice1InDatabase;
 import static com.invoice.TestDataFactory.buildExistingInvoice2InDatabase;
 import static com.invoice.TestUtil.compareInvoices;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(
@@ -36,54 +39,6 @@ public class InvoiceRepositoryTest {
 
     @Autowired
     private InvoiceRepository repository;
-
-
-    static Stream<Arguments> findByCostRangeTestCases() {
-        Invoice invoice1 = buildExistingInvoice1InDatabase();
-        Invoice invoice2 = buildExistingInvoice2InDatabase();
-        return Stream.of(
-                //@formatter:off
-                //            costGreaterOrEqual,   costLessOrEqual,   expectedResult
-                Arguments.of( null,                 null,              List.of(invoice1, invoice2) ),
-                Arguments.of( 12d,                  null,              List.of(invoice2) ),
-                Arguments.of( null,                 12d,               List.of(invoice1) ),
-                Arguments.of( 0d,                   10d,               List.of() ),
-                Arguments.of( 10d,                  20d,               List.of(invoice1) ),
-                Arguments.of( 10d,                  1000d,             List.of(invoice1, invoice2) ),
-                Arguments.of( 1000d,                2000d,             List.of() )
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("findByCostRangeTestCases")
-    @DisplayName("findById: test cases")
-    public void findByCostRange_testCases(Double costGreaterOrEqual,
-                                          Double costLessOrEqual,
-                                          List<Invoice> expectedResult) {
-        List<Invoice> result = repository.findByCostRange(
-                costGreaterOrEqual,
-                costLessOrEqual
-        );
-        if (expectedResult.isEmpty()) {
-            assertNotNull(result);
-            assertTrue(
-                    result.isEmpty()
-            );
-        }
-        else {
-            assertNotNull(result);
-            assertEquals(
-                    expectedResult.size(),
-                    result.size()
-            );
-            for (int i = 0; i < result.size(); i++) {
-                compareInvoices(
-                        result.get(i),
-                        expectedResult.get(i)
-                );
-            }
-        }
-    }
 
 
     static Stream<Arguments> findAllNoMemoryPaginationTestCases() {
@@ -156,6 +111,88 @@ public class InvoiceRepositoryTest {
                     result.getContent().get(i),
                     expectedResult.getContent().get(i)
             );
+        }
+    }
+
+
+    static Stream<Arguments> findByCodeTestCases() {
+        Invoice invoice = buildExistingInvoice1InDatabase();
+        return Stream.of(
+                //@formatter:off
+                //            code,                expectedResult
+                Arguments.of( null,                empty() ),
+                Arguments.of( "NotFound",          empty() ),
+                Arguments.of( invoice.getCode(),   of(invoice) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByCodeTestCases")
+    @DisplayName("findByCode: test cases")
+    public void findByCode_testCases(String code,
+                                     Optional<Invoice> expectedResult) {
+        Optional<Invoice> result = repository.findByCode(
+                code
+        );
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.isEmpty(),
+                result.isEmpty()
+        );
+        expectedResult.ifPresent(
+                invoice ->
+                        compareInvoices(
+                                result.get(),
+                                invoice
+                        )
+        );
+    }
+
+
+    static Stream<Arguments> findByCostRangeTestCases() {
+        Invoice invoice1 = buildExistingInvoice1InDatabase();
+        Invoice invoice2 = buildExistingInvoice2InDatabase();
+        return Stream.of(
+                //@formatter:off
+                //            costGreaterOrEqual,   costLessOrEqual,   expectedResult
+                Arguments.of( null,                 null,              List.of(invoice1, invoice2) ),
+                Arguments.of( 12d,                  null,              List.of(invoice2) ),
+                Arguments.of( null,                 12d,               List.of(invoice1) ),
+                Arguments.of( 0d,                   10d,               List.of() ),
+                Arguments.of( 10d,                  20d,               List.of(invoice1) ),
+                Arguments.of( 10d,                  1000d,             List.of(invoice1, invoice2) ),
+                Arguments.of( 1000d,                2000d,             List.of() )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByCostRangeTestCases")
+    @DisplayName("findByCostRange: test cases")
+    public void findByCostRange_testCases(Double costGreaterOrEqual,
+                                          Double costLessOrEqual,
+                                          List<Invoice> expectedResult) {
+        List<Invoice> result = repository.findByCostRange(
+                costGreaterOrEqual,
+                costLessOrEqual
+        );
+        if (expectedResult.isEmpty()) {
+            assertNotNull(result);
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertNotNull(result);
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            for (int i = 0; i < result.size(); i++) {
+                compareInvoices(
+                        result.get(i),
+                        expectedResult.get(i)
+                );
+            }
         }
     }
 
