@@ -131,6 +131,51 @@ public class CustomerServiceTest {
     }
 
 
+    static Stream<Arguments> saveTestCases() {
+        Customer customer = buildCustomer();
+        return Stream.of(
+                //@formatter:off
+                //            customer,   repositoryResult,   expectedResult
+                Arguments.of( null,       null,               empty() ),
+                Arguments.of( customer,   null,               empty() ),
+                Arguments.of( customer,   customer,           of(customer) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("saveTestCases")
+    @DisplayName("save: test cases")
+    public void save_testCases(Customer customer,
+                               Customer repositoryResult,
+                               Optional<Customer> expectedResult) {
+        when(mockRepository.save(customer))
+                .thenReturn(repositoryResult);
+
+        Optional<Customer> result = service.save(
+                customer
+        );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareCustomers(
+                    expectedResult.get(),
+                    result.get()
+            );
+            verify(mockRepository, times(1))
+                    .save(
+                            customer
+                    );
+        }
+    }
+
+
     private static Customer buildCustomer() {
         return TestDataFactory.buildCustomer(
                 1,

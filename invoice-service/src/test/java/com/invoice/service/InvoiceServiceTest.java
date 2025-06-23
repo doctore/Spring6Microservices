@@ -132,6 +132,51 @@ public class InvoiceServiceTest {
     }
 
 
+    static Stream<Arguments> saveTestCases() {
+        Invoice invoice = buildInvoice();
+        return Stream.of(
+                //@formatter:off
+                //            invoice,   repositoryResult,   expectedResult
+                Arguments.of( null,      null,               empty() ),
+                Arguments.of( invoice,   null,               empty() ),
+                Arguments.of( invoice,   invoice,            of(invoice) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("saveTestCases")
+    @DisplayName("save: test cases")
+    public void save_testCases(Invoice invoice,
+                               Invoice repositoryResult,
+                               Optional<Invoice> expectedResult) {
+        when(mockRepository.save(invoice))
+                .thenReturn(repositoryResult);
+
+        Optional<Invoice> result = service.save(
+                invoice
+        );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareInvoices(
+                    expectedResult.get(),
+                    result.get()
+            );
+            verify(mockRepository, times(1))
+                    .save(
+                            invoice
+                    );
+        }
+    }
+
+
     private static Invoice buildInvoice() {
         Customer customer = buildCustomer(
                 1,

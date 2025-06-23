@@ -24,6 +24,9 @@ public class CustomerService {
     }
 
 
+    // TODO: findAll using findAllNoMemoryPagination
+
+
     /**
      *    Returns an {@link Optional} with the {@link Customer} if there is one which {@link Customer#getCode()}
      * matches with {@code code}, {@link Optional#empty()} otherwise.
@@ -53,6 +56,21 @@ public class CustomerService {
     public Optional<Customer> findById(final Integer id) {
         return ofNullable(id)
                 .flatMap(repository::findById);
+    }
+
+
+    /**
+     * Persist the information included in the given {@link Customer}.
+     *
+     * @param customer
+     *    {@link Customer} to save
+     *
+     * @return {@link Optional} with the saved {@link Customer} if provided {@code customer} is not {@code null},
+     *         {@link Optional#empty()} if the given {@code customer} is {@code null}
+     */
+    public Optional<Customer> save(final Customer customer) {
+        return ofNullable(customer)
+                .map(repository::save);
     }
 
 }

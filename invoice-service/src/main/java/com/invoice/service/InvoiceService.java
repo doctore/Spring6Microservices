@@ -24,6 +24,9 @@ public class InvoiceService {
     }
 
 
+    // TODO: findAll using findAllNoMemoryPagination
+
+
     /**
      *    Returns an {@link Optional} with the {@link Invoice} if there is one which {@link Invoice#getCode()}
      * matches with {@code code}, {@link Optional#empty()} otherwise.
@@ -53,6 +56,21 @@ public class InvoiceService {
     public Optional<Invoice> findById(final Integer id) {
         return ofNullable(id)
                 .flatMap(repository::findById);
+    }
+
+
+    /**
+     * Persist the information included in the given {@link Invoice}.
+     *
+     * @param invoice
+     *    {@link Invoice} to save
+     *
+     * @return {@link Optional} with the saved {@link Invoice} if provided {@code invoice} is not {@code null},
+     *         {@link Optional#empty()} if the given {@code invoice} is {@code null}
+     */
+    public Optional<Invoice> save(final Invoice invoice) {
+        return ofNullable(invoice)
+                .map(repository::save);
     }
 
 }
