@@ -4,12 +4,14 @@ import com.invoice.configuration.persistence.PersistenceConfiguration;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.util.CollectionUtil;
+import com.spring6microservices.common.core.util.ObjectUtil;
 import com.spring6microservices.common.spring.repository.ExtendedJpaRepository;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -36,23 +38,23 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
      *    {@link PagingAndSortingRepository#findAll(Pageable)}.
      *
      * @param pageable
-     *    {@link Pageable} with the desired page to get
+     *    {@link Pageable} with the desired page to get. If {@code null} then {@link ExtendedJpaRepository#getDefaultPageable()}
+     *    will be used.
      *
      * @return {@link Page} of {@link Invoice}
      */
     default Page<Invoice> findAllNoMemoryPagination(@Nullable final Pageable pageable) {
-        if (null == pageable) {
-            return new PageImpl<>(
-                 findAll()
-            );
-        }
-        int rankInitial = (pageable.getPageNumber() * pageable.getPageSize()) + 1;
-        int rankFinal = rankInitial + pageable.getPageSize() - 1;
+        final Pageable finalPageable = ObjectUtil.getOrElse(
+                pageable,
+                this.getDefaultPageable()
+        );
+        int rankInitial = (finalPageable.getPageNumber() * finalPageable.getPageSize()) + 1;
+        int rankFinal = rankInitial + finalPageable.getPageSize() - 1;
 
-        String orderByClause = (null == pageable.getSort() || pageable.getSort().isUnsorted())
+        String orderByClause = (null == finalPageable.getSort() || finalPageable.getSort().isUnsorted())
                 ? Invoice.ID_COLUMN + " desc "
                 : buildRawOrder(
-                        pageable.getSort()
+                        finalPageable.getSort()
                   );
 
         final String query = "select i_c.* "
@@ -78,7 +80,6 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
         LOG.info(
                 query
         );
-
         @SuppressWarnings("unchecked")
         List<Object[]> rawResults = getEntityManager().createNativeQuery(
                 query,
@@ -99,7 +100,7 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
                         rawResults,
                         array -> (Invoice) array[0]
                 ),
-                pageable,
+                finalPageable,
                 this.count()
         );
     }

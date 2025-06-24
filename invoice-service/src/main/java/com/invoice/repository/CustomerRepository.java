@@ -2,6 +2,7 @@ package com.invoice.repository;
 
 import com.invoice.configuration.persistence.PersistenceConfiguration;
 import com.invoice.model.Customer;
+import com.spring6microservices.common.core.util.ObjectUtil;
 import com.spring6microservices.common.spring.repository.ExtendedJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,23 +29,23 @@ public interface CustomerRepository extends ExtendedJpaRepository<Customer, Inte
      *    {@link PagingAndSortingRepository#findAll(Pageable)}.
      *
      * @param pageable
-     *    {@link Pageable} with the desired page to get
+     *    {@link Pageable} with the desired page to get. If {@code null} then {@link ExtendedJpaRepository#getDefaultPageable()}
+     *    will be used.
      *
      * @return {@link Page} of {@link Customer}
      */
     default Page<Customer> findAllNoMemoryPagination(@Nullable final Pageable pageable) {
-        if (null == pageable) {
-            return new PageImpl<>(
-                    findAll()
-            );
-        }
-        int rankInitial = (pageable.getPageNumber() * pageable.getPageSize()) + 1;
-        int rankFinal = rankInitial + pageable.getPageSize() - 1;
+        final Pageable finalPageable = ObjectUtil.getOrElse(
+                pageable,
+                this.getDefaultPageable()
+        );
+        int rankInitial = (finalPageable.getPageNumber() * finalPageable.getPageSize()) + 1;
+        int rankFinal = rankInitial + finalPageable.getPageSize() - 1;
 
-        String orderByClause = (null == pageable.getSort() || pageable.getSort().isUnsorted())
+        String orderByClause = (null == finalPageable.getSort() || finalPageable.getSort().isUnsorted())
                 ? Customer.ID_COLUMN + " desc "
                 : buildRawOrder(
-                        pageable.getSort()
+                        finalPageable.getSort()
                   );
 
         final String query = "select c.* "
@@ -59,7 +60,6 @@ public interface CustomerRepository extends ExtendedJpaRepository<Customer, Inte
         LOG.info(
                 query
         );
-
         @SuppressWarnings("unchecked")
         List<Customer> rawResults = getEntityManager().createNativeQuery(
                         query,
@@ -77,7 +77,7 @@ public interface CustomerRepository extends ExtendedJpaRepository<Customer, Inte
 
         return new PageImpl<>(
                 rawResults,
-                pageable,
+                finalPageable,
                 this.count()
         );
     }

@@ -60,8 +60,8 @@ public class CustomerRepositoryTest {
 
         Page<Customer> expectedResultNullPageable = new PageImpl<>(
                 List.of(
-                        customer1,
-                        customer2
+                        customer2,
+                        customer1
                 )
         );
         Page<Customer> expectedResultDefaultSortPageable = new PageImpl<>(

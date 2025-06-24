@@ -11,8 +11,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -20,7 +26,7 @@ import static com.invoice.TestDataFactory.buildCustomer;
 import static com.invoice.TestUtil.compareInvoices;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(
@@ -39,6 +45,76 @@ public class InvoiceServiceTest {
         service = new InvoiceService(
                 mockRepository
         );
+    }
+
+
+    static Stream<Arguments> findAllTestCases() {
+        PageRequest pageable = PageRequest.of(
+                0,
+                5
+        );
+
+        PageImpl<Invoice> emptyResult = new PageImpl<>(
+                new ArrayList<>()
+        );
+        PageImpl<Invoice> notEmptyResult = new PageImpl<>(
+                List.of(
+                        buildInvoice()
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            pageable,   repositoryResult,   expectedResult
+                Arguments.of( null,       emptyResult,        emptyResult ),
+                Arguments.of( null,       notEmptyResult,     notEmptyResult ),
+                Arguments.of( pageable,   emptyResult,        emptyResult ),
+                Arguments.of( pageable,   notEmptyResult,     notEmptyResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findAllTestCases")
+    @DisplayName("findAll: test cases")
+    public void findAll_testCases(Pageable pageable,
+                                  Page<Invoice> repositoryResult,
+                                  Page<Invoice> expectedResult) {
+
+        when(mockRepository.findAllNoMemoryPagination(pageable))
+                .thenReturn(repositoryResult);
+
+        when(mockRepository.findAll())
+                .thenReturn(repositoryResult.getContent());
+
+        Page<Invoice> result = service.findAll(
+                pageable
+        );
+
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.getTotalElements(),
+                result.getTotalElements()
+        );
+        assertEquals(
+                expectedResult.getNumberOfElements(),
+                result.getNumberOfElements()
+        );
+        for (int i = 0; i < result.getContent().size(); i++) {
+            compareInvoices(
+                    result.getContent().get(i),
+                    expectedResult.getContent().get(i)
+            );
+        }
+
+        if (null == pageable) {
+            verify(mockRepository, times(1))
+                    .findAll();
+        }
+        else {
+            verify(mockRepository, times(1))
+                    .findAllNoMemoryPagination(
+                            pageable
+                    );
+        }
     }
 
 

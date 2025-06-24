@@ -60,8 +60,8 @@ public class InvoiceRepositoryTest {
 
         Page<Invoice> expectedResultNullPageable = new PageImpl<>(
                 List.of(
-                        invoice1,
-                        invoice2
+                        invoice2,
+                        invoice1
                 )
         );
         Page<Invoice> expectedResultDefaultSortPageable = new PageImpl<>(
