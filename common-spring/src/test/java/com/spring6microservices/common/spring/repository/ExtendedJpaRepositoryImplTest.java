@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.test.context.ContextConfiguration;
@@ -154,6 +155,27 @@ public class ExtendedJpaRepositoryImplTest {
         assertEquals(
                 expectedResult,
                 repository.getHQLQuery(query)
+        );
+    }
+
+
+    @Test
+    @DisplayName("getDefaultPageable: then default Pageable is returned")
+    public void getDefaultPageable_thenDefaultPageableIsReturned() {
+        Pageable result = repository.getDefaultPageable();
+
+        assertNotNull(result);
+        assertEquals(
+                0,
+                result.getPageNumber()
+        );
+        assertEquals(
+                ExtendedJpaRepository.DEFAULT_PAGE_SIZE,
+                result.getPageSize()
+        );
+        assertEquals(
+                Sort.unsorted(),
+                result.getSort()
         );
     }
 

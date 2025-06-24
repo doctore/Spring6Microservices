@@ -13,6 +13,8 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.query.sqm.internal.QuerySqmImpl;
 import org.hibernate.query.sqm.tree.SqmVisitableNode;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -88,6 +90,15 @@ public class ExtendedJpaRepositoryImpl<T, ID extends Serializable> extends Simpl
     @Override
     public String getHQLQuery(final TypedQuery<?> query) {
         return getHQLQuery((Query) query);
+    }
+
+
+    @Override
+    public Pageable getDefaultPageable() {
+        return PageRequest.of(
+                0,
+                DEFAULT_PAGE_SIZE
+        );
     }
 
 

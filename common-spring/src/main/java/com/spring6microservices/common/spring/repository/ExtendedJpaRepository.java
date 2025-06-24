@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -29,6 +30,8 @@ import java.util.Optional;
 public interface ExtendedJpaRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
     String RAW_SQL_SEPARATOR = ",";
+
+    int DEFAULT_PAGE_SIZE = 25;
 
 
     /**
@@ -61,6 +64,14 @@ public interface ExtendedJpaRepository<T, ID extends Serializable> extends JpaRe
      *         empty {@link String} is there is any error getting it.
      */
     String getHQLQuery(final TypedQuery<?> query);
+
+
+    /**
+     * Returns default {@link Pageable} when no one is provided.
+     *
+     * @return {@link Pageable}
+     */
+    Pageable getDefaultPageable();
 
 
     /**
