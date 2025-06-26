@@ -1,5 +1,7 @@
 package com.invoice;
 
+import com.invoice.dto.CustomerDto;
+import com.invoice.dto.InvoiceDto;
 import com.invoice.dto.page.PageDto;
 import com.invoice.dto.page.SortDto;
 import com.invoice.model.Customer;
@@ -20,6 +22,24 @@ public class TestDataFactory {
                                          final String phone,
                                          final String email) {
         return Customer.builder()
+                .id(id)
+                .code(code)
+                .address(address)
+                .phone(phone)
+                .email(email)
+                .createdAt(
+                        LocalDateTime.now()
+                )
+                .build();
+    }
+
+
+    public static CustomerDto buildCustomerDto(final Integer id,
+                                               final String code,
+                                               final String address,
+                                               final String phone,
+                                               final String email) {
+        return CustomerDto.builder()
                 .id(id)
                 .code(code)
                 .address(address)
@@ -60,6 +80,24 @@ public class TestDataFactory {
                                        final Integer orderId,
                                        final double cost) {
         return Invoice.builder()
+                .id(id)
+                .code(code)
+                .customer(customer)
+                .orderId(orderId)
+                .cost(cost)
+                .createdAt(
+                        LocalDateTime.now()
+                )
+                .build();
+    }
+
+
+    public static InvoiceDto buildInvoiceDto(final Integer id,
+                                             final String code,
+                                             final CustomerDto customer,
+                                             final Integer orderId,
+                                             final double cost) {
+        return InvoiceDto.builder()
                 .id(id)
                 .code(code)
                 .customer(customer)

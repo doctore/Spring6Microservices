@@ -78,4 +78,22 @@ public class Customer implements Serializable {
     @NotNull
     private LocalDateTime createdAt;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Customer customer = (Customer) o;
+        return code.equals(
+                customer.code
+        );
+    }
+
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
+    }
+
 }

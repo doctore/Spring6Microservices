@@ -113,4 +113,22 @@ public class Invoice implements Serializable {
     @NotNull
     private LocalDateTime createdAt;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Invoice invoice = (Invoice) o;
+        return code.equals(
+                invoice.code
+        );
+    }
+
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
+    }
+
 }
