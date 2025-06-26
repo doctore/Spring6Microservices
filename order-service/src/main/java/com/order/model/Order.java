@@ -12,7 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(
-        of = {"code"}
+        of = {
+                "code"
+        }
 )
 @NoArgsConstructor
 @ToString(

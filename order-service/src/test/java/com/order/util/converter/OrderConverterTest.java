@@ -86,7 +86,9 @@ public class OrderConverterTest {
     @DisplayName("fromDtoToModel: when the given dto contains data then the equivalent model is returned")
     public void fromDtoToModel_whenGivenDtoContainsData_thenEquivalentModelIsReturned(OrderDto dtoToConvert,
                                                                                       Order expectedResult) {
-        Order result = converter.fromDtoToModel(dtoToConvert);
+        Order result = converter.fromDtoToModel(
+                dtoToConvert
+        );
 
         compareOrders(
                 expectedResult,
@@ -150,7 +152,9 @@ public class OrderConverterTest {
     @DisplayName("fromDtoToOptionalModel: when the given dto contains data then then Optional with equivalent model is returned")
     public void fromDtoToOptionalModel_whenGivenDtoContainsData_thenOptionalOfEquivalentModelIsReturned(OrderDto dtoToConvert,
                                                                                                         Optional<Order> expectedResult) {
-        Optional<Order> result = converter.fromDtoToOptionalModel(dtoToConvert);
+        Optional<Order> result = converter.fromDtoToOptionalModel(
+                dtoToConvert
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -209,7 +213,9 @@ public class OrderConverterTest {
     @DisplayName("fromDtosToModels: when the given collection contains data then a List of equivalent models is returned")
     public void fromDtosToModels_whenGivenCollectionContainsData_thenEquivalentCollectionModelsIsReturned(Collection<OrderDto> dtosToConvert,
                                                                                                           List<Order> expectedResult) {
-        List<Order> result = converter.fromDtosToModels(dtosToConvert);
+        List<Order> result = converter.fromDtosToModels(
+                dtosToConvert
+        );
 
         assertNotNull(result);
         assertEquals(
@@ -273,7 +279,9 @@ public class OrderConverterTest {
     @DisplayName("fromModelToDto: when the given model contains data then the equivalent dto is returned")
     public void fromModelToDto_whenGivenModelContainsData_thenEquivalentDtoIsReturned(Order modelToConvert,
                                                                                       OrderDto expectedResult) {
-        OrderDto result = converter.fromModelToDto(modelToConvert);
+        OrderDto result = converter.fromModelToDto(
+                modelToConvert
+        );
 
         compareOrderDtos(
                 expectedResult,
@@ -285,7 +293,9 @@ public class OrderConverterTest {
     @Test
     @DisplayName("fromModelToOptionalDto: when given model is null then empty Optional is returned")
     public void fromModelToOptionalDto_whenGivenModelIsNull_thenEmptyOptionalIsReturned() {
-        Optional<OrderDto> result = converter.fromModelToOptionalDto(null);
+        Optional<OrderDto> result = converter.fromModelToOptionalDto(
+                null
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -337,7 +347,9 @@ public class OrderConverterTest {
     @DisplayName("fromModelToOptionalDto: when the given model contains data then then Optional with equivalent dto is returned")
     public void fromModelToOptionalDto_whenGivenModelContainsData_thenOptionalOfEquivalentDtoIsReturned(Order modelToConvert,
                                                                                                         Optional<OrderDto> expectedResult) {
-        Optional<OrderDto> result = converter.fromModelToOptionalDto(modelToConvert);
+        Optional<OrderDto> result = converter.fromModelToOptionalDto(
+                modelToConvert
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -396,7 +408,9 @@ public class OrderConverterTest {
     @DisplayName("fromModelsToDtos: when the given collection contains data then a List of equivalent dtos is returned")
     public void fromModelsToDtos_whenGivenCollectionContainsData_thenEquivalentCollectionDtosIsIsReturned(Collection<Order> modelsToConvert,
                                                                                                           List<OrderDto> expectedResult) {
-        List<OrderDto> result = converter.fromModelsToDtos(modelsToConvert);
+        List<OrderDto> result = converter.fromModelsToDtos(
+                modelsToConvert
+        );
 
         assertNotNull(result);
         assertEquals(

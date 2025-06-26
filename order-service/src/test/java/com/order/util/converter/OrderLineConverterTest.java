@@ -87,7 +87,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromDtoToModel: when the given dto contains data then the equivalent model is returned")
     public void fromDtoToModel_whenGivenDtoContainsData_thenEquivalentModelIsReturned(OrderLineDto dtoToConvert,
                                                                                       OrderLine expectedResult) {
-        OrderLine result = converter.fromDtoToModel(dtoToConvert);
+        OrderLine result = converter.fromDtoToModel(
+                dtoToConvert
+        );
 
         compareOrderLines(
                 expectedResult,
@@ -155,7 +157,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromDtoToOptionalModel: when the given dto contains data then then Optional with equivalent model is returned")
     public void fromDtoToOptionalModel_whenGivenDtoContainsData_thenOptionalOfEquivalentModelIsReturned(OrderLineDto dtoToConvert,
                                                                                                         Optional<OrderLine> expectedResult) {
-        Optional<OrderLine> result = converter.fromDtoToOptionalModel(dtoToConvert);
+        Optional<OrderLine> result = converter.fromDtoToOptionalModel(
+                dtoToConvert
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -218,7 +222,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromDtosToModels: when the given collection contains data then a List of equivalent models is returned")
     public void fromDtosToModels_whenGivenCollectionContainsData_thenEquivalentCollectionModelsIsReturned(Collection<OrderLineDto> dtosToConvert,
                                                                                                           List<OrderLine> expectedResult) {
-        List<OrderLine> result = converter.fromDtosToModels(dtosToConvert);
+        List<OrderLine> result = converter.fromDtosToModels(
+                dtosToConvert
+        );
 
         assertNotNull(result);
         assertEquals(
@@ -286,7 +292,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromModelToDto: when the given model contains data then the equivalent dto is returned")
     public void fromModelToDto_whenGivenModelContainsData_thenEquivalentDtoIsReturned(OrderLine modelToConvert,
                                                                                       OrderLineDto expectedResult) {
-        OrderLineDto result = converter.fromModelToDto(modelToConvert);
+        OrderLineDto result = converter.fromModelToDto(
+                modelToConvert
+        );
 
         compareOrderLinesDtos(
                 expectedResult,
@@ -298,7 +306,9 @@ public class OrderLineConverterTest {
     @Test
     @DisplayName("fromModelToOptionalDto: when given model is null then empty Optional is returned")
     public void fromModelToOptionalDto_whenGivenModelIsNull_thenEmptyOptionalIsReturned() {
-        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(null);
+        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(
+                null
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -354,7 +364,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromModelToOptionalDto: when the given model contains data then then Optional with equivalent dto is returned")
     public void fromModelToOptionalDto_whenGivenModelContainsData_thenOptionalOfEquivalentDtoIsReturned(OrderLine modelToConvert,
                                                                                                         Optional<OrderLineDto> expectedResult) {
-        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(modelToConvert);
+        Optional<OrderLineDto> result = converter.fromModelToOptionalDto(
+                modelToConvert
+        );
 
         assertNotNull(result);
         assertTrue(
@@ -418,7 +430,9 @@ public class OrderLineConverterTest {
     @DisplayName("fromModelsToDtos: when the given collection contains data then a List of equivalent dtos is returned")
     public void fromModelsToDtos_whenGivenCollectionContainsData_thenEquivalentCollectionDtosIsIsReturned(Collection<OrderLine> modelsToConvert,
                                                                                                           List<OrderLineDto> expectedResult) {
-        List<OrderLineDto> result = converter.fromModelsToDtos(modelsToConvert);
+        List<OrderLineDto> result = converter.fromModelsToDtos(
+                modelsToConvert
+        );
 
         assertNotNull(result);
         assertEquals(
