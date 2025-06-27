@@ -5,6 +5,7 @@ import com.invoice.model.Customer;
 import com.invoice.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -44,6 +46,21 @@ public class CustomerServiceTest {
     public void init() {
         service = new CustomerService(
                 mockRepository
+        );
+    }
+
+
+    @Test
+    @DisplayName("count: then repository result is returned")
+    public void count_thenRepositoryResultIsReturned() {
+        long expectedResult = 12;
+
+        when(mockRepository.count())
+                .thenReturn(expectedResult);
+
+        assertEquals(
+                expectedResult,
+                service.count()
         );
     }
 
@@ -248,6 +265,63 @@ public class CustomerServiceTest {
             verify(mockRepository, times(1))
                     .save(
                             customer
+                    );
+        }
+    }
+
+
+    static Stream<Arguments> saveAllTestCases() {
+        Customer customer1 = buildCustomer();
+        Customer customer2 = TestDataFactory.buildCustomer(
+                2,
+                "Customer 2",
+                "Address of customer 2",
+                "(+34) 987654321",
+                "customer2@email.es"
+        );
+        List<Customer> allCustomers = List.of(
+                customer1,
+                customer2
+        );
+        return Stream.of(
+                //@formatter:off
+                //            customers,            repositoryResult,     expectedResult
+                Arguments.of( null,                 null,                 List.of() ),
+                Arguments.of( null,                 List.of(),            List.of() ),
+                Arguments.of( List.of(customer1),   List.of(),            List.of() ),
+                Arguments.of( List.of(customer1),   List.of(customer1),   List.of(customer1) ),
+                Arguments.of( allCustomers,         allCustomers,         allCustomers )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("saveAllTestCases")
+    @DisplayName("saveAll: test cases")
+    public void saveAll_testCases(Collection<Customer> customers,
+                                  List<Customer> repositoryResult,
+                                  List<Customer> expectedResult) {
+        when(mockRepository.saveAll(customers))
+                .thenReturn(repositoryResult);
+
+        List<Customer> result = service.saveAll(
+                customers
+        );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            for (int i = 0; i < expectedResult.size(); i++) {
+                compareCustomers(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
+            verify(mockRepository, times(1))
+                    .saveAll(
+                            customers
                     );
         }
     }

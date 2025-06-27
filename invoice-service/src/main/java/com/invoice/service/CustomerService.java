@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
@@ -25,6 +28,16 @@ public class CustomerService {
     @Autowired
     public CustomerService(@Lazy final CustomerRepository repository) {
         this.repository = repository;
+    }
+
+
+    /**
+     * Returns how many {@link Customer}s exist.
+     *
+     * @return number of existing {@link Customer}s
+     */
+    public long count() {
+        return repository.count();
     }
 
 
@@ -94,6 +107,22 @@ public class CustomerService {
     public Optional<Customer> save(final Customer customer) {
         return ofNullable(customer)
                 .map(repository::save);
+    }
+
+
+    /**
+     *    Persists the information included in the given {@link Collection} of {@link Customer}s, inserting the new
+     * and updating the existing ones.
+     *
+     * @param customers
+     *    {@link Collection} of {@link Customer}s to save
+     *
+     * @return {@link List} with the updated {@link Customer}s
+     */
+    public List<Customer> saveAll(final Collection<Customer> customers) {
+        return ofNullable(customers)
+                .map(repository::saveAll)
+                .orElseGet(ArrayList::new);
     }
 
 }

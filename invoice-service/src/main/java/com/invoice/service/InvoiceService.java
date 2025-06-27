@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
@@ -25,6 +28,16 @@ public class InvoiceService {
     @Autowired
     public InvoiceService(@Lazy final InvoiceRepository repository) {
         this.repository = repository;
+    }
+
+
+    /**
+     * Returns how many {@link Invoice}s exist.
+     *
+     * @return number of existing {@link Invoice}s
+     */
+    public long count() {
+        return repository.count();
     }
 
 
@@ -94,6 +107,22 @@ public class InvoiceService {
     public Optional<Invoice> save(final Invoice invoice) {
         return ofNullable(invoice)
                 .map(repository::save);
+    }
+
+
+    /**
+     *    Persists the information included in the given {@link Collection} of {@link Invoice}s, inserting the new
+     * and updating the existing ones.
+     *
+     * @param invoices
+     *    {@link Collection} of {@link Invoice}s to save
+     *
+     * @return {@link List} with the updated {@link Invoice}s
+     */
+    public List<Invoice> saveAll(final Collection<Invoice> invoices) {
+        return ofNullable(invoices)
+                .map(repository::saveAll)
+                .orElseGet(ArrayList::new);
     }
 
 }
