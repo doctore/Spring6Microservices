@@ -90,13 +90,19 @@ VALUES (1
        ,'UPDATE_ORDER'
        ,current_timestamp)
       ,(5
-       ,'CREATE_INVOICE'
+       ,'CREATE_CUSTOMER'
        ,current_timestamp)
       ,(6
-       ,'GET_INVOICE'
+       ,'GET_CUSTOMER'
        ,current_timestamp)
       ,(7
-       ,'GET_CUSTOMER'
+       ,'UPDATE_CUSTOMER'
+       ,current_timestamp)
+      ,(8
+       ,'CREATE_INVOICE'
+       ,current_timestamp)
+      ,(9
+       ,'GET_INVOICE'
        ,current_timestamp);
 
 
@@ -150,6 +156,30 @@ VALUES (
          WHERE name = 'ROLE_ADMIN'
         ,SELECT id
          FROM security.spring6microservice_permission
+         WHERE name = 'CREATE_CUSTOMER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'GET_CUSTOMER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'UPDATE_CUSTOMER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_ADMIN'
+        ,SELECT id
+         FROM security.spring6microservice_permission
          WHERE name = 'CREATE_INVOICE'
        )
       ,(
@@ -159,14 +189,6 @@ VALUES (
         ,SELECT id
          FROM security.spring6microservice_permission
          WHERE name = 'GET_INVOICE'
-       )
-      ,(
-         SELECT id
-         FROM security.spring6microservice_role
-         WHERE name = 'ROLE_ADMIN'
-        ,SELECT id
-         FROM security.spring6microservice_permission
-         WHERE name = 'GET_CUSTOMER'
        );
 
 
@@ -179,6 +201,14 @@ VALUES (
         ,SELECT id
          FROM security.spring6microservice_permission
          WHERE name = 'GET_ORDER'
+       )
+      ,(
+         SELECT id
+         FROM security.spring6microservice_role
+         WHERE name = 'ROLE_USER'
+        ,SELECT id
+         FROM security.spring6microservice_permission
+         WHERE name = 'GET_CUSTOMER'
        )
       ,(
          SELECT id

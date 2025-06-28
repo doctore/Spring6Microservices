@@ -99,17 +99,27 @@ MERGE INTO security.spring6microservice_permission (id, name, created_at)
     )
    ,(
        5
-      ,'CREATE_INVOICE'
+      ,'CREATE_CUSTOMER'
       ,current_timestamp
     )
    ,(
        6
-      ,'GET_INVOICE'
+      ,'GET_CUSTOMER'
       ,current_timestamp
     )
    ,(
        7
-      ,'GET_CUSTOMER'
+      ,'UPDATE_CUSTOMER'
+      ,current_timestamp
+    )
+   ,(
+       8
+      ,'CREATE_INVOICE'
+      ,current_timestamp
+    )
+   ,(
+       9
+      ,'GET_INVOICE'
       ,current_timestamp
     );
 
@@ -166,6 +176,30 @@ MERGE INTO security.spring6microservice_role_permission (role_id, permission_id)
        WHERE name = 'ROLE_ADMIN'
       ,SELECT id
        FROM security.spring6microservice_permission
+       WHERE name = 'CREATE_CUSTOMER'
+    )
+   ,(
+       SELECT id
+       FROM security.spring6microservice_role
+       WHERE name = 'ROLE_ADMIN'
+      ,SELECT id
+       FROM security.spring6microservice_permission
+       WHERE name = 'GET_CUSTOMER'
+    )
+   ,(
+       SELECT id
+       FROM security.spring6microservice_role
+       WHERE name = 'ROLE_ADMIN'
+      ,SELECT id
+       FROM security.spring6microservice_permission
+       WHERE name = 'UPDATE_CUSTOMER'
+    )
+   ,(
+       SELECT id
+       FROM security.spring6microservice_role
+       WHERE name = 'ROLE_ADMIN'
+      ,SELECT id
+       FROM security.spring6microservice_permission
        WHERE name = 'CREATE_INVOICE'
     )
    ,(
@@ -175,12 +209,4 @@ MERGE INTO security.spring6microservice_role_permission (role_id, permission_id)
       ,SELECT id
        FROM security.spring6microservice_permission
        WHERE name = 'GET_INVOICE'
-    )
-   ,(
-       SELECT id
-       FROM security.spring6microservice_role
-       WHERE name = 'ROLE_ADMIN'
-      ,SELECT id
-       FROM security.spring6microservice_permission
-       WHERE name = 'GET_CUSTOMER'
     );
