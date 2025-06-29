@@ -1,19 +1,19 @@
-package com.order.configuration;
+package com.invoice.configuration;
 
-import com.order.configuration.security.CorsConfiguration;
+import com.invoice.configuration.security.CorsConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Configuration
-@EnableWebMvc
-public class WebConfiguration implements WebMvcConfigurer {
+@EnableWebFlux
+public class WebfluxConfiguration implements WebFluxConfigurer {
 
     private final CorsConfiguration corsConfiguration;
 
 
-    public WebConfiguration(final CorsConfiguration corsConfiguration) {
+    public WebfluxConfiguration(final CorsConfiguration corsConfiguration) {
         this.corsConfiguration = corsConfiguration;
     }
 

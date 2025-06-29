@@ -33,6 +33,18 @@ logging:
         mapper: trace
 
 
+# Custom security configuration
+security:
+  # CORS configuration
+  cors:
+    # Enable cross-origin request handling for the specified path pattern
+    mapping: /**
+    # Comma separated HTTP methods to allow
+    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
+    # Comma separated origins for which cross-origin requests are allowed from a browser
+    allowedOrigins: "*"
+
+
 # Disable eureka server connection request for testing
 eureka:
   client:
