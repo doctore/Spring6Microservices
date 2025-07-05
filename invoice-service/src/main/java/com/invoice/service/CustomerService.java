@@ -52,7 +52,7 @@ public class CustomerService {
      *
      * @return {@link Page} of {@link Customer}
      */
-    Page<Customer> findAll(@Nullable final Pageable pageable) {
+    public Page<Customer> findAll(@Nullable final Pageable pageable) {
         return ofNullable(pageable)
                 .map(repository::findAllNoMemoryPagination)
                 .orElseGet(()  ->

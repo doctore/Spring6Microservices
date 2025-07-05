@@ -8,12 +8,12 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Configuration
 @EnableWebFlux
-public class WebfluxConfiguration implements WebFluxConfigurer {
+public class WebConfiguration implements WebFluxConfigurer {
 
     private final CorsConfiguration corsConfiguration;
 
 
-    public WebfluxConfiguration(final CorsConfiguration corsConfiguration) {
+    public WebConfiguration(final CorsConfiguration corsConfiguration) {
         this.corsConfiguration = corsConfiguration;
     }
 

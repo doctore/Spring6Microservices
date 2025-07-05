@@ -1,16 +1,15 @@
-package com.order.controller;
+package com.invoice.controller;
 
-import com.order.configuration.Constants;
-import com.order.configuration.rest.RestRoutes;
-import com.order.configuration.security.annotation.CreateOrderPermission;
-import com.order.configuration.security.annotation.DeleteOrderPermission;
-import com.order.configuration.security.annotation.GetOrderPermission;
-import com.order.configuration.security.annotation.UpdateOrderPermission;
-import com.order.dto.OrderDto;
-import com.order.dto.OrderLineDto;
-import com.order.model.Order;
-import com.order.service.OrderService;
-import com.order.util.converter.OrderConverter;
+import com.invoice.configuration.Constants;
+import com.invoice.configuration.rest.RestRoutes;
+import com.invoice.configuration.security.annotation.CreateCustomerPermission;
+import com.invoice.configuration.security.annotation.GetCustomerPermission;
+import com.invoice.configuration.security.annotation.UpdateCustomerPermission;
+import com.invoice.dto.CustomerDto;
+import com.invoice.dto.page.PageDto;
+import com.invoice.model.Customer;
+import com.invoice.service.CustomerService;
+import com.invoice.util.converter.CustomerConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +22,7 @@ import jakarta.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,54 +31,55 @@ import org.springframework.web.bind.annotation.*;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
- * Rest services to work with {@link Order}.
+ * Rest services to work with {@link Customer}.
  */
 @Log4j2
 @RestController
 @RequestMapping(
-        RestRoutes.ORDER.ROOT
+        RestRoutes.CUSTOMER.ROOT
 )
 @Validated
-public class OrderController {
+public class CustomerController {
 
-    private final OrderConverter converter;
+    private final CustomerConverter converter;
 
-    private final OrderService service;
+    private final CustomerService service;
 
 
     @Autowired
-    public OrderController(@Lazy final OrderConverter orderConverter,
-                           @Lazy final OrderService orderService) {
-        this.converter = orderConverter;
-        this.service = orderService;
+    public CustomerController(@Lazy final CustomerConverter customerConverter,
+                              @Lazy final CustomerService customerService) {
+        this.converter = customerConverter;
+        this.service = customerService;
     }
 
 
     /**
-     * Creates a new {@link Order} using provided {@link OrderDto}.
+     * Creates a new {@link Customer} using provided {@link CustomerDto}.
      *
-     * @param orderDto
-     *    {@link OrderDto} to create
+     * @param customerDto
+     *    {@link CustomerDto} to create
      *
-     * @return if {@code orderDto} is not {@code null}: {@link HttpStatus#CREATED} and created {@link OrderDto}
+     * @return if {@code customerDto} is not {@code null}: {@link HttpStatus#CREATED} and created {@link CustomerDto}
      *         {@link HttpStatus#UNPROCESSABLE_ENTITY} otherwise
      */
     @Operation(
-            summary = "Creates an order",
-            description = "Creates an order (only allowed for users with permission: " + Constants.PERMISSIONS.CREATE_ORDER
+            summary = "Creates a customer",
+            description = "Creates a customer (only allowed for users with permission: " + Constants.PERMISSIONS.CREATE_CUSTOMER
     )
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "The given order was successfully created",
+                            description = "The given customer was successfully created",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(
-                                            implementation = OrderDto.class
+                                            implementation = CustomerDto.class
                                     )
                             )
                     ),
@@ -104,7 +105,7 @@ public class OrderController {
                     ),
                     @ApiResponse(
                             responseCode = "422",
-                            description = "The order could not be created"
+                            description = "The customer could not be created"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -122,16 +123,16 @@ public class OrderController {
     @Transactional(
             rollbackFor = Exception.class
     )
-    @CreateOrderPermission
-    public ResponseEntity<OrderDto> create(@RequestBody @Valid final OrderDto orderDto) {
+    @CreateCustomerPermission
+    public ResponseEntity<CustomerDto> create(@RequestBody @Valid final CustomerDto customerDto) {
         log.info(
-                format("Creating the order: %s",
-                        orderDto
+                format("Creating the customer: %s",
+                        customerDto
                 )
         );
         return service.save(
                 converter.fromDtoToModel(
-                        orderDto
+                        customerDto
                 )
            )
            .map(
@@ -152,187 +153,108 @@ public class OrderController {
 
 
     /**
-     * Deletes an existing {@link Order} using provided {@link Order#getCode()}}.
+     * Returns a {@link Page} of {@link CustomerDto}s using provided {@link PageDto}.
      *
-     * @param code
-     *    {@link Order#getCode()} to search and delete its related {@link Order}
+     * @param page
+     *    {@link PageDto} to paginate the results
      *
-     * @return {@link HttpStatus#NO_CONTENT} if there related {@link Order} was removed successfully,
-     *         {@link HttpStatus#NOT_FOUND} otherwise
+     * @return {@link HttpStatus#OK} and the {@link Page} of {@link CustomerDto} based on provided {@code page}
      */
     @Operation(
-            summary = "Deletes an order using provided code",
-            description = "Deletes an order (only allowed for users with permission: " + Constants.PERMISSIONS.DELETE_ORDER
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "The order with the given code was successfully deleted"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "There was a problem in the given request, the given parameters have not passed the required validations",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            description = "The user has not authorization to execute this request or provided authorization has expired",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "There is no a order matching with provided information"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "There was an internal problem in the server",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    )
-            }
-    )
-    @DeleteMapping(
-            RestRoutes.ORDER.BY_CODE + "/{code}"
-    )
-    @Transactional(
-            rollbackFor = Exception.class
-    )
-    @DeleteOrderPermission
-    public ResponseEntity<Void> deleteByCode(@PathVariable @Size(min = 1) final String code) {
-        log.info(
-                format("Removing the order with code: %s",
-                        code
-                )
-        );
-        return service.deleteByCode(
-                code
-           )
-           ? new ResponseEntity<>(
-                   NO_CONTENT
-             )
-           : new ResponseEntity<>(
-                   NOT_FOUND
-             );
-    }
-
-
-    /**
-     * Deletes an existing {@link Order} using provided {@link Order#getId()}.
-     *
-     * @param id
-     *    {@link Order#getId()} to search and delete its related {@link Order}
-     *
-     * @return {@link HttpStatus#NO_CONTENT} if there related {@link Order} was removed successfully,
-     *         {@link HttpStatus#NOT_FOUND} otherwise
-     */
-    @Operation(
-            summary = "Deletes an order using provided identifier",
-            description = "Deletes an order (only allowed for users with permission: " + Constants.PERMISSIONS.DELETE_ORDER
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "The order with the given identifier was successfully deleted"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "There was a problem in the given request, the given parameters have not passed the required validations",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            description = "The user has not authorization to execute this request or provided authorization has expired",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "There is no a order matching with provided information"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "There was an internal problem in the server",
-                            content = @Content(
-                                    mediaType = APPLICATION_JSON_VALUE,
-                                    schema = @Schema(
-                                            implementation = ErrorResponseDto.class
-                                    )
-                            )
-                    )
-            }
-    )
-    @DeleteMapping(
-            RestRoutes.ORDER.BY_ID + "/{id}"
-    )
-    @Transactional(
-            rollbackFor = Exception.class
-    )
-    @DeleteOrderPermission
-    public ResponseEntity<Void> deleteById(@PathVariable @Positive final Integer id) {
-        log.info(
-                format("Removing the order with id: %s",
-                        id
-                )
-        );
-        return service.deleteById(
-                id
-           )
-           ? new ResponseEntity<>(
-                   NO_CONTENT
-             )
-           : new ResponseEntity<>(
-                   NOT_FOUND
-            );
-    }
-
-
-    /**
-     * Returns an existing {@link OrderDto} (and related {@link OrderLineDto}s) using provided {@link Order#getCode()}.
-     *
-     * @param code
-     *    {@link Order#getCode()} to search
-     *
-     * @return {@link HttpStatus#OK} and the {@link OrderDto} that matches with {@code code},
-     *         {@link HttpStatus#NOT_FOUND} otherwise
-     */
-    @Operation(
-            summary = "Returns the order (and order lines) that matches with provided code",
-            description = "Returns an order (only allowed for users with permission: " + Constants.PERMISSIONS.GET_ORDER
+            summary = "Returns the customers that matches with page",
+            description = "Returns the customers (only allowed for users with permission: " + Constants.PERMISSIONS.GET_CUSTOMER
     )
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "There is an order with the given code",
+                            description = "With the required page of customers",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(
-                                            implementation = OrderDto.class
+                                            implementation = CustomerDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "There was a problem in the given request, the given parameters have not passed the required validations",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "The user has not authorization to execute this request or provided authorization has expired",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "There was an internal problem in the server",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    )
+            }
+    )
+    @PostMapping(
+            RestRoutes.CUSTOMER.FIND_ALL
+    )
+    @Transactional(
+            readOnly = true
+    )
+    @GetCustomerPermission
+    public ResponseEntity<Page<CustomerDto>> findAll(@RequestBody @Valid final PageDto page) {
+        log.info(
+                format("Searching the page of customers based on provided request: %s",
+                        page
+                )
+        );
+        return new ResponseEntity<>(
+                service.findAll(
+                        page.toPageable()
+                    )
+                    .map(
+                        converter::fromModelToDto
+                    ),
+                OK
+        );
+    }
+
+
+    /**
+     * Returns an existing {@link CustomerDto} using provided {@link Customer#getCode()}.
+     *
+     * @param code
+     *    {@link Customer#getCode()} to search
+     *
+     * @return {@link HttpStatus#OK} and the {@link CustomerDto} that matches with {@code code},
+     *         {@link HttpStatus#NOT_FOUND} otherwise
+     */
+    @Operation(
+            summary = "Returns the customer that matches with provided code",
+            description = "Returns a customer (only allowed for users with permission: " + Constants.PERMISSIONS.GET_CUSTOMER
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "There is a customer with the given code",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = CustomerDto.class
                                     )
                             )
                     ),
@@ -358,7 +280,7 @@ public class OrderController {
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "There is no a order matching with provided information"
+                            description = "There is no a customer matching with provided information"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -373,60 +295,60 @@ public class OrderController {
             }
     )
     @GetMapping(
-            RestRoutes.ORDER.BY_CODE + "/{code}"
+            RestRoutes.CUSTOMER.BY_CODE + "/{code}"
     )
     @Transactional(
             readOnly = true
     )
-    @GetOrderPermission
-    public ResponseEntity<OrderDto> findByCode(@PathVariable @Size(min = 1) final String code) {
+    @GetCustomerPermission
+    public ResponseEntity<CustomerDto> findByCode(@PathVariable @Size(min = 1) final String code) {
         log.info(
-                format("Searching the order (and related order lines) with code: %s",
+                format("Searching the customer with code: %s",
                         code
                 )
         );
         return service.findByCode(
-                code
-           )
-           .map(
-                   converter::fromModelToDto
-           )
-           .map(o ->
-                   new ResponseEntity<>(
-                           o,
-                           OK
-                   )
-           )
-           .orElseGet(() ->
-                   new ResponseEntity<>(
-                           NOT_FOUND
-                   )
-           );
+                        code
+                )
+                .map(
+                        converter::fromModelToDto
+                )
+                .map(o ->
+                        new ResponseEntity<>(
+                                o,
+                                OK
+                        )
+                )
+                .orElseGet(() ->
+                        new ResponseEntity<>(
+                                NOT_FOUND
+                        )
+                );
     }
 
 
     /**
-     * Returns an existing {@link OrderDto} (and related {@link OrderLineDto}s) using provided {@link Order#getId()}.
+     * Returns an existing {@link CustomerDto} using provided {@link Customer#getId()}.
      *
      * @param id
-     *    {@link Order#getId()} to search
+     *    {@link Customer#getId()} to search
      *
-     * @return {@link HttpStatus#OK} and the {@link OrderDto} that matches with {@code id},
+     * @return {@link HttpStatus#OK} and the {@link CustomerDto} that matches with {@code id},
      *         {@link HttpStatus#NOT_FOUND} otherwise
      */
     @Operation(
-            summary = "Returns the order (and order lines) that matches with provided identifier",
-            description = "Returns an order (only allowed for users with permission: " + Constants.PERMISSIONS.GET_ORDER
+            summary = "Returns the customer that matches with provided identifier",
+            description = "Returns a customer (only allowed for users with permission: " + Constants.PERMISSIONS.GET_CUSTOMER
     )
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "There is an order with the given identifier",
+                            description = "There is a customer with the given identifier",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(
-                                            implementation = OrderDto.class
+                                            implementation = CustomerDto.class
                                     )
                             )
                     ),
@@ -452,7 +374,7 @@ public class OrderController {
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "There is no a order matching with provided information"
+                            description = "There is no a customer matching with provided information"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -467,60 +389,60 @@ public class OrderController {
             }
     )
     @GetMapping(
-            RestRoutes.ORDER.BY_ID + "/{id}"
+            RestRoutes.CUSTOMER.BY_ID + "/{id}"
     )
     @Transactional(
             readOnly = true
     )
-    @GetOrderPermission
-    public ResponseEntity<OrderDto> findById(@PathVariable @Positive final Integer id) {
+    @GetCustomerPermission
+    public ResponseEntity<CustomerDto> findById(@PathVariable @Positive final Integer id) {
         log.info(
-                format("Searching the order (and related order lines) with identifier: %s",
+                format("Searching the customer with identifier: %s",
                         id
                 )
         );
         return service.findById(
-                id
-           )
-           .map(
-                   converter::fromModelToDto
-           )
-           .map(o ->
-                   new ResponseEntity<>(
-                           o,
-                           OK
-                   )
-           )
-           .orElseGet(() ->
-                   new ResponseEntity<>(
-                           NOT_FOUND
-                   )
-           );
+                        id
+                )
+                .map(
+                        converter::fromModelToDto
+                )
+                .map(o ->
+                        new ResponseEntity<>(
+                                o,
+                                OK
+                        )
+                )
+                .orElseGet(() ->
+                        new ResponseEntity<>(
+                                NOT_FOUND
+                        )
+                );
     }
 
 
     /**
-     * Updates an existing {@link Order} using provided {@link OrderDto}.
+     * Updates an existing {@link Customer} using provided {@link CustomerDto}.
      *
-     * @param orderDto
-     *    {@link OrderDto} to update
+     * @param customerDto
+     *    {@link CustomerDto} to update
      *
-     * @return if {@code orderDto} is not {@code null} and exists: {@link HttpStatus#OK} and updated {@link OrderDto}
-     *         if {@code orderDto} is {@code null} or not exists: {@link HttpStatus#NOT_FOUND}
+     * @return if {@code customerDto} is not {@code null} and exists: {@link HttpStatus#OK} and updated {@link CustomerDto}
+     *         if {@code customerDto} is {@code null} or not exists: {@link HttpStatus#NOT_FOUND}
      */
     @Operation(
-            summary = "Updates an order",
-            description = "Updates an order (only allowed for users with permission: " + Constants.PERMISSIONS.UPDATE_ORDER
+            summary = "Updates a customer",
+            description = "Updates a customer (only allowed for users with permission: " + Constants.PERMISSIONS.UPDATE_CUSTOMER
     )
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "The given order was successfully updated",
+                            description = "The given customer was successfully updated",
                             content = @Content(
                                     mediaType = APPLICATION_JSON_VALUE,
                                     schema = @Schema(
-                                            implementation = OrderDto.class
+                                            implementation = CustomerDto.class
                                     )
                             )
                     ),
@@ -546,7 +468,7 @@ public class OrderController {
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "There is no a order matching with provided information"
+                            description = "There is no a customer matching with provided information"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -564,16 +486,16 @@ public class OrderController {
     @Transactional(
             rollbackFor = Exception.class
     )
-    @UpdateOrderPermission
-    public ResponseEntity<OrderDto> update(@RequestBody @Valid final OrderDto orderDto) {
+    @UpdateCustomerPermission
+    public ResponseEntity<CustomerDto> update(@RequestBody @Valid final CustomerDto customerDto) {
         log.info(
-                format("Updating the order: %s",
-                        orderDto
+                format("Updating the customer: %s",
+                        customerDto
                 )
         );
         return service.save(
                 converter.fromDtoToModel(
-                        orderDto
+                        customerDto
                 )
            )
            .map(

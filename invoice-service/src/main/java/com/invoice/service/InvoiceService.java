@@ -52,7 +52,7 @@ public class InvoiceService {
      *
      * @return {@link Page} of {@link Invoice}
      */
-    Page<Invoice> findAll(@Nullable final Pageable pageable) {
+    public Page<Invoice> findAll(@Nullable final Pageable pageable) {
         return ofNullable(pageable)
                 .map(repository::findAllNoMemoryPagination)
                 .orElseGet(()  ->
