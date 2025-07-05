@@ -749,7 +749,7 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findById: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
     public void findById_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        OrderDto dto = buildOrderDtoWithOrderLine(1);
         Order model = buildNewOrderWithOrderLine(
                 dto.getId()
         );
@@ -930,7 +930,7 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("update: when given parameters verifies validations but service returns empty then Http code Not Found is returned")
     public void update_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        OrderDto dto = buildOrderDtoWithOrderLine(1);
         Order model = buildNewOrderWithOrderLine(
                 dto.getId()
         );
@@ -978,7 +978,7 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("update: when given parameters verifies validations and service returns a model then Http code Ok with the updated Dto is returned")
     public void update_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeOkdWithTheUpdatedDtoIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine(1);
+        OrderDto dto = buildOrderDtoWithOrderLine(1);
         Order model = buildNewOrderWithOrderLine(
                 dto.getId()
         );
@@ -1054,20 +1054,6 @@ public class OrderControllerTest extends BaseControllerTest {
     }
 
 
-    private static OrderDto buildNewOrderDtoWithOrderLine(final Integer orderId) {
-        OrderDto orderDto = buildNewOrderDtoWithOrderLine();
-        orderDto.setId(
-                orderId
-        );
-        orderDto.getOrderLines()
-                .getFirst()
-                .setOrderId(
-                        orderId
-                );
-        return orderDto;
-    }
-
-
     private static OrderDto buildNewOrderDtoWithOrderLine() {
         OrderDto orderDto = buildOrderDto(
                 "Order 1",
@@ -1084,6 +1070,20 @@ public class OrderControllerTest extends BaseControllerTest {
                         orderLine
                 )
         );
+        return orderDto;
+    }
+
+
+    private static OrderDto buildOrderDtoWithOrderLine(final Integer orderId) {
+        OrderDto orderDto = buildNewOrderDtoWithOrderLine();
+        orderDto.setId(
+                orderId
+        );
+        orderDto.getOrderLines()
+                .getFirst()
+                .setOrderId(
+                        orderId
+                );
         return orderDto;
     }
 

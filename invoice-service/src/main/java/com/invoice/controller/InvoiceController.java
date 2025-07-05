@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.*;
@@ -122,31 +123,33 @@ public class InvoiceController {
             rollbackFor = Exception.class
     )
     @CreateInvoicePermission
-    public ResponseEntity<InvoiceDto> create(@RequestBody @Valid final InvoiceDto invoiceDto) {
+    public Mono<ResponseEntity<InvoiceDto>> create(@RequestBody @Valid final InvoiceDto invoiceDto) {
         log.info(
                 format("Creating the invoice: %s",
                         invoiceDto
                 )
         );
-        return service.save(
-                converter.fromDtoToModel(
-                        invoiceDto
+        return Mono.just(
+                service.save(
+                        converter.fromDtoToModel(
+                                invoiceDto
+                        )
                 )
-           )
-           .map(
-                   converter::fromModelToDto
-           )
-           .map(o ->
-                   new ResponseEntity<>(
-                           o,
-                           CREATED
-                   )
-           )
-           .orElseGet(() ->
-                   new ResponseEntity<>(
-                           UNPROCESSABLE_ENTITY
-                   )
-           );
+                .map(
+                        converter::fromModelToDto
+                )
+                .map(o ->
+                        new ResponseEntity<>(
+                                o,
+                                CREATED
+                        )
+                )
+                .orElseGet(() ->
+                        new ResponseEntity<>(
+                                UNPROCESSABLE_ENTITY
+                        )
+                )
+        );
     }
 
 
@@ -213,20 +216,22 @@ public class InvoiceController {
             readOnly = true
     )
     @GetInvoicePermission
-    public ResponseEntity<Page<InvoiceDto>> findAll(@RequestBody @Valid final PageDto page) {
+    public Mono<ResponseEntity<Page<InvoiceDto>>> findAll(@RequestBody @Valid final PageDto page) {
         log.info(
                 format("Searching the page of invoices based on provided request: %s",
                         page
                 )
         );
-        return new ResponseEntity<>(
-                service.findAll(
-                        page.toPageable()
-                    )
-                    .map(
-                        converter::fromModelToDto
-                    ),
-                OK
+        return Mono.just(
+                new ResponseEntity<>(
+                        service.findAll(
+                                page.toPageable()
+                        )
+                        .map(
+                                converter::fromModelToDto
+                        ),
+                        OK
+                )
         );
     }
 
@@ -299,13 +304,14 @@ public class InvoiceController {
             readOnly = true
     )
     @GetInvoicePermission
-    public ResponseEntity<InvoiceDto> findByCode(@PathVariable @Size(min = 1) final String code) {
+    public Mono<ResponseEntity<InvoiceDto>> findByCode(@PathVariable @Size(min = 1) final String code) {
         log.info(
                 format("Searching the invoice with code: %s",
                         code
                 )
         );
-        return service.findByCode(
+        return Mono.just(
+                service.findByCode(
                         code
                 )
                 .map(
@@ -321,7 +327,8 @@ public class InvoiceController {
                         new ResponseEntity<>(
                                 NOT_FOUND
                         )
-                );
+                )
+        );
     }
 
 
@@ -393,13 +400,14 @@ public class InvoiceController {
             readOnly = true
     )
     @GetInvoicePermission
-    public ResponseEntity<InvoiceDto> findById(@PathVariable @Positive final Integer id) {
+    public Mono<ResponseEntity<InvoiceDto>> findById(@PathVariable @Positive final Integer id) {
         log.info(
                 format("Searching the invoice with identifier: %s",
                         id
                 )
         );
-        return service.findById(
+        return Mono.just(
+                service.findById(
                         id
                 )
                 .map(
@@ -415,7 +423,8 @@ public class InvoiceController {
                         new ResponseEntity<>(
                                 NOT_FOUND
                         )
-                );
+                )
+        );
     }
 
 }

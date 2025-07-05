@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.*;
@@ -124,31 +125,33 @@ public class CustomerController {
             rollbackFor = Exception.class
     )
     @CreateCustomerPermission
-    public ResponseEntity<CustomerDto> create(@RequestBody @Valid final CustomerDto customerDto) {
+    public Mono<ResponseEntity<CustomerDto>> create(@RequestBody @Valid final CustomerDto customerDto) {
         log.info(
                 format("Creating the customer: %s",
                         customerDto
                 )
         );
-        return service.save(
-                converter.fromDtoToModel(
-                        customerDto
-                )
-           )
-           .map(
-                   converter::fromModelToDto
-           )
-           .map(o ->
-                   new ResponseEntity<>(
-                           o,
-                           CREATED
+        return Mono.just(
+                service.save(
+                        converter.fromDtoToModel(
+                                customerDto
+                        )
                    )
-           )
-           .orElseGet(() ->
-                   new ResponseEntity<>(
-                           UNPROCESSABLE_ENTITY
+                   .map(
+                           converter::fromModelToDto
                    )
-           );
+                   .map(o ->
+                           new ResponseEntity<>(
+                                   o,
+                                   CREATED
+                           )
+                   )
+                   .orElseGet(() ->
+                           new ResponseEntity<>(
+                                   UNPROCESSABLE_ENTITY
+                           )
+                   )
+        );
     }
 
 
@@ -215,20 +218,23 @@ public class CustomerController {
             readOnly = true
     )
     @GetCustomerPermission
-    public ResponseEntity<Page<CustomerDto>> findAll(@RequestBody @Valid final PageDto page) {
+    public Mono<ResponseEntity<Page<CustomerDto>>> findAll(@RequestBody @Valid final PageDto page) {
         log.info(
                 format("Searching the page of customers based on provided request: %s",
                         page
                 )
         );
-        return new ResponseEntity<>(
-                service.findAll(
-                        page.toPageable()
-                    )
-                    .map(
-                        converter::fromModelToDto
-                    ),
-                OK
+        return Mono.just(
+                new ResponseEntity<>(
+                        service.findAll(
+                                page.toPageable()
+
+                        )
+                        .map(
+                                converter::fromModelToDto
+                        ),
+                        OK
+                )
         );
     }
 
@@ -301,13 +307,14 @@ public class CustomerController {
             readOnly = true
     )
     @GetCustomerPermission
-    public ResponseEntity<CustomerDto> findByCode(@PathVariable @Size(min = 1) final String code) {
+    public Mono<ResponseEntity<CustomerDto>> findByCode(@PathVariable @Size(min = 1) final String code) {
         log.info(
                 format("Searching the customer with code: %s",
                         code
                 )
         );
-        return service.findByCode(
+        return Mono.just(
+                service.findByCode(
                         code
                 )
                 .map(
@@ -323,7 +330,8 @@ public class CustomerController {
                         new ResponseEntity<>(
                                 NOT_FOUND
                         )
-                );
+                )
+        );
     }
 
 
@@ -395,13 +403,14 @@ public class CustomerController {
             readOnly = true
     )
     @GetCustomerPermission
-    public ResponseEntity<CustomerDto> findById(@PathVariable @Positive final Integer id) {
+    public Mono<ResponseEntity<CustomerDto>> findById(@PathVariable @Positive final Integer id) {
         log.info(
                 format("Searching the customer with identifier: %s",
                         id
                 )
         );
-        return service.findById(
+        return Mono.just(
+                service.findById(
                         id
                 )
                 .map(
@@ -417,7 +426,8 @@ public class CustomerController {
                         new ResponseEntity<>(
                                 NOT_FOUND
                         )
-                );
+                )
+        );
     }
 
 
@@ -487,31 +497,33 @@ public class CustomerController {
             rollbackFor = Exception.class
     )
     @UpdateCustomerPermission
-    public ResponseEntity<CustomerDto> update(@RequestBody @Valid final CustomerDto customerDto) {
+    public Mono<ResponseEntity<CustomerDto>> update(@RequestBody @Valid final CustomerDto customerDto) {
         log.info(
                 format("Updating the customer: %s",
                         customerDto
                 )
         );
-        return service.save(
-                converter.fromDtoToModel(
-                        customerDto
+        return Mono.just(
+                service.save(
+                        converter.fromDtoToModel(
+                                customerDto
+                        )
                 )
-           )
-           .map(
-                   converter::fromModelToDto
-           )
-           .map(o ->
-                   new ResponseEntity<>(
-                           o,
-                           OK
-                   )
-           )
-           .orElseGet(() ->
-                   new ResponseEntity<>(
-                           NOT_FOUND
-                   )
-           );
+                .map(
+                        converter::fromModelToDto
+                )
+                .map(o ->
+                        new ResponseEntity<>(
+                                o,
+                                OK
+                        )
+                )
+                .orElseGet(() ->
+                        new ResponseEntity<>(
+                                NOT_FOUND
+                        )
+                )
+        );
     }
 
 }
