@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ConfigServer",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

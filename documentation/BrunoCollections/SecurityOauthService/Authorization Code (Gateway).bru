@@ -1,0 +1,24 @@
+meta {
+  name: Authorization Code (Gateway)
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:5555/security/oauth/token
+  body: formUrlEncoded
+  auth: basic
+}
+
+auth:basic {
+  username: Spring6Microservices
+  password: Spring6Microservices
+}
+
+body:form-urlencoded {
+  client_id: Spring6Microservices
+  grant_type: authorization_code
+  redirect_uri: http://localhost:8181/security/oauth/authorized
+  code: HotL7Qyybyz67pinqwC25JOridmFwYEdiyJ1I9qiCgp52xSFshbOLXI_7AM9R_xLXRXdFAWWruaTSOkedKklAsgOErWfxoBdghLs2R9tu7Zt970rkkAIjak7SEm-ZNp8
+  code_verifier: 123456
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Refresh Token (Gateway)
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:5555/security/oauth/token
+  body: formUrlEncoded
+  auth: basic
+}
+
+auth:basic {
+  username: Spring6Microservices
+  password: Spring6Microservices
+}
+
+body:form-urlencoded {
+  client_id: Spring6Microservices
+  grant_type: refresh_token
+  refresh_token: Qrf9V0ikinzgMnLo3XoHCJCYfB17VjoNse6zTFMo4t-fGDPQjXtdVTOJpcdeaeSHrfe285x6J47tqgQo-XQLlRF2RMKS5Ll_1FLO0dvA_mkUvuNd0c7UZD9-lbrdhtNZ
+}
