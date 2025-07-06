@@ -244,23 +244,30 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created with the new Dto is returned")
     public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedWithTheNewDtoIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine();
-        Order model = buildNewOrderWithOrderLine();
+        OrderDto beforeDto = buildNewOrderDtoWithOrderLine();
+        OrderDto afterDto = buildNewOrderDtoWithOrderLine();
+        afterDto.setId(1);
 
-        when(mockConverter.fromDtoToModel(dto))
-                .thenReturn(model);
+        Order beforeModel = buildNewOrderWithOrderLine();
+        Order afterModel = buildNewOrderWithOrderLine();
+        afterModel.setId(
+                afterDto.getId()
+        );
 
-        when(mockService.save(model))
-                .thenReturn(of(model));
+        when(mockConverter.fromDtoToModel(beforeDto))
+                .thenReturn(beforeModel);
 
-        when(mockConverter.fromModelToDto(model))
-                .thenReturn(dto);
+        when(mockService.save(beforeModel))
+                .thenReturn(of(afterModel));
+
+        when(mockConverter.fromModelToDto(afterModel))
+                .thenReturn(afterDto);
 
         ResultActions result = mockMvc.perform(
                         post(RestRoutes.ORDER.ROOT)
                                 .contentType(APPLICATION_JSON)
                                 .content(
-                                        objectMapper.writeValueAsString(dto)
+                                        objectMapper.writeValueAsString(beforeDto)
                                 )
                 )
                 .andExpect(
@@ -270,21 +277,21 @@ public class OrderControllerTest extends BaseControllerTest {
         thenBodyIsReturned(
                 result,
                 CREATED,
-                dto,
+                afterDto,
                 OrderDto.class
         );
 
         verify(mockConverter, times(1))
                 .fromDtoToModel(
-                        dto
+                        beforeDto
                 );
         verify(mockService, times(1))
                 .save(
-                        model
+                        beforeModel
                 );
         verify(mockConverter, times(1))
                 .fromModelToDto(
-                        model
+                        afterModel
                 );
     }
 

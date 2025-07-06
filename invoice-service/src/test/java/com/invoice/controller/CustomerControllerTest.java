@@ -9,7 +9,6 @@ import com.invoice.model.Customer;
 import com.invoice.service.CustomerService;
 import com.invoice.util.converter.CustomerConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @SpringBootTest(
         classes = InvoiceServiceApplication.class
@@ -52,7 +55,6 @@ public class CustomerControllerTest extends BaseControllerTest {
 
 
     @Test
-    @SneakyThrows
     @DisplayName("create: when no logged user is given then unauthorized Http code is returned")
     public void create_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
         CustomerDto dto = buildNewCustomerDto();
@@ -73,7 +75,6 @@ public class CustomerControllerTest extends BaseControllerTest {
 
 
     @Test
-    @SneakyThrows
     @WithMockUser(
             authorities = { Constants.PERMISSIONS.GET_CUSTOMER }
     )
@@ -162,7 +163,6 @@ public class CustomerControllerTest extends BaseControllerTest {
     }
 
     @ParameterizedTest
-    @SneakyThrows
     @WithMockUser(
             authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
     )
@@ -187,7 +187,101 @@ public class CustomerControllerTest extends BaseControllerTest {
     }
 
 
-    // TODO PENDING TO DECIDE IF CREATE 2 TESTS OR JUST ONE PARAMETRIZED FOR "VALID" TESTS
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+    )
+    @DisplayName("create: when given parameters verifies validations but service returns empty then Http code Unprocessable Entity is returned")
+    public void create_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeUnprocessableEntityIsReturned() {
+        CustomerDto dto = buildNewCustomerDto();
+        Customer model = buildNewCustomer();
+
+        when(mockConverter.fromDtoToModel(dto))
+                .thenReturn(model);
+
+        when(mockService.save(model))
+                .thenReturn(empty());
+
+        webTestClient.post()
+                .uri(RestRoutes.CUSTOMER.ROOT)
+                .body(
+                        Mono.just(dto),
+                        CustomerDto.class
+                )
+                .exchange()
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody().isEmpty();
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        dto
+                );
+        verify(mockService, times(1))
+                .save(
+                        model
+                );
+        verify(mockConverter, never())
+                .fromModelToDto(
+                        any(Customer.class)
+                );
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+    )
+    @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created with the new Dto is returned")
+    public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedWithTheNewDtoIsReturned() {
+        CustomerDto beforeDto = buildNewCustomerDto();
+        CustomerDto afterDto = buildNewCustomerDto();
+        afterDto.setId(1);
+
+        Customer beforeModel = buildNewCustomer();
+        Customer afterModel = buildNewCustomer();
+        afterModel.setId(
+                afterDto.getId()
+        );
+
+        when(mockConverter.fromDtoToModel(beforeDto))
+                .thenReturn(beforeModel);
+
+        when(mockService.save(beforeModel))
+                .thenReturn(of(afterModel));
+
+        when(mockConverter.fromModelToDto(afterModel))
+                .thenReturn(afterDto);
+
+        webTestClient.post()
+                .uri(RestRoutes.CUSTOMER.ROOT)
+                .body(
+                        Mono.just(beforeDto),
+                        CustomerDto.class
+                )
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody(CustomerDto.class)
+                .isEqualTo(afterDto);
+
+        verify(mockConverter, times(1))
+                .fromDtoToModel(
+                        beforeDto
+                );
+        verify(mockService, times(1))
+                .save(
+                        beforeModel
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        afterModel
+                );
+    }
+
+
+
+
+
 
 
 
