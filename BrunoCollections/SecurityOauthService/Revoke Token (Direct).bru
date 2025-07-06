@@ -1,0 +1,20 @@
+meta {
+  name: Revoke Token (Direct)
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8181/security/oauth/revoke
+  body: formUrlEncoded
+  auth: basic
+}
+
+auth:basic {
+  username: Spring6Microservices
+  password: Spring6Microservices
+}
+
+body:form-urlencoded {
+  token: eyJraWQiOiJjOTg2YzU1OC1lZjIzLTQzN2UtOTViNS00MWQ3MzVjYjkzOWEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImF1ZCI6IlNwcmluZzZNaWNyb3NlcnZpY2VzIiwibmJmIjoxNzQ0OTY0MDQ2LCJzY29wZSI6WyJvcGVuaWQiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgxIiwiZXhwIjoxNzQ0OTY0MzQ2LCJpYXQiOjE3NDQ5NjQwNDYsImp0aSI6Ijk2MjYzYmFkLTQxY2YtNGY3ZC04MmQwLTRjODg0M2MwMzc3NSJ9.XdoKLqsX-TiGJetmGk0JGVCZ3HC6eP5PrsFUH9KqAe2TQu97F-jn276FUJKaIIC_D8JHIheSUK57y2Ae8tkReOo9ugHLI10T9X0aF7d1kEDbr8VR-_WlEdm9kKWSjgvDaX9oEEUttCu72F5WxtBY24-SFOwG26lUYVMLPROFgE_3WhX8PHHUfcJXWraZI_5XObUPOKCoFhXkVXZrP7sLkEoE2UlBemP0vAQXgs8pI26oWrdjWIh9SVq6iLTvEgwm5XEGUJKL0MJWNHyuJ9ehpePSYCJrX7BecXpG6NxbAYt-QaElzsJ3OShpuZJBP0cenZHoyOzZw-KVxG8EmVV3GA
+}

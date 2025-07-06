@@ -1,0 +1,25 @@
+meta {
+  name: Login Token - PKCE2 (Gateway)
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:5555/security/custom/authentication/login/token
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: Spring6Microservices
+  password: Spring6Microservices
+}
+
+body:json {
+  {
+    "username": "admin",
+    "password": "admin",
+    "authorizationCode": "d6b47dba-c5d1-43b7-ad17-8a662c294327",
+    "verifier": "123456"
+  }
+}
