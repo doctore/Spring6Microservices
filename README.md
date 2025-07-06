@@ -22,6 +22,7 @@
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
   - [security-custom-service native](#security-custom-service-native)
+- [Endpoint definitions](#endpoint-definitions)
 
 
 
@@ -735,3 +736,10 @@ you will be able to notice an important improvement in the performance:
 * **native:** less than 3 seconds.
 
 ![Alt text](/documentation/security-custom-service/NativeProfile.png?raw=true "Native run")
+<br><br>
+
+
+
+## Endpoint definitions
+
+Configured to use the application [Bruno](https://www.usebruno.com/), several collections were created to use the provided endpoints. You can them [here](https://github.com/doctore/Spring6Microservices/tree/main/documentation/BrunoCollections).
