@@ -29,7 +29,7 @@ public class InvoiceDto {
 
     @Schema(
             description = "Internal unique identifier",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
     private Integer id;
 
@@ -69,9 +69,8 @@ public class InvoiceDto {
 
     @Schema(
             description = "When the invoice was created",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
-    @NotNull
     @JsonFormat(
             pattern = Constants.DATETIME_FORMAT
     )

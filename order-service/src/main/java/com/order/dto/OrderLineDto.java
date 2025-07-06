@@ -24,7 +24,7 @@ public class OrderLineDto {
 
     @Schema(
             description = "Internal unique identifier",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
     private Integer id;
 

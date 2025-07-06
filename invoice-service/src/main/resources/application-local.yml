@@ -38,6 +38,12 @@ encrypt:
 
 # Custom security configuration
 security:
+  # Configuration used to connect to the security microservice
+  authorizationServer:
+    authenticationInformation: http://localhost:8180/security/custom/authorization/check_token
+    clientId: Spring6Microservices
+    # Raw password: Spring6Microservices
+    clientPassword: "{cipher}1274c88a1340ad50f1199fd477c1406e4d020ca321a4b27443d7df371cc83262d9688c3e883141cf08e04878d85e42b2"
   # CORS configuration
   cors:
     # Enable cross-origin request handling for the specified path pattern
@@ -65,6 +71,18 @@ management:
     sampling:
       # To log traceId and spanId in every request
       probability: 1.0
+
+
+# Configuration for external REST requests
+rest:
+  connect:
+    timeoutInMilliseconds: 5000
+  read:
+    timeoutInMilliseconds: 30000
+  response:
+    timeoutInMilliseconds: 30000
+  write:
+    timeoutInMilliseconds: 30000
 
 
 # API documentation

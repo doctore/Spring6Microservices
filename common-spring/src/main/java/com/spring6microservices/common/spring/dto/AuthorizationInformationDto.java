@@ -15,7 +15,7 @@ import java.util.Set;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 /**
- * Required information to send as response when trying to authorize a user.
+ * Required information to send as a response when trying to authorize a user.
  */
 @Builder
 @Data

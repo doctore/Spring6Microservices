@@ -22,6 +22,11 @@ spring:
 
 # Custom security configuration
 security:
+  # Configuration used to connect to the security microservice
+  authorizationServer:
+    authenticationInformation: OnlyToAvoidAFailureLoadingConfigurationClass
+    clientId: TestClient
+    clientPassword: TestPassword
   # CORS configuration
   cors:
     # Enable cross-origin request handling for the specified path pattern
@@ -45,6 +50,18 @@ logging:
       invoice:
         # Set the level of the mapper package for debugging purpose
         mapper: trace
+
+
+# Configuration for external REST requests
+rest:
+  connect:
+    timeoutInMilliseconds: 5000
+  read:
+    timeoutInMilliseconds: 5000
+  response:
+    timeoutInMilliseconds: 5000
+  write:
+    timeoutInMilliseconds: 5000
 
 
 # API documentation

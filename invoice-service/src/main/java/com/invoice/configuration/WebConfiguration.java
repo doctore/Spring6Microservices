@@ -1,6 +1,6 @@
 package com.invoice.configuration;
 
-import com.invoice.configuration.security.CorsConfiguration;
+import com.invoice.configuration.security.configuration.CorsConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.EnableWebFlux;

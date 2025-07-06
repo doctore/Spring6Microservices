@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -111,6 +112,9 @@ public class Invoice implements Serializable {
     private double cost;
 
     @NotNull
+    @ColumnDefault(
+            value = "CURRENT_TIMESTAMP"
+    )
     private LocalDateTime createdAt;
 
 

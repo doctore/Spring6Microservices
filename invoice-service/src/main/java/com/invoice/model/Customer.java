@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -59,7 +60,7 @@ public class Customer implements Serializable {
     @NotNull
     @Size(
             min = 1,
-            max = 64
+            max = 128
     )
     private String address;
 
@@ -76,6 +77,9 @@ public class Customer implements Serializable {
     private String email;
 
     @NotNull
+    @ColumnDefault(
+            value = "CURRENT_TIMESTAMP"
+    )
     private LocalDateTime createdAt;
 
 

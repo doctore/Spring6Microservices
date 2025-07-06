@@ -9,7 +9,7 @@ CREATE SEQUENCE IF NOT EXISTS customer_id_seq AS integer;
 CREATE TABLE IF NOT EXISTS main.customer(
     id              int                 not null     default nextval('customer_id_seq')   constraint customer_pk primary key,
     code            varchar(64)         not null,
-    address         varchar(64)         not null,
+    address         varchar(128)        not null,
     phone           varchar(16)         not null,
     email           varchar(64),
     created_at      timestamp           not null     default current_timestamp

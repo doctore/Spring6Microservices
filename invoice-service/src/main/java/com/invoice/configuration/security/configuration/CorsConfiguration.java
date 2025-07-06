@@ -1,4 +1,4 @@
-package com.invoice.configuration.security;
+package com.invoice.configuration.security.configuration;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

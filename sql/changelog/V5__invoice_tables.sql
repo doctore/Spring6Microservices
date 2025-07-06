@@ -6,7 +6,7 @@ CREATE SCHEMA IF NOT EXISTS main;
 CREATE TABLE main.customer(
     id                  serial              not null       constraint customer_pk primary key,
     code                varchar(64)         not null,
-    address             varchar(64)         not null,
+    address             varchar(128)        not null,
     phone               varchar(16)         not null,
     email               varchar(64),
     created_at          timestamp           not null       default current_timestamp

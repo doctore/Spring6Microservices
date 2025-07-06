@@ -27,7 +27,7 @@ public class CustomerDto {
 
     @Schema(
             description = "Internal unique identifier",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
     private Integer id;
 
@@ -49,7 +49,7 @@ public class CustomerDto {
     @NotNull
     @Size(
             min = 1,
-            max = 64
+            max = 128
     )
     private String address;
 
@@ -75,9 +75,8 @@ public class CustomerDto {
 
     @Schema(
             description = "When the customer was created",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
-    @NotNull
     @JsonFormat(
             pattern = Constants.DATETIME_FORMAT
     )

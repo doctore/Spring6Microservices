@@ -48,7 +48,9 @@ public class CustomAuthoritiesOpaqueTokenIntrospector implements OpaqueTokenIntr
         return new DefaultOAuth2AuthenticatedPrincipal(
                 principal.getName(),
                 principal.getAttributes(),
-                extractAuthorities(principal)
+                extractAuthorities(
+                        principal
+                )
         );
     }
 
