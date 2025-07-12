@@ -1,6 +1,7 @@
 package com.spring6microservices.common.spring.dto.page;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @AllArgsConstructor
@@ -19,6 +20,7 @@ public class SortDto {
             description = "Property used to sort the results",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
+    @NotBlank
     private String property;
 
     @Schema(
