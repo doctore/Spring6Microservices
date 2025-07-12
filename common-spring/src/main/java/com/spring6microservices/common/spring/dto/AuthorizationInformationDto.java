@@ -19,21 +19,36 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
  */
 @Builder
 @Data
-@EqualsAndHashCode(of = {"username"})
+@EqualsAndHashCode(
+        of = {"username"}
+)
 @NoArgsConstructor
-@Schema(description = "Authorization information about an specific user")
+@Schema(
+        description = "Authorization information about an specific user"
+)
 public class AuthorizationInformationDto {
 
-    @Schema(description = "What was the application (or microservice) used to generate this instance")
+    @Schema(
+            description = "What was the application (or microservice) used to generate this instance"
+    )
     private String application;
 
-    @Schema(description = "Identifier of the logged user", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Identifier of the logged user",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private String username;
 
-    @Schema(description = "Roles and/or permissions of the logged user", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Roles and/or permissions of the logged user",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private Set<String> authorities;
 
-    @Schema(description = "Extra data returned by security service", requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+            description = "Extra data returned by security service",
+            requiredMode = RequiredMode.REQUIRED
+    )
     private Map<String, Object> additionalInformation;
 
 
