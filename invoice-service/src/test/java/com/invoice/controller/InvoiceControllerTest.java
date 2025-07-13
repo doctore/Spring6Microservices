@@ -6,9 +6,11 @@ import com.invoice.TestUtil;
 import com.invoice.configuration.Constants;
 import com.invoice.configuration.rest.RestRoutes;
 import com.invoice.dto.CustomerDto;
+import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Customer;
-import com.invoice.service.CustomerService;
-import com.invoice.util.converter.CustomerConverter;
+import com.invoice.model.Invoice;
+import com.invoice.service.InvoiceService;
+import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
@@ -30,24 +32,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.invoice.TestDataFactory.buildEmptyPage;
-import static com.invoice.TestDataFactory.buildPage;
+import static com.invoice.TestDataFactory.*;
 import static com.spring6microservices.common.spring.enums.RestApiErrorCode.VALIDATION;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @SpringBootTest(
         classes = InvoiceServiceApplication.class
 )
-public class CustomerControllerTest extends BaseControllerTest {
+public class InvoiceControllerTest extends BaseControllerTest {
 
     @MockitoBean
-    private CustomerConverter mockConverter;
+    private InvoiceConverter mockConverter;
 
     @MockitoBean
-    private CustomerService mockService;
+    private InvoiceService mockService;
 
     private WebTestClient webTestClient;
 
@@ -63,13 +66,13 @@ public class CustomerControllerTest extends BaseControllerTest {
     @Test
     @DisplayName("create: when no logged user is given then unauthorized Http code is returned")
     public void create_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
-        CustomerDto dto = buildNewCustomerDto();
+        InvoiceDto dto = buildNewInvoiceDto();
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT)
+                .uri(RestRoutes.INVOICE.ROOT)
                 .body(
                         Mono.just(dto),
-                        CustomerDto.class
+                        InvoiceDto.class
                 )
                 .exchange()
                 .expectStatus()
@@ -82,17 +85,17 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.GET_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
     )
     @DisplayName("create: when no valid authority is given then forbidden Http code is returned")
     public void create_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
-        CustomerDto dto = buildNewCustomerDto();
+        InvoiceDto dto = buildNewInvoiceDto();
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT)
+                .uri(RestRoutes.INVOICE.ROOT)
                 .body(
                         Mono.just(dto),
-                        CustomerDto.class
+                        InvoiceDto.class
                 )
                 .exchange()
                 .expectStatus()
@@ -106,81 +109,73 @@ public class CustomerControllerTest extends BaseControllerTest {
     static Stream<Arguments> create_invalidParametersTestCases() {
         String longString = String.join("", Collections.nCopies(300, "a"));
 
-        CustomerDto dtoWithNoCode = buildNewCustomerDto();
+        InvoiceDto dtoWithNoCode = buildNewInvoiceDto();
         dtoWithNoCode.setCode(null);
 
-        CustomerDto dtoWithLongCode = buildNewCustomerDto();
+        InvoiceDto dtoWithLongCode = buildNewInvoiceDto();
         dtoWithLongCode.setCode(longString);
 
-        CustomerDto dtoWithNoAddress = buildNewCustomerDto();
-        dtoWithNoAddress.setAddress(null);
+        InvoiceDto dtoWithNoCustomer = buildNewInvoiceDto();
+        dtoWithNoCustomer.setCustomer(null);
 
-        CustomerDto dtoWithLongAddress = buildNewCustomerDto();
-        dtoWithLongAddress.setAddress(longString);
+        InvoiceDto dtoWithNoOrderId = buildNewInvoiceDto();
+        dtoWithNoOrderId.setOrderId(null);
 
-        CustomerDto dtoWithNoPhone = buildNewCustomerDto();
-        dtoWithNoPhone.setPhone(null);
+        InvoiceDto dtoWithNoCost = buildNewInvoiceDto();
+        dtoWithNoCost.setCost(null);
 
-        CustomerDto dtoWithLongPhone = buildNewCustomerDto();
-        dtoWithLongPhone.setPhone(longString);
-
-        CustomerDto dtoWithLongEmail = buildNewCustomerDto();
-        dtoWithLongEmail.setEmail(longString);
+        InvoiceDto dtoWithNegativeCost = buildNewInvoiceDto();
+        dtoWithNegativeCost.setCost(-1d);
 
         ErrorResponseDto responseDtoWithNoCode = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'code' due to: must not be null")
+                List.of("Field error in object 'invoiceDto' on field 'code' due to: must not be null")
         );
         ErrorResponseDto responseDtoWithLongCode = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'code' due to: size must be between 1 and 64")
+                List.of("Field error in object 'invoiceDto' on field 'code' due to: size must be between 1 and 64")
         );
-        ErrorResponseDto responseDtoWithNoAddress = new ErrorResponseDto(
+        ErrorResponseDto responseDtoWithNoCustomer= new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'address' due to: must not be null")
+                List.of("Field error in object 'invoiceDto' on field 'customer' due to: must not be null")
         );
-        ErrorResponseDto responseDtoWithLongAddress = new ErrorResponseDto(
+        ErrorResponseDto responseDtoWithNoOrderId = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'address' due to: size must be between 1 and 128")
+                List.of("Field error in object 'invoiceDto' on field 'orderId' due to: must not be null")
         );
-        ErrorResponseDto responseDtoWithNoPhone = new ErrorResponseDto(
+        ErrorResponseDto responseDtoNoCost = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'phone' due to: must not be null")
+                List.of("Field error in object 'invoiceDto' on field 'cost' due to: must not be null")
         );
-        ErrorResponseDto responseDtoWithLongPhone = new ErrorResponseDto(
+        ErrorResponseDto responseDtoWithNegativeCost = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'phone' due to: size must be between 1 and 16")
-        );
-        ErrorResponseDto responseDtoWithLongEmail = new ErrorResponseDto(
-                VALIDATION,
-                List.of("Field error in object 'customerDto' on field 'email' due to: size must be between 0 and 64")
+                List.of("Field error in object 'invoiceDto' on field 'cost' due to: must be greater than 0")
         );
         return Stream.of(
                 //@formatter:off
-                //            dtoToCreate,          expectedResponse
-                Arguments.of( dtoWithNoCode,        responseDtoWithNoCode ),
-                Arguments.of( dtoWithLongCode,      responseDtoWithLongCode ),
-                Arguments.of( dtoWithNoAddress,     responseDtoWithNoAddress ),
-                Arguments.of( dtoWithLongAddress,   responseDtoWithLongAddress ),
-                Arguments.of( dtoWithNoPhone,       responseDtoWithNoPhone ),
-                Arguments.of( dtoWithLongPhone,     responseDtoWithLongPhone ),
-                Arguments.of( dtoWithLongEmail,     responseDtoWithLongEmail )
+                //            dtoToCreate,           expectedResponse
+                Arguments.of( dtoWithNoCode,         responseDtoWithNoCode ),
+                Arguments.of( dtoWithLongCode,       responseDtoWithLongCode ),
+                Arguments.of( dtoWithNoCustomer,     responseDtoWithNoCustomer ),
+                Arguments.of( dtoWithNoOrderId,      responseDtoWithNoOrderId ),
+                Arguments.of( dtoWithNoCost,         responseDtoNoCost ),
+                Arguments.of( dtoWithNegativeCost,   responseDtoWithNegativeCost )
         ); //@formatter:on
     }
 
     @ParameterizedTest
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
     )
     @MethodSource("create_invalidParametersTestCases")
     @DisplayName("create: when given parameters do not verify validations then bad request error is returned with validation errors")
-    public void create_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(CustomerDto dtoToCreate,
+    public void create_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(InvoiceDto dtoToCreate,
                                                                                                                       ErrorResponseDto expectedResponse) {
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT)
+                .uri(RestRoutes.INVOICE.ROOT)
                 .body(
                         Mono.just(dtoToCreate),
-                        CustomerDto.class
+                        InvoiceDto.class
                 )
                 .exchange()
                 .expectStatus()
@@ -195,12 +190,12 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
     )
     @DisplayName("create: when given parameters verifies validations but service returns empty then Http code Unprocessable Entity is returned")
     public void create_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeUnprocessableEntityIsReturned() {
-        CustomerDto dto = buildNewCustomerDto();
-        Customer model = buildNewCustomer();
+        InvoiceDto dto = buildNewInvoiceDto();
+        Invoice model = buildNewInvoice();
 
         when(mockConverter.fromDtoToModel(dto))
                 .thenReturn(model);
@@ -209,10 +204,10 @@ public class CustomerControllerTest extends BaseControllerTest {
                 .thenReturn(empty());
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT)
+                .uri(RestRoutes.INVOICE.ROOT)
                 .body(
                         Mono.just(dto),
-                        CustomerDto.class
+                        InvoiceDto.class
                 )
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
@@ -228,23 +223,23 @@ public class CustomerControllerTest extends BaseControllerTest {
                 );
         verify(mockConverter, never())
                 .fromModelToDto(
-                        any(Customer.class)
+                        any(Invoice.class)
                 );
     }
 
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
     )
     @DisplayName("create: when given parameters verifies validations and service returns a model then Http code Created with the new Dto is returned")
     public void create_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeCreatedWithTheNewDtoIsReturned() {
-        CustomerDto beforeDto = buildNewCustomerDto();
-        CustomerDto afterDto = buildNewCustomerDto();
+        InvoiceDto beforeDto = buildNewInvoiceDto();
+        InvoiceDto afterDto = buildNewInvoiceDto();
         afterDto.setId(1);
 
-        Customer beforeModel = buildNewCustomer();
-        Customer afterModel = buildNewCustomer();
+        Invoice beforeModel = buildNewInvoice();
+        Invoice afterModel = buildNewInvoice();
         afterModel.setId(
                 afterDto.getId()
         );
@@ -259,15 +254,15 @@ public class CustomerControllerTest extends BaseControllerTest {
                 .thenReturn(afterDto);
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT)
+                .uri(RestRoutes.INVOICE.ROOT)
                 .body(
                         Mono.just(beforeDto),
-                        CustomerDto.class
+                        InvoiceDto.class
                 )
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-                .expectBody(CustomerDto.class)
+                .expectBody(InvoiceDto.class)
                 .isEqualTo(afterDto);
 
         verify(mockConverter, times(1))
@@ -291,7 +286,7 @@ public class CustomerControllerTest extends BaseControllerTest {
         PageDto dto = buildPageDto();
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT + RestRoutes.CUSTOMER.FIND_ALL)
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
                 .body(
                         Mono.just(dto),
                         PageDto.class
@@ -307,14 +302,14 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.CREATE_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
     )
     @DisplayName("findAll: when no valid authority is given then forbidden Http code is returned")
     public void findAll_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
         PageDto dto = buildPageDto();
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT + RestRoutes.CUSTOMER.FIND_ALL)
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
                 .body(
                         Mono.just(dto),
                         PageDto.class
@@ -361,14 +356,14 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @ParameterizedTest
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.GET_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
     )
     @MethodSource("findAll_invalidParametersTestCases")
     @DisplayName("findAll: when given parameters do not verify validations then bad request error is returned with validation errors")
     public void findAll_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(PageDto dto,
                                                                                                                        ErrorResponseDto expectedResponse) {
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT + RestRoutes.CUSTOMER.FIND_ALL)
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
                 .body(
                         Mono.just(dto),
                         PageDto.class
@@ -386,7 +381,7 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.GET_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
     )
     @DisplayName("findAll: when no results are found then empty page is returned")
     public void findAll_whenNoResultsAreFound_thenEmptyPageIsReturned() {
@@ -398,7 +393,7 @@ public class CustomerControllerTest extends BaseControllerTest {
                 );
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT + RestRoutes.CUSTOMER.FIND_ALL)
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
                 .body(
                         Mono.just(pageDto),
                         PageDto.class
@@ -422,13 +417,13 @@ public class CustomerControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(
-            authorities = { Constants.PERMISSIONS.GET_CUSTOMER }
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
     )
     @DisplayName("findAll: when results are found then expected page is returned")
     public void findAll_whenResultsAreFound_thenExpectedPageIsReturned() {
         PageDto pageDto = buildPageDto();
-        CustomerDto dto = buildCustomerDto();
-        Customer model = buildCustomer();
+        InvoiceDto dto = buildInvoiceDto();
+        Invoice model = buildInvoice();
 
         when(mockService.findAll(pageDto.toPageable()))
                 .thenReturn(
@@ -441,7 +436,7 @@ public class CustomerControllerTest extends BaseControllerTest {
                 .thenReturn(dto);
 
         webTestClient.post()
-                .uri(RestRoutes.CUSTOMER.ROOT + RestRoutes.CUSTOMER.FIND_ALL)
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
                 .body(
                         Mono.just(pageDto),
                         PageDto.class
@@ -451,9 +446,15 @@ public class CustomerControllerTest extends BaseControllerTest {
                 .expectBody()
                 .jsonPath("$.content.[0].id").isEqualTo(dto.getId())
                 .jsonPath("$.content.[0].code").isEqualTo(dto.getCode())
-                .jsonPath("$.content.[0].address").isEqualTo(dto.getAddress())
-                .jsonPath("$.content.[0].phone").isEqualTo(dto.getPhone())
-                .jsonPath("$.content.[0].email").isEqualTo(dto.getEmail())
+                .jsonPath("$.content.[0].customer.id").isEqualTo(dto.getCustomer().getId())
+                .jsonPath("$.content.[0].customer.code").isEqualTo(dto.getCustomer().getCode())
+                .jsonPath("$.content.[0].customer.address").isEqualTo(dto.getCustomer().getAddress())
+                .jsonPath("$.content.[0].customer.phone").isEqualTo(dto.getCustomer().getPhone())
+                .jsonPath("$.content.[0].customer.email").isEqualTo(dto.getCustomer().getEmail())
+                .jsonPath("$.content.[0].customer.createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCustomer().getCreatedAt()))
+                .jsonPath("$.content.[0].orderId").isEqualTo(dto.getOrderId())
+                .jsonPath("$.content.[0].cost").isEqualTo(dto.getCost())
+                .jsonPath("$.content.[0].createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCreatedAt()))
                 .jsonPath("$.content.[0].createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCreatedAt()))
                 .jsonPath("$.numberOfElements").isEqualTo(1)
                 .jsonPath("$.size").isEqualTo(pageDto.getSize())
@@ -476,38 +477,52 @@ public class CustomerControllerTest extends BaseControllerTest {
 
 
 
-    private static Customer buildCustomer() {
-        Customer model = buildNewCustomer();
+    private static Invoice buildInvoice() {
+        Invoice model = buildNewInvoice();
         model.setId(1);
         return model;
     }
 
 
-    private static Customer buildNewCustomer() {
-        return TestDataFactory.buildCustomer(
-                null,
+    private static Invoice buildNewInvoice() {
+        Customer customer = buildCustomer(
+                1,
                 "Customer 1",
                 "Address of customer 1",
                 "(+34) 123456789",
                 "customer1@email.es"
         );
+        return TestDataFactory.buildInvoice(
+                null,
+                "Invoice 1",
+                customer,
+                1,
+                10.1d
+        );
     }
 
 
-    private static CustomerDto buildCustomerDto() {
-        CustomerDto dto = buildNewCustomerDto();
+    private static InvoiceDto buildInvoiceDto() {
+        InvoiceDto dto = buildNewInvoiceDto();
         dto.setId(1);
         return dto;
     }
 
 
-    private static CustomerDto buildNewCustomerDto() {
-        return TestDataFactory.buildCustomerDto(
-                null,
+    private static InvoiceDto buildNewInvoiceDto() {
+        CustomerDto customer = buildCustomerDto(
+                1,
                 "Customer 1",
                 "Address of customer 1",
                 "(+34) 123456789",
                 "customer1@email.es"
+        );
+        return TestDataFactory.buildInvoiceDto(
+                null,
+                "Invoice 1",
+                customer,
+                1,
+                10.1d
         );
     }
 
@@ -515,7 +530,7 @@ public class CustomerControllerTest extends BaseControllerTest {
     private static PageDto buildPageDto() {
         List<SortDto> sortDtos = List.of(
                 TestDataFactory.buildSortDto(
-                        Customer.ID_PROPERTY,
+                        Invoice.ID_PROPERTY,
                         true
                 )
         );

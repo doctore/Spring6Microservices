@@ -1,10 +1,14 @@
 package com.invoice;
 
+import com.invoice.configuration.Constants;
 import com.invoice.dto.CustomerDto;
 import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
+import com.spring6microservices.common.core.util.DateTimeUtil;
 import lombok.experimental.UtilityClass;
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -106,10 +110,7 @@ public class TestUtil {
         assertNull(invoice.getId());
         assertNull(invoice.getCustomer());
         assertNull(invoice.getOrderId());
-        assertEquals(
-                0d,
-                invoice.getCost()
-        );
+        assertNull(invoice.getCost());
         assertNull(invoice.getCreatedAt());
     }
 
@@ -119,11 +120,16 @@ public class TestUtil {
         assertNull(invoice.getId());
         assertNull(invoice.getCustomer());
         assertNull(invoice.getOrderId());
-        assertEquals(
-                0d,
-                invoice.getCost()
-        );
+        assertNull(invoice.getCost());
         assertNull(invoice.getCreatedAt());
+    }
+
+
+    public static String localDateTimeToJSONFormat(final LocalDateTime localDateTime) {
+        return DateTimeUtil.format(
+                localDateTime,
+                Constants.DATETIME_FORMAT
+        );
     }
 
 }

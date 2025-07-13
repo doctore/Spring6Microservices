@@ -2,16 +2,20 @@ package com.invoice;
 
 import com.invoice.dto.CustomerDto;
 import com.invoice.dto.InvoiceDto;
-import com.invoice.dto.page.PageDto;
-import com.invoice.dto.page.SortDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.util.CollectionUtil;
+import com.spring6microservices.common.spring.dto.page.PageDto;
+import com.spring6microservices.common.spring.dto.page.SortDto;
 import lombok.experimental.UtilityClass;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @UtilityClass
 public class TestDataFactory {
@@ -153,6 +157,25 @@ public class TestDataFactory {
                 .property(property)
                 .isAscending(isAscending)
                 .build();
+    }
+
+
+    public static <T> Page<T> buildEmptyPage(final Pageable pageable) {
+        return new PageImpl<>(
+                List.of(),
+                pageable,
+                0
+        );
+    }
+
+
+    public static <T> Page<T> buildPage(final Pageable pageable,
+                                        final List<T> content) {
+        return new PageImpl<>(
+                content,
+                pageable,
+                content.size()
+        );
     }
 
 }

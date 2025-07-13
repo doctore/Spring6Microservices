@@ -65,7 +65,7 @@ public class InvoiceDto {
     )
     @NotNull
     @Positive
-    private double cost;
+    private Double cost;
 
     @Schema(
             description = "When the invoice was created",

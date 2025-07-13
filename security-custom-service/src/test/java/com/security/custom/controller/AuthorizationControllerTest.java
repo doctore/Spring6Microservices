@@ -106,7 +106,10 @@ public class AuthorizationControllerTest extends BaseControllerTest {
 
         webTestClient.post()
                 .uri(RestRoutes.AUTHORIZATION.ROOT + RestRoutes.AUTHORIZATION.CHECK_TOKEN)
-                .body(Mono.just(accessToken), String.class)
+                .body(
+                        Mono.just(accessToken),
+                        String.class
+                )
                 .exchange()
                 .expectStatus()
                 .isOk()

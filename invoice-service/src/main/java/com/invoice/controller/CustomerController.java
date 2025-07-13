@@ -6,11 +6,11 @@ import com.invoice.configuration.security.annotation.CreateCustomerPermission;
 import com.invoice.configuration.security.annotation.GetCustomerPermission;
 import com.invoice.configuration.security.annotation.UpdateCustomerPermission;
 import com.invoice.dto.CustomerDto;
-import com.invoice.dto.page.PageDto;
 import com.invoice.model.Customer;
 import com.invoice.service.CustomerService;
 import com.invoice.util.converter.CustomerConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.dto.page.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -228,7 +228,6 @@ public class CustomerController {
                 new ResponseEntity<>(
                         service.findAll(
                                 page.toPageable()
-
                         )
                         .map(
                                 converter::fromModelToDto

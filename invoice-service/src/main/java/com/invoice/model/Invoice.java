@@ -109,7 +109,7 @@ public class Invoice implements Serializable {
 
     @NotNull
     @Positive
-    private double cost;
+    private Double cost;
 
     @NotNull
     @ColumnDefault(
