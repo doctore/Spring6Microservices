@@ -1,0 +1,23 @@
+meta {
+  name: Find All Customers (Gateway)
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5555/customer/all
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: rmZnfZsLC66mtM1nh5FCvE9qtEkeEBiQ01zfVQvMcEcTp/X/0bdvdtuhnZ4KxQF/OQTBRuQclnEqwMFNsoe9tgOD2vAEYpz14sc7cau25plEtlRX66OVukSDfPaVdh0k8TmxkiGy6/cJU/w64M6gdDQVJgjUH6zAldJ2e6J+McTVJhunahXFBDx6QftfosjJQjB8vEka+wjQWo1HmakVjn2CV+8nCgadtZc1+KgkG+R7oS2H90RAQLGwZFKW1gR7umJeq73OVlvQ+Crw3LiqQd2/rMtBOI1N636FQxxosa27SgHmJ1uHkkRC2O2gOuE+zHph8dIhTsQB38C0JoX/UyBjU/9CgcF98JA7ZXeZ6dYr5JeIGVFJedjekBWckp9lQY0wlywltXgk4TDTeXbLkMPZWiBexc0xbycGig2MHRhQ6YVnG3mfrOLHEuXOkSknOPsMEhZAD7OFA+w90rQQsm+ZmtvfuG5vzOFB9xtLRDfubS/oJpqNPNnH3yIrwhJqxTcfijoeTBqqOos2IECOJh7JNunpU1YtrJEqT0hZKIYPG63ZVibWeMq4O+vqyzhEEsp9/SF9KMVlQfLvcQufm35J3h/02+se4+A/6gJ0w1aNQoBw0NVQzOJgeVbMTp89GW39w/f3OzAn2nqq0Iba+wyNc1Btw007fqjR1NaGq/5IIbmmiiOCpzb47CAFufr70cF4ESlURDisDduwUB370Xfmmw6+qP5CfEqfgocPJilZ4lME1OCcgk8KDiycRLH4cP3SKgQR4ri4Df8pxgEGlHGh+cX9+hiOOlu0ifLIsA9eDJo5wG4Zpz1tTAESEXv7o2G3DpNuWvj2LyOrpt78mxXo6LRsU1rHVbRE19/Osgup0Gf+BfarNHNP6/qk6UJAK0cXXcoGGG3wac3KtMAieiv4Po4hyHSaz+9uB/r5RyO2lW5GBnZ9Sp5XB+zIx/ee+9Wgp+PijxqVoo+gM1LF1/+vCSewVJZCseiYmK7+yfbUt4ypjJVYih0YPn+5BIb2iXv2A7Y+VsGxt7FR5RmSCME1cIifUva932UobiIQ+Z8RCS3tvmISiIgtTke4W6ZZ+drSGYALygOdA7uU9RSn7npm0WIfzoBbLVRX0CVJnWUUbcigWAM8rp+SVQvHijy3ZJMP01jevWpZj6KQpqJICBc=
+}
+
+body:json {
+  {
+    "page": 0,
+    "size": 2,
+    "sort": []
+  }
+}
