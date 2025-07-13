@@ -3,10 +3,13 @@ package com.spring6microservices.common.core.util;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
 import lombok.experimental.UtilityClass;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 import static com.spring6microservices.common.core.util.ObjectUtil.getOrElse;
@@ -14,6 +17,9 @@ import static java.lang.Math.abs;
 
 @UtilityClass
 public class DateTimeUtil {
+
+    private static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+
 
     /**
      * Compares provided {@link Date}s taking into account the given {@code epsilon} and {@code timeUnit}.
@@ -102,6 +108,92 @@ public class DateTimeUtil {
         return abs(difference) <= finalEpsilon
                 ? 0
                 : 0 < difference ? -1 : 1;
+    }
+
+
+    /**
+     * Formats a {@link Date} into a date-time string using {@link DateTimeUtil#DEFAULT_DATETIME_FORMAT}.
+     *
+     * @param sourceDate
+     *    The time value to be formatted into a date-time string. If {@code null} then new {@link Date} will be used
+     *
+     * @return the formatted date-time string
+     */
+    public static String format(final Date sourceDate) {
+        return format(
+                sourceDate,
+                DEFAULT_DATETIME_FORMAT
+        );
+    }
+
+
+    /**
+     * Formats a {@link Date} into a date-time string using provided {@code pattern}.
+     *
+     * @param sourceDate
+     *    The time value to be formatted into a date-time string. If {@code null} then new {@link Date} will be used
+     * @param pattern
+     *    The pattern describing the date and time format
+     *
+     * @return the formatted date-time string
+     *
+     * @throws IllegalArgumentException if the given {@code pattern} is invalid
+     */
+    public static String format(final Date sourceDate,
+                                final String pattern) {
+        final Date finalSourceDate = getOrElse(
+                sourceDate,
+                new Date()
+        );
+        final String finalPatter = getOrElse(
+                pattern,
+                DEFAULT_DATETIME_FORMAT
+        );
+        return new SimpleDateFormat(finalPatter)
+                .format(finalSourceDate);
+    }
+
+
+    /**
+     * Formats a {@link TemporalAccessor} into a date-time string using {@link DateTimeUtil#DEFAULT_DATETIME_FORMAT}.
+     *
+     * @param sourceTemporal
+     *    The time value to be formatted into a date-time string. If {@code null} then {@link LocalDateTime#now()} will be used
+     *
+     * @return the formatted date-time string
+     */
+    public static String format(final TemporalAccessor sourceTemporal) {
+        return format(
+                sourceTemporal,
+                DEFAULT_DATETIME_FORMAT
+        );
+    }
+
+
+    /**
+     * Formats a {@link TemporalAccessor} into a date-time string using provided {@code pattern}.
+     *
+     * @param sourceTemporal
+     *    The time value to be formatted into a date-time string. If {@code null} then new {@link Date} will be used
+     * @param pattern
+     *    The pattern describing the date and time format
+     *
+     * @return the formatted date-time string
+     *
+     * @throws IllegalArgumentException if the given {@code pattern} is invalid
+     */
+    public static String format(final TemporalAccessor sourceTemporal,
+                                final String pattern) {
+        final TemporalAccessor finalSourceTemporal = getOrElse(
+                sourceTemporal,
+                LocalDateTime.now()
+        );
+        final String finalPatter = getOrElse(
+                pattern,
+                DEFAULT_DATETIME_FORMAT
+        );
+        return DateTimeFormatter.ofPattern(finalPatter)
+                .format(finalSourceTemporal);
     }
 
 

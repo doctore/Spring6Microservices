@@ -11,22 +11,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.util.DateTimeUtil.fromDateToLocalDate;
-import static com.spring6microservices.common.core.util.DateTimeUtil.fromDateToLocalDateTime;
-import static com.spring6microservices.common.core.util.DateTimeUtil.fromLocalDateTimeToDate;
-import static com.spring6microservices.common.core.util.DateTimeUtil.fromLocalDateToDate;
-import static com.spring6microservices.common.core.util.DateTimeUtil.getDateIntervalFromGiven;
-import static com.spring6microservices.common.core.util.DateTimeUtil.getLocalDateTimeIntervalFromGiven;
-import static com.spring6microservices.common.core.util.DateTimeUtil.minus;
-import static com.spring6microservices.common.core.util.DateTimeUtil.plus;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.spring6microservices.common.core.util.DateTimeUtil.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DateTimeUtilTest {
 
@@ -111,6 +105,139 @@ public class DateTimeUtilTest {
                                                CompareToResult expectedResult) {
         int result = DateTimeUtil.compare(one, two, epsilon, timeUnit);
         verifyCompareToResult(result, expectedResult);
+    }
+
+
+    static Stream<Arguments> formatWithDateTestCases() {
+        GregorianCalendar gc1 = new GregorianCalendar(2020, Calendar.OCTOBER, 10, 12, 0, 0);
+        gc1.setTimeZone(TimeZone.getDefault());
+        GregorianCalendar gc2 = new GregorianCalendar(2022, Calendar.NOVEMBER, 12, 23, 10, 5);
+        gc2.setTimeZone(TimeZone.getDefault());
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,      expectedResult
+                Arguments.of( gc1.getTime(),   "2020-10-10T12:00:00" ),
+                Arguments.of( gc2.getTime(),   "2022-11-12T23:10:05" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("formatWithDateTestCases")
+    @DisplayName("format: with Date test cases")
+    public void formatWithDate_testCases(Date sourceDate,
+                                         String expectedResult) {
+        assertEquals(
+                expectedResult,
+                format(sourceDate)
+        );
+    }
+
+
+    static Stream<Arguments> formatWithDateAllParametersTestCases() {
+        GregorianCalendar gc1 = new GregorianCalendar(2020, Calendar.OCTOBER, 10, 12, 0, 0);
+        gc1.setTimeZone(TimeZone.getDefault());
+        GregorianCalendar gc2 = new GregorianCalendar(2022, Calendar.NOVEMBER, 12, 23, 10, 5);
+        gc2.setTimeZone(TimeZone.getDefault());
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,      pattern,    expectedException,   expectedResult
+                Arguments.of( gc1.getTime(),   "NotValid",                IllegalArgumentException.class,   null ),
+                Arguments.of( gc1.getTime(),   null,                      null,                             "2020-10-10T12:00:00" ),
+                Arguments.of( gc1.getTime(),   "yyyy-MM-dd'T'HH:mm:ss",   null,                             "2020-10-10T12:00:00" ),
+                Arguments.of( gc2.getTime(),   "yyyy.MM.dd",              null,                             "2022.11.12" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("formatWithDateAllParametersTestCases")
+    @DisplayName("format: using Date with all parameters test cases")
+    public void formatWithDateAllParameters_testCases(Date sourceDate,
+                                                      String pattern,
+                                                      Class<? extends Exception> expectedException,
+                                                      String expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    format(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    format(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> formatWithTemporalAccessorTestCases() {
+        LocalDateTime ldt1 = LocalDateTime.of(2020, 10, 10, 12, 0, 0);
+        LocalDateTime ldt2 = LocalDateTime.of(2022, 11, 12, 23, 10, 5);
+        return Stream.of(
+                //@formatter:off
+                //            sourceTemporal,   expectedResult
+                Arguments.of( ldt1,             "2020-10-10T12:00:00" ),
+                Arguments.of( ldt2,             "2022-11-12T23:10:05" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("formatWithTemporalAccessorTestCases")
+    @DisplayName("format: with TemporalAccessor test cases")
+    public void formatWithTemporalAccessor_testCases(TemporalAccessor sourceTemporal,
+                                                     String expectedResult) {
+        assertEquals(
+                expectedResult,
+                format(sourceTemporal)
+        );
+    }
+
+
+    static Stream<Arguments> formatWithTemporalAccessorAllParametersTestCases() {
+        LocalDate ld = LocalDate.of(2025, 9, 19);
+        LocalDateTime ldt1 = LocalDateTime.of(2020, 10, 10, 12, 0, 0);
+        LocalDateTime ldt2 = LocalDateTime.of(2022, 11, 12, 23, 10, 5);
+        return Stream.of(
+                //@formatter:off
+                //            sourceTemporal,   pattern,    expectedException,   expectedResult
+                Arguments.of( ld,               "yyyy-MM-dd HH:mm:ss",     UnsupportedTemporalTypeException.class,   null ),
+                Arguments.of( ldt1,             "NotValid",                IllegalArgumentException.class,           null ),
+                Arguments.of( ld,               "yyyy-MM-dd",              null,                                     "2025-09-19" ),
+                Arguments.of( ldt1,             null,                      null,                                     "2020-10-10T12:00:00" ),
+                Arguments.of( ldt1,             "yyyy-MM-dd'T'HH:mm:ss",   null,                                     "2020-10-10T12:00:00" ),
+                Arguments.of( ldt2,             "yyyy.MM.dd",              null,                                     "2022.11.12" )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("formatWithTemporalAccessorAllParametersTestCases")
+    @DisplayName("format: using TemporalAccessor with all parameters test cases")
+    public void formatWithTemporalAccessorAllParameters_testCases(TemporalAccessor sourceTemporal,
+                                                                  String pattern,
+                                                                  Class<? extends Exception> expectedException,
+                                                                  String expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    format(
+                            sourceTemporal,
+                            pattern
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    format(
+                            sourceTemporal,
+                            pattern
+                    )
+            );
+        }
     }
 
 
