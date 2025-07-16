@@ -66,7 +66,9 @@ public class AuthenticationRequestDetailsServiceTest {
                                                   Class<? extends Exception> expectedException,
                                                   AuthenticationRequestDetails expectedResult) {
         when(mockCacheService.get(eq(authorizationCode)))
-                .thenReturn(ofNullable(cacheServiceResult));
+                .thenReturn(
+                        ofNullable(cacheServiceResult)
+                );
 
         if (null != expectedException) {
             assertThrows(
@@ -128,7 +130,9 @@ public class AuthenticationRequestDetailsServiceTest {
         );
 
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
-                .thenReturn(false);
+                .thenReturn(
+                        false
+                );
 
         assertThrows(
                 AuthenticationRequestDetailsNotSavedException.class,
@@ -155,7 +159,9 @@ public class AuthenticationRequestDetailsServiceTest {
         );
 
         when(mockCacheService.put(anyString(), any(AuthenticationRequestDetails.class)))
-                .thenReturn(true);
+                .thenReturn(
+                        true
+                );
 
         Optional<AuthenticationRequestDetails> result = service.save(
                 applicationClientId,

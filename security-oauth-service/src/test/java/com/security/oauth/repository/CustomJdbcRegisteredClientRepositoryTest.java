@@ -95,7 +95,9 @@ public class CustomJdbcRegisteredClientRepositoryTest {
                                    Class<? extends Exception> expectedException,
                                    RegisteredClient expectedResult) {
         when(mockRegisteredClientCacheService.get(id))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         if (null != expectedException) {
             assertThrows(
@@ -104,7 +106,10 @@ public class CustomJdbcRegisteredClientRepositoryTest {
             );
         }
         else {
-            RegisteredClient result = repository.findById(id);
+            RegisteredClient result = repository.findById(
+                    id
+            );
+
             if (null == expectedResult) {
                 assertNull(result);
             }
@@ -162,7 +167,9 @@ public class CustomJdbcRegisteredClientRepositoryTest {
                                          Class<? extends Exception> expectedException,
                                          RegisteredClient expectedResult) {
         when(mockRegisteredClientCacheService.get(clientId))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         if (null != expectedException) {
             assertThrows(
@@ -171,7 +178,10 @@ public class CustomJdbcRegisteredClientRepositoryTest {
             );
         }
         else {
-            RegisteredClient result = repository.findByClientId(clientId);
+            RegisteredClient result = repository.findByClientId(
+                    clientId
+            );
+
             if (null == expectedResult) {
                 assertNull(result);
             }
@@ -259,7 +269,9 @@ public class CustomJdbcRegisteredClientRepositoryTest {
                                                                      Optional<RegisteredClient> cacheServiceResult,
                                                                      RegisteredClient expectedResult) {
         verify(mockRegisteredClientCacheService, times(1))
-                .get(eq(id));
+                .get(
+                        eq(id)
+                );
 
         int putInvocations = cacheServiceResult.isPresent() || null == expectedResult
                 ? 0

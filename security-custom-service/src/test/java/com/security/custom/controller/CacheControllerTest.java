@@ -119,13 +119,17 @@ public class CacheControllerTest extends BaseControllerTest {
                                                                                boolean cacheServiceResult,
                                                                                HttpStatus expectedResultHttpCode) {
         when(mockApplicationClientDetailsCacheService.clear())
-                .thenReturn(cacheServiceResult);
-
+                .thenReturn(
+                        cacheServiceResult
+                );
         when(mockApplicationUserBlackListCacheService.clear())
-                .thenReturn(cacheServiceResult);
-
+                .thenReturn(
+                        cacheServiceResult
+                );
         when(mockAuthenticationRequestDetailsCacheService.clear())
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         webTestClient.put()
                 .uri(RestRoutes.CACHE.ROOT + RestRoutes.CACHE.CLEAR)

@@ -151,7 +151,9 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         AuthenticationRequestLoginDto authenticationRequest = buildAuthenticationRequestLoginDto("usernameValue", "passwordValue");
 
         when(mockAuthenticationService.login(applicationClientId, authenticationRequest.getUsername(), authenticationRequest.getPassword()))
-                .thenReturn(authenticationServiceResult);
+                .thenReturn(
+                        authenticationServiceResult
+                );
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN)
@@ -279,7 +281,9 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         );
 
         when(mockAuthenticationService.loginAuthorized(applicationClientId, authenticationRequest))
-                .thenReturn(authenticationServiceResult);
+                .thenReturn(
+                        authenticationServiceResult
+                );
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_AUTHORIZED)
@@ -458,7 +462,9 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         );
 
         when(mockAuthenticationService.loginToken(applicationClientId, authenticationRequest))
-                .thenReturn(authenticationServiceResult);
+                .thenReturn(
+                        authenticationServiceResult
+                );
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGIN_TOKEN)
@@ -570,7 +576,9 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         LogoutRequestDto logoutRequest = buildLogoutRequestDto("usernameValue");
 
         when(mockAuthenticationService.logout(applicationClientId, logoutRequest))
-                .thenReturn(authenticationServiceResult);
+                .thenReturn(
+                        authenticationServiceResult
+                );
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.LOGOUT)
@@ -657,7 +665,9 @@ public class AuthenticationControllerTest extends BaseControllerTest {
         String refreshToken = "refreshToken";
 
         when(mockAuthenticationService.refresh(applicationClientId, refreshToken))
-                .thenReturn(authenticationServiceResult);
+                .thenReturn(
+                        authenticationServiceResult
+                );
 
         WebTestClient.ResponseSpec response = webTestClient.post()
                 .uri(RestRoutes.AUTHENTICATION.ROOT + RestRoutes.AUTHENTICATION.REFRESH)

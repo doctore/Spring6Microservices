@@ -46,7 +46,9 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                 mockCacheService
         );
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn("TestCache");
+                .thenReturn(
+                        "TestCache"
+                );
     }
 
 
@@ -65,7 +67,9 @@ public class AuthenticationRequestDetailsCacheServiceTest {
     public void clear_testCases(boolean cacheServiceResult,
                                 boolean expectedResult) {
         when(mockCacheService.clear(anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.clear();
 
@@ -94,9 +98,13 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                                    boolean cacheServiceResult,
                                    boolean expectedResult) {
         when(mockCacheService.contains(anyString(), eq(id)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
-        boolean result = service.contains(id);
+        boolean result = service.contains(
+                id
+        );
 
         assertEquals(
                 expectedResult,
@@ -126,9 +134,13 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                               Optional<AuthenticationRequestDetails> cacheServiceResult,
                               Optional<AuthenticationRequestDetails> expectedResult) {
         when(mockCacheService.get(anyString(), eq(authorizationCode)))
-                .thenReturn((Optional)cacheServiceResult);
+                .thenReturn(
+                        (Optional)cacheServiceResult
+                );
 
-        Optional<AuthenticationRequestDetails> result = service.get(authorizationCode);
+        Optional<AuthenticationRequestDetails> result = service.get(
+                authorizationCode
+        );
 
         assertEquals(
                 expectedResult,
@@ -144,7 +156,9 @@ public class AuthenticationRequestDetailsCacheServiceTest {
         String cacheName = "CacheNameTest";
 
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn(cacheName);
+                .thenReturn(
+                        cacheName
+                );
 
         assertEquals(
                 cacheName,
@@ -174,9 +188,14 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                               boolean cacheServiceResult,
                               boolean expectedResult) {
         when(mockCacheService.put(anyString(), eq(authorizationCode), eq(authenticationRequestDetails)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
-        boolean result = service.put(authorizationCode, authenticationRequestDetails);
+        boolean result = service.put(
+                authorizationCode,
+                authenticationRequestDetails
+        );
 
         assertEquals(
                 expectedResult,
@@ -201,9 +220,13 @@ public class AuthenticationRequestDetailsCacheServiceTest {
                                  boolean cacheServiceResult,
                                  boolean expectedResult) {
         when(mockCacheService.remove(anyString(), eq(authorizationCode)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
-        boolean result = service.remove(authorizationCode);
+        boolean result = service.remove(
+                authorizationCode
+        );
 
         assertEquals(
                 expectedResult,

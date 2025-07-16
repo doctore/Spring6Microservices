@@ -46,7 +46,9 @@ public class ApplicationClientDetailsCacheServiceTest {
                 mockCacheService
         );
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn("TestCache");
+                .thenReturn(
+                        "TestCache"
+                );
     }
 
 
@@ -65,7 +67,9 @@ public class ApplicationClientDetailsCacheServiceTest {
     public void clear_testCases(boolean cacheServiceResult,
                                 boolean expectedResult) {
         when(mockCacheService.clear(anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.clear();
 
@@ -94,7 +98,9 @@ public class ApplicationClientDetailsCacheServiceTest {
                                    boolean cacheServiceResult,
                                    boolean expectedResult) {
         when(mockCacheService.contains(anyString(), eq(id)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.contains(id);
 
@@ -126,7 +132,9 @@ public class ApplicationClientDetailsCacheServiceTest {
                               Optional<ApplicationClientDetails> cacheServiceResult,
                               Optional<ApplicationClientDetails> expectedResult) {
         when(mockCacheService.get(anyString(), eq(id)))
-                .thenReturn((Optional)cacheServiceResult);
+                .thenReturn(
+                        (Optional)cacheServiceResult
+                );
 
         Optional<ApplicationClientDetails> result = service.get(id);
 
@@ -144,7 +152,9 @@ public class ApplicationClientDetailsCacheServiceTest {
         String cacheName = "CacheNameTest";
 
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn(cacheName);
+                .thenReturn(
+                        cacheName
+                );
 
         assertEquals(
                 cacheName,
@@ -174,7 +184,9 @@ public class ApplicationClientDetailsCacheServiceTest {
                               boolean cacheServiceResult,
                               boolean expectedResult) {
         when(mockCacheService.put(anyString(), eq(id), eq(applicationClientDetails)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.put(id, applicationClientDetails);
 

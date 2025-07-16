@@ -40,7 +40,9 @@ public class ApplicationUserBlackListCacheServiceTest {
                 mockCacheService
         );
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn("TestCache");
+                .thenReturn(
+                        "TestCache"
+                );
     }
 
 
@@ -59,7 +61,9 @@ public class ApplicationUserBlackListCacheServiceTest {
     public void clear_testCases(boolean cacheServiceResult,
                                 boolean expectedResult) {
         when(mockCacheService.clear(anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.clear();
 
@@ -92,7 +96,9 @@ public class ApplicationUserBlackListCacheServiceTest {
                                    boolean cacheServiceResult,
                                    boolean expectedResult) {
         when(mockCacheService.contains(anyString(), anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.contains(applicationClientDetailsId, username);
 
@@ -119,7 +125,9 @@ public class ApplicationUserBlackListCacheServiceTest {
         String cacheName = "CacheNameTest";
 
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn(cacheName);
+                .thenReturn(
+                        cacheName
+                );
 
         assertEquals(
                 cacheName,
@@ -150,7 +158,9 @@ public class ApplicationUserBlackListCacheServiceTest {
                               boolean cacheServiceResult,
                               boolean expectedResult) {
         when(mockCacheService.put(anyString(), anyString(), eq(true)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.put(applicationClientDetailsId, username);
 
@@ -193,7 +203,9 @@ public class ApplicationUserBlackListCacheServiceTest {
                                  boolean cacheServiceResult,
                                  boolean expectedResult) {
         when(mockCacheService.remove(anyString(), anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.remove(applicationClientDetailsId, username);
 

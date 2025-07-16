@@ -102,7 +102,9 @@ public class AuthorizationControllerTest extends BaseControllerTest {
         );
 
         when(mockAuthorizationService.checkAccessToken(applicationClientId, accessToken))
-                .thenReturn(authorizationInformation);
+                .thenReturn(
+                        authorizationInformation
+                );
 
         webTestClient.post()
                 .uri(RestRoutes.AUTHORIZATION.ROOT + RestRoutes.AUTHORIZATION.CHECK_TOKEN)

@@ -60,7 +60,9 @@ public class ApplicationUserBlackListServiceTest {
                                    boolean expectedResult) {
         if (null != cacheServiceResult) {
             when(mockCacheService.contains(eq(applicationClientDetailsId), eq(username)))
-                    .thenReturn(cacheServiceResult);
+                    .thenReturn(
+                            cacheServiceResult
+                    );
         }
 
         assertEquals(
@@ -102,7 +104,9 @@ public class ApplicationUserBlackListServiceTest {
                                                 boolean cacheServiceResult,
                                                 Class<? extends Exception> expectedException) {
         when(mockCacheService.contains(anyString(), anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         if (null != expectedException) {
             assertThrows(
@@ -149,7 +153,9 @@ public class ApplicationUserBlackListServiceTest {
                                  boolean expectedResult) {
         if (null != cacheServiceResult) {
             when(mockCacheService.remove(eq(applicationClientDetailsId), eq(username)))
-                    .thenReturn(cacheServiceResult);
+                    .thenReturn(
+                            cacheServiceResult
+                    );
         }
 
         assertEquals(
@@ -192,7 +198,9 @@ public class ApplicationUserBlackListServiceTest {
                                boolean expectedResult) {
         if (null != cacheServiceResult) {
             when(mockCacheService.put(eq(applicationClientDetailsId), eq(username)))
-                    .thenReturn(cacheServiceResult);
+                    .thenReturn(
+                            cacheServiceResult
+                    );
         }
 
         assertEquals(

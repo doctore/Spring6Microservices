@@ -44,7 +44,9 @@ public class RegisteredClientCacheServiceTest {
                 mockCacheService
         );
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn("TestCache");
+                .thenReturn(
+                        "TestCache"
+                );
     }
 
 
@@ -63,7 +65,9 @@ public class RegisteredClientCacheServiceTest {
     public void clear_testCases(boolean cacheServiceResult,
                                 boolean expectedResult) {
         when(mockCacheService.clear(anyString()))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean result = service.clear();
 
@@ -92,7 +96,9 @@ public class RegisteredClientCacheServiceTest {
                                    boolean cacheServiceResult,
                                    boolean expectedResult) {
         when(mockCacheService.contains(anyString(), eq(id)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean operationResult = service.contains(id);
 
@@ -127,7 +133,9 @@ public class RegisteredClientCacheServiceTest {
                               Optional<RegisteredClient> cacheServiceResult,
                               Optional<RegisteredClient> expectedResult) {
         when(mockCacheService.get(anyString(), eq(id)))
-                .thenReturn((Optional)cacheServiceResult);
+                .thenReturn(
+                        (Optional)cacheServiceResult
+                );
 
         Optional<RegisteredClient> operationResult = service.get(id);
 
@@ -145,7 +153,9 @@ public class RegisteredClientCacheServiceTest {
         String cacheName = "CacheNameTest";
 
         when(mockCacheConfiguration.getCacheName())
-                .thenReturn(cacheName);
+                .thenReturn(
+                        cacheName
+                );
 
         assertEquals(
                 cacheName,
@@ -178,7 +188,9 @@ public class RegisteredClientCacheServiceTest {
                               boolean cacheServiceResult,
                               boolean expectedResult) {
         when(mockCacheService.put(anyString(), eq(id), eq(registeredClient)))
-                .thenReturn(cacheServiceResult);
+                .thenReturn(
+                        cacheServiceResult
+                );
 
         boolean operationResult = service.put(id, registeredClient);
 

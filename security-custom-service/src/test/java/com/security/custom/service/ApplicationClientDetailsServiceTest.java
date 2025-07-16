@@ -76,9 +76,13 @@ public class ApplicationClientDetailsServiceTest {
                                                     ApplicationClientDetails cacheServiceResult,
                                                     Class<? extends Exception> expectedException) {
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
         when(mockCacheService.get(eq(id)))
-                .thenReturn(ofNullable(cacheServiceResult));
+                .thenReturn(
+                        ofNullable(cacheServiceResult)
+                );
 
         assertThrows(
                 expectedException,
@@ -113,9 +117,13 @@ public class ApplicationClientDetailsServiceTest {
                                         ApplicationClientDetails expectedResult) {
 
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
         when(mockCacheService.get(eq(id)))
-                .thenReturn(ofNullable(cacheServiceResult));
+                .thenReturn(
+                        ofNullable(cacheServiceResult)
+                );
 
         assertEquals(
                 expectedResult,
@@ -149,7 +157,9 @@ public class ApplicationClientDetailsServiceTest {
                                                           Optional<ApplicationClientDetails> repositoryResult,
                                                           Class<? extends Exception> expectedException) {
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         assertThrows(
                 expectedException,
@@ -181,7 +191,9 @@ public class ApplicationClientDetailsServiceTest {
                                               Optional<ApplicationClientDetails> repositoryResult,
                                               ApplicationClientDetails expectedResult) {
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Mono<UserDetails> result = service.findByUsername(id);
         StepVerifier.create(result)

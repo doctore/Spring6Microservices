@@ -75,7 +75,10 @@ public class UserRepositoryTest {
     @DisplayName("findByUsername: test cases")
     public void findByUsername_testCases(String username,
                                          Optional<User> expectedResult) {
-        Optional<User> result = repository.findByUsername(username);
+        Optional<User> result = repository.findByUsername(
+                username
+        );
+
         if (expectedResult.isEmpty()) {
             assertNotNull(result);
             assertFalse(result.isPresent());

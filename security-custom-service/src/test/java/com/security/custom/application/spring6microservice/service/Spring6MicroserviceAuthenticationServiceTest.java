@@ -125,7 +125,9 @@ public class Spring6MicroserviceAuthenticationServiceTest {
                                              Class<? extends Exception> expectedException,
                                              UserDetails expectedResult) {
         when(mockUserRepository.findByUsername(username))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         if (null != expectedException) {
             assertThrows(
@@ -168,7 +170,9 @@ public class Spring6MicroserviceAuthenticationServiceTest {
                 .build();
 
         when(mockPasswordEncoder.matches(rawPassword, encodedPassword))
-                .thenReturn(passwordEncoderResult);
+                .thenReturn(
+                        passwordEncoderResult
+                );
 
         assertEquals(
                 expectedResult,

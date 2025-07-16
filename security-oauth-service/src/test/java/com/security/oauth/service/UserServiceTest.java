@@ -61,7 +61,9 @@ public class UserServiceTest {
                                              Class<? extends Exception> expectedException,
                                              UserDetails expectedResult) {
         when(mockRepository.findByUsername(username))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         if (null != expectedException) {
             assertThrows(

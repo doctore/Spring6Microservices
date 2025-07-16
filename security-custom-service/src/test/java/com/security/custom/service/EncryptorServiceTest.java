@@ -58,7 +58,9 @@ public class EncryptorServiceTest {
     public void defaultDecrypt_testCases(String encryptedText,
                                          String expectedResult) {
         when(mockTextEncryptor.decrypt(anyString()))
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
@@ -91,7 +93,9 @@ public class EncryptorServiceTest {
     public void defaultEncrypt_testCases(String textToEncrypt,
                                          String expectedResult) {
         when(mockTextEncryptor.encrypt(eq(textToEncrypt)))
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
