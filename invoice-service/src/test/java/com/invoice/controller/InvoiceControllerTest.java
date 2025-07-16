@@ -11,6 +11,7 @@ import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
 import com.invoice.util.converter.InvoiceConverter;
+import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
@@ -198,10 +199,13 @@ public class InvoiceControllerTest extends BaseControllerTest {
         Invoice model = buildNewInvoice();
 
         when(mockConverter.fromDtoToModel(dto))
-                .thenReturn(model);
-
+                .thenReturn(
+                        model
+                );
         when(mockService.save(model))
-                .thenReturn(empty());
+                .thenReturn(
+                        empty()
+                );
 
         webTestClient.post()
                 .uri(RestRoutes.INVOICE.ROOT)
@@ -245,13 +249,17 @@ public class InvoiceControllerTest extends BaseControllerTest {
         );
 
         when(mockConverter.fromDtoToModel(beforeDto))
-                .thenReturn(beforeModel);
-
+                .thenReturn(
+                        beforeModel
+                );
         when(mockService.save(beforeModel))
-                .thenReturn(of(afterModel));
-
+                .thenReturn(
+                        of(afterModel)
+                );
         when(mockConverter.fromModelToDto(afterModel))
-                .thenReturn(afterDto);
+                .thenReturn(
+                        afterDto
+                );
 
         webTestClient.post()
                 .uri(RestRoutes.INVOICE.ROOT)
@@ -433,7 +441,9 @@ public class InvoiceControllerTest extends BaseControllerTest {
                         )
                 );
         when(mockConverter.fromModelToDto(model))
-                .thenReturn(dto);
+                .thenReturn(
+                        dto
+                );
 
         webTestClient.post()
                 .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.FIND_ALL)
@@ -472,9 +482,241 @@ public class InvoiceControllerTest extends BaseControllerTest {
     }
 
 
+    @Test
+    @DisplayName("findByCode: when no logged user is given then unauthorized Http code is returned")
+    public void findByCode_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        String code = StringUtil.urlEncode(
+                "Invoice 1"
+        );
 
-    // TODO: PENDING TO COMPLETE
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_CODE + "/" + code)
+                .exchange()
+                .expectStatus()
+                .isUnauthorized();
 
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
+    )
+    @DisplayName("findByCode: when no valid authority is given then forbidden Http code is returned")
+    public void findByCode_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        String code = StringUtil.urlEncode(
+                "Invoice 1"
+        );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_CODE + "/" + code)
+                .exchange()
+                .expectStatus()
+                .isForbidden();
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findByCode: when based on provided parameters the service returns empty then Http code Not Found is returned")
+    public void findByCode_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        String code = StringUtil.urlEncode(
+                "Invoice 1"
+        );
+
+        when(mockService.findByCode(code))
+                .thenReturn(
+                        empty()
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_CODE + "/" + code)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+
+        verify(mockService, times(1))
+                .findByCode(
+                        code
+                );
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findByCode: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
+    public void findByCode_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
+        InvoiceDto dto = buildInvoiceDto();
+        Invoice model = buildInvoice();
+
+        when(mockService.findByCode(dto.getCode()))
+                .thenReturn(
+                        of(model)
+                );
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(
+                        dto
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_CODE + "/" + dto.getCode())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody(InvoiceDto.class)
+                .isEqualTo(dto);
+
+        verify(mockService, times(1))
+                .findByCode(
+                        dto.getCode()
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
+
+
+    @Test
+    @DisplayName("findById: when no logged user is given then unauthorized Http code is returned")
+    public void findById_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        int id = 1;
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isUnauthorized();
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
+    )
+    @DisplayName("findById: when no valid authority is given then forbidden Http code is returned")
+    public void findById_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        int id = 1;
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isForbidden();
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    static Stream<Arguments> findById_invalidParametersTestCases() {
+        ErrorResponseDto responseInvalidOrderId = new ErrorResponseDto(
+                VALIDATION,
+                List.of("id: must be greater than 0")
+        );
+        return Stream.of(
+                //@formatter:off
+                //            id,   expectedResponse
+                Arguments.of( -1,   responseInvalidOrderId ),
+                Arguments.of( 0,    responseInvalidOrderId )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @MethodSource("findById_invalidParametersTestCases")
+    @DisplayName("findById: when given parameters do not verify validations then bad request error is returned with validation errors")
+    public void findById_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer id,
+                                                                                                                        ErrorResponseDto expectedResponse) {
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ErrorResponseDto.class)
+                .isEqualTo(expectedResponse);
+
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findById: when based on provided parameters the service returns empty then Http code Not Found is returned")
+    public void findById_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        Integer id = 1;
+
+        when(mockService.findById(id))
+                .thenReturn(
+                        empty()
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+
+        verify(mockService, times(1))
+                .findById(
+                        id
+                );
+        verifyNoInteractions(mockConverter);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findById: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
+    public void findById_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
+        InvoiceDto dto = buildInvoiceDto();
+        Invoice model = buildInvoice();
+
+        when(mockService.findById(dto.getId()))
+                .thenReturn(
+                        of(model)
+                );
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(
+                        dto
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + dto.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody(InvoiceDto.class)
+                .isEqualTo(dto);
+
+        verify(mockService, times(1))
+                .findById(
+                        dto.getId()
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+    }
 
 
     private static Invoice buildInvoice() {

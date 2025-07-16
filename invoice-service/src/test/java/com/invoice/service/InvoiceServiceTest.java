@@ -56,7 +56,9 @@ public class InvoiceServiceTest {
         long expectedResult = 12;
 
         when(mockRepository.count())
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
@@ -97,10 +99,13 @@ public class InvoiceServiceTest {
                                   Page<Invoice> expectedResult) {
 
         when(mockRepository.findAllNoMemoryPagination(pageable))
-                .thenReturn(repositoryResult);
-
+                .thenReturn(
+                        repositoryResult
+                );
         when(mockRepository.findAll())
-                .thenReturn(repositoryResult.getContent());
+                .thenReturn(
+                        repositoryResult.getContent()
+                );
 
         Page<Invoice> result = service.findAll(
                 pageable
@@ -153,7 +158,9 @@ public class InvoiceServiceTest {
                                      Optional<Invoice> repositoryResult,
                                      Optional<Invoice> expectedResult) {
         when(mockRepository.findByCode(code))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Invoice> result = service.findByCode(
                 code
@@ -198,7 +205,9 @@ public class InvoiceServiceTest {
                                    Optional<Invoice> repositoryResult,
                                    Optional<Invoice> expectedResult) {
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Invoice> result = service.findById(
                 id
@@ -243,7 +252,9 @@ public class InvoiceServiceTest {
                                Invoice repositoryResult,
                                Optional<Invoice> expectedResult) {
         when(mockRepository.save(invoice))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Invoice> result = service.save(
                 invoice
@@ -301,7 +312,9 @@ public class InvoiceServiceTest {
                                   List<Invoice> repositoryResult,
                                   List<Invoice> expectedResult) {
         when(mockRepository.saveAll(invoices))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         List<Invoice> result = service.saveAll(
                 invoices

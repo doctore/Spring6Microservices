@@ -2,6 +2,8 @@ package com.invoice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.invoice.configuration.Constants;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,16 +31,30 @@ public class CustomerDto {
             description = "Internal unique identifier",
             requiredMode = RequiredMode.AUTO
     )
+    @NotNull(
+            groups = {
+                    UpdateAction.class
+            }
+    )
     private Integer id;
 
     @Schema(
             description = "Unique identifier of the customer",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String code;
 
@@ -46,10 +62,19 @@ public class CustomerDto {
             description = "Customer address",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 128
+            max = 128,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String address;
 
@@ -57,10 +82,19 @@ public class CustomerDto {
             description = "Customer phone",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 16
+            max = 16,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String phone;
 
@@ -69,7 +103,11 @@ public class CustomerDto {
             requiredMode = RequiredMode.NOT_REQUIRED
     )
     @Size(
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String email;
 

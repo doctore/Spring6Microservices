@@ -56,7 +56,9 @@ public class CustomerServiceTest {
         long expectedResult = 12;
 
         when(mockRepository.count())
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
@@ -97,10 +99,13 @@ public class CustomerServiceTest {
                                   Page<Customer> expectedResult) {
 
         when(mockRepository.findAllNoMemoryPagination(pageable))
-                .thenReturn(repositoryResult);
-
+                .thenReturn(
+                        repositoryResult
+                );
         when(mockRepository.findAll())
-                .thenReturn(repositoryResult.getContent());
+                .thenReturn(
+                        repositoryResult.getContent()
+                );
 
         Page<Customer> result = service.findAll(
                 pageable
@@ -153,7 +158,9 @@ public class CustomerServiceTest {
                                      Optional<Customer> repositoryResult,
                                      Optional<Customer> expectedResult) {
         when(mockRepository.findByCode(code))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Customer> result = service.findByCode(
                 code
@@ -198,7 +205,9 @@ public class CustomerServiceTest {
                                    Optional<Customer> repositoryResult,
                                    Optional<Customer> expectedResult) {
         when(mockRepository.findById(id))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Customer> result = service.findById(
                 id
@@ -243,7 +252,9 @@ public class CustomerServiceTest {
                                Customer repositoryResult,
                                Optional<Customer> expectedResult) {
         when(mockRepository.save(customer))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         Optional<Customer> result = service.save(
                 customer
@@ -301,7 +312,9 @@ public class CustomerServiceTest {
                                   List<Customer> repositoryResult,
                                   List<Customer> expectedResult) {
         when(mockRepository.saveAll(customers))
-                .thenReturn(repositoryResult);
+                .thenReturn(
+                        repositoryResult
+                );
 
         List<Customer> result = service.saveAll(
                 customers

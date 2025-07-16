@@ -11,6 +11,8 @@ import com.invoice.service.CustomerService;
 import com.invoice.util.converter.CustomerConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -125,7 +127,7 @@ public class CustomerController {
             rollbackFor = Exception.class
     )
     @CreateCustomerPermission
-    public Mono<ResponseEntity<CustomerDto>> create(@RequestBody @Valid final CustomerDto customerDto) {
+    public Mono<ResponseEntity<CustomerDto>> create(@RequestBody @Validated(CreateAction.class) final CustomerDto customerDto) {
         log.info(
                 format("Creating the customer: %s",
                         customerDto
@@ -496,7 +498,7 @@ public class CustomerController {
             rollbackFor = Exception.class
     )
     @UpdateCustomerPermission
-    public Mono<ResponseEntity<CustomerDto>> update(@RequestBody @Valid final CustomerDto customerDto) {
+    public Mono<ResponseEntity<CustomerDto>> update(@RequestBody @Validated(UpdateAction.class) final CustomerDto customerDto) {
         log.info(
                 format("Updating the customer: %s",
                         customerDto

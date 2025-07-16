@@ -2,6 +2,8 @@ package com.invoice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.invoice.configuration.Constants;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -31,16 +33,30 @@ public class InvoiceDto {
             description = "Internal unique identifier",
             requiredMode = RequiredMode.AUTO
     )
+    @NotNull(
+            groups = {
+                    UpdateAction.class
+            }
+    )
     private Integer id;
 
     @Schema(
             description = "Unique identifier of the customer",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String code;
 
@@ -48,7 +64,12 @@ public class InvoiceDto {
             description = "Related customer",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Valid
     CustomerDto customer;
 
@@ -56,15 +77,30 @@ public class InvoiceDto {
             description = "Order identifier with the elements included in the invoice",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     private Integer orderId;
 
     @Schema(
             description = "Total amount related with the invoice",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
-    @Positive
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
+    @Positive(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     private Double cost;
 
     @Schema(

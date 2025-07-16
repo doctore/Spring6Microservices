@@ -10,6 +10,7 @@ import com.invoice.service.InvoiceService;
 import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -123,7 +124,7 @@ public class InvoiceController {
             rollbackFor = Exception.class
     )
     @CreateInvoicePermission
-    public Mono<ResponseEntity<InvoiceDto>> create(@RequestBody @Valid final InvoiceDto invoiceDto) {
+    public Mono<ResponseEntity<InvoiceDto>> create(@RequestBody @Validated(CreateAction.class) final InvoiceDto invoiceDto) {
         log.info(
                 format("Creating the invoice: %s",
                         invoiceDto
