@@ -12,6 +12,8 @@ import com.order.model.Order;
 import com.order.service.OrderService;
 import com.order.util.converter.OrderConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -123,7 +125,7 @@ public class OrderController {
             rollbackFor = Exception.class
     )
     @CreateOrderPermission
-    public ResponseEntity<OrderDto> create(@RequestBody @Valid final OrderDto orderDto) {
+    public ResponseEntity<OrderDto> create(@RequestBody @Validated(CreateAction.class) final OrderDto orderDto) {
         log.info(
                 format("Creating the order: %s",
                         orderDto
@@ -565,7 +567,7 @@ public class OrderController {
             rollbackFor = Exception.class
     )
     @UpdateOrderPermission
-    public ResponseEntity<OrderDto> update(@RequestBody @Valid final OrderDto orderDto) {
+    public ResponseEntity<OrderDto> update(@RequestBody @Validated(UpdateAction.class) final OrderDto orderDto) {
         log.info(
                 format("Updating the order: %s",
                         orderDto

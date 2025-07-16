@@ -707,9 +707,9 @@ public class OrderControllerTest extends BaseControllerTest {
         );
         return Stream.of(
                 //@formatter:off
-                //            orderId,   expectedResponse
-                Arguments.of( -1,        responseInvalidOrderId ),
-                Arguments.of( 0,         responseInvalidOrderId )
+                //            id,   expectedResponse
+                Arguments.of( -1,   responseInvalidOrderId ),
+                Arguments.of( 0,    responseInvalidOrderId )
         ); //@formatter:on
     }
 
@@ -720,10 +720,10 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @MethodSource("findById_invalidParametersTestCases")
     @DisplayName("findById: when given parameters do not verify validations then bad request error is returned with validation errors")
-    public void findById_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer orderId,
+    public void findById_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer id,
                                                                                                                         ErrorResponseDto expectedResponse) {
         ResultActions result = mockMvc.perform(
-                get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + id)
         );
 
         thenHttpErrorIsReturned(
@@ -778,10 +778,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findById: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
     public void findById_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
-        OrderDto dto = buildOrderDtoWithOrderLine(1);
-        Order model = buildNewOrderWithOrderLine(
-                dto.getId()
-        );
+        OrderDto dto = buildOrderDtoWithOrderLine();
+        Order model = buildOrderWithOrderLine();
 
         when(mockService.findById(dto.getId()))
                 .thenReturn(
@@ -825,7 +823,7 @@ public class OrderControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("update: when no logged user is given then unauthorized Http code is returned")
     public void update_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine();
+        OrderDto dto = buildOrderDtoWithOrderLine();
 
         mockMvc.perform(
                         put(RestRoutes.ORDER.ROOT)
@@ -850,7 +848,7 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("update: when no valid authority is given then forbidden Http code is returned")
     public void update_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
-        OrderDto dto = buildNewOrderDtoWithOrderLine();
+        OrderDto dto = buildOrderDtoWithOrderLine();
 
         mockMvc.perform(
                         put(RestRoutes.ORDER.ROOT)
@@ -871,24 +869,30 @@ public class OrderControllerTest extends BaseControllerTest {
     static Stream<Arguments> update_invalidParametersTestCases() {
         String longString = String.join("", Collections.nCopies(300, "a"));
 
-        OrderDto dtoWithNoCode = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithNoId = buildNewOrderDtoWithOrderLine();
+
+        OrderDto dtoWithNoCode = buildOrderDtoWithOrderLine();
         dtoWithNoCode.setCode(null);
 
-        OrderDto dtoWithLongCode = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithLongCode = buildOrderDtoWithOrderLine();
         dtoWithLongCode.setCode(longString);
 
-        OrderDto dtoWithOrderLineWithoutConcept = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithOrderLineWithoutConcept = buildOrderDtoWithOrderLine();
         dtoWithOrderLineWithoutConcept.getOrderLines().getFirst().setConcept(null);
 
-        OrderDto dtoWithOrderLineWithLongConcept = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithOrderLineWithLongConcept = buildOrderDtoWithOrderLine();
         dtoWithOrderLineWithLongConcept.getOrderLines().getFirst().setConcept(longString);
 
-        OrderDto dtoWithOrderLineWithNegativeAmount = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithOrderLineWithNegativeAmount = buildOrderDtoWithOrderLine();
         dtoWithOrderLineWithNegativeAmount.getOrderLines().getFirst().setAmount(-1);
 
-        OrderDto dtoWithOrderLineWithNegativeCost = buildNewOrderDtoWithOrderLine();
+        OrderDto dtoWithOrderLineWithNegativeCost = buildOrderDtoWithOrderLine();
         dtoWithOrderLineWithNegativeCost.getOrderLines().getFirst().setCost(-2d);
 
+        ErrorResponseDto responseDtoWithNoId = new ErrorResponseDto(
+                VALIDATION,
+                List.of("Field error in object: orderDto on field: id due to: must not be null")
+        );
         ErrorResponseDto responseDtoWithNoCode = new ErrorResponseDto(
                 VALIDATION,
                 List.of("Field error in object: orderDto on field: code due to: must not be null")
@@ -916,6 +920,7 @@ public class OrderControllerTest extends BaseControllerTest {
         return Stream.of(
                 //@formatter:off
                 //            dtoToCreate,                          expectedResponse
+                Arguments.of( dtoWithNoId,                          responseDtoWithNoId ),
                 Arguments.of( dtoWithNoCode,                        responseDtoWithNoCode ),
                 Arguments.of( dtoWithLongCode,                      responseDtoWithLongCode ),
                 Arguments.of( dtoWithOrderLineWithoutConcept,       responseDtoWithOrderLineWithoutConcept ),
@@ -962,10 +967,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("update: when given parameters verifies validations but service returns empty then Http code Not Found is returned")
     public void update_whenGivenParametersVerifiesValidationsButServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
-        OrderDto dto = buildOrderDtoWithOrderLine(1);
-        Order model = buildNewOrderWithOrderLine(
-                dto.getId()
-        );
+        OrderDto dto = buildOrderDtoWithOrderLine();
+        Order model = buildOrderWithOrderLine();
 
         when(mockConverter.fromDtoToModel(dto))
                 .thenReturn(
@@ -1013,10 +1016,8 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("update: when given parameters verifies validations and service returns a model then Http code Ok with the updated Dto is returned")
     public void update_whenGivenParametersVerifiesValidationsAndServiceReturnAModel_thenHttpCodeOkdWithTheUpdatedDtoIsReturned() {
-        OrderDto dto = buildOrderDtoWithOrderLine(1);
-        Order model = buildNewOrderWithOrderLine(
-                dto.getId()
-        );
+        OrderDto dto = buildOrderDtoWithOrderLine();
+        Order model = buildOrderWithOrderLine();
 
         when(mockConverter.fromDtoToModel(dto))
                 .thenReturn(
@@ -1064,10 +1065,10 @@ public class OrderControllerTest extends BaseControllerTest {
     }
 
 
-    private static Order buildNewOrderWithOrderLine(final Integer orderId) {
+    private static Order buildOrderWithOrderLine() {
         Order order = buildNewOrderWithOrderLine();
         order.setId(
-                orderId
+                1
         );
         return order;
     }
@@ -1093,6 +1094,20 @@ public class OrderControllerTest extends BaseControllerTest {
     }
 
 
+    private static OrderDto buildOrderDtoWithOrderLine() {
+        OrderDto orderDto = buildNewOrderDtoWithOrderLine();
+        orderDto.setId(
+                1
+        );
+        orderDto.getOrderLines()
+                .getFirst()
+                .setOrderId(
+                        1
+                );
+        return orderDto;
+    }
+
+
     private static OrderDto buildNewOrderDtoWithOrderLine() {
         OrderDto orderDto = buildOrderDto(
                 "Order 1",
@@ -1109,20 +1124,6 @@ public class OrderControllerTest extends BaseControllerTest {
                         orderLine
                 )
         );
-        return orderDto;
-    }
-
-
-    private static OrderDto buildOrderDtoWithOrderLine(final Integer orderId) {
-        OrderDto orderDto = buildNewOrderDtoWithOrderLine();
-        orderDto.setId(
-                orderId
-        );
-        orderDto.getOrderLines()
-                .getFirst()
-                .setOrderId(
-                        orderId
-                );
         return orderDto;
     }
 

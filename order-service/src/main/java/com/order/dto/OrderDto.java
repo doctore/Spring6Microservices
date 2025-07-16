@@ -2,6 +2,8 @@ package com.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.order.configuration.Constants;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -31,16 +33,30 @@ public class OrderDto {
             description = "Internal unique identifier",
             requiredMode = RequiredMode.AUTO
     )
+    @NotNull(
+            groups = {
+                    UpdateAction.class
+            }
+    )
     private Integer id;
 
     @Schema(
             description = "Unique identifier of the order",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String code;
 
@@ -51,7 +67,11 @@ public class OrderDto {
     @NotNull
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String customerCode;
 

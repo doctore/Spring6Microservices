@@ -1,5 +1,7 @@
 package com.order.dto;
 
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -34,10 +36,19 @@ public class OrderLineDto {
     )
     private Integer orderId;
 
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 255
+            max = 255,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     @Schema(
             description = "The purchased item",
@@ -49,16 +60,36 @@ public class OrderLineDto {
             description = "Number of items included as concept",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
-    @Positive
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
+    @Positive(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     private int amount;
 
     @Schema(
             description = "Cost",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
-    @Positive
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
+    @Positive(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     private double cost;
 
 
