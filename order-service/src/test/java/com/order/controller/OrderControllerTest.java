@@ -202,10 +202,13 @@ public class OrderControllerTest extends BaseControllerTest {
         Order model = buildNewOrderWithOrderLine();
 
         when(mockConverter.fromDtoToModel(dto))
-                .thenReturn(model);
-
+                .thenReturn(
+                        model
+                );
         when(mockService.save(model))
-                .thenReturn(empty());
+                .thenReturn(
+                        empty()
+                );
 
         ResultActions result = mockMvc.perform(
                         post(RestRoutes.ORDER.ROOT)
@@ -255,13 +258,17 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockConverter.fromDtoToModel(beforeDto))
-                .thenReturn(beforeModel);
-
+                .thenReturn(
+                        beforeModel
+                );
         when(mockService.save(beforeModel))
-                .thenReturn(of(afterModel));
-
+                .thenReturn(
+                        of(afterModel)
+                );
         when(mockConverter.fromModelToDto(afterModel))
-                .thenReturn(afterDto);
+                .thenReturn(
+                        afterDto
+                );
 
         ResultActions result = mockMvc.perform(
                         post(RestRoutes.ORDER.ROOT)
@@ -349,7 +356,9 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockService.deleteByCode(orderCode))
-                .thenReturn(false);
+                .thenReturn(
+                        false
+                );
 
         mockMvc.perform(
                         delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
@@ -377,7 +386,9 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockService.deleteByCode(orderCode))
-                .thenReturn(true);
+                .thenReturn(
+                        true
+                );
 
         mockMvc.perform(
                         delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
@@ -475,7 +486,9 @@ public class OrderControllerTest extends BaseControllerTest {
         Integer orderId = 1;
 
         when(mockService.deleteById(orderId))
-                .thenReturn(false);
+                .thenReturn(
+                        false
+                );
 
         mockMvc.perform(
                         delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
@@ -501,7 +514,9 @@ public class OrderControllerTest extends BaseControllerTest {
         Integer orderId = 1;
 
         when(mockService.deleteById(orderId))
-                .thenReturn(true);
+                .thenReturn(
+                        true
+                );
 
         mockMvc.perform(
                         delete(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
@@ -521,12 +536,12 @@ public class OrderControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("findByCode: when no logged user is given then unauthorized Http code is returned")
     public void findByCode_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
-        String orderCode = StringUtil.urlEncode(
+        String code = StringUtil.urlEncode(
                 "Order 1"
         );
 
         mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + code)
                 )
                 .andExpect(
                         status().isUnauthorized()
@@ -544,12 +559,12 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findByCode: when no valid authority is given then forbidden Http code is returned")
     public void findByCode_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
-        String orderCode = StringUtil.urlEncode(
+        String code = StringUtil.urlEncode(
                 "Order 1"
         );
 
         mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + code)
                 )
                 .andExpect(
                         status().isForbidden()
@@ -567,15 +582,17 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findByCode: when based on provided parameters the service returns empty then Http code Not Found is returned")
     public void findByCode_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
-        String orderCode = StringUtil.urlEncode(
+        String code = StringUtil.urlEncode(
                 "Order 1"
         );
 
-        when(mockService.findByCode(orderCode))
-                .thenReturn(empty());
+        when(mockService.findByCode(code))
+                .thenReturn(
+                        empty()
+                );
 
         ResultActions result = mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + orderCode)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + code)
                 )
                 .andExpect(
                         status().isNotFound()
@@ -590,7 +607,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
         verify(mockService, times(1))
                 .findByCode(
-                        orderCode
+                        code
                 );
         verifyNoInteractions(mockConverter);
     }
@@ -607,10 +624,13 @@ public class OrderControllerTest extends BaseControllerTest {
         Order model = buildNewOrderWithOrderLine();
 
         when(mockService.findByCode(dto.getCode()))
-                .thenReturn(of(model));
-
+                .thenReturn(
+                        of(model)
+                );
         when(mockConverter.fromModelToDto(model))
-                .thenReturn(dto);
+                .thenReturn(
+                        dto
+                );
 
         ResultActions result = mockMvc.perform(
                         get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_CODE + "/" + dto.getCode())
@@ -645,10 +665,10 @@ public class OrderControllerTest extends BaseControllerTest {
     @SneakyThrows
     @DisplayName("findById: when no logged user is given then unauthorized Http code is returned")
     public void findById_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
-        int orderId = 1;
+        int id = 1;
 
         mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + id)
                 )
                 .andExpect(
                         status().isUnauthorized()
@@ -666,10 +686,10 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findById: when no valid authority is given then forbidden Http code is returned")
     public void findById_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
-        int orderId = 1;
+        int id = 1;
 
         mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + id)
                 )
                 .andExpect(
                         status().isForbidden()
@@ -722,13 +742,15 @@ public class OrderControllerTest extends BaseControllerTest {
     )
     @DisplayName("findById: when based on provided parameters the service returns empty then Http code Not Found is returned")
     public void findById_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
-        Integer orderId = 1;
+        Integer id = 1;
 
-        when(mockService.findById(orderId))
-                .thenReturn(empty());
+        when(mockService.findById(id))
+                .thenReturn(
+                        empty()
+                );
 
         ResultActions result = mockMvc.perform(
-                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + orderId)
+                        get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + id)
                 )
                 .andExpect(
                         status().isNotFound()
@@ -743,7 +765,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
         verify(mockService, times(1))
                 .findById(
-                        orderId
+                        id
                 );
         verifyNoInteractions(mockConverter);
     }
@@ -762,10 +784,13 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockService.findById(dto.getId()))
-                .thenReturn(of(model));
-
+                .thenReturn(
+                        of(model)
+                );
         when(mockConverter.fromModelToDto(model))
-                .thenReturn(dto);
+                .thenReturn(
+                        dto
+                );
 
         ResultActions result = mockMvc.perform(
                         get(RestRoutes.ORDER.ROOT + RestRoutes.ORDER.BY_ID + "/" + dto.getId())
@@ -943,10 +968,13 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockConverter.fromDtoToModel(dto))
-                .thenReturn(model);
-
+                .thenReturn(
+                        model
+                );
         when(mockService.save(model))
-                .thenReturn(empty());
+                .thenReturn(
+                        empty()
+                );
 
         ResultActions result = mockMvc.perform(
                 put(RestRoutes.ORDER.ROOT)
@@ -991,13 +1019,17 @@ public class OrderControllerTest extends BaseControllerTest {
         );
 
         when(mockConverter.fromDtoToModel(dto))
-                .thenReturn(model);
-
+                .thenReturn(
+                        model
+                );
         when(mockService.save(model))
-                .thenReturn(of(model));
-
+                .thenReturn(
+                        of(model)
+                );
         when(mockConverter.fromModelToDto(model))
-                .thenReturn(dto);
+                .thenReturn(
+                        dto
+                );
 
         ResultActions result = mockMvc.perform(
                         put(RestRoutes.ORDER.ROOT)

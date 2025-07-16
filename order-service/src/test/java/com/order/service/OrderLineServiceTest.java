@@ -52,7 +52,9 @@ public class OrderLineServiceTest {
         long expectedResult = 12;
 
         when(mockMapper.count())
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
@@ -79,7 +81,9 @@ public class OrderLineServiceTest {
                                      int mapperResult,
                                      boolean expectedResult) {
         when(mockMapper.deleteById(id))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         boolean result = service.deleteById(
                 id
@@ -110,7 +114,9 @@ public class OrderLineServiceTest {
                                           int mapperResult,
                                           boolean expectedResult) {
         when(mockMapper.deleteByOrderId(orderId))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         boolean result = service.deleteByOrderId(
                 orderId
@@ -141,7 +147,9 @@ public class OrderLineServiceTest {
                                    OrderLine mapperResult,
                                    Optional<OrderLine> expectedResult) {
         when(mockMapper.findById(id))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         Optional<OrderLine> result = service.findById(
                 id
@@ -186,7 +194,9 @@ public class OrderLineServiceTest {
                                         List<OrderLine> mapperResult,
                                         List<OrderLine> expectedResult) {
         when(mockMapper.findByConcept(concept))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         List<OrderLine> result = service.findByConcept(
                 concept
@@ -230,7 +240,9 @@ public class OrderLineServiceTest {
                                         List<OrderLine> mapperResult,
                                         List<OrderLine> expectedResult) {
         when(mockMapper.findByOrderId(orderId))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         List<OrderLine> result = service.findByOrderId(
                 orderId

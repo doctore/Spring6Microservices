@@ -54,9 +54,13 @@ public class ExtendedJpaRepositoryImplTest {
     @BeforeEach
     public void init() {
         when(mockJpaEntityInformation.getJavaType())
-                .thenReturn(User.class);
+                .thenReturn(
+                        User.class
+                );
         when(mockJpaEntityInformation.getEntityName())
-                .thenReturn(User.class.getSimpleName());
+                .thenReturn(
+                        User.class.getSimpleName()
+                );
 
         repository = new ExtendedJpaRepositoryImpl<>(
                 mockJpaEntityInformation,

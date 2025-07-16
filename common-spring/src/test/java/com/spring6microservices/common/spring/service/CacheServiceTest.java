@@ -57,12 +57,15 @@ public class CacheServiceTest {
                                 Cache cacheManagerResult,
                                 boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
             doNothing()
                     .when(cacheManagerResult)
                     .clear();
         }
+
         boolean result = service.clear(cacheName);
 
         assertEquals(
@@ -95,10 +98,14 @@ public class CacheServiceTest {
                                    SimpleValueWrapper cacheResult,
                                    boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
             when(cacheManagerResult.get(key))
-                    .thenReturn(cacheResult);
+                    .thenReturn(
+                            cacheResult
+                    );
         }
 
         boolean result = service.contains(cacheName, key);
@@ -133,10 +140,14 @@ public class CacheServiceTest {
                               SimpleValueWrapper cacheResult,
                               Optional<String> expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
             when(cacheManagerResult.get(key))
-                    .thenReturn(cacheResult);
+                    .thenReturn(
+                            cacheResult
+                    );
         }
 
         Optional<String> result = service.get(cacheName, key);
@@ -166,7 +177,9 @@ public class CacheServiceTest {
                                    Cache cacheManagerResult,
                                    Optional<Cache> expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
 
         Optional<Cache> result = service.getCache(cacheName);
 
@@ -205,9 +218,16 @@ public class CacheServiceTest {
                               Cache cacheManagerResult,
                               boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
-            doNothing().when(cacheManagerResult).put(key, value);
+            doNothing()
+                    .when(cacheManagerResult)
+                    .put(
+                            key,
+                            value
+                    );
         }
 
         boolean result = service.put(cacheName, key, value);
@@ -243,13 +263,20 @@ public class CacheServiceTest {
                                       SimpleValueWrapper cacheResult,
                                       boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
             when(cacheManagerResult.get(key))
-                    .thenReturn(cacheResult);
+                    .thenReturn(
+                            cacheResult
+                    );
             doNothing()
                     .when(cacheManagerResult)
-                    .put(key, value);
+                    .put(
+                            key,
+                            value
+                    );
         }
 
         boolean result = service.putIfAbsent(cacheName, key, value);
@@ -285,13 +312,20 @@ public class CacheServiceTest {
                                        SimpleValueWrapper cacheResult,
                                        boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
         if (null != cacheManagerResult) {
             when(cacheManagerResult.get(key))
-                    .thenReturn(cacheResult);
+                    .thenReturn(
+                            cacheResult
+                    );
             doNothing()
                     .when(cacheManagerResult)
-                    .put(key, value);
+                    .put(
+                            key,
+                            value
+                    );
         }
 
         boolean result = service.putIfPresent(cacheName, key, value);
@@ -323,7 +357,9 @@ public class CacheServiceTest {
                                  Cache cacheManagerResult,
                                  boolean expectedResult) {
         when(mockCacheManager.getCache(cacheName))
-                .thenReturn(cacheManagerResult);
+                .thenReturn(
+                        cacheManagerResult
+                );
 
         boolean result = service.remove(cacheName, key);
 

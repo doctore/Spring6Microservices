@@ -38,9 +38,13 @@ public class ExtendedQueryDslJpaRepositoryImplTest {
     @BeforeEach
     public void init() {
         when(mockJpaEntityInformation.getJavaType())
-                .thenReturn(User.class);
+                .thenReturn(
+                        User.class
+                );
         when(mockJpaEntityInformation.getEntityName())
-                .thenReturn(User.class.getSimpleName());
+                .thenReturn(
+                        User.class.getSimpleName()
+                );
 
         repository = new ExtendedQueryDslJpaRepositoryImpl<>(
                 mockJpaEntityInformation,

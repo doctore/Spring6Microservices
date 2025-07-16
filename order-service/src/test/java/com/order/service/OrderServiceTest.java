@@ -56,7 +56,9 @@ public class OrderServiceTest {
         long expectedResult = 12;
 
         when(mockMapper.count())
-                .thenReturn(expectedResult);
+                .thenReturn(
+                        expectedResult
+                );
 
         assertEquals(
                 expectedResult,
@@ -83,7 +85,9 @@ public class OrderServiceTest {
                                      int mapperResult,
                                      boolean expectedResult) {
         when(mockMapper.deleteById(id))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         boolean result = service.deleteById(
                 id
@@ -127,10 +131,14 @@ public class OrderServiceTest {
                                        int mapperDeleteResult,
                                        boolean expectedResult) {
         when(mockMapper.findByCode(code))
-                .thenReturn(mapperFindResult);
+                .thenReturn(
+                        mapperFindResult
+                );
 
         when(mockMapper.deleteById(anyInt()))
-                .thenReturn(mapperDeleteResult);
+                .thenReturn(
+                        mapperDeleteResult
+                );
 
         boolean result = service.deleteByCode(
                 code
@@ -177,7 +185,9 @@ public class OrderServiceTest {
                                    Order mapperResult,
                                    Optional<Order> expectedResult) {
         when(mockMapper.findById(id))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         Optional<Order> result = service.findById(
                 id
@@ -222,7 +232,9 @@ public class OrderServiceTest {
                                      Order mapperResult,
                                      Optional<Order> expectedResult) {
         when(mockMapper.findByCode(code))
-                .thenReturn(mapperResult);
+                .thenReturn(
+                        mapperResult
+                );
 
         Optional<Order> result = service.findByCode(
                 code
