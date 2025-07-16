@@ -12,5 +12,5 @@ import jakarta.validation.constraints.NotNull;
  *    private Integer id;
  * </pre>
  */
-public class UpdateAction {
+public interface UpdateAction {
 }
