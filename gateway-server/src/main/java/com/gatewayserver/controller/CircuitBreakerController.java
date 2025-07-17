@@ -26,6 +26,20 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 public class CircuitBreakerController {
 
 
+    @RequestMapping(RestRoutes.CIRCUIT_BREAKER.INVOICE_SERVICE)
+    public Mono<ResponseEntity<ErrorResponseDto>> invoiceServiceFailureRedirect() {
+        String errorMessage = "Sorry, invoice service is down at this moment. Please try again later";
+        log.error(errorMessage);
+        return Mono.just(
+                buildErrorResponse(
+                        INTERNAL,
+                        errorMessage,
+                        SERVICE_UNAVAILABLE
+                )
+        );
+    }
+
+
     @RequestMapping(RestRoutes.CIRCUIT_BREAKER.ORDER_SERVICE)
     public Mono<ResponseEntity<ErrorResponseDto>> orderServiceFailureRedirect() {
         String errorMessage = "Sorry, order service is down at this moment. Please try again later";

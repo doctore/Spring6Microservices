@@ -15,7 +15,7 @@ public final class RestRoutes {
     }
 
     public static final class CUSTOMER {
-        public static final String ROOT = "/customer";
+        public static final String ROOT = RestRoutes.ROOT + "/customer";
         public static final String FIND_ALL = "/all";
         public static final String BY_CODE = "/byCode";
         public static final String BY_ID = "/byId";

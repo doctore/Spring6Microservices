@@ -6,6 +6,7 @@ package com.gatewayserver.configuration.rest;
 public final class RestRoutes {
 
     public static final class MAIN_ROUTES {
+        public static final String INVOICE_SERVICE = "/invoice-service";
         public static final String ORDER_SERVICE = "/order-service";
         public static final String SECURITY_CUSTOM_SERVICE = "/security-custom-service";
         public static final String SECURITY_OAUTH_SERVICE = "/security-oauth-service";
@@ -16,6 +17,7 @@ public final class RestRoutes {
         public static final String ROOT = "/failed";
         public static final String REDIRECT = "/redirect";
 
+        public static final String INVOICE_SERVICE = MAIN_ROUTES.INVOICE_SERVICE + REDIRECT;
         public static final String ORDER_SERVICE = MAIN_ROUTES.ORDER_SERVICE + REDIRECT;
         public static final String SECURITY_CUSTOM_SERVICE = MAIN_ROUTES.SECURITY_CUSTOM_SERVICE + REDIRECT;
         public static final String SECURITY_OAUTH_SERVICE = MAIN_ROUTES.SECURITY_OAUTH_SERVICE + REDIRECT;
