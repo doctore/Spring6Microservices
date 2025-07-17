@@ -255,8 +255,44 @@ All the managed SQL files are located in the folder [changelog](https://github.c
 
 ### [invoice-service](https://github.com/doctore/Spring6Microservices/tree/main/invoice-service)
 
-**UNDER CONSTRUCTION**
+Microservice used to manage invoices and related customers. The main purpose of this microservice is the creation of a small one on which I am using
+the following technologies:
 
+* **[Hibernate](https://hibernate.org)** as ORM to deal with the PostgreSQL database.
+* **[JPA](https://en.wikipedia.org/wiki/Jakarta_Persistence)** for accessing, persisting, and managing data between Java objects and database.
+* **[Flyway](https://www.red-gate.com/products/flyway/)** as version control of database changes.
+* **[Lombok](https://projectlombok.org/features)** to reduce the code development in entities and DTOs.
+* **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
+* **[Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)** creating a reactive REST Api to manage the authentication/authorization requests.
+
+In this microservice, the layer's division is:
+
+* **repository** layer used to access to the database.
+* **service** containing the business logic.
+* **controller** REST Api using Spring Webflux.
+
+On the other hand, there are other important folders:
+
+* **configuration** with several classes used to manage several areas such: security, documentation, database, exception handlers, etc.
+* **model** to store the entities.
+* **dto** custom objects to contain specific data.
+* **util/converter** to translate from models to DTOs and vice versa.
+
+Regarding **[Flyway](https://www.red-gate.com/products/flyway/)**, using [application.yml](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/resources/application.yml) the project has been configured
+to avoid invoking it when this microservice is launched or packaged:
+
+```
+spring:
+  flyway:
+    enabled: false
+```
+
+So, if you want to manage it manually, you can create a new [maven](https://maven.apache.org/) configuration. The next picture displays how to do it
+using [IntelliJ IDEA](https://www.jetbrains.com/idea/):
+
+![Alt text](/documentation/invoice-service/ConfigureFlyway.png?raw=true "Configure Flyway")
+
+All the managed SQL files are located in the folder [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog).
 <br><br>
 
 
