@@ -1,0 +1,45 @@
+// Proto version used
+syntax = "proto3";
+
+// Separate .java files will be generated for each of the Java classes/enums/etc. included in this .proto file
+option java_multiple_files = true;
+
+// Package used for your generated Java classes.
+option java_package = "com.spring6microservices.grpc";
+
+// Class name (and hence the file name) for the wrapper Java class to generate
+option java_outer_classname = "OrderServiceProto";
+
+
+// Interface exported by the server.
+service OrderService {
+
+  // A server-to-client streaming RPC:
+  // Obtains the Order's details and the list of OrderLines related with the given Order's identifier
+  rpc getOrderWithOrderLines(OrderRequest) returns (stream Order) {}
+
+}
+
+
+// Order's identifier
+message OrderRequest {
+  int32 id = 1;
+}
+
+
+// Order's details and the list of OrderLines related with the Order's identifier
+message Order {
+  int32 id = 1;
+  string code = 2;
+  string customerCode = 3;
+  string createdAt = 4;
+  repeated OrderLine orderLines = 5;
+}
+
+
+message OrderLine {
+  int32 id = 1;
+  string concept = 2;
+  int32 amount = 3;
+  double cost = 4;
+}
