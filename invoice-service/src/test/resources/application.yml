@@ -1,42 +1,3 @@
-# Spring framework configuration
-spring:
-  cloud:
-    # Disable configuration server for testing
-    config:
-      enabled: false
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS main
-    username: sa
-    password:
-  # Disable Flyway for testing
-  flyway:
-    enabled: false
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-
-# Custom security configuration
-security:
-  # Configuration used to connect to the security microservice
-  authorizationServer:
-    authenticationInformation: OnlyToAvoidAFailureLoadingConfigurationClass
-    clientId: TestClient
-    clientPassword: TestPassword
-  # CORS configuration
-  cors:
-    # Enable cross-origin request handling for the specified path pattern
-    mapping: /**
-    # Comma separated HTTP methods to allow
-    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
-    # Comma separated origins for which cross-origin requests are allowed from a browser
-    allowedOrigins: "*"
-
-
 # Disable eureka server connection request for testing
 eureka:
   client:
@@ -62,6 +23,45 @@ rest:
     timeoutInMilliseconds: 5000
   write:
     timeoutInMilliseconds: 5000
+
+
+# Custom security configuration
+security:
+  # Configuration used to connect to the security microservice
+  authorizationServer:
+    authenticationInformation: OnlyToAvoidAFailureLoadingConfigurationClass
+    clientId: TestClient
+    clientPassword: TestPassword
+  # CORS configuration
+  cors:
+    # Enable cross-origin request handling for the specified path pattern
+    mapping: /**
+    # Comma separated HTTP methods to allow
+    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
+    # Comma separated origins for which cross-origin requests are allowed from a browser
+    allowedOrigins: "*"
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server for testing
+    config:
+      enabled: false
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS main
+    username: sa
+    password:
+  # Disable Flyway for testing
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
 # API documentation

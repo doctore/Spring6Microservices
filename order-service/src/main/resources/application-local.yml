@@ -1,3 +1,48 @@
+# Encryption configuration
+encrypt:
+  # Defined symmetric (shared) key to encrypt/decrypt text:
+  #
+  #  1. Receiving encrypted property values from Config Server like:
+  #       spring.datasource.password: "{cipher}..."
+  #
+  #  2. Receiving encrypted column values from database like:
+  #       security.application_client_details.signature_secret = '{cipher}...'
+  #
+  # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
+  key: ${ENCRYPT_KEY:ENCRYPT_KEY}
+
+
+# Disable eureka server connection request
+eureka:
+  client:
+    enabled: false
+
+
+# Main properties in Spring Boot to configure some general purpose services
+management:
+  endpoints:
+    web:
+      exposure:
+        # Actuator endpoints exposed: actuator/routes
+        include: health, info
+  tracing:
+    sampling:
+      # To log traceId and spanId in every request
+      probability: 1.0
+
+
+# Custom security configuration
+security:
+  # CORS configuration
+  cors:
+    # Enable cross-origin request handling for the specified path pattern
+    mapping: /**
+    # Comma separated HTTP methods to allow
+    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
+    # Comma separated origins for which cross-origin requests are allowed from a browser
+    allowedOrigins: "*"
+
+
 # Server configuration
 server:
   port: 8182
@@ -29,51 +74,6 @@ spring:
           # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
           # Raw password: Spring6Microservices
           client-secret: "{cipher}1274c88a1340ad50f1199fd477c1406e4d020ca321a4b27443d7df371cc83262d9688c3e883141cf08e04878d85e42b2"
-
-
-# Encryption configuration
-encrypt:
-  # Defined symmetric (shared) key to encrypt/decrypt text:
-  #
-  #  1. Receiving encrypted property values from Config Server like:
-  #       spring.datasource.password: "{cipher}..."
-  #
-  #  2. Receiving encrypted column values from database like:
-  #       security.application_client_details.signature_secret = '{cipher}...'
-  #
-  # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
-  key: ${ENCRYPT_KEY:ENCRYPT_KEY}
-
-
-# Custom security configuration
-security:
-  # CORS configuration
-  cors:
-    # Enable cross-origin request handling for the specified path pattern
-    mapping: /**
-    # Comma separated HTTP methods to allow
-    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
-    # Comma separated origins for which cross-origin requests are allowed from a browser
-    allowedOrigins: "*"
-
-
-# Disable eureka server connection request
-eureka:
-  client:
-    enabled: false
-
-
-# Main properties in Spring Boot to configure some general purpose services
-management:
-  endpoints:
-    web:
-      exposure:
-        # Actuator endpoints exposed: actuator/routes
-        include: health, info
-  tracing:
-    sampling:
-      # To log traceId and spanId in every request
-      probability: 1.0
 
 
 # API documentation

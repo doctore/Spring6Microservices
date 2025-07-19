@@ -1,3 +1,48 @@
+# Internal caches used by the microservice
+cache:
+  applicationClientDetails:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests
+  applicationUserBlackList:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests2
+  authenticationRequestDetails:
+    entryCapacity: 0
+    expireInSeconds: 0
+    name: onlyForTests3
+
+
+# Encryption configuration
+encrypt:
+  customKey: onlyForTests
+
+
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false
+
+
+# Configure the logs
+logging:
+  level:
+    com:
+      security:
+        custom:
+          # Set the level of the repository package for debugging purpose
+          application:
+            spring6microservice:
+              repository: trace
+          repository: trace
+    org:
+      springframework:
+        jdbc:
+          # Set the level of the Spring JDBC package for debugging purpose
+          core: trace
+
+
 # Spring framework configuration
 spring:
   cloud:
@@ -18,51 +63,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-
-# Encryption configuration
-encrypt:
-  customKey: onlyForTests
-
-
-# Disable eureka server connection request for testing
-eureka:
-  client:
-    enabled: false
-
-
-# Internal caches used by the microservice
-cache:
-  applicationClientDetails:
-    entryCapacity: 0
-    expireInSeconds: 0
-    name: onlyForTests
-  applicationUserBlackList:
-    entryCapacity: 0
-    expireInSeconds: 0
-    name: onlyForTests2
-  authenticationRequestDetails:
-    entryCapacity: 0
-    expireInSeconds: 0
-    name: onlyForTests3
-
-
-# Configure the logs
-logging:
-  level:
-    com:
-      security:
-        custom:
-          # Set the level of the repository package for debugging purpose
-          application:
-            spring6microservice:
-              repository: trace
-          repository: trace
-    org:
-      springframework:
-        jdbc:
-          # Set the level of the Spring JDBC package for debugging purpose
-          core: trace
 
 
 # API documentation

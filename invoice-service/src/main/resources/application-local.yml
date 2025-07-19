@@ -1,27 +1,3 @@
-# Server configuration
-server:
-  port: 8183
-
-
-# Spring framework configuration
-spring:
-  cloud:
-    # Disable configuration server request to work provided values
-    config:
-      enabled: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/spring6
-    username: spring6
-    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
-    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
-    # Raw password: spring6
-    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-
 # Encryption configuration
 encrypt:
   # Defined symmetric (shared) key to encrypt/decrypt text:
@@ -34,24 +10,6 @@ encrypt:
   #
   # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
   key: ${ENCRYPT_KEY:ENCRYPT_KEY}
-
-
-# Custom security configuration
-security:
-  # Configuration used to connect to the security microservice
-  authorizationServer:
-    authenticationInformation: http://localhost:8180/security/custom/authorization/check_token
-    clientId: Spring6Microservices
-    # Raw password: Spring6Microservices
-    clientPassword: "{cipher}1274c88a1340ad50f1199fd477c1406e4d020ca321a4b27443d7df371cc83262d9688c3e883141cf08e04878d85e42b2"
-  # CORS configuration
-  cors:
-    # Enable cross-origin request handling for the specified path pattern
-    mapping: /**
-    # Comma separated HTTP methods to allow
-    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
-    # Comma separated origins for which cross-origin requests are allowed from a browser
-    allowedOrigins: "*"
 
 
 # Disable eureka server connection request
@@ -83,6 +41,48 @@ rest:
     timeoutInMilliseconds: 30000
   write:
     timeoutInMilliseconds: 30000
+
+
+# Custom security configuration
+security:
+  # Configuration used to connect to the security microservice
+  authorizationServer:
+    authenticationInformation: http://localhost:8180/security/custom/authorization/check_token
+    clientId: Spring6Microservices
+    # Raw password: Spring6Microservices
+    clientPassword: "{cipher}1274c88a1340ad50f1199fd477c1406e4d020ca321a4b27443d7df371cc83262d9688c3e883141cf08e04878d85e42b2"
+  # CORS configuration
+  cors:
+    # Enable cross-origin request handling for the specified path pattern
+    mapping: /**
+    # Comma separated HTTP methods to allow
+    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
+    # Comma separated origins for which cross-origin requests are allowed from a browser
+    allowedOrigins: "*"
+
+
+# Server configuration
+server:
+  port: 8183
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server request to work provided values
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring6
+    username: spring6
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
+    # Raw password: spring6
+    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
 # API documentation

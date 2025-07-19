@@ -1,14 +1,3 @@
-# Server configuration
-server:
-  port: 8182
-
-
-# Spring framework configuration
-spring:
-  config:
-    import: configserver:http://localhost:8888
-
-
 # Encryption configuration
 encrypt:
   # Defined symmetric (shared) key to encrypt/decrypt text:
@@ -21,3 +10,14 @@ encrypt:
   #
   # To encrypt a text, use the endpoint POST: localhost:8888/encrypt and the text in its body
   key: ${ENCRYPT_KEY:ENCRYPT_KEY}
+
+
+# Server configuration
+server:
+  port: 8182
+
+
+# Spring framework configuration
+spring:
+  config:
+    import: configserver:http://localhost:8888

@@ -1,3 +1,30 @@
+# Disable eureka server connection request for testing
+eureka:
+  client:
+    enabled: false
+
+
+# Configure the logs
+logging:
+  level:
+    com:
+      order:
+        # Set the level of the mapper package for debugging purpose
+        mapper: trace
+
+
+# Custom security configuration
+security:
+  # CORS configuration
+  cors:
+    # Enable cross-origin request handling for the specified path pattern
+    mapping: /**
+    # Comma separated HTTP methods to allow
+    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
+    # Comma separated origins for which cross-origin requests are allowed from a browser
+    allowedOrigins: "*"
+
+
 # Spring framework configuration
 spring:
   cloud:
@@ -22,33 +49,6 @@ spring:
           token-introspection-uri: TestIntrospectEndpoint
           client-id: TestClientId
           client-secret: TestClientSecret
-
-
-# Configure the logs
-logging:
-  level:
-    com:
-      order:
-        # Set the level of the mapper package for debugging purpose
-        mapper: trace
-
-
-# Custom security configuration
-security:
-  # CORS configuration
-  cors:
-    # Enable cross-origin request handling for the specified path pattern
-    mapping: /**
-    # Comma separated HTTP methods to allow
-    allowedMethods: DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT
-    # Comma separated origins for which cross-origin requests are allowed from a browser
-    allowedOrigins: "*"
-
-
-# Disable eureka server connection request for testing
-eureka:
-  client:
-    enabled: false
 
 
 # API documentation

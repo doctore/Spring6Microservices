@@ -1,34 +1,10 @@
-# Server configuration
-server:
-  port: 8181
-
-
-# Spring framework configuration
-spring:
-  cloud:
-    # Disable configuration server request to work provided values
-    config:
-      enabled: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/spring6
-    username: spring6
-    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
-    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
-    # Raw password: spring6
-    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-
-# Security configuration
-security:
-  # JWT configuration
-  jwk:
-    id: 'local-f57f-46a2-b502-8a24c308be7f'
-    public: classpath:/jwt/app.pub
-    private: classpath:/jwt/app.key
+# Internal caches used by the microservice
+cache:
+  # To manage the configuration of the applications included in the microservice
+  registeredClient:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: registeredClientCache
 
 
 # Encryption configuration
@@ -51,15 +27,6 @@ eureka:
     enabled: false
 
 
-# Internal caches used by the microservice
-cache:
-  # To manage the configuration of the applications included in the microservice
-  registeredClient:
-    entryCapacity: 2
-    expireInSeconds: 3600
-    name: registeredClientCache
-
-
 # Configure the logs
 logging:
   level:
@@ -80,6 +47,39 @@ management:
     sampling:
       # To log traceId and spanId in every request
       probability: 1.0
+
+
+# Security configuration
+security:
+  # JWT configuration
+  jwk:
+    id: 'local-f57f-46a2-b502-8a24c308be7f'
+    public: classpath:/jwt/app.pub
+    private: classpath:/jwt/app.key
+
+
+# Server configuration
+server:
+  port: 8181
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server request to work provided values
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring6
+    username: spring6
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
+    # Raw password: spring6
+    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
 # API documentation

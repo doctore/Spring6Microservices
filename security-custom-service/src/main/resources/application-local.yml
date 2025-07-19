@@ -1,25 +1,20 @@
-# Server configuration
-server:
-  port: 8180
-
-
-# Spring framework configuration
-spring:
-  cloud:
-    # Disable configuration server request to work provided values
-    config:
-      enabled: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/spring6
-    username: spring6
-    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
-    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
-    # Raw password: spring6
-    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+# Internal caches used by the microservice
+cache:
+  # To manage the configuration of the applications included in the microservice
+  applicationClientDetails:
+    entryCapacity: 2
+    expireInSeconds: 3600
+    name: applicationClientDetailsCache
+  # To handle the application-username pairs, not allowed making requests
+  applicationUserBlackList:
+    entryCapacity: 2
+    expireInSeconds: 1800
+    name: applicationUserBlackListCache
+  # Used in the authentication flow with PKCE (Proof of Key Code Exchange)
+  authenticationRequestDetails:
+    entryCapacity: 10
+    expireInSeconds: 600
+    name: authenticationRequestsDetails
 
 
 # Encryption configuration
@@ -44,25 +39,6 @@ eureka:
     enabled: false
 
 
-# Internal caches used by the microservice
-cache:
-  # To manage the configuration of the applications included in the microservice
-  applicationClientDetails:
-    entryCapacity: 2
-    expireInSeconds: 3600
-    name: applicationClientDetailsCache
-  # To handle the application-username pairs, not allowed making requests
-  applicationUserBlackList:
-    entryCapacity: 2
-    expireInSeconds: 1800
-    name: applicationUserBlackListCache
-  # Used in the authentication flow with PKCE (Proof of Key Code Exchange)
-  authenticationRequestDetails:
-    entryCapacity: 10
-    expireInSeconds: 600
-    name: authenticationRequestsDetails
-
-
 # Main properties in Spring Boot to configure some general purpose services
 management:
   endpoints:
@@ -74,6 +50,30 @@ management:
     sampling:
       # To log traceId and spanId in every request
       probability: 1.0
+
+
+# Server configuration
+server:
+  port: 8180
+
+
+# Spring framework configuration
+spring:
+  cloud:
+    # Disable configuration server request to work provided values
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring6
+    username: spring6
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
+    # Raw password: spring6
+    password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
 # API documentation
