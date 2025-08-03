@@ -800,10 +800,9 @@ public class DateTimeUtil {
      */
     public static Date toDate(final String sourceDate,
                               final String pattern) {
-        final String finalSourceDate = getOrElse(
-                sourceDate,
-                new Date().toString()
-        );
+        final String finalSourceDate = StringUtil.isBlank(sourceDate)
+                ? new Date().toString()
+                : sourceDate;
         final String finalPatter = getOrElse(
                 pattern,
                 DEFAULT_DATETIME_FORMAT
@@ -853,10 +852,9 @@ public class DateTimeUtil {
      */
     public static LocalDate toLocalDate(final String sourceDate,
                                         final String pattern) {
-        final String finalSourceDate = getOrElse(
-                sourceDate,
-                LocalDate.now().toString()
-        );
+        final String finalSourceDate = StringUtil.isBlank(sourceDate)
+                ? LocalDate.now().toString()
+                : sourceDate;
         final String finalPatter = getOrElse(
                 pattern,
                 DEFAULT_DATE_FORMAT
@@ -908,10 +906,9 @@ public class DateTimeUtil {
      */
     public static LocalDateTime toLocalDateTime(final String sourceDate,
                                                 final String pattern) {
-        final String finalSourceDate = getOrElse(
-                sourceDate,
-                LocalDate.now().toString()
-        );
+        final String finalSourceDate = StringUtil.isBlank(sourceDate)
+                ? LocalDateTime.now().toString()
+                : sourceDate;
         final String finalPatter = getOrElse(
                 pattern,
                 DEFAULT_DATE_FORMAT
