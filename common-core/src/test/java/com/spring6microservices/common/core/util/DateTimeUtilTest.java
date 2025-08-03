@@ -1492,7 +1492,7 @@ public class DateTimeUtilTest {
         }
         else if (StringUtil.isBlank(sourceDate)) {
             assertNotNull(
-                    toDate(
+                    toLocalDate(
                             sourceDate
                     )
             );
@@ -1544,7 +1544,7 @@ public class DateTimeUtilTest {
         }
         else if (StringUtil.isBlank(sourceDate)) {
             assertNotNull(
-                    toDate(
+                    toLocalDate(
                             sourceDate
                     )
             );
@@ -1589,7 +1589,7 @@ public class DateTimeUtilTest {
         }
         else if (StringUtil.isBlank(sourceDate)) {
             assertNotNull(
-                    toDate(
+                    toLocalDateTime(
                             sourceDate
                     )
             );
@@ -1641,7 +1641,7 @@ public class DateTimeUtilTest {
         }
         else if (StringUtil.isBlank(sourceDate)) {
             assertNotNull(
-                    toDate(
+                    toLocalDateTime(
                             sourceDate
                     )
             );

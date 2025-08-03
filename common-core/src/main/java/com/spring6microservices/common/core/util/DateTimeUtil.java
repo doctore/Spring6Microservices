@@ -810,9 +810,9 @@ public class DateTimeUtil {
         );
         final String finalSourceDate = StringUtil.isBlank(sourceDate)
                 ? new SimpleDateFormat(finalPatter)
-                      .format(
-                              new Date()
-                       )
+                     .format(
+                             new Date()
+                     )
                 : sourceDate;
         try {
             return new SimpleDateFormat(finalPatter)
@@ -925,13 +925,16 @@ public class DateTimeUtil {
      */
     public static LocalDateTime toLocalDateTime(final String sourceDate,
                                                 final String pattern) {
-        final String finalSourceDate = StringUtil.isBlank(sourceDate)
-                ? LocalDateTime.now().toString()
-                : sourceDate;
         final String finalPatter = getOrElse(
                 pattern,
                 DEFAULT_DATE_FORMAT
         );
+        final String finalSourceDate = StringUtil.isBlank(sourceDate)
+                ?  DateTimeFormatter.ofPattern(finalPatter)
+                      .format(
+                              LocalDateTime.now()
+                      )
+                : sourceDate;
         try {
             return LocalDateTime.from(
                     DateTimeFormatter.ofPattern(finalPatter)
