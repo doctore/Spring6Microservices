@@ -587,7 +587,7 @@ public class CollectionUtil {
      *    {@link PartialFunction} to filter elements of {@code sourceCollection} and transform the first one defined at function's domain
      *
      * @return {@link Optional} value containing {@code partialFunction} applied to the first value for which it is defined,
-     *         {@link Optional#empty()} if none exists.
+     *         {@link Optional#empty()} if none exists or provided {@code sourceCollection} is empty.
      *
      * @throws IllegalArgumentException if {@code partialFunction} is {@code null} with a not empty {@code sourceCollection}
      */

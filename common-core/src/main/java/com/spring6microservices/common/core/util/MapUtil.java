@@ -598,7 +598,7 @@ public class MapUtil {
      *    {@link PartialFunction} to filter elements of {@code sourceMap} and transform the first one defined at function's domain
      *
      * @return {@link Optional} value containing {@code partialFunction} applied to the first value for which it is defined,
-     *         {@link Optional#empty()} if none exists.
+     *         {@link Optional#empty()} if none exists or provided {@code sourceMap} is empty.
      *
      * @throws IllegalArgumentException if {@code partialFunction} is {@code null} with a not empty {@code sourceMap}
      */

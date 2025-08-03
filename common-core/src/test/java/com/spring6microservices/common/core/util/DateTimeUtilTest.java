@@ -6,6 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -1357,6 +1359,246 @@ public class DateTimeUtilTest {
             assertEquals(
                     expectedResult,
                     plus(sourceLocalDateTime, amountToAdd, timeUnit, zoneId)
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toDateWithSourceDateTestCases() throws ParseException {
+        String sourceDate = "2020-10-10T12:00:00";
+        Date expectedResult = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT)
+                .parse(sourceDate);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate,   null,                             expectedResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toDateWithSourceDateTestCases")
+    @DisplayName("toDate: with sourceDate test cases")
+    public void toDateWithSourceDate_testCases(String sourceDate,
+                                               Class<? extends Exception> expectedException,
+                                               Date expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toDate(
+                            sourceDate
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toDate(
+                            sourceDate
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toDateAllParametersTestCases() throws ParseException {
+        String sourceDate1 = "2020-10-10T12:00:00";
+        String sourceDate2 = "2025-11-19 05:30:00";
+
+        String dateTimeFormat2 = "yyyy-MM-dd HH:mm:ss";
+
+        Date expectedResult1 = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT)
+                .parse(sourceDate1);
+        Date expectedResult2 = new SimpleDateFormat(dateTimeFormat2)
+                .parse(sourceDate2);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,    pattern,                   expectedException,                expectedResult
+                Arguments.of( "NotValid",    null,                      IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate1,   DEFAULT_DATETIME_FORMAT,   null,                             expectedResult1 ),
+                Arguments.of( sourceDate2,   dateTimeFormat2,           null,                             expectedResult2 )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toDateAllParametersTestCases")
+    @DisplayName("toDate: with all parameters test cases")
+    public void toDateAllParameters_testCases(String sourceDate,
+                                              String pattern,
+                                              Class<? extends Exception> expectedException,
+                                              Date expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toDate(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toDate(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toLocalDateWithSourceDateTestCases() throws ParseException {
+        String sourceDate = "2020-10-10";
+        LocalDate expectedResult = LocalDate.of(2020, 10, 10);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate,   null,                             expectedResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toLocalDateWithSourceDateTestCases")
+    @DisplayName("toLocalDate: with sourceDate test cases")
+    public void toLocalDateWithSourceDate_testCases(String sourceDate,
+                                                    Class<? extends Exception> expectedException,
+                                                    LocalDate expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toLocalDate(
+                            sourceDate
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toLocalDate(
+                            sourceDate
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toLocalDateAllParametersTestCases() throws ParseException {
+        String sourceDate1 = "2020-10-10";
+        String sourceDate2 = "2025.11.19";
+
+        String dateFormat2 = "yyyy.MM.dd";
+
+        LocalDate expectedResult1 = LocalDate.of(2020, 10, 10);
+        LocalDate expectedResult2 = LocalDate.of(2025, 11, 19);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,    pattern,               expectedException,                expectedResult
+                Arguments.of( "NotValid",    null,                  IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate1,   DEFAULT_DATE_FORMAT,   null,                             expectedResult1 ),
+                Arguments.of( sourceDate2,   dateFormat2,           null,                             expectedResult2 )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toLocalDateAllParametersTestCases")
+    @DisplayName("toLocalDate: with all parameters test cases")
+    public void toLocalDateAllParameters_testCases(String sourceDate,
+                                                   String pattern,
+                                                   Class<? extends Exception> expectedException,
+                                                   LocalDate expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toLocalDate(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toLocalDate(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toLocalDateTimeWithSourceDateTestCases() throws ParseException {
+        String sourceDate = "2020-10-10T12:00:00";
+        LocalDateTime expectedResult = LocalDateTime.of(2020, 10, 10, 12, 0, 0);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate,   null,                             expectedResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toLocalDateTimeWithSourceDateTestCases")
+    @DisplayName("toLocalDateTime: with sourceDate test cases")
+    public void toLocalDateTimeWithSourceDate_testCases(String sourceDate,
+                                                        Class<? extends Exception> expectedException,
+                                                        LocalDateTime expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toLocalDateTime(
+                            sourceDate
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toLocalDateTime(
+                            sourceDate
+                    )
+            );
+        }
+    }
+
+
+    static Stream<Arguments> toLocalDateTimeAllParametersTestCases() throws ParseException {
+        String sourceDate1 = "2020-10-10T12:00:00";
+        String sourceDate2 = "2025-11-19 05:30:00";
+
+        String dateTimeFormat2 = "yyyy-MM-dd HH:mm:ss";
+
+        LocalDateTime expectedResult1 = LocalDateTime.of(2020, 10, 10, 12, 0, 0);
+        LocalDateTime expectedResult2 = LocalDateTime.of(2025, 11, 19, 5, 30, 0);
+        return Stream.of(
+                //@formatter:off
+                //            sourceDate,    pattern,                   expectedException,                expectedResult
+                Arguments.of( "NotValid",    null,                      IllegalArgumentException.class,   null ),
+                Arguments.of( sourceDate1,   DEFAULT_DATETIME_FORMAT,   null,                             expectedResult1 ),
+                Arguments.of( sourceDate2,   dateTimeFormat2,           null,                             expectedResult2 )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("toLocalDateTimeAllParametersTestCases")
+    @DisplayName("toLocalDateTime: with all parameters test cases")
+    public void toLocalDateTimeAllParameters_testCases(String sourceDate,
+                                                       String pattern,
+                                                       Class<? extends Exception> expectedException,
+                                                       LocalDateTime expectedResult) {
+        if (null != expectedException) {
+            assertThrows(expectedException, () ->
+                    toLocalDateTime(
+                            sourceDate,
+                            pattern
+                    )
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    toLocalDateTime(
+                            sourceDate,
+                            pattern
+                    )
             );
         }
     }

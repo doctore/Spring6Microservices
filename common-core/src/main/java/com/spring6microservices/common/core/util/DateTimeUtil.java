@@ -18,7 +18,9 @@ import static java.lang.Math.abs;
 @UtilityClass
 public class DateTimeUtil {
 
-    private static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+
+    public static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
 
     /**
@@ -766,6 +768,169 @@ public class DateTimeUtil {
                         finalTimeUnit
                 )
                 .toLocalDateTime();
+    }
+
+
+    /**
+     *    Converts to a {@link Date} the given {@code sourceDate} using {@link DateTimeUtil#DEFAULT_DATETIME_FORMAT} as
+     * pattern.
+     *
+     * @param sourceDate
+     *    {@link String} with the date value to convert
+     *
+     * @return {@link Date} value equivalent to the given {@code sourceDate}
+     */
+    public static Date toDate(final String sourceDate) {
+        return toDate(
+                sourceDate,
+                DEFAULT_DATETIME_FORMAT
+        );
+    }
+
+
+    /**
+     * Converts to a {@link Date} the given {@code sourceDate} using provided {@code pattern}.
+     *
+     * @param sourceDate
+     *     {@link String} with the date value to convert
+     * @param pattern
+     *    The pattern describing the date and time format
+     *
+     * @return {@link Date} value equivalent to the given {@code sourceDate}
+     */
+    public static Date toDate(final String sourceDate,
+                              final String pattern) {
+        final String finalSourceDate = getOrElse(
+                sourceDate,
+                new Date().toString()
+        );
+        final String finalPatter = getOrElse(
+                pattern,
+                DEFAULT_DATETIME_FORMAT
+        );
+        try {
+            return new SimpleDateFormat(finalPatter)
+                    .parse(finalSourceDate);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("There was an error trying to convert to a Date value the string: %s using the format: %s",
+                            finalSourceDate,
+                            finalPatter
+                    ),
+                    e
+            );
+        }
+    }
+
+
+    /**
+     *    Converts to a {@link LocalDate} the given {@code sourceDate} using {@link DateTimeUtil#DEFAULT_DATE_FORMAT} as
+     * pattern.
+     *
+     * @param sourceDate
+     *    {@link String} with the date value to convert
+     *
+     * @return {@link LocalDate} value equivalent to the given {@code sourceDate}
+     */
+    public static LocalDate toLocalDate(final String sourceDate) {
+        return toLocalDate(
+                sourceDate,
+                DEFAULT_DATE_FORMAT
+        );
+    }
+
+
+    /**
+     * Converts to a {@link LocalDate} the given {@code sourceDate} using provided {@code pattern}.
+     *
+     * @param sourceDate
+     *     {@link String} with the date value to convert
+     * @param pattern
+     *    The pattern describing the date and time format
+     *
+     * @return {@link LocalDate} value equivalent to the given {@code sourceDate}
+     */
+    public static LocalDate toLocalDate(final String sourceDate,
+                                        final String pattern) {
+        final String finalSourceDate = getOrElse(
+                sourceDate,
+                LocalDate.now().toString()
+        );
+        final String finalPatter = getOrElse(
+                pattern,
+                DEFAULT_DATE_FORMAT
+        );
+        try {
+            return LocalDate.from(
+                    DateTimeFormatter.ofPattern(finalPatter)
+                            .parse(finalSourceDate)
+            );
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("There was an error trying to convert to a LocalDate value the string: %s using the format: %s",
+                            finalSourceDate,
+                            finalPatter
+                    ),
+                    e
+            );
+        }
+    }
+
+
+    /**
+     *    Converts to a {@link LocalDateTime} the given {@code sourceDate} using {@link DateTimeUtil#DEFAULT_DATETIME_FORMAT}
+     * as pattern.
+     *
+     * @param sourceDate
+     *    {@link String} with the date-time value to convert
+     *
+     * @return {@link LocalDateTime} value equivalent to the given {@code sourceDate}
+     */
+    public static LocalDateTime toLocalDateTime(final String sourceDate) {
+        return toLocalDateTime(
+                sourceDate,
+                DEFAULT_DATETIME_FORMAT
+        );
+    }
+
+
+    /**
+     * Converts to a {@link LocalDateTime} the given {@code sourceDate} using provided {@code pattern}.
+     *
+     * @param sourceDate
+     *     {@link String} with the date-time value to convert
+     * @param pattern
+     *    The pattern describing the date and time format
+     *
+     * @return {@link LocalDateTime} value equivalent to the given {@code sourceDate}
+     */
+    public static LocalDateTime toLocalDateTime(final String sourceDate,
+                                                final String pattern) {
+        final String finalSourceDate = getOrElse(
+                sourceDate,
+                LocalDate.now().toString()
+        );
+        final String finalPatter = getOrElse(
+                pattern,
+                DEFAULT_DATE_FORMAT
+        );
+        try {
+            return LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(finalPatter)
+                            .parse(finalSourceDate)
+            );
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("There was an error trying to convert to a LocalDateTime value the string: %s using the format: %s",
+                            finalSourceDate,
+                            finalPatter
+                    ),
+                    e
+            );
+        }
     }
 
 }
