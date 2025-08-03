@@ -1371,6 +1371,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( null,         null,                             null ),
+                Arguments.of( "",           null,                             null ),
                 Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate,   null,                             expectedResult )
         ); //@formatter:on
@@ -1384,6 +1386,13 @@ public class DateTimeUtilTest {
                                                Date expectedResult) {
         if (null != expectedException) {
             assertThrows(expectedException, () ->
+                    toDate(
+                            sourceDate
+                    )
+            );
+        }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
                     toDate(
                             sourceDate
                     )
@@ -1413,6 +1422,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,    pattern,                   expectedException,                expectedResult
+                Arguments.of( null,          null,                      null,                             null ),
+                Arguments.of( "",            null,                      null,                             null ),
                 Arguments.of( "NotValid",    null,                      IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate1,   DEFAULT_DATETIME_FORMAT,   null,                             expectedResult1 ),
                 Arguments.of( sourceDate2,   dateTimeFormat2,           null,                             expectedResult2 )
@@ -1434,6 +1445,13 @@ public class DateTimeUtilTest {
                     )
             );
         }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
+                    toDate(
+                            sourceDate
+                    )
+            );
+        }
         else {
             assertEquals(
                     expectedResult,
@@ -1452,6 +1470,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( null,         null,                             null ),
+                Arguments.of( "",           null,                             null ),
                 Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate,   null,                             expectedResult )
         ); //@formatter:on
@@ -1466,6 +1486,13 @@ public class DateTimeUtilTest {
         if (null != expectedException) {
             assertThrows(expectedException, () ->
                     toLocalDate(
+                            sourceDate
+                    )
+            );
+        }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
+                    toDate(
                             sourceDate
                     )
             );
@@ -1492,6 +1519,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,    pattern,               expectedException,                expectedResult
+                Arguments.of( null,          null,                  null,                             null ),
+                Arguments.of( "",            null,                  null,                             null ),
                 Arguments.of( "NotValid",    null,                  IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate1,   DEFAULT_DATE_FORMAT,   null,                             expectedResult1 ),
                 Arguments.of( sourceDate2,   dateFormat2,           null,                             expectedResult2 )
@@ -1513,6 +1542,13 @@ public class DateTimeUtilTest {
                     )
             );
         }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
+                    toDate(
+                            sourceDate
+                    )
+            );
+        }
         else {
             assertEquals(
                     expectedResult,
@@ -1531,6 +1567,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,   expectedException,                expectedResult
+                Arguments.of( null,         null,                             null ),
+                Arguments.of( "",           null,                             null ),
                 Arguments.of( "NotValid",   IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate,   null,                             expectedResult )
         ); //@formatter:on
@@ -1545,6 +1583,13 @@ public class DateTimeUtilTest {
         if (null != expectedException) {
             assertThrows(expectedException, () ->
                     toLocalDateTime(
+                            sourceDate
+                    )
+            );
+        }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
+                    toDate(
                             sourceDate
                     )
             );
@@ -1571,6 +1616,8 @@ public class DateTimeUtilTest {
         return Stream.of(
                 //@formatter:off
                 //            sourceDate,    pattern,                   expectedException,                expectedResult
+                Arguments.of( null,          null,                      null,                             null ),
+                Arguments.of( "",            null,                      null,                             null ),
                 Arguments.of( "NotValid",    null,                      IllegalArgumentException.class,   null ),
                 Arguments.of( sourceDate1,   DEFAULT_DATETIME_FORMAT,   null,                             expectedResult1 ),
                 Arguments.of( sourceDate2,   dateTimeFormat2,           null,                             expectedResult2 )
@@ -1589,6 +1636,13 @@ public class DateTimeUtilTest {
                     toLocalDateTime(
                             sourceDate,
                             pattern
+                    )
+            );
+        }
+        else if (StringUtil.isBlank(sourceDate)) {
+            assertNotNull(
+                    toDate(
+                            sourceDate
                     )
             );
         }

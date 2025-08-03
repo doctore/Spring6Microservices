@@ -776,9 +776,11 @@ public class DateTimeUtil {
      * pattern.
      *
      * @param sourceDate
-     *    {@link String} with the date value to convert
+     *    {@link String} with the date value to convert. If empty a new {@link Date} will be used.
      *
      * @return {@link Date} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static Date toDate(final String sourceDate) {
         return toDate(
@@ -792,24 +794,31 @@ public class DateTimeUtil {
      * Converts to a {@link Date} the given {@code sourceDate} using provided {@code pattern}.
      *
      * @param sourceDate
-     *     {@link String} with the date value to convert
+     *     {@link String} with the date value to convert. If empty a new {@link Date} will be used.
      * @param pattern
      *    The pattern describing the date and time format
      *
      * @return {@link Date} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static Date toDate(final String sourceDate,
                               final String pattern) {
-        final String finalSourceDate = StringUtil.isBlank(sourceDate)
-                ? new Date().toString()
-                : sourceDate;
         final String finalPatter = getOrElse(
                 pattern,
                 DEFAULT_DATETIME_FORMAT
         );
+        final String finalSourceDate = StringUtil.isBlank(sourceDate)
+                ? new SimpleDateFormat(finalPatter)
+                      .format(
+                              new Date()
+                       )
+                : sourceDate;
         try {
             return new SimpleDateFormat(finalPatter)
-                    .parse(finalSourceDate);
+                    .parse(
+                            finalSourceDate
+                    );
 
         } catch (Exception e) {
             throw new IllegalArgumentException(
@@ -828,9 +837,11 @@ public class DateTimeUtil {
      * pattern.
      *
      * @param sourceDate
-     *    {@link String} with the date value to convert
+     *    {@link String} with the date value to convert. If empty a new {@link LocalDate} will be used.
      *
      * @return {@link LocalDate} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static LocalDate toLocalDate(final String sourceDate) {
         return toLocalDate(
@@ -844,11 +855,13 @@ public class DateTimeUtil {
      * Converts to a {@link LocalDate} the given {@code sourceDate} using provided {@code pattern}.
      *
      * @param sourceDate
-     *     {@link String} with the date value to convert
+     *     {@link String} with the date value to convert. If empty a new {@link LocalDate} will be used.
      * @param pattern
      *    The pattern describing the date and time format
      *
      * @return {@link LocalDate} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static LocalDate toLocalDate(final String sourceDate,
                                         final String pattern) {
@@ -862,7 +875,9 @@ public class DateTimeUtil {
         try {
             return LocalDate.from(
                     DateTimeFormatter.ofPattern(finalPatter)
-                            .parse(finalSourceDate)
+                            .parse(
+                                    finalSourceDate
+                            )
             );
 
         } catch (Exception e) {
@@ -882,9 +897,11 @@ public class DateTimeUtil {
      * as pattern.
      *
      * @param sourceDate
-     *    {@link String} with the date-time value to convert
+     *    {@link String} with the date-time value to convert. If empty a new {@link LocalDateTime} will be used.
      *
      * @return {@link LocalDateTime} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static LocalDateTime toLocalDateTime(final String sourceDate) {
         return toLocalDateTime(
@@ -898,11 +915,13 @@ public class DateTimeUtil {
      * Converts to a {@link LocalDateTime} the given {@code sourceDate} using provided {@code pattern}.
      *
      * @param sourceDate
-     *     {@link String} with the date-time value to convert
+     *     {@link String} with the date-time value to convert. If empty a new {@link LocalDateTime} will be used.
      * @param pattern
      *    The pattern describing the date and time format
      *
      * @return {@link LocalDateTime} value equivalent to the given {@code sourceDate}
+     *
+     * @throws IllegalArgumentException if there was an error converting provided {@code sourceDate}
      */
     public static LocalDateTime toLocalDateTime(final String sourceDate,
                                                 final String pattern) {
@@ -916,7 +935,9 @@ public class DateTimeUtil {
         try {
             return LocalDateTime.from(
                     DateTimeFormatter.ofPattern(finalPatter)
-                            .parse(finalSourceDate)
+                            .parse(
+                                    finalSourceDate
+                            )
             );
 
         } catch (Exception e) {
