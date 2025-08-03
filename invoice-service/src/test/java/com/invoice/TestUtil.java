@@ -3,6 +3,8 @@ package com.invoice;
 import com.invoice.configuration.Constants;
 import com.invoice.dto.CustomerDto;
 import com.invoice.dto.InvoiceDto;
+import com.invoice.dto.OrderDto;
+import com.invoice.dto.OrderLineDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.util.DateTimeUtil;
@@ -83,6 +85,63 @@ public class TestUtil {
     }
 
 
+    public static void compareOrderDtos(final OrderDto expected,
+                                        final OrderDto actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(
+                expected.getId(),
+                actual.getId()
+        );
+        assertEquals(
+                expected.getCode(),
+                actual.getCode()
+        );
+        assertEquals(
+                expected.getCustomerCode(),
+                actual.getCustomerCode()
+        );
+        if (null == expected.getOrderLines()) {
+            assertNull(actual.getOrderLines());
+        }
+        else {
+            assertEquals(
+                    expected.getOrderLines().size(),
+                    actual.getOrderLines().size()
+            );
+            for (int i = 0; i < expected.getOrderLines().size(); i++) {
+                compareOrderLinesDtos(
+                        expected.getOrderLines().get(i),
+                        actual.getOrderLines().get(i)
+                );
+            }
+        }
+    }
+
+
+    public static void compareOrderLinesDtos(final OrderLineDto expected,
+                                             final OrderLineDto actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(
+                expected.getId(),
+                actual.getId()
+        );
+        assertEquals(
+                expected.getConcept(),
+                actual.getConcept()
+        );
+        assertEquals(
+                expected.getAmount(),
+                actual.getAmount()
+        );
+        assertEquals(
+                expected.getCost(),
+                actual.getCost()
+        );
+    }
+
+
     public static void verifyEmptyCustomer(final Customer customer) {
         assertNotNull(customer);
         assertNull(customer.getId());
@@ -122,6 +181,46 @@ public class TestUtil {
         assertNull(invoice.getOrderId());
         assertNull(invoice.getCost());
         assertNull(invoice.getCreatedAt());
+    }
+
+
+    public static void verifyEmptyOrderDto(final OrderDto order) {
+        assertNotNull(order);
+        assertEquals(
+                0,
+                order.getId()
+        );
+        assertEquals(
+                "",
+                order.getCode()
+        );
+        assertEquals(
+                "",
+                order.getCustomerCode()
+        );
+        assertNotNull(order.getCreatedAt());
+        assertTrue(order.getOrderLines().isEmpty());
+    }
+
+
+    public static void verifyEmptyOrderLineDto(final OrderLineDto orderLine) {
+        assertNotNull(orderLine);
+        assertEquals(
+                0,
+                orderLine.getId()
+        );
+        assertEquals(
+                "",
+                orderLine.getConcept()
+        );
+        assertEquals(
+                0,
+                orderLine.getAmount()
+        );
+        assertEquals(
+                0.0d,
+                orderLine.getCost()
+        );
     }
 
 

@@ -4,6 +4,13 @@ eureka:
     enabled: false
 
 
+# gRPC server configuration
+grpc:
+  server:
+    port: 0
+    awaitTerminationInSeconds: 0
+
+
 # Configure the logs
 logging:
   level:

@@ -7,6 +7,7 @@ import com.invoice.configuration.security.annotation.GetInvoicePermission;
 import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
+import com.invoice.service.OrderService;
 import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
@@ -49,12 +50,17 @@ public class InvoiceController {
 
     private final InvoiceService service;
 
+    private final OrderService orderService;
+
 
     @Autowired
     public InvoiceController(@Lazy final InvoiceConverter invoiceConverter,
-                             @Lazy final InvoiceService invoiceService) {
+                             @Lazy final InvoiceService invoiceService,
+                             @Lazy final OrderService orderService) {
+
         this.converter = invoiceConverter;
         this.service = invoiceService;
+        this.orderService = orderService;
     }
 
 
@@ -139,9 +145,9 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(i ->
                         new ResponseEntity<>(
-                                o,
+                                i,
                                 CREATED
                         )
                 )
@@ -318,9 +324,9 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(i ->
                         new ResponseEntity<>(
-                                o,
+                                i,
                                 OK
                         )
                 )
@@ -414,9 +420,9 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(i ->
                         new ResponseEntity<>(
-                                o,
+                                i,
                                 OK
                         )
                 )

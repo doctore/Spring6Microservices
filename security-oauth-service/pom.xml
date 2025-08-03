@@ -64,7 +64,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-        <!-- Spring6 microservices common -->
+        <!-- Spring6 microservices common-spring -->
         <dependency>
             <groupId>com.spring6microservices.common</groupId>
             <artifactId>common-spring</artifactId>

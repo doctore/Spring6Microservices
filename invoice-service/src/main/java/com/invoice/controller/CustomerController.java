@@ -142,9 +142,9 @@ public class CustomerController {
                    .map(
                            converter::fromModelToDto
                    )
-                   .map(o ->
+                   .map(c ->
                            new ResponseEntity<>(
-                                   o,
+                                   c,
                                    CREATED
                            )
                    )
@@ -321,9 +321,9 @@ public class CustomerController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(c ->
                         new ResponseEntity<>(
-                                o,
+                                c,
                                 OK
                         )
                 )
@@ -417,9 +417,9 @@ public class CustomerController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(c ->
                         new ResponseEntity<>(
-                                o,
+                                c,
                                 OK
                         )
                 )
@@ -513,9 +513,9 @@ public class CustomerController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(o ->
+                .map(c ->
                         new ResponseEntity<>(
-                                o,
+                                c,
                                 OK
                         )
                 )

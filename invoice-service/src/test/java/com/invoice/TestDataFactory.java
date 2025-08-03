@@ -2,11 +2,15 @@ package com.invoice;
 
 import com.invoice.dto.CustomerDto;
 import com.invoice.dto.InvoiceDto;
+import com.invoice.dto.OrderDto;
+import com.invoice.dto.OrderLineDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
+import com.spring6microservices.grpc.OrderLineResponseGrpc;
+import com.spring6microservices.grpc.OrderResponseGrpc;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -133,6 +137,114 @@ public class TestDataFactory {
                 2,
                 911.5
         );
+    }
+
+
+    public static OrderDto buildOrderDto() {
+        return buildOrderDto(
+                1,
+                "Order 1",
+                List.of(
+                        buildOrderLineDto()
+                )
+        );
+    }
+
+
+    public static OrderDto buildOrderDto(final Integer id,
+                                         final String code,
+                                         final Collection<OrderLineDto> orderLines) {
+        return OrderDto.builder()
+                .id(id)
+                .code(code)
+                .customerCode("Customer" + (null == id ? "" : " " + id))
+                .createdAt(
+                        LocalDateTime.now()
+                )
+                .orderLines(
+                        new ArrayList<>(
+                                orderLines
+                        )
+                )
+                .build();
+    }
+
+
+    public static OrderResponseGrpc buildOrderResponseGrpc() {
+        return OrderResponseGrpc.newBuilder()
+                .setId(1)
+                .setCode("Order 1")
+                .setCustomerCode("Customer 1")
+                .setCreatedAt("2025-11-19T05:30:00")
+                .addOrderLines(
+                        buildOrderLineResponseGrpc()
+                )
+                .build();
+    }
+
+
+    public static OrderResponseGrpc buildOrderResponseGrpc(final Integer id,
+                                                           final String code,
+                                                           final Collection<OrderLineResponseGrpc> orderLines) {
+        OrderResponseGrpc.Builder builder = OrderResponseGrpc.newBuilder()
+                .setId(id)
+                .setCode(code)
+                .setCustomerCode("Customer" + (null == id ? "" : " " + id))
+                .setCreatedAt("2025-11-19T05:30:00");
+        if (null != orderLines) {
+            for (OrderLineResponseGrpc orderLine : orderLines) {
+                builder.addOrderLines(
+                        orderLine
+                );
+            }
+        }
+        return builder.build();
+    }
+
+
+    public static OrderLineDto buildOrderLineDto() {
+        return buildOrderLineDto(
+                1,
+                "Order line 1",
+                1,
+                9.99d
+        );
+    }
+
+
+    public static OrderLineDto buildOrderLineDto(final Integer id,
+                                                 final String concept,
+                                                 final int amount,
+                                                 final double cost) {
+        return OrderLineDto.builder()
+                .id(id)
+                .concept(concept)
+                .amount(amount)
+                .cost(cost)
+                .build();
+    }
+
+
+    public static OrderLineResponseGrpc buildOrderLineResponseGrpc() {
+        return OrderLineResponseGrpc.newBuilder()
+                .setId(1)
+                .setConcept("Order line 1")
+                .setAmount(1)
+                .setCost(9.99d)
+                .build();
+    }
+
+
+    public static OrderLineResponseGrpc buildOrderLineResponseGrpc(final Integer id,
+                                                                   final String concept,
+                                                                   final int amount,
+                                                                   final double cost) {
+        return OrderLineResponseGrpc.newBuilder()
+                .setId(id)
+                .setConcept(concept)
+                .setAmount(amount)
+                .setCost(cost)
+                .build();
     }
 
 

@@ -16,28 +16,28 @@ service OrderService {
 
   // A server-to-client streaming RPC:
   // Obtains the Order's details and the list of OrderLines related with the given Order's identifier
-  rpc getOrderWithOrderLines(OrderRequest) returns (stream Order) {}
+  rpc getOrderWithOrderLines(OrderRequestGrpc) returns (stream OrderResponseGrpc) {}
 
 }
 
 
 // Order's identifier
-message OrderRequest {
+message OrderRequestGrpc {
   int32 id = 1;
 }
 
 
 // Order's details and the list of OrderLines related with the Order's identifier
-message Order {
+message OrderResponseGrpc {
   int32 id = 1;
   string code = 2;
   string customerCode = 3;
   string createdAt = 4;
-  repeated OrderLine orderLines = 5;
+  repeated OrderLineResponseGrpc orderLines = 5;
 }
 
 
-message OrderLine {
+message OrderLineResponseGrpc {
   int32 id = 1;
   string concept = 2;
   int32 amount = 3;

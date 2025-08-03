@@ -4,6 +4,8 @@ import com.order.dto.OrderDto;
 import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
+import com.spring6microservices.grpc.OrderLineResponseGrpc;
+import com.spring6microservices.grpc.OrderResponseGrpc;
 import lombok.experimental.UtilityClass;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,21 +85,55 @@ public class TestUtil {
                     actual.getOrderLines().size()
             );
             for (int i = 0; i < expected.getOrderLines().size(); i++) {
+                compareOrderLinesDtos(
+                        expected.getOrderLines().get(i),
+                        actual.getOrderLines().get(i)
+                );
+            }
+        }
+    }
+
+
+    public static void compareOrderResponseGrpc(final OrderResponseGrpc expected,
+                                                final OrderResponseGrpc actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(
+                expected.getId(),
+                actual.getId()
+        );
+        assertEquals(
+                expected.getCode(),
+                actual.getCode()
+        );
+        assertEquals(
+                expected.getCustomerCode(),
+                actual.getCustomerCode()
+        );
+        if (null == expected.getOrderLinesList()) {
+            assertNull(actual.getOrderLinesList());
+        }
+        else {
+            assertEquals(
+                    expected.getOrderLinesList().size(),
+                    actual.getOrderLinesList().size()
+            );
+            for (int i = 0; i < expected.getOrderLinesList().size(); i++) {
                 assertEquals(
-                        expected.getOrderLines().get(i).getId(),
-                        actual.getOrderLines().get(i).getId()
+                        expected.getOrderLinesList().get(i).getId(),
+                        actual.getOrderLinesList().get(i).getId()
                 );
                 assertEquals(
-                        expected.getOrderLines().get(i).getConcept(),
-                        actual.getOrderLines().get(i).getConcept()
+                        expected.getOrderLinesList().get(i).getConcept(),
+                        actual.getOrderLinesList().get(i).getConcept()
                 );
                 assertEquals(
-                        expected.getOrderLines().get(i).getAmount(),
-                        actual.getOrderLines().get(i).getAmount()
+                        expected.getOrderLinesList().get(i).getAmount(),
+                        actual.getOrderLinesList().get(i).getAmount()
                 );
                 assertEquals(
-                        expected.getOrderLines().get(i).getCost(),
-                        actual.getOrderLines().get(i).getCost()
+                        expected.getOrderLinesList().get(i).getCost(),
+                        actual.getOrderLinesList().get(i).getCost()
                 );
             }
         }
@@ -171,6 +207,29 @@ public class TestUtil {
         assertEquals(
                 expected.getOrderId(),
                 actual.getOrderId()
+        );
+    }
+
+
+    public static void compareOrderLineResponseGrpc(final OrderLineResponseGrpc expected,
+                                                    final OrderLineResponseGrpc actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(
+                expected.getId(),
+                actual.getId()
+        );
+        assertEquals(
+                expected.getConcept(),
+                actual.getConcept()
+        );
+        assertEquals(
+                expected.getAmount(),
+                actual.getAmount()
+        );
+        assertEquals(
+                expected.getCost(),
+                actual.getCost()
         );
     }
 

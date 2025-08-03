@@ -1,11 +1,13 @@
 package com.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.order.grpc.server.GrpcServerRunner;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
@@ -15,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class BaseControllerTest {
+
+    // To avoid running GrpcServer in unit tests
+    @MockitoBean
+    private GrpcServerRunner mockGrpcServerRunner;
 
     @Autowired
     protected ApplicationContext context;

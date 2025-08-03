@@ -36,6 +36,10 @@ public class OrderLineDto {
     )
     private Integer orderId;
 
+    @Schema(
+            description = "The purchased item",
+            requiredMode = RequiredMode.REQUIRED
+    )
     @NotNull(
             groups = {
                     CreateAction.class,
@@ -49,10 +53,6 @@ public class OrderLineDto {
                     CreateAction.class,
                     UpdateAction.class
             }
-    )
-    @Schema(
-            description = "The purchased item",
-            requiredMode = RequiredMode.REQUIRED
     )
     private String concept;
 

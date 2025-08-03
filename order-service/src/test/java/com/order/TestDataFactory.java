@@ -4,12 +4,18 @@ import com.order.dto.OrderDto;
 import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
+import com.spring6microservices.grpc.OrderLineResponseGrpc;
+import com.spring6microservices.grpc.OrderResponseGrpc;
+import io.grpc.stub.StreamObserver;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 @UtilityClass
 public class TestDataFactory {
@@ -90,6 +96,38 @@ public class TestDataFactory {
     }
 
 
+    public static OrderResponseGrpc buildOrderResponseGrpc() {
+        return OrderResponseGrpc.newBuilder()
+                .setId(1)
+                .setCode("Order 1")
+                .setCustomerCode("Customer 1")
+                .setCreatedAt("2025-11-19'T'05:30:00")
+                .addOrderLines(
+                        buildOrderLineResponseGrpc()
+                )
+                .build();
+    }
+
+
+    public static OrderResponseGrpc buildOrderResponseGrpc(final Integer id,
+                                                           final String code,
+                                                           final Collection<OrderLineResponseGrpc> orderLines) {
+        OrderResponseGrpc.Builder builder = OrderResponseGrpc.newBuilder()
+                .setId(id)
+                .setCode(code)
+                .setCustomerCode("Customer" + (null == id ? "" : " " + id))
+                .setCreatedAt("2025-11-19'T'05:30:00");
+        if (null != orderLines) {
+            for (OrderLineResponseGrpc orderLine : orderLines) {
+                builder.addOrderLines(
+                        orderLine
+                );
+            }
+        }
+        return builder.build();
+    }
+
+
     public static OrderLine buildOrderLine(final Order order,
                                            final String concept,
                                            final int amount,
@@ -167,6 +205,53 @@ public class TestDataFactory {
                 .amount(amount)
                 .cost(cost)
                 .build();
+    }
+
+
+    public static OrderLineResponseGrpc buildOrderLineResponseGrpc() {
+        return OrderLineResponseGrpc.newBuilder()
+                .setId(1)
+                .setConcept("Keyboard")
+                .setAmount(2)
+                .setCost(10.1d)
+                .build();
+    }
+
+
+    public static OrderLineResponseGrpc buildOrderLineResponseGrpc(final Integer id,
+                                                                   final String concept,
+                                                                   final int amount,
+                                                                   final double cost) {
+        return OrderLineResponseGrpc.newBuilder()
+                .setId(id)
+                .setConcept(concept)
+                .setAmount(amount)
+                .setCost(cost)
+                .build();
+    }
+
+
+    public static StreamObserver<OrderResponseGrpc> buildStreamObserver(final Collection<OrderResponseGrpc> orderResponse,
+                                                                        final CountDownLatch latch) {
+        return new StreamObserver<>() {
+            @Override
+            public void onNext(final OrderResponseGrpc value) {
+                orderResponse.add(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                fail(
+                        "There was an error in the StreamObserver used as response",
+                        t
+                );
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        };
     }
 
 }

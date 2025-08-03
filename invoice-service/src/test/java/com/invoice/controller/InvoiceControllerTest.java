@@ -10,6 +10,7 @@ import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
+import com.invoice.service.OrderService;
 import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
@@ -52,6 +53,9 @@ public class InvoiceControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private InvoiceService mockService;
+
+    @MockitoBean
+    private OrderService mockOrderService;
 
     private WebTestClient webTestClient;
 

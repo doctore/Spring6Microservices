@@ -1,0 +1,177 @@
+package com.order.grpc.server;
+
+import com.order.grpc.configuration.GrpcConfiguration;
+import com.order.grpc.interceptor.AuthenticationInterceptor;
+import com.order.grpc.interceptor.ExceptionHandlerInterceptor;
+import com.order.grpc.interceptor.RequestIdInterceptor;
+import com.order.grpc.service.OrderServiceGrpcImpl;
+import io.grpc.*;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+
+/**
+ * gRPC server used to communicate microservices.
+ *
+ * @see <a href="https://grpc.io/docs/what-is-grpc/introduction/">Introduction to gRPC</a>
+ * @see <a href="https://grpc.io/docs/languages/java/">Java gRPC</a>
+ */
+@Component
+@Log4j2
+public class GrpcServer {
+
+    private final GrpcConfiguration grpcConfiguration;
+
+    private final RequestIdInterceptor requestIdInterceptor;
+
+    private final AuthenticationInterceptor authenticationInterceptor;
+
+    private final ExceptionHandlerInterceptor exceptionHandlerInterceptor;
+
+    private final OrderServiceGrpcImpl orderServiceGrpc;
+
+    private final Server server;
+
+
+    @Autowired
+    public GrpcServer(@Lazy final GrpcConfiguration grpcConfiguration,
+                      @Lazy final RequestIdInterceptor requestIdInterceptor,
+                      @Lazy final AuthenticationInterceptor authenticationInterceptor,
+                      @Lazy final ExceptionHandlerInterceptor exceptionHandlerInterceptor,
+                      @Lazy final OrderServiceGrpcImpl orderServiceGrpc) {
+        this.grpcConfiguration = grpcConfiguration;
+        this.requestIdInterceptor = requestIdInterceptor;
+        this.authenticationInterceptor = authenticationInterceptor;
+        this.exceptionHandlerInterceptor = exceptionHandlerInterceptor;
+        this.orderServiceGrpc = orderServiceGrpc;
+        this.server = buildServer(
+                grpcConfiguration.getServerPort()
+        );
+    }
+
+
+    /**
+     * Start serving requests
+     */
+    public void start() {
+        if (nonNull(server)) {
+            log.info("gRPC server is starting");
+            try {
+                server.start();
+                log.info(
+                        format("gRPC server started and listening on port: %d",
+                                grpcConfiguration.getServerPort()
+                        )
+                );
+                displayAvailableServices();
+                addShutdownHook();
+
+            } catch (Throwable e) {
+                log.error(
+                        "There was an error starting gRPC server",
+                        e
+                );
+            }
+        } else {
+            log.error("gRPC server is null");
+        }
+    }
+
+
+    /**
+     * Stop serving requests and shutdown resources.
+     *
+     * @throws InterruptedException if there was a problem shutting down the server
+     */
+    public void stop() throws InterruptedException {
+        if (nonNull(server)) {
+            int awaitTerminationInSeconds = grpcConfiguration.getServerAwaitTerminationInSeconds();
+            if (0 < awaitTerminationInSeconds) {
+                server.shutdown()
+                        .awaitTermination(
+                                awaitTerminationInSeconds,
+                                TimeUnit.SECONDS
+                        );
+            } else {
+                server.shutdown()
+                        .awaitTermination();
+            }
+        }
+    }
+
+
+    /**
+     * Await termination on the main thread since the grpc library uses daemon threads.
+     *
+     * @throws InterruptedException if there was a problem shutting down the server
+     */
+    public void blockUntilShutdown() throws InterruptedException {
+        if (nonNull(server)) {
+            server.awaitTermination();
+        }
+    }
+
+
+    /**
+     * Configures the gRPC server including: {@link BindableService} and {@link ServerInterceptor}.
+     *
+     * @param port
+     *    Port used by the gRPC server
+     *
+     * @return {@link Server}
+     */
+    private Server buildServer(final int port) {
+        return Grpc.newServerBuilderForPort(
+                        port,
+                        InsecureServerCredentials.create()
+                )
+                .addService(orderServiceGrpc)
+                .intercept(exceptionHandlerInterceptor)
+                .intercept(authenticationInterceptor)
+                .intercept(requestIdInterceptor)
+                .build();
+    }
+
+
+    /**
+     * Adds into the logs the available services provided by the gRPC server.
+     */
+    private void displayAvailableServices() {
+        server.getServices()
+                .forEach(s ->
+                        log.info(
+                                format("Available the gRPC service: %s",
+                                        s.getServiceDescriptor().getName()
+                                )
+                        )
+                );
+    }
+
+
+    /**
+     * Stops the gRPC server before JVM completes the shutdown.
+     */
+    private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> {
+                    log.info("Shutting down gRPC server");
+                    try {
+                        GrpcServer.this.stop();
+                    } catch (Exception e) {
+                        log.error(
+                                "There was an error shutting down gRPC server",
+                                e
+                        );
+                    }
+                    log.info("gRPC server shut down");
+                })
+        );
+    }
+
+}

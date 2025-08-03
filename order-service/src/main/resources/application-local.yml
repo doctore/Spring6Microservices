@@ -18,6 +18,15 @@ eureka:
     enabled: false
 
 
+# gRPC server configuration
+grpc:
+  server:
+    port: 8070
+    # Time in seconds waiting for the server to become terminated, giving up if the timeout is reached.
+    # 0 means no value
+    awaitTerminationInSeconds: 30
+
+
 # Main properties in Spring Boot to configure some general purpose services
 management:
   endpoints:

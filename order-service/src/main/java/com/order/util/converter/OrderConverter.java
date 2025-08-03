@@ -2,7 +2,6 @@ package com.order.util.converter;
 
 import com.order.dto.OrderDto;
 import com.order.model.Order;
-import com.order.model.OrderLine;
 import com.spring6microservices.common.core.converter.BaseConverter;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import org.mapstruct.*;
@@ -57,26 +56,21 @@ abstract class OrderConverterDecorator implements OrderConverter {
     private OrderLineConverter orderLineConverter;
 
 
-    /**
-     *    Creates a new {@link Order} which properties match with the given {@link OrderDto}. The difference
-     * with the default behavior is how to manage the bidirectional relation between {@link Order} and {@link OrderLine}.
-     *
-     * @param orderDto
-     *    {@link OrderDto} with the source information
-     *
-     * @return {@link Order}
-     */
     @Override
-    public Order fromDtoToModel(final OrderDto orderDto) {
-        return ofNullable(orderDto)
-                .map(dto -> {
-                    Order model = converter.fromDtoToModel(dto);
-                    if (!CollectionUtil.isEmpty(dto.getOrderLines())) {
+    public Order fromDtoToModel(final OrderDto dto) {
+        return ofNullable(dto)
+                .map(d -> {
+                    Order model = converter.fromDtoToModel(
+                            d
+                    );
+                    if (!CollectionUtil.isEmpty(d.getOrderLines())) {
                         model.setOrderLines(
-                                dto.getOrderLines().stream()
+                                d.getOrderLines().stream()
                                         .map(orderLineConverter::fromDtoToModel)
                                         .peek(orderLine ->
-                                                orderLine.setOrder(model)
+                                                orderLine.setOrder(
+                                                        model
+                                                )
                                         )
                                         .toList()
                         );
@@ -93,10 +87,10 @@ abstract class OrderConverterDecorator implements OrderConverter {
 
 
     @Override
-    public List<Order> fromDtosToModels(final Collection<OrderDto> orderDtos) {
-        return ofNullable(orderDtos)
-                .map(dtos ->
-                        dtos.stream()
+    public List<Order> fromDtosToModels(final Collection<OrderDto> dtos) {
+        return ofNullable(dtos)
+                .map(d ->
+                        d.stream()
                                 .map(this::fromDtoToModel)
                                 .toList()
                 )
