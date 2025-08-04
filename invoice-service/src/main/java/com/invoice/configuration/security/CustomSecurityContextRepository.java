@@ -57,7 +57,8 @@ public class CustomSecurityContextRepository implements ServerSecurityContextRep
             return this.authenticationManager
                     .authenticate(auth)
                     .map(SecurityContextImpl::new);
-        } else {
+        }
+        else {
             return Mono.empty();
         }
     }

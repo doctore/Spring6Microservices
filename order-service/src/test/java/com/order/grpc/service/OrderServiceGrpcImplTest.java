@@ -103,7 +103,8 @@ public class OrderServiceGrpcImplTest {
 
         if (null == expectedResult) {
             assertTrue(result.isEmpty());
-        } else {
+        }
+        else {
             compareOrderResponseGrpc(
                     expectedResult,
                     result.getFirst()

@@ -70,7 +70,8 @@ public class GrpcClient {
                             withDeadlineAfterInSeconds,
                             TimeUnit.SECONDS
                     );
-        } else {
+        }
+        else {
             return orderServiceGrpc;
         }
     }
@@ -88,7 +89,8 @@ public class GrpcClient {
                     )
             );
             addShutdownHook();
-        } else {
+        }
+        else {
             log.error("gRPC client channel is null");
         }
     }
