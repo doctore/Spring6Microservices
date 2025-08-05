@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.spring6microservices.common.core.util.ExceptionUtil.getFormattedCurrentAndRootError;
 import static java.lang.String.format;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 @Log4j2
@@ -42,30 +44,44 @@ public class OrderServiceGrpcImpl {
      */
     public Optional<OrderResponseGrpc> findById(final Integer id) {
         log.info(
-                format("Sending a request to get the order and order lines related with order's identifier: %s",
+                format("Sending a request to Order Service to get the order and order lines related with order's identifier: %s",
                         id
                 )
         );
-        return ofNullable(id)
-                .map(i -> {
-                            List<OrderResponseGrpc> orders = getOrders(
-                                    OrderRequestGrpc.newBuilder()
-                                            .setId(i)
-                                            .build()
-                            );
-                            log.info(
-                                    format("Received orders: %s",
-                                            StringUtil.getOrElse(
-                                                    orders,
-                                                    List::size,
-                                                    "0"
-                                            )
-                                    )
-                            );
-                            return CollectionUtil.isEmpty(orders)
-                                    ? null
-                                    : orders.getFirst();
-                });
+        try {
+            return ofNullable(id)
+                    .map(i -> {
+                        List<OrderResponseGrpc> orders = getOrders(
+                                OrderRequestGrpc.newBuilder()
+                                        .setId(i)
+                                        .build()
+                        );
+                        log.info(
+                                format("Received orders: %s",
+                                        StringUtil.getOrElse(
+                                                orders,
+                                                List::size,
+                                                "0"
+                                        )
+                                )
+                        );
+                        return CollectionUtil.isEmpty(orders)
+                                ? null
+                                : orders.getFirst();
+                    });
+
+        } catch (Throwable t) {
+            log.error(
+                    format("There was an error getting the order and order line related with order's identifier: %s. %s",
+                            id,
+                            getFormattedCurrentAndRootError(
+                                    t
+                            )
+                    ),
+                    t
+            );
+            return empty();
+        }
     }
 
 

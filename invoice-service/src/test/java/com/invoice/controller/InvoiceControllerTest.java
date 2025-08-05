@@ -123,8 +123,8 @@ public class InvoiceControllerTest extends BaseControllerTest {
         InvoiceDto dtoWithNoCustomer = buildNewInvoiceDto();
         dtoWithNoCustomer.setCustomer(null);
 
-        InvoiceDto dtoWithNoOrderId = buildNewInvoiceDto();
-        dtoWithNoOrderId.setOrderId(null);
+        InvoiceDto dtoWithNoOrder = buildNewInvoiceDto();
+        dtoWithNoOrder.setOrder(null);
 
         InvoiceDto dtoWithNoCost = buildNewInvoiceDto();
         dtoWithNoCost.setCost(null);
@@ -144,9 +144,9 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 VALIDATION,
                 List.of("Field error in object 'invoiceDto' on field 'customer' due to: must not be null")
         );
-        ErrorResponseDto responseDtoWithNoOrderId = new ErrorResponseDto(
+        ErrorResponseDto responseDtoWithNoOrder = new ErrorResponseDto(
                 VALIDATION,
-                List.of("Field error in object 'invoiceDto' on field 'orderId' due to: must not be null")
+                List.of("Field error in object 'invoiceDto' on field 'order' due to: must not be null")
         );
         ErrorResponseDto responseDtoNoCost = new ErrorResponseDto(
                 VALIDATION,
@@ -162,7 +162,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 Arguments.of( dtoWithNoCode,         responseDtoWithNoCode ),
                 Arguments.of( dtoWithLongCode,       responseDtoWithLongCode ),
                 Arguments.of( dtoWithNoCustomer,     responseDtoWithNoCustomer ),
-                Arguments.of( dtoWithNoOrderId,      responseDtoWithNoOrderId ),
+                Arguments.of( dtoWithNoOrder,        responseDtoWithNoOrder ),
                 Arguments.of( dtoWithNoCost,         responseDtoNoCost ),
                 Arguments.of( dtoWithNegativeCost,   responseDtoWithNegativeCost )
         ); //@formatter:on
@@ -466,7 +466,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .jsonPath("$.content.[0].customer.phone").isEqualTo(dto.getCustomer().getPhone())
                 .jsonPath("$.content.[0].customer.email").isEqualTo(dto.getCustomer().getEmail())
                 .jsonPath("$.content.[0].customer.createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCustomer().getCreatedAt()))
-                .jsonPath("$.content.[0].orderId").isEqualTo(dto.getOrderId())
+                .jsonPath("$.content.[0].order.id").isEqualTo(dto.getOrder().getId())
                 .jsonPath("$.content.[0].cost").isEqualTo(dto.getCost())
                 .jsonPath("$.content.[0].createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCreatedAt()))
                 .jsonPath("$.content.[0].createdAt").isEqualTo(TestUtil.localDateTimeToJSONFormat(dto.getCreatedAt()))
@@ -501,6 +501,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
 
         verifyNoInteractions(mockService);
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -522,6 +523,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
 
         verifyNoInteractions(mockService);
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -551,6 +553,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                         code
                 );
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -571,6 +574,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .thenReturn(
                         dto
                 );
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        of(dto.getOrder())
+                );
 
         webTestClient.get()
                 .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_CODE + "/" + dto.getCode())
@@ -588,6 +595,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .fromModelToDto(
                         model
                 );
+        verify(mockOrderService, times(1))
+                .findById(
+                        dto.getOrder().getId()
+                );
     }
 
 
@@ -604,6 +615,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
 
         verifyNoInteractions(mockService);
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -623,6 +635,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
 
         verifyNoInteractions(mockService);
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -656,6 +669,8 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .isEqualTo(expectedResponse);
 
         verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -683,6 +698,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                         id
                 );
         verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
     }
 
 
@@ -703,6 +719,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .thenReturn(
                         dto
                 );
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        of(dto.getOrder())
+                );
 
         webTestClient.get()
                 .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ID + "/" + dto.getId())
@@ -719,6 +739,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
         verify(mockConverter, times(1))
                 .fromModelToDto(
                         model
+                );
+        verify(mockOrderService, times(1))
+                .findById(
+                        dto.getOrder().getId()
                 );
     }
 
@@ -767,7 +791,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 null,
                 "Invoice 1",
                 customer,
-                1,
+                buildOrderDto(),
                 10.1d
         );
     }

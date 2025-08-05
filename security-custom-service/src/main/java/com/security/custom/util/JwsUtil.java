@@ -274,7 +274,9 @@ public class JwsUtil {
             log.debug(
                     format("The was an error getting information included in JWS token: %s. %s",
                             jwsToken,
-                            getFormattedCurrentAndRootError(e)
+                            getFormattedCurrentAndRootError(
+                                    e
+                            )
                     ),
                     e
             );
@@ -401,7 +403,9 @@ public class JwsUtil {
             log.debug(
                     format("The was a problem trying to figure out the type of token: %s. %s",
                             token,
-                            getFormattedCurrentAndRootError(e)
+                            getFormattedCurrentAndRootError(
+                                    e
+                            )
                     ),
                     e
             );
@@ -617,7 +621,9 @@ public class JwsUtil {
         return new TokenException(
                 format("%s. %s",
                         errorMessageIfNoTokenException,
-                        getFormattedRootError(sourceException)
+                        getFormattedRootError(
+                                sourceException
+                        )
                 ),
                 sourceException
         );

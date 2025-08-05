@@ -319,7 +319,9 @@ public class JweUtil {
             log.debug(
                     format("The was an error getting information included in JWE token: %s. %s",
                             jweToken,
-                            getFormattedCurrentAndRootError(e)
+                            getFormattedCurrentAndRootError(
+                                    e
+                            )
                     ),
                     e
             );
@@ -458,7 +460,9 @@ public class JweUtil {
             log.debug(
                     format("The was a problem trying to figure out the type of token: %s. %s",
                             token,
-                            getFormattedCurrentAndRootError(e)
+                            getFormattedCurrentAndRootError(
+                                    e
+                            )
                     ),
                     e
             );
@@ -717,7 +721,9 @@ public class JweUtil {
         return new TokenException(
                 format("%s. %s",
                         errorMessageIfNoTokenException,
-                        getFormattedRootError(sourceException)
+                        getFormattedRootError(
+                                sourceException
+                        )
                 ),
                 sourceException
         );

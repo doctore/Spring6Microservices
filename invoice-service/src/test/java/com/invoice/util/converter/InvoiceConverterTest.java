@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.invoice.TestDataFactory.buildOrderDto;
 import static com.invoice.TestUtil.*;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
         classes = {
                 InvoiceConverterImpl.class,
+                InvoiceConverterImpl_.class,
                 CustomerConverterImpl.class
         }
 )
@@ -350,7 +352,7 @@ public class InvoiceConverterTest {
                 1,
                 "Invoice 1",
                 customer,
-                11,
+                buildOrderDto().getId(),
                 99d
         );
     }
@@ -368,7 +370,7 @@ public class InvoiceConverterTest {
                 1,
                 "Invoice 1",
                 customer,
-                11,
+                buildOrderDto(),
                 99d
         );
     }

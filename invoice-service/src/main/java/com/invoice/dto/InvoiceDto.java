@@ -74,7 +74,7 @@ public class InvoiceDto {
     CustomerDto customer;
 
     @Schema(
-            description = "Order identifier with the elements included in the invoice",
+            description = "Order with the elements included in the invoice",
             requiredMode = RequiredMode.REQUIRED
     )
     @NotNull(
@@ -83,7 +83,7 @@ public class InvoiceDto {
                     UpdateAction.class
             }
     )
-    private Integer orderId;
+    private OrderDto order;
 
     @Schema(
             description = "Total amount related with the invoice",

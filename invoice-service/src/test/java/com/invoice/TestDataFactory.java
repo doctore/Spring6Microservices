@@ -103,13 +103,13 @@ public class TestDataFactory {
     public static InvoiceDto buildInvoiceDto(final Integer id,
                                              final String code,
                                              final CustomerDto customer,
-                                             final Integer orderId,
+                                             final OrderDto order,
                                              final double cost) {
         return InvoiceDto.builder()
                 .id(id)
                 .code(code)
                 .customer(customer)
-                .orderId(orderId)
+                .order(order)
                 .cost(cost)
                 .createdAt(
                         LocalDateTime.now()
@@ -123,7 +123,7 @@ public class TestDataFactory {
                 1,
                 "Invoice 1",
                 buildExistingCustomer1InDatabase(),
-                1,
+                buildOrderDto().getId(),
                 10.1d
         );
     }

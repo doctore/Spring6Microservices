@@ -76,13 +76,24 @@ public class TestUtil {
                 samePropertyValuesAs(
                         expected,
                         "createdAt",
-                        "customer"
+                        "customer",
+                        "order"
                 )
         );
         compareCustomerDtos(
                 actual.getCustomer(),
                 expected.getCustomer()
         );
+        assertEquals(
+                expected.getOrder().getId(),
+                actual.getOrder().getId()
+        );
+        if (null != expected.getOrder().getCode() &&  null != actual.getOrder().getCode()) {
+            compareOrderDtos(
+                    expected.getOrder(),
+                    actual.getOrder()
+            );
+        }
     }
 
 
@@ -225,7 +236,7 @@ public class TestUtil {
         assertNotNull(invoice);
         assertNull(invoice.getId());
         assertNull(invoice.getCustomer());
-        assertNull(invoice.getOrderId());
+        assertNull(invoice.getOrder());
         assertNull(invoice.getCost());
         assertNull(invoice.getCreatedAt());
     }

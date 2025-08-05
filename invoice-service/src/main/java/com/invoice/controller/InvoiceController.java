@@ -324,6 +324,17 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
+                .map(dto -> {
+                        dto.setOrder(
+                                orderService.findById(
+                                        dto.getOrder().getId()
+                                )
+                                .orElse(
+                                        dto.getOrder()
+                                )
+                        );
+                        return dto;
+                })
                 .map(i ->
                         new ResponseEntity<>(
                                 i,
@@ -420,6 +431,17 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
+                .map(dto -> {
+                        dto.setOrder(
+                                orderService.findById(
+                                        dto.getOrder().getId()
+                                )
+                                .orElse(
+                                        dto.getOrder()
+                                )
+                            );
+                            return dto;
+                })
                 .map(i ->
                         new ResponseEntity<>(
                                 i,
