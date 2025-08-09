@@ -1,7 +1,5 @@
 # Spring6Microservices
 
-**--- UNDER CONSTRUCTION ---**
-
 - [Why was this project created?](#why-was-this-project-created)
 - [Elements included in this project](#elements-included-in-this-project)
   - [registry-server](#registry-server)
@@ -10,19 +8,24 @@
   - [security-oauth-service](#security-oauth-service)
   - [security-custom-service](#security-custom-service) 
   - [order-service](#order-service)
-  - [invoice-service](#invoice-service)
+  - [invoice-service](#invoice-service)  
   - [common-core](#common-core)
   - [common-spring](#common-spring)
+  - [grpc-api](#grpc-api)
   - [sql](#sql)
 - [Previous steps](#previous-steps)
 - [Security services](#security-services)
   - [security-oauth-service endpoints](#security-oauth-service-endpoints) 
   - [security-custom-service endpoints](#security-custom-service-endpoints)
 - [Rest API documentation](#rest-api-documentation)
+  - [Endpoint definitions](#endpoint-definitions)
+- [gRPC communication](#grpc-communication)
+  - [Security in gRPC](#security-in-grpc)
+  - [Request identifier in gRPC](#request-identifier-grpc)
+  - [gRPC example request](#grpc-example-request) 
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
   - [security-custom-service native](#security-custom-service-native)
-- [Endpoint definitions](#endpoint-definitions)
 
 
 
@@ -221,6 +224,7 @@ of a small one on which I am using the following technologies:
 * **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
 * **[Spring OAuth 2.0 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)** to handle the security through the microservice [security-oauth-service](#security-oauth-service).
 * **[MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)** a traditional Spring MVC Rest API to manage the included requests.
+* **[gRPC](https://grpc.io/docs/what-is-grpc/introduction/)** server, more information in [gRPC communication](#grpc-communication).
 
 In this microservice, the layer's division is:
 
@@ -264,6 +268,7 @@ the following technologies:
 * **[Lombok](https://projectlombok.org/features)** to reduce the code development in entities and DTOs.
 * **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
 * **[Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)** creating a reactive REST Api to manage the authentication/authorization requests.
+* **[gRPC](https://grpc.io/docs/what-is-grpc/introduction/)** client, more information in [gRPC communication](#grpc-communication).
 
 In this microservice, the layer's division is:
 
@@ -357,6 +362,24 @@ New validators:
 Common DTOs to send/receive authentication, authorization data and/or handle errors invoking endpoints:
 
 * [Common DTOs](https://github.com/doctore/Spring6Microservices/tree/main/common-spring/src/main/java/com/spring6microservices/common/spring/dto)
+<br><br>
+
+
+### grpc-api
+
+Common functionality used by developed gRPC server and client. This one contains:
+
+* [order.proto](https://github.com/doctore/Spring6Microservices/blob/main/grpc-api/src/main/resources/proto/order.proto) with the contract
+  which includes defining the gRPC service and the method request and response types using [protocol buffers](https://developers.google.com/protocol-buffers/docs/reference/java-generated)
+  specification.
+
+* [BasicCredential](https://github.com/doctore/Spring6Microservices/blob/main/grpc-api/src/main/java/com/spring6microservices/grpc/security/BasicCredential.java)
+  which carries the Basic Authentication that will be propagated from gRPC client to the server in the request metadata with the `Authorization` key.
+
+* [GrpcErrorHandlerUtil](https://github.com/doctore/Spring6Microservices/blob/main/grpc-api/src/main/java/com/spring6microservices/grpc/util/GrpcErrorHandlerUtil.java)
+  helper class with several methods to manage errors both on gRPC client and server side.
+
+More information about how gRPC server and client uses it in [gRPC communication](#grpc-communication).
 <br><br>
 
 
@@ -591,6 +614,8 @@ The user must complete any of the provided login flows to resubmit new requests.
 
 The following microservices have a well-documented Rest API:
 
+* [invoice-service](#invoice-service)
+* [order-service](#order-service)
 * [security-custom-service](#security-custom-service)
 * [security-oauth-service](#security-oauth-service)
 
@@ -603,9 +628,94 @@ we will be able to choose between all existing microservices.
 
 Using **dev** profile, the url to access them is `http://localhost:5555/swagger-ui/index.html`
 
+![Alt text](/documentation/invoice-service/SwaggerDocumentation.png?raw=true "Invoice Service Swagger documentation")
+<br><br>
+![Alt text](/documentation/order-service/SwaggerDocumentation.png?raw=true "Order Service Swagger documentation")
+<br><br>
 ![Alt text](/documentation/security-custom-service/SwaggerDocumentation.png?raw=true "Security Custom Service Swagger documentation")
 <br><br>
 ![Alt text](/documentation/security-oauth-service/SwaggerDocumentation.png?raw=true "Security Oauth Service Swagger documentation")
+<br><br>
+
+
+### Endpoint definitions
+
+Configured to use the application [Bruno](https://www.usebruno.com/), several collections were created to use the provided endpoints. You can them [here](https://github.com/doctore/Spring6Microservices/tree/main/documentation/BrunoCollections).
+<br><br>
+
+
+
+## gRPC communication
+
+Besides the REST API developed in:
+
+* [order-service](#order-service)
+* [invoice-service](#invoice-service)
+
+In this project has been added a [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) communication channel between:
+
+* **gRPC server:** in [order-service](https://github.com/doctore/Spring6Microservices/tree/main/order-service/src/main/java/com/order/grpc)
+* **gRPC client:** in [invoice-service](https://github.com/doctore/Spring6Microservices/tree/main/invoice-service/src/main/java/com/invoice/grpc)
+
+Both use the same approach to run server and client instances:
+
+* The instance definition:
+  - [Server instance](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/grpc/server/GrpcServer.java)
+  - [Client instance](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/grpc/client/GrpcClient.java)
+<br>
+
+* The Spring functionality used to run it:
+  - [Server runner](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/grpc/server/GrpcServerRunner.java)
+  - [Client runner](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/grpc/client/GrpcClientRunner.java)
+<br>
+
+
+### Security in gRPC
+
+The internal communication between a microservice and its related security server, that is:
+
+* [order-service](#order-service) => [security-oauth-service](#security-oauth-service)
+* [invoice-service](#invoice-service) => [security-custom-service](#security-custom-service)
+
+Uses [Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) to include the required credentials:
+
+* [order-service](#order-service) in the class [CustomAuthoritiesOpaqueTokenIntrospector](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/configuration/security/oauth/CustomAuthoritiesOpaqueTokenIntrospector.java)
+* [invoice-service](#invoice-service) in the class [CustomAuthenticationManager](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/configuration/security/CustomAuthenticationManager.java)
+
+In the current gRPC development I have followed the same approach:
+
+* In the **gRPC client** creating a new [BasicCredential](https://github.com/doctore/Spring6Microservices/blob/main/grpc-api/src/main/java/com/spring6microservices/grpc/security/BasicCredential.java)
+instance and adding it in the `Authorization` header sent to the server, using the method `buildCallCredentials` of the class [GrpcClient](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/grpc/client/GrpcClient.java).
+
+* In the **gRPC server**, the interceptor [AuthenticationInterceptor](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/grpc/interceptor/AuthenticationInterceptor.java)
+manages required verifications.
+<br><br>
+
+
+### Request identifier in gRPC
+
+This project uses [Spring tracing](https://docs.spring.io/spring-boot/reference/actuator/tracing.html) through [Micrometer tracing](https://docs.micrometer.io/tracing/reference/) for distributed tracing,
+to simulate the same behaviour two interceptors have been defined:
+
+* At **gRPC server** with [RequestIdInterceptor](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/grpc/interceptor/RequestIdInterceptor.java)
+* At **gRPC client** with [RequestIdInterceptor](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/grpc/interceptor/RequestIdInterceptor.java)
+<br><br>
+
+
+### gRPC example request
+
+Everytime [invoice-service](#invoice-service) returns an invoice details searched by its identifier or code, will send a request to [order-service](#order-service) using a [gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
+communication channel to get its order and order lines data. 
+
+The communication diagram including also the invocation of [security-oauth-service](#security-oauth-service) is the following:
+
+![Alt text](/documentation/GrpcCommunicationDiagram.png?raw=true "gRPC Communication diagram")
+<br>
+
+So, as I explained you in [security-custom-service endpoints](#security-custom-service-endpoints), once you have obtained the required JWT access token, you can use it to invoke the web service that uses the developed
+gRPC channel:
+
+![Alt text](/documentation/invoice-service/WebServiceWithGRPC.png?raw=true "Example of web service using gRPC channel")
 <br><br>
 
 
@@ -772,10 +882,3 @@ you will be able to notice an important improvement in the performance:
 * **native:** less than 3 seconds.
 
 ![Alt text](/documentation/security-custom-service/NativeProfile.png?raw=true "Native run")
-<br><br>
-
-
-
-## Endpoint definitions
-
-Configured to use the application [Bruno](https://www.usebruno.com/), several collections were created to use the provided endpoints. You can them [here](https://github.com/doctore/Spring6Microservices/tree/main/documentation/BrunoCollections).
