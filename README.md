@@ -21,7 +21,7 @@
   - [Endpoint definitions](#endpoint-definitions)
 - [gRPC communication](#grpc-communication)
   - [Security in gRPC](#security-in-grpc)
-  - [Request identifier in gRPC](#request-identifier-grpc)
+  - [Request identifier in gRPC](#request-identifier-in-grpc)
   - [gRPC example request](#grpc-example-request) 
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
