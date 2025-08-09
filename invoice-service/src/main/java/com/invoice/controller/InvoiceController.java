@@ -456,4 +456,111 @@ public class InvoiceController {
         );
     }
 
+
+    /**
+     * Returns an existing {@link InvoiceDto} using provided {@link Invoice#getOrderId()}.
+     *
+     * @param orderId
+     *    {@link Invoice#getOrderId()} to search
+     *
+     * @return {@link HttpStatus#OK} and the {@link InvoiceDto} that matches with {@code orderId},
+     *         {@link HttpStatus#NOT_FOUND} otherwise
+     */
+    @Operation(
+            summary = "Returns the invoice that matches with provided order's identifier",
+            description = "Returns am invoice (only allowed for users with permission: " + Constants.PERMISSIONS.GET_INVOICE
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "There is am invoice with the given order's identifier",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = InvoiceDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "There was a problem in the given request, the given parameters have not passed the required validations",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "The user has not authorization to execute this request or provided authorization has expired",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "There is no an invoice matching with provided information"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "There was an internal problem in the server",
+                            content = @Content(
+                                    mediaType = APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                            implementation = ErrorResponseDto.class
+                                    )
+                            )
+                    )
+            }
+    )
+    @GetMapping(
+            RestRoutes.INVOICE.BY_ORDERID + "/{orderId}"
+    )
+    @Transactional(
+            readOnly = true
+    )
+    @GetInvoicePermission
+    public Mono<ResponseEntity<InvoiceDto>> findByOrderId(@PathVariable @Positive final Integer orderId) {
+        log.info(
+                format("Searching the invoice with order's identifier: %s",
+                        orderId
+                )
+        );
+        return Mono.just(
+                service.findByOrderId(
+                                orderId
+                )
+                .map(
+                        converter::fromModelToDto
+                )
+                .map(dto -> {
+                    dto.setOrder(
+                            orderService.findById(
+                                    dto.getOrder().getId()
+                                    )
+                                    .orElse(
+                                            dto.getOrder()
+                                    )
+                            );
+                            return dto;
+                })
+                .map(i ->
+                        new ResponseEntity<>(
+                                i,
+                                OK
+                        )
+                )
+                .orElseGet(() ->
+                        new ResponseEntity<>(
+                                NOT_FOUND
+                        )
+                )
+        );
+    }
+
 }

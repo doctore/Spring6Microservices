@@ -25,6 +25,7 @@ CREATE TABLE main.invoice(
 );
 
 CREATE UNIQUE INDEX invoice_code_uindex ON main.invoice(code);
+CREATE UNIQUE INDEX invoice_orderid_uindex ON main.invoice(order_id);
 
 
 ------------------------------------------------------------------------------------------------------------------------

@@ -747,6 +747,152 @@ public class InvoiceControllerTest extends BaseControllerTest {
     }
 
 
+    @Test
+    @DisplayName("findByOrderId: when no logged user is given then unauthorized Http code is returned")
+    public void findByOrderId_whenNoLoggedUserIsGiven_thenUnauthorizedHttpCodeIsReturned() {
+        int id = 1;
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isUnauthorized();
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
+    )
+    @DisplayName("findByOrderId: when no valid authority is given then forbidden Http code is returned")
+    public void findByOrderId_whenNotValidAuthorityIsGiven_thenForbiddenHttpCodeIsReturned() {
+        int id = 1;
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + id)
+                .exchange()
+                .expectStatus()
+                .isForbidden();
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
+    }
+
+
+    static Stream<Arguments> findByOrderId_invalidParametersTestCases() {
+        ErrorResponseDto responseInvalidOrderId = new ErrorResponseDto(
+                VALIDATION,
+                List.of("orderId: must be greater than 0")
+        );
+        return Stream.of(
+                //@formatter:off
+                //            orderId,   expectedResponse
+                Arguments.of( -1,        responseInvalidOrderId ),
+                Arguments.of( 0,         responseInvalidOrderId )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @MethodSource("findByOrderId_invalidParametersTestCases")
+    @DisplayName("findByOrderId: when given parameters do not verify validations then bad request error is returned with validation errors")
+    public void findByOrderId_whenGivenParametersDoNotVerifyValidations_thenBadRequestHttpCodeAndValidationErrorsAreReturned(Integer orderId,
+                                                                                                                             ErrorResponseDto expectedResponse) {
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + orderId)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ErrorResponseDto.class)
+                .isEqualTo(expectedResponse);
+
+        verifyNoInteractions(mockService);
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findByOrderId: when based on provided parameters the service returns empty then Http code Not Found is returned")
+    public void findByOrderId_whenBasedOnProvidedParametersTheServiceReturnsEmpty_thenHttpCodeNotFoundIsReturned() {
+        Integer orderId = 1;
+
+        when(mockService.findByOrderId(orderId))
+                .thenReturn(
+                        empty()
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + orderId)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+
+        verify(mockService, times(1))
+                .findByOrderId(
+                        orderId
+                );
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockOrderService);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.GET_INVOICE }
+    )
+    @DisplayName("findByOrderId: when based on provided parameters the service returns a model then Http code Ok with the found Dto is returned")
+    public void findByOrderId_whenBasedOnProvidedParametersTheServiceReturnsTrue_thenHttpCodeOkWithTheFoundDtoIsReturned() {
+        InvoiceDto dto = buildInvoiceDto();
+        Invoice model = buildInvoice();
+
+        when(mockService.findByOrderId(dto.getOrder().getId()))
+                .thenReturn(
+                        of(model)
+                );
+        when(mockConverter.fromModelToDto(model))
+                .thenReturn(
+                        dto
+                );
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        of(dto.getOrder())
+                );
+
+        webTestClient.get()
+                .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + dto.getOrder().getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody(InvoiceDto.class)
+                .isEqualTo(dto);
+
+        verify(mockService, times(1))
+                .findByOrderId(
+                        dto.getOrder().getId()
+                );
+        verify(mockConverter, times(1))
+                .fromModelToDto(
+                        model
+                );
+        verify(mockOrderService, times(1))
+                .findById(
+                        dto.getOrder().getId()
+                );
+    }
+
+
+
     private static Invoice buildInvoice() {
         Invoice model = buildNewInvoice();
         model.setId(1);

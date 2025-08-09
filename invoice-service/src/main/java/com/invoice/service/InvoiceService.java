@@ -96,6 +96,22 @@ public class InvoiceService {
 
 
     /**
+     *    Returns an {@link Optional} with the {@link Invoice} if there is one which {@link Invoice#getOrderId()}
+     * matches with {@code id}, {@link Optional#empty()} otherwise.
+     *
+     * @param orderId
+     *    {@link Invoice#getOrderId()} to find
+     *
+     * @return {@link Optional} with the {@link Invoice} which {@code orderId} matches with the given one.
+     *         {@link Optional#empty()} otherwise
+     */
+    public Optional<Invoice> findByOrderId(final Integer orderId) {
+        return ofNullable(orderId)
+                .flatMap(repository::findByOrderId);
+    }
+
+
+    /**
      * Persist the information included in the given {@link Invoice}.
      *
      * @param invoice

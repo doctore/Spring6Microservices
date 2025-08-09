@@ -196,4 +196,38 @@ public class InvoiceRepositoryTest {
         }
     }
 
+
+    static Stream<Arguments> findByOrderIdTestCases() {
+        Invoice invoice = buildExistingInvoice1InDatabase();
+        return Stream.of(
+                //@formatter:off
+                //            orderId,                expectedResult
+                Arguments.of( null,                   empty() ),
+                Arguments.of( -12,                    empty() ),
+                Arguments.of( invoice.getOrderId(),   of(invoice) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByOrderIdTestCases")
+    @DisplayName("findByOrderId: test cases")
+    public void findByOrderId_testCases(Integer orderId,
+                                        Optional<Invoice> expectedResult) {
+        Optional<Invoice> result = repository.findByOrderId(
+                orderId
+        );
+        assertNotNull(result);
+        assertEquals(
+                expectedResult.isEmpty(),
+                result.isEmpty()
+        );
+        expectedResult.ifPresent(
+                invoice ->
+                        compareInvoices(
+                                result.get(),
+                                invoice
+                        )
+        );
+    }
+
 }

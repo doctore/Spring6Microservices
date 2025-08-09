@@ -201,4 +201,17 @@ public interface InvoiceRepository extends ExtendedJpaRepository<Invoice, Intege
         return query.getResultList();
     }
 
+
+    /**
+     *    Returns an {@link Optional} with the {@link Invoice} if there is one which {@link Invoice#getOrderId()}
+     * matches with {@code orderId}, {@link Optional#empty()} otherwise.
+     *
+     * @param orderId
+     *    {@link Invoice#getOrderId()} to find
+     *
+     * @return {@link Optional} with the {@link Invoice} which {@code orderId} matches with the given one.
+     *         {@link Optional#empty()} otherwise
+     */
+    Optional<Invoice> findByOrderId(final Integer orderId);
+
 }

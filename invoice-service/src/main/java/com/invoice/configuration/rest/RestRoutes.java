@@ -12,6 +12,7 @@ public final class RestRoutes {
         public static final String FIND_ALL = "/all";
         public static final String BY_CODE = "/byCode";
         public static final String BY_ID = "/byId";
+        public static final String BY_ORDERID = "/byOrderId";
     }
 
     public static final class CUSTOMER {

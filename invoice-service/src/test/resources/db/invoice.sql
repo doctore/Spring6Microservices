@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS main.invoice(
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS invoice_code_uindex ON main.invoice(code);
+CREATE UNIQUE INDEX IF NOT EXISTS invoice_orderid_uindex ON main.invoice(order_id);
 
 
 ---------------------

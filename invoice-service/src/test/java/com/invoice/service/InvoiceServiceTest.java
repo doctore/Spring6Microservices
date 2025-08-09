@@ -234,6 +234,53 @@ public class InvoiceServiceTest {
     }
 
 
+    static Stream<Arguments> findByOrderIdTestCases() {
+        Invoice invoice = buildInvoice();
+        return Stream.of(
+                //@formatter:off
+                //            id,                repositoryResult,   expectedResult
+                Arguments.of( null,              empty(),            empty() ),
+                Arguments.of( 21,                empty(),            empty() ),
+                Arguments.of( invoice.getId(),   of(invoice),        of(invoice) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("findByOrderIdTestCases")
+    @DisplayName("findByOrderId: test cases")
+    public void findByOrderId_testCases(Integer orderId,
+                                        Optional<Invoice> repositoryResult,
+                                        Optional<Invoice> expectedResult) {
+        when(mockRepository.findByOrderId(orderId))
+                .thenReturn(
+                        repositoryResult
+                );
+
+        Optional<Invoice> result = service.findByOrderId(
+                orderId
+        );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareInvoices(
+                    expectedResult.get(),
+                    result.get()
+            );
+            verify(mockRepository, times(1))
+                    .findByOrderId(
+                            orderId
+                    );
+        }
+    }
+
+
     static Stream<Arguments> saveTestCases() {
         Invoice invoice = buildInvoice();
         return Stream.of(

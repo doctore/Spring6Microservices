@@ -6,6 +6,7 @@ import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.converter.BaseConverter;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -17,7 +18,9 @@ import static java.util.Optional.ofNullable;
 /**
  * Utility class to convert from {@link Invoice} to {@link InvoiceDto} and vice versa.
  */
-@Mapper
+@Mapper(
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 @DecoratedWith(
         InvoiceConverterDecorator.class
 )
