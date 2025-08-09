@@ -13,6 +13,7 @@
   - [common-spring](#common-spring)
   - [grpc-api](#grpc-api)
   - [sql](#sql)
+  - [Communication diagram](#communication-diagram)
 - [Previous steps](#previous-steps)
 - [Security services](#security-services)
   - [security-oauth-service endpoints](#security-oauth-service-endpoints) 
@@ -389,6 +390,14 @@ With SQL files included in the database, just to expose the initial steps to sta
 
 * [changelog](https://github.com/doctore/Spring6Microservices/tree/main/sql/changelog) contains all the SQL archives required by the microservices that
 use [Flyway](https://www.red-gate.com/products/flyway/) to manage their changes in database.
+<br><br>
+
+
+### Communication diagram
+
+In the next picture, you will see a communication diagram of all microservices described above:
+
+![Alt text](/documentation/CommunitationDiagram.png?raw=true "Communication diagram")
 <br><br>
 
 
