@@ -9,8 +9,8 @@ public final class RestRoutes {
 
     public static final class ORDER {
         public static final String ROOT = RestRoutes.ROOT;
-        public static final String BY_CODE = "/byCode";
-        public static final String BY_ID = "/byId";
+        public static final String BY_CODE = "/code";
+        public static final String BY_ID = "/id";
     }
 
 }
