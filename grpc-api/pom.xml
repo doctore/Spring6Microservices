@@ -14,7 +14,7 @@
     <properties>
         <java.version>21</java.version>
         <javax-annotation.version>1.3.2</javax-annotation.version>
-        <junit.version>5.13.1</junit.version>
+        <junit.version>5.13.4</junit.version>
         <lombok.version>1.18.38</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -22,8 +22,8 @@
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
 
         <!-- gRPC -->
-        <google-protobuf-protoc.version>3.25.3</google-protobuf-protoc.version>
-        <grpc.version>1.73.0</grpc.version>
+        <google-protobuf-protoc.version>3.25.8</google-protobuf-protoc.version>
+        <grpc.version>1.74.0</grpc.version>
         <maven-protobuf-plugin.version>0.6.1</maven-protobuf-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
     </properties>
