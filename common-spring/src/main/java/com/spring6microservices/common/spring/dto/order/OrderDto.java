@@ -1,7 +1,9 @@
-package com.invoice.dto;
+package com.spring6microservices.common.spring.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.invoice.configuration.Constants;
+import com.spring6microservices.common.spring.configuration.Constants;
+import com.spring6microservices.common.spring.validator.group.CreateAction;
+import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -32,17 +34,30 @@ public class OrderDto {
             description = "Internal unique identifier",
             requiredMode = RequiredMode.AUTO
     )
-    @NotNull
-    private int id;
+    @NotNull(
+            groups = {
+                    UpdateAction.class
+            }
+    )
+    private Integer id;
 
     @Schema(
             description = "Unique identifier of the order",
             requiredMode = RequiredMode.REQUIRED
     )
-    @NotNull
+    @NotNull(
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
+    )
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String code;
 
@@ -53,7 +68,11 @@ public class OrderDto {
     @NotNull
     @Size(
             min = 1,
-            max = 64
+            max = 64,
+            groups = {
+                    CreateAction.class,
+                    UpdateAction.class
+            }
     )
     private String customerCode;
 
@@ -74,7 +93,7 @@ public class OrderDto {
     List<OrderLineDto> orderLines;
 
 
-    public void addOrderLine(OrderLineDto orderLineDto) {
+    public void addOrderLine(final OrderLineDto orderLineDto) {
         if (null == this.orderLines) {
             this.orderLines = new ArrayList<>();
         }

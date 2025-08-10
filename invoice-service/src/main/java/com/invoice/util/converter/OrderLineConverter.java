@@ -1,7 +1,7 @@
 package com.invoice.util.converter;
 
-import com.invoice.dto.OrderLineDto;
 import com.spring6microservices.common.core.converter.BaseFromModelToDtoConverter;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

@@ -5,8 +5,6 @@ import com.invoice.TestDataFactory;
 import com.invoice.TestUtil;
 import com.invoice.configuration.Constants;
 import com.invoice.configuration.rest.RestRoutes;
-import com.invoice.dto.CustomerDto;
-import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
@@ -14,6 +12,8 @@ import com.invoice.service.OrderService;
 import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.dto.invoice.CustomerDto;
+import com.spring6microservices.common.spring.dto.invoice.InvoiceDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -864,10 +864,6 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .thenReturn(
                         dto
                 );
-        when(mockOrderService.findById(dto.getOrder().getId()))
-                .thenReturn(
-                        of(dto.getOrder())
-                );
 
         webTestClient.get()
                 .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + dto.getOrder().getId())
@@ -885,10 +881,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .fromModelToDto(
                         model
                 );
-        verify(mockOrderService, times(1))
-                .findById(
-                        dto.getOrder().getId()
-                );
+        verifyNoInteractions(mockOrderService);
     }
 
 

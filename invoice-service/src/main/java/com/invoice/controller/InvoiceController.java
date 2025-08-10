@@ -4,12 +4,12 @@ import com.invoice.configuration.Constants;
 import com.invoice.configuration.rest.RestRoutes;
 import com.invoice.configuration.security.annotation.CreateInvoicePermission;
 import com.invoice.configuration.security.annotation.GetInvoicePermission;
-import com.invoice.dto.InvoiceDto;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
 import com.invoice.service.OrderService;
 import com.invoice.util.converter.InvoiceConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.dto.invoice.InvoiceDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.validator.group.CreateAction;
 import io.swagger.v3.oas.annotations.Operation;
@@ -538,17 +538,6 @@ public class InvoiceController {
                 .map(
                         converter::fromModelToDto
                 )
-                .map(dto -> {
-                    dto.setOrder(
-                            orderService.findById(
-                                    dto.getOrder().getId()
-                                    )
-                                    .orElse(
-                                            dto.getOrder()
-                                    )
-                            );
-                            return dto;
-                })
                 .map(i ->
                         new ResponseEntity<>(
                                 i,

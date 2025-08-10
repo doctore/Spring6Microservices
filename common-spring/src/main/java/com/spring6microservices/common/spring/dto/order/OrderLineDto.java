@@ -1,4 +1,4 @@
-package com.order.dto;
+package com.spring6microservices.common.spring.dto.order;
 
 import com.spring6microservices.common.spring.validator.group.CreateAction;
 import com.spring6microservices.common.spring.validator.group.UpdateAction;

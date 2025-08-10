@@ -1,12 +1,12 @@
 package com.invoice;
 
-import com.invoice.dto.CustomerDto;
-import com.invoice.dto.InvoiceDto;
-import com.invoice.dto.OrderDto;
-import com.invoice.dto.OrderLineDto;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.util.CollectionUtil;
+import com.spring6microservices.common.spring.dto.invoice.CustomerDto;
+import com.spring6microservices.common.spring.dto.invoice.InvoiceDto;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;

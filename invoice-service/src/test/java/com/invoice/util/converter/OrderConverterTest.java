@@ -1,6 +1,6 @@
 package com.invoice.util.converter;
 
-import com.invoice.dto.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

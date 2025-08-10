@@ -1,10 +1,10 @@
 package com.invoice.util.converter;
 
-import com.invoice.configuration.Constants;
-import com.invoice.dto.OrderDto;
 import com.spring6microservices.common.core.converter.BaseFromModelToDtoConverter;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import com.spring6microservices.common.core.util.DateTimeUtil;
+import com.spring6microservices.common.spring.configuration.Constants;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import org.mapstruct.DecoratedWith;

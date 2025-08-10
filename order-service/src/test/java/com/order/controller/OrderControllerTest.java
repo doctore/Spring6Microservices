@@ -2,14 +2,14 @@ package com.order.controller;
 
 import com.order.configuration.Constants;
 import com.order.configuration.rest.RestRoutes;
-import com.order.dto.OrderDto;
-import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
 import com.order.service.OrderService;
 import com.order.util.converter.OrderConverter;
 import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

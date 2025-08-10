@@ -1,9 +1,9 @@
 package com.order.util.converter;
 
-import com.order.dto.OrderDto;
 import com.order.model.Order;
 import com.spring6microservices.common.core.converter.BaseConverter;
 import com.spring6microservices.common.core.util.CollectionUtil;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

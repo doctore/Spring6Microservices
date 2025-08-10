@@ -1,9 +1,9 @@
 package com.order.util.converter;
 
-import com.order.dto.OrderDto;
-import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

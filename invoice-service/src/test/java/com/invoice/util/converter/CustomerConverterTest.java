@@ -1,8 +1,8 @@
 package com.invoice.util.converter;
 
 import com.invoice.TestDataFactory;
-import com.invoice.dto.CustomerDto;
 import com.invoice.model.Customer;
+import com.spring6microservices.common.spring.dto.invoice.CustomerDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

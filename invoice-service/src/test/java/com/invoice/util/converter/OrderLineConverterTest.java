@@ -1,6 +1,6 @@
 package com.invoice.util.converter;
 
-import com.invoice.dto.OrderLineDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -97,7 +97,7 @@ public class OrderLineConverterTest {
                 modelToConvert
         );
 
-        if (0 == expectedResult.getId()) {
+        if (null == expectedResult.getId()) {
             verifyEmptyOrderLineDto(
                     result
             );
@@ -155,7 +155,7 @@ public class OrderLineConverterTest {
         assertTrue(
                 expectedResult.isPresent()
         );
-        if (0 == expectedResult.get().getId()) {
+        if (null == expectedResult.get().getId()) {
             verifyEmptyOrderLineDto(
                     result.get()
             );

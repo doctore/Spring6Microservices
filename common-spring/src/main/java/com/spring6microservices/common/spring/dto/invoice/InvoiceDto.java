@@ -1,7 +1,8 @@
-package com.invoice.dto;
+package com.spring6microservices.common.spring.dto.invoice;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.invoice.configuration.Constants;
+import com.spring6microservices.common.spring.configuration.Constants;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import com.spring6microservices.common.spring.validator.group.CreateAction;
 import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.media.Schema;

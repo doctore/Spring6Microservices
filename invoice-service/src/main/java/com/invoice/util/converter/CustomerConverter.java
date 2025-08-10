@@ -1,8 +1,8 @@
 package com.invoice.util.converter;
 
-import com.invoice.dto.CustomerDto;
 import com.invoice.model.Customer;
 import com.spring6microservices.common.core.converter.BaseConverter;
+import com.spring6microservices.common.spring.dto.invoice.CustomerDto;
 import org.mapstruct.Mapper;
 
 /**

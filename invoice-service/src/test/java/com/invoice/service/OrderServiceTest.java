@@ -1,8 +1,8 @@
 package com.invoice.service;
 
-import com.invoice.dto.OrderDto;
 import com.invoice.grpc.service.OrderServiceGrpcImpl;
 import com.invoice.util.converter.OrderConverter;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.security.oauth.configuration;
 
 /**
- * Global values used in different part of the application
+ * Global values used in the application
  */
 public final class Constants {
 

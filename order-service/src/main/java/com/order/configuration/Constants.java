@@ -1,13 +1,9 @@
 package com.order.configuration;
 
 /**
- * Global values used in different part of the application
+ * Global values used the application
  */
 public final class Constants {
-
-    // Format of datetime values
-    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-
 
     // Allowed permissions managed by the microservice
     public static final class PERMISSIONS {

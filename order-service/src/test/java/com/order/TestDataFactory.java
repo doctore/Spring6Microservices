@@ -1,9 +1,9 @@
 package com.order;
 
-import com.order.dto.OrderDto;
-import com.order.dto.OrderLineDto;
 import com.order.model.Order;
 import com.order.model.OrderLine;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import io.grpc.stub.StreamObserver;

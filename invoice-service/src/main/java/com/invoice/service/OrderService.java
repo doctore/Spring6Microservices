@@ -1,8 +1,8 @@
 package com.invoice.service;
 
-import com.invoice.dto.OrderDto;
 import com.invoice.grpc.service.OrderServiceGrpcImpl;
 import com.invoice.util.converter.OrderConverter;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

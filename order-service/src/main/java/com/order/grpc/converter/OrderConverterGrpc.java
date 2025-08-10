@@ -1,11 +1,11 @@
 package com.order.grpc.converter;
 
-import com.order.configuration.Constants;
 import com.order.model.Order;
 import com.order.model.OrderLine;
 import com.spring6microservices.common.core.converter.BaseFromModelToDtoConverter;
 import com.spring6microservices.common.core.util.CollectionUtil;
 import com.spring6microservices.common.core.util.DateTimeUtil;
+import com.spring6microservices.common.spring.configuration.Constants;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;

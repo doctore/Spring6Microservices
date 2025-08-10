@@ -1,9 +1,9 @@
 package com.invoice.util.converter;
 
-import com.invoice.dto.InvoiceDto;
-import com.invoice.dto.OrderDto;
 import com.invoice.model.Invoice;
 import com.spring6microservices.common.core.converter.BaseConverter;
+import com.spring6microservices.common.spring.dto.invoice.InvoiceDto;
+import com.spring6microservices.common.spring.dto.order.OrderDto;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
