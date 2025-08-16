@@ -864,6 +864,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .thenReturn(
                         dto
                 );
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        of(dto.getOrder())
+                );
 
         webTestClient.get()
                 .uri(RestRoutes.INVOICE.ROOT + RestRoutes.INVOICE.BY_ORDERID + "/" + dto.getOrder().getId())
@@ -881,7 +885,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .fromModelToDto(
                         model
                 );
-        verifyNoInteractions(mockOrderService);
+        verify(mockOrderService, times(1))
+                .findById(
+                        dto.getOrder().getId()
+                );
     }
 
 
