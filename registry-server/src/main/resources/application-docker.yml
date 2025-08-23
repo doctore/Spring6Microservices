@@ -1,12 +1,12 @@
 # Server configuration
 server:
-  port: 8761
+  port: ${SERVER_PORT:8761}
 
 
 # Service registration and discovery
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${SERVER_HOSTNAME:registry-server}
   client:
     # Do not cache registry information locally
     fetchRegistry: false
@@ -19,4 +19,4 @@ eureka:
     # when network hiccup has stopped the renewal request from making its way to Eureka
     enableSelfPreservation: false
     # Initial time to wait before server takes requests
-    waitTimeInMsWhenSyncEmpty: 1
+    waitTimeInMsWhenSyncEmpty: 5

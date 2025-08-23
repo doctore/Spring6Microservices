@@ -1,0 +1,223 @@
+services:
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: ./Dockerfile
+    container_name: config-server
+    depends_on:
+      registry-server:
+        condition: service_healthy
+    environment:
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      SERVER_PORT: 8888
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider config-server:8888/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 5
+    image: config-server:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8888:8888
+
+
+  gateway-server:
+    build:
+      context: ./gateway-server
+      dockerfile: ./Dockerfile
+    container_name: gateway-server
+    environment:
+      CONFIG_SERVER: http://config-server:8888
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      SERVER_PORT: 5555
+    depends_on:
+      config-server:
+        condition: service_healthy
+      registry-server:
+        condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider gateway-server:5555/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 5
+    image: gateway-server:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 5555:5555
+
+
+  invoice-service:
+    build:
+      context: ./invoice-service
+      dockerfile: ./Dockerfile
+    container_name: invoice-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      registry-server:
+        condition: service_healthy
+      security-custom-service:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER: http://config-server:8888
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/spring6
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      GRPC_SERVER_HOST: order-service
+      GRPC_SERVER_PORT: 8070
+      SECURITY_SERVER_CHECK: http://gateway-server:5555/security/custom/authorization/check_token
+      SERVER_PORT: 8183
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider invoice-service:8183/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 10
+    image: invoice-service:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8183:8183
+
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: ./Dockerfile
+    container_name: order-service
+    environment:
+      CONFIG_SERVER: http://config-server:8888
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/spring6
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      GRPC_SERVER_PORT: 8070
+      SECURITY_SERVER_CHECK: http://gateway-server:5555/security/oauth/introspect
+      SERVER_PORT: 8182
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      registry-server:
+        condition: service_healthy
+      security-oauth-service:
+        condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider order-service:8182/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 10
+    image: order-service:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8182:8182
+
+
+  registry-server:
+    build:
+      context: ./registry-server
+      dockerfile: ./Dockerfile
+    container_name: registry-server
+    environment:
+      SERVER_HOSTNAME: registry-server
+      SERVER_PORT: 8761
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider registry-server:8761/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 5
+    image: registry-server:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8761:8761
+
+
+  security-custom-service:
+    build:
+      context: ./security-custom-service
+      dockerfile: ./Dockerfile
+    container_name: security-custom-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      registry-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER: http://config-server:8888
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/spring6
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      SERVER_PORT: 8180
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider security-custom-service:8180/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 10
+    image: security-custom-service:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8180:8180
+
+
+  security-oauth-service:
+    build:
+      context: ./security-oauth-service
+      dockerfile: ./Dockerfile
+    container_name: security-oauth-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      registry-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER: http://config-server:8888
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/spring6
+      EUREKA_SERVER: http://registry-server:8761/eureka/
+      SERVER_PORT: 8181
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider security-oauth-service:8181/actuator/health || exit 1
+      interval: 12s
+      timeout: 6s
+      retries: 10
+    image: security-oauth-service:latest
+    networks:
+      - Spring6Microservices
+    ports:
+      - 8181:8181
+
+
+networks:
+  Spring6Microservices:
+    external: true
+    name: Spring6Microservices
+
+
+# ------------------------------------------------------------------------------------------
+# COMMANDS:
+#
+# 1. Create and start containers:
+#
+#      docker compose -f compose.yml up
+#
+#    1.1 If you want to create the Docker images use --build
+#
+#
+# 2. Stop and remove containers:
+#
+#      docker compose -f compose.yml down

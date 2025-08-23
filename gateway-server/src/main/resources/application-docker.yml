@@ -1,0 +1,9 @@
+# Server configuration
+server:
+  port: ${SERVER_PORT:5555}
+
+
+# Spring framework configuration
+spring:
+  config:
+    import: configserver:${CONFIG_SERVER:http://config-server:8888}

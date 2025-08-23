@@ -27,6 +27,9 @@
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
   - [security-custom-service native](#security-custom-service-native)
+- [Docker](#docker)
+    - [Docker compose](#docker-compose)
+    - [PostgreSQL configuration in localhost](#postgresql-configuration-in-localhost)
 
 
 
@@ -891,3 +894,65 @@ you will be able to notice an important improvement in the performance:
 * **native:** less than 3 seconds.
 
 ![Alt text](/documentation/security-custom-service/NativeProfile.png?raw=true "Native run")
+<br><br>
+
+
+
+## Docker
+
+In addition to launching all the microservices included in this project as *normal* Java applications locally, all of them have been [dockerized](https://www.docker.com/). Every one
+includes a `Dockerfile` inside with the required configuration and instructions to generate both Docker image and container. On the other hand, new application files with **docker**
+profile have been added to [Spring6Microservices_ConfigServerData](https://github.com/doctore/Spring6Microservices_ConfigServerData).
+
+There are 2 main types of `Dockerfile` based on the option to invoke `maven install` inside the Docker container, this is because some projects contain internal dependencies that
+have not been uploaded to a public repository like:
+
+* [common-core](#common-core)
+* [common-spring](#common-spring)
+* [grpc-api](#grpc-api)
+
+Projects with `maven install` in their `DockerFile` and which do not need to create the **jar** file previously:
+
+* [Registry server](https://github.com/doctore/Spring6Microservices/blob/main/registry-server/Dockerfile)
+* [Configuration server](https://github.com/doctore/Spring6Microservices/tree/main/config-server/Dockerfile)
+
+Projects that must create the **jar** file before creating the Docker image:
+
+* [Gateway server](https://github.com/doctore/Spring6Microservices/tree/main/gateway-server/Dockerfile)
+* [Invoice Service](https://github.com/doctore/Spring6Microservices/tree/main/invoice-service/Dockerfile)
+* [Order Service](https://github.com/doctore/Spring6Microservices/tree/main/order-service/Dockerfile)
+* [Security Custom Service](https://github.com/doctore/Spring6Microservices/tree/main/security-custom-service/Dockerfile)
+* [Security Oauth Service](https://github.com/doctore/Spring6Microservices/tree/main/security-oauth-service/Dockerfile)
+
+Once you have created all the Docker images on your local, you should see something similar to:
+
+![Alt text](/documentation/DockerImages.png?raw=true "Docker images")
+
+
+### Docker compose
+
+To manage the Docker containers in an easier way, a [Docker compose](https://docs.docker.com/compose/compose-file) file: [compose.yml](https://github.com/doctore/Spring6Microservices/tree/main/compose.yml)
+has been added. It includes the required commands to up and down the project's containers.
+
+
+### PostgreSQL configuration in localhost
+
+In this project, the PostgreSQL database has not been dockerized, feel free to do it if you prefer such option instead of using the local one. In this section, I will describe the
+required steps to allow the connections from Docker to the PostgreSQL database installed in a local computer, in my case, PostgreSQL 16 over Ubuntu (other database versions and/or
+OS should need similar ones).
+
+1. Go to the PostgreSQL's folder with configuration files (in my case `/etc/postgresql/16/main`)
+<br><br>
+2. Edit `postgresql.conf` to listen connections outside `localhost`:
+```
+listen_addresses = '*'
+```
+
+3. Edit `pg_hba.conf` to allow connections from Docker containers
+```
+# # IPv4 local connections:
+host    all             all             172.18.0.0/16           md5   # Docker
+host    all             all             172.21.0.0/16           md5   # Docker compose
+```
+
+4. Restart PostgreSQL service (in my case `service postgresql restart`).
