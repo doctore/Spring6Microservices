@@ -83,6 +83,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .expectStatus()
                 .isUnauthorized();
 
+        verifyNoInteractions(mockOrderService);
         verifyNoInteractions(mockConverter);
         verifyNoInteractions(mockService);
     }
@@ -106,6 +107,7 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .expectStatus()
                 .isForbidden();
 
+        verifyNoInteractions(mockOrderService);
         verifyNoInteractions(mockConverter);
         verifyNoInteractions(mockService);
     }
@@ -188,6 +190,35 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .expectBody(ErrorResponseDto.class)
                 .isEqualTo(expectedResponse);
 
+        verifyNoInteractions(mockOrderService);
+        verifyNoInteractions(mockConverter);
+        verifyNoInteractions(mockService);
+    }
+
+
+    @Test
+    @WithMockUser(
+            authorities = { Constants.PERMISSIONS.CREATE_INVOICE }
+    )
+    @DisplayName("create: when given parameters verifies validations but order service returns empty then Http code Unprocessable Entity is returned")
+    public void create_whenGivenParametersVerifiesValidationsButOrderServiceReturnsEmpty_thenHttpCodeUnprocessableEntityIsReturned() {
+        InvoiceDto dto = buildNewInvoiceDto();
+
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        empty()
+                );
+
+        webTestClient.post()
+                .uri(RestRoutes.INVOICE.ROOT)
+                .body(
+                        Mono.just(dto),
+                        InvoiceDto.class
+                )
+                .exchange()
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody().isEmpty();
+
         verifyNoInteractions(mockConverter);
         verifyNoInteractions(mockService);
     }
@@ -202,6 +233,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
         InvoiceDto dto = buildNewInvoiceDto();
         Invoice model = buildNewInvoice();
 
+        when(mockOrderService.findById(dto.getOrder().getId()))
+                .thenReturn(
+                        of(dto.getOrder())
+                );
         when(mockConverter.fromDtoToModel(dto))
                 .thenReturn(
                         model
@@ -221,6 +256,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody().isEmpty();
 
+        verify(mockOrderService, times(1))
+                .findById(
+                        dto.getOrder().getId()
+                );
         verify(mockConverter, times(1))
                 .fromDtoToModel(
                         dto
@@ -252,6 +291,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 afterDto.getId()
         );
 
+        when(mockOrderService.findById(beforeDto.getOrder().getId()))
+                .thenReturn(
+                        of(beforeDto.getOrder())
+                );
         when(mockConverter.fromDtoToModel(beforeDto))
                 .thenReturn(
                         beforeModel
@@ -277,6 +320,10 @@ public class InvoiceControllerTest extends BaseControllerTest {
                 .expectBody(InvoiceDto.class)
                 .isEqualTo(afterDto);
 
+        verify(mockOrderService, times(1))
+                .findById(
+                        beforeDto.getOrder().getId()
+                );
         verify(mockConverter, times(1))
                 .fromDtoToModel(
                         beforeDto

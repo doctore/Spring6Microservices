@@ -136,6 +136,18 @@ public class InvoiceController {
                         invoiceDto
                 )
         );
+        if (orderService.findById(invoiceDto.getOrder().getId()).isEmpty()) {
+            log.error(
+                    format("The order identifier: %s was not found",
+                            invoiceDto.getOrder().getId()
+                    )
+            );
+            return Mono.just(
+                    new ResponseEntity<>(
+                            UNPROCESSABLE_ENTITY
+                    )
+            );
+        }
         return Mono.just(
                 service.save(
                         converter.fromDtoToModel(

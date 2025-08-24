@@ -911,12 +911,12 @@ have not been uploaded to a public repository like:
 * [common-spring](#common-spring)
 * [grpc-api](#grpc-api)
 
-Projects with `maven install` in their `DockerFile` and which do not need to create the **jar** file previously:
+Projects with `maven install` in their `DockerFile` and do not need to create the **jar** file previously:
 
 * [Registry server](https://github.com/doctore/Spring6Microservices/blob/main/registry-server/Dockerfile)
 * [Configuration server](https://github.com/doctore/Spring6Microservices/tree/main/config-server/Dockerfile)
 
-Projects that must create the **jar** file before creating the Docker image:
+Projects that must create the **jar** file before building the Docker image:
 
 * [Gateway server](https://github.com/doctore/Spring6Microservices/tree/main/gateway-server/Dockerfile)
 * [Invoice Service](https://github.com/doctore/Spring6Microservices/tree/main/invoice-service/Dockerfile)
