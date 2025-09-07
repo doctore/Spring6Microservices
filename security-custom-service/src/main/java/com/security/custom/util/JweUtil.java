@@ -9,14 +9,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.crypto.DirectDecrypter;
-import com.nimbusds.jose.crypto.DirectEncrypter;
-import com.nimbusds.jose.crypto.ECDH1PUDecrypter;
-import com.nimbusds.jose.crypto.ECDH1PUEncrypter;
-import com.nimbusds.jose.crypto.RSADecrypter;
-import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jwt.EncryptedJWT;
@@ -591,39 +583,19 @@ public class JweUtil {
     private static JWEEncrypter getSuitableEncrypter(final TokenEncryptionAlgorithm encryptionAlgorithm,
                                                      final String encryptionSecret) {
         try {
-            return switch (encryptionAlgorithm) {
-                case DIR ->
-                        new DirectEncrypter(
-                                encryptionSecret.getBytes()
-                        );
-
-                case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
-                        new RSAEncrypter(
-                                RSAKey.parseFromPEMEncodedObjects(
-                                        encryptionSecret
-                                )
-                                .toRSAKey()
-                        );
-
-                case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
-                    ECKey key = ECKey.parseFromPEMEncodedObjects(
-                                        encryptionSecret
-                                )
-                                .toECKey();
-
-                    yield new ECDH1PUEncrypter(
-                            key.toECPrivateKey(),
-                            key.toECPublicKey()
+            return ofNullable(encryptionAlgorithm)
+                    .map(a ->
+                            a.getEncrypter(
+                                    encryptionSecret
+                            )
+                    )
+                    .orElseThrow(() ->
+                            new TokenException(
+                                    format("It was not possible to find a suitable encrypter for the encryption algorithm: %s",
+                                            ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null")
+                                    )
+                            )
                     );
-                }
-
-                case null, default ->
-                        throw new TokenException(
-                                format("It was not possible to find a suitable encrypter for the encryption algorithm: %s",
-                                        ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null")
-                                )
-                        );
-            };
 
         } catch (Exception e) {
             throw handleMultipleExceptions(
@@ -638,7 +610,7 @@ public class JweUtil {
 
     /**
      *    Returns the suitable {@link JWEDecrypter} taking into account the {@link TokenEncryptionAlgorithm} used to
-     * encrypt the given JWE token {@code jweObject}.
+     * decrypt the given JWE token {@code jweObject}.
      *
      * @param encryptedJWT
      *    {@link EncryptedJWT} with JWE token
@@ -657,39 +629,19 @@ public class JweUtil {
         ).orElse(null);
 
         try {
-            return switch (encryptionAlgorithm) {
-                case DIR ->
-                        new DirectDecrypter(
-                                encryptionSecret.getBytes()
-                        );
-
-                case RSA_OAEP_256, RSA_OAEP_384, RSA_OAEP_512 ->
-                        new RSADecrypter(
-                                RSAKey.parseFromPEMEncodedObjects(
-                                        encryptionSecret
-                                )
-                                .toRSAKey()
-                        );
-
-                case ECDH_1PU_A128KW, ECDH_1PU_A192KW, ECDH_1PU_A256KW -> {
-                    ECKey key = ECKey.parseFromPEMEncodedObjects(
-                                        encryptionSecret
-                                )
-                                .toECKey();
-
-                    yield new ECDH1PUDecrypter(
-                            key.toECPrivateKey(),
-                            key.toECPublicKey()
+            return ofNullable(encryptionAlgorithm)
+                    .map(a ->
+                            a.getDecrypter(
+                                    encryptionSecret
+                            )
+                    )
+                    .orElseThrow(() ->
+                            new TokenException(
+                                    format("It was not possible to find a suitable decrypter for the encryption algorithm: %s",
+                                            ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null")
+                                    )
+                            )
                     );
-                }
-
-                case null, default ->
-                        throw new TokenException(
-                                format("It was not possible to find a suitable decrypter for the encryption algorithm: %s",
-                                        ofNullable(encryptionAlgorithm).map(Enum::name).orElse("null")
-                                )
-                        );
-            };
 
         } catch (Exception e) {
             throw handleMultipleExceptions(

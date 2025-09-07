@@ -7,14 +7,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.crypto.ECDSAVerifier;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -500,35 +492,19 @@ public class JwsUtil {
     private static JWSSigner getSuitableSigner(final TokenSignatureAlgorithm signatureAlgorithm,
                                                final String signatureSecret) {
         try {
-            return switch (signatureAlgorithm) {
-                case HS256, HS384, HS512 ->
-                        new MACSigner(
-                                signatureSecret
-                        );
-
-                case RS256, RS384, RS512 ->
-                        new RSASSASigner(
-                                RSAKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                )
-                                .toRSAKey()
-                        );
-
-                case ES256, ES384, ES512 ->
-                        new ECDSASigner(
-                                ECKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                )
-                                .toECKey()
-                        );
-
-                case null, default ->
-                        throw new TokenException(
-                                format("It was not possible to find a suitable signer for the signature algorithm: %s",
-                                        ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
-                                )
-                        );
-            };
+            return ofNullable(signatureAlgorithm)
+                    .map(a ->
+                            a.getSigner(
+                                    signatureSecret
+                            )
+                    )
+                    .orElseThrow(() ->
+                            new TokenException(
+                                    format("It was not possible to find a suitable signer for the signature algorithm: %s",
+                                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                                    )
+                            )
+                    );
 
         } catch (Exception e) {
             throw handleMultipleExceptions(
@@ -562,34 +538,19 @@ public class JwsUtil {
         ).orElse(null);
 
         try {
-            return switch (signatureAlgorithm) {
-                case HS256, HS384, HS512 ->
-                        new MACVerifier(
-                                signatureSecret
-                        );
-
-                case RS256, RS384, RS512 ->
-                        new RSASSAVerifier(
-                                RSAKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                )
-                                .toRSAKey()
-                        );
-
-                case ES256, ES384, ES512 ->
-                        new ECDSAVerifier(
-                                ECKey.parseFromPEMEncodedObjects(
-                                        signatureSecret
-                                )
-                                .toECKey()
-                        );
-
-                case null, default -> throw new TokenException(
-                        format("It was not possible to find a suitable verifier for the signature algorithm: %s",
-                               ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
-                        )
-                );
-            };
+            return ofNullable(signatureAlgorithm)
+                    .map(a ->
+                            a.getVerifier(
+                                    signatureSecret
+                            )
+                    )
+                    .orElseThrow(() ->
+                            new TokenException(
+                                    format("It was not possible to find a suitable verifier for the signature algorithm: %s",
+                                            ofNullable(signatureAlgorithm).map(Enum::name).orElse("null")
+                                    )
+                            )
+                    );
 
         } catch (Exception e) {
             throw handleMultipleExceptions(

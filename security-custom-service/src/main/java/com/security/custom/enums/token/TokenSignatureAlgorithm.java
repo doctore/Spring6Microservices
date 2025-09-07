@@ -1,6 +1,13 @@
 package com.security.custom.enums.token;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.security.custom.exception.token.TokenException;
+import com.security.custom.interfaces.ITokenSignatureAlgorithm;
 import com.spring6microservices.common.core.util.EnumUtil;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
@@ -36,17 +43,323 @@ import java.util.Optional;
  * </ul>
  */
 @Getter
-public enum TokenSignatureAlgorithm {
+public enum TokenSignatureAlgorithm implements ITokenSignatureAlgorithm {
 
-    ES256(JWSAlgorithm.ES256),
-    ES384(JWSAlgorithm.ES384),
-    ES512(JWSAlgorithm.ES512),
-    HS256(JWSAlgorithm.HS256),
-    HS384(JWSAlgorithm.HS384),
-    HS512(JWSAlgorithm.HS512),
-    RS256(JWSAlgorithm.RS256),
-    RS384(JWSAlgorithm.RS384),
-    RS512(JWSAlgorithm.RS512);
+    ES256(JWSAlgorithm.ES256) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new ECDSASigner(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new ECDSAVerifier(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    ES384(JWSAlgorithm.ES384) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new ECDSASigner(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new ECDSAVerifier(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    ES512(JWSAlgorithm.ES512) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new ECDSASigner(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new ECDSAVerifier(
+                        ECKey.parseFromPEMEncodedObjects(
+                                        signatureSecret
+                                )
+                                .toECKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    HS256(JWSAlgorithm.HS256) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new MACSigner(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new MACVerifier(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    HS384(JWSAlgorithm.HS384) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new MACSigner(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new MACVerifier(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    HS512(JWSAlgorithm.HS512) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new MACSigner(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new MACVerifier(
+                        signatureSecret
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RS256(JWSAlgorithm.RS256) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new RSASSASigner(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new RSASSAVerifier(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RS384(JWSAlgorithm.RS384) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new RSASSASigner(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new RSASSAVerifier(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RS512(JWSAlgorithm.RS512) {
+
+        @Override
+        public JWSSigner getSigner(final String signatureSecret) {
+            try {
+                return new RSASSASigner(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSSigner of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWSVerifier getVerifier(final String signatureSecret) {
+            try {
+                return new RSASSAVerifier(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                signatureSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWSVerifier of: " + this.name(),
+                        t
+                );
+            }
+        }
+    };
 
 
     private final JWSAlgorithm algorithm;

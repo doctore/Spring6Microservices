@@ -1,6 +1,13 @@
 package com.security.custom.enums.token;
 
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEDecrypter;
+import com.nimbusds.jose.JWEEncrypter;
+import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.security.custom.exception.token.TokenException;
+import com.security.custom.interfaces.ITokenEncryptionAlgorithm;
 import com.spring6microservices.common.core.util.EnumUtil;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
@@ -36,15 +43,280 @@ import java.util.Optional;
  * </ul>
  */
 @Getter
-public enum TokenEncryptionAlgorithm {
+public enum TokenEncryptionAlgorithm implements ITokenEncryptionAlgorithm {
 
-    DIR(JWEAlgorithm.DIR),
-    ECDH_1PU_A128KW(JWEAlgorithm.ECDH_1PU_A128KW),
-    ECDH_1PU_A192KW(JWEAlgorithm.ECDH_1PU_A192KW),
-    ECDH_1PU_A256KW(JWEAlgorithm.ECDH_1PU_A256KW),
-    RSA_OAEP_256(JWEAlgorithm.RSA_OAEP_256),
-    RSA_OAEP_384(JWEAlgorithm.RSA_OAEP_384),
-    RSA_OAEP_512(JWEAlgorithm.RSA_OAEP_512);
+    DIR(JWEAlgorithm.DIR) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                return new DirectEncrypter(
+                        encryptionSecret.getBytes()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                return new DirectDecrypter(
+                        encryptionSecret.getBytes()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    ECDH_1PU_A128KW(JWEAlgorithm.ECDH_1PU_A128KW) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                    encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUEncrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUDecrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    ECDH_1PU_A192KW(JWEAlgorithm.ECDH_1PU_A192KW) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                    encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUEncrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUDecrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    ECDH_1PU_A256KW(JWEAlgorithm.ECDH_1PU_A256KW) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUEncrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                ECKey key = ECKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                            )
+                            .toECKey();
+
+                return new ECDH1PUDecrypter(
+                        key.toECPrivateKey(),
+                        key.toECPublicKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RSA_OAEP_256(JWEAlgorithm.RSA_OAEP_256) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                return new RSAEncrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                return new RSADecrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RSA_OAEP_384(JWEAlgorithm.RSA_OAEP_384) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                return new RSAEncrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                return new RSADecrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    },
+    RSA_OAEP_512(JWEAlgorithm.RSA_OAEP_512) {
+
+        @Override
+        public JWEEncrypter getEncrypter(final String encryptionSecret) {
+            try {
+                return new RSAEncrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEEncrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+
+
+        @Override
+        public JWEDecrypter getDecrypter(final String encryptionSecret) {
+            try {
+                return new RSADecrypter(
+                        RSAKey.parseFromPEMEncodedObjects(
+
+                                encryptionSecret
+                        )
+                        .toRSAKey()
+                );
+            } catch (Throwable t) {
+                throw new TokenException(
+                        "There was an error returning the JWEDecrypter of: " + this.name(),
+                        t
+                );
+            }
+        }
+    };
 
 
     private final JWEAlgorithm algorithm;
