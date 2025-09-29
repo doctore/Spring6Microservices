@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
         name = PersistenceConfiguration.TABLE.CUSTOMER,
         schema = PersistenceConfiguration.SCHEMA
 )
-public class Customer implements Serializable {
+public class Customer implements IModel, Serializable {
 
     @Serial
     private static final long serialVersionUID = -161419389728211353L;
@@ -46,7 +46,12 @@ public class Customer implements Serializable {
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.CUSTOMER + "_id_seq"
+            generator = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.CUSTOMER
+    )
+    @SequenceGenerator(
+            name = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.CUSTOMER,
+            sequenceName = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.CUSTOMER + "_id_seq",
+            allocationSize = 1
     )
     private Integer id;
 
@@ -98,6 +103,12 @@ public class Customer implements Serializable {
     @Override
     public int hashCode() {
         return code.hashCode();
+    }
+
+
+    @Override
+    public boolean isNew() {
+        return null == id;
     }
 
 }

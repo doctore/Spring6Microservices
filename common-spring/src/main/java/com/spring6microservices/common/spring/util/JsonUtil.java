@@ -87,7 +87,9 @@ public class JsonUtil {
                                 format("There was an error trying to convert the given JSON-formatted string: %s into an instance of the class: %s. %s",
                                         sourceJson,
                                         ofNullable(clazzToConvert).map(Class::getName).orElse("null"),
-                                        getFormattedRootError(e)
+                                        getFormattedRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );
@@ -202,7 +204,9 @@ public class JsonUtil {
                                         sourceJson,
                                         ofNullable(finalClazzOfCollection).map(Class::getName).orElse("null"),
                                         ofNullable(clazzOfElements).map(Class::getName).orElse("null"),
-                                        getFormattedRootError(e)
+                                        getFormattedRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );
@@ -218,7 +222,9 @@ public class JsonUtil {
                                      + "empty instance of the class: %s. However, there was an error trying to do it. %s",
                                         sourceJson,
                                         ofNullable(finalClazzOfCollection).map(Class::getName).orElse("null"),
-                                        getFormattedRootError(e)
+                                        getFormattedRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );
@@ -275,7 +281,9 @@ public class JsonUtil {
                                 format("There was an error trying to convert an object of the class: %s into a JSON-formatted "
                                      + "string. %s",
                                         sourceObject.getClass().getName(),
-                                        getFormattedRootError(e)
+                                        getFormattedRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );

@@ -9,6 +9,9 @@ import com.spring6microservices.common.spring.dto.order.OrderDto;
 import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.common.spring.dto.page.PageDto;
 import com.spring6microservices.common.spring.dto.page.SortDto;
+import com.spring6microservices.common.spring.jms.JmsHeader;
+import com.spring6microservices.common.spring.jms.dto.EventDto;
+import com.spring6microservices.common.spring.jms.dto.OrderEventDto;
 import com.spring6microservices.grpc.OrderLineResponseGrpc;
 import com.spring6microservices.grpc.OrderResponseGrpc;
 import lombok.experimental.UtilityClass;
@@ -19,10 +22,23 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 @UtilityClass
 public class TestDataFactory {
+
+
+    public static Customer buildCustomer() {
+        return buildCustomer(
+                1,
+                "Customer 1",
+                "Address of customer 1",
+                "(+34) 123456789",
+                "customer1@email.es"
+        );
+    }
+
 
     public static Customer buildCustomer(final Integer id,
                                          final String code,
@@ -78,6 +94,18 @@ public class TestDataFactory {
                 "Address of customer 2",
                 "(+34) 987654321",
                 "customer2@email.es"
+        );
+    }
+
+
+    public static Invoice buildInvoice() {
+        Customer customer = buildCustomer();
+        return TestDataFactory.buildInvoice(
+                1,
+                "Invoice 1",
+                customer,
+                1,
+                10.1d
         );
     }
 
@@ -140,6 +168,23 @@ public class TestDataFactory {
     }
 
 
+    public static EventDto<OrderEventDto> buildEventDto(final String authorizationValue,
+                                                        final OrderEventDto orderEventDto) {
+        return EventDto.<OrderEventDto>builder()
+                .id("1")
+                .body(orderEventDto)
+                .metadata(
+                        new HashMap<>() {{
+                            put(
+                                    JmsHeader.AUTHORIZATION.name(),
+                                    authorizationValue
+                            );
+                        }}
+                )
+                .build();
+    }
+
+
     public static OrderDto buildOrderDto() {
         return buildOrderDto(
                 1,
@@ -199,6 +244,15 @@ public class TestDataFactory {
             }
         }
         return builder.build();
+    }
+
+
+    public static OrderEventDto buildOrderEventDto() {
+        return OrderEventDto.builder()
+                .id(1)
+                .customerCode("Customer 1")
+                .cost(9.99d)
+                .build();
     }
 
 

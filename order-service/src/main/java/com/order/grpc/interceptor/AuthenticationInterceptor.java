@@ -3,6 +3,7 @@ package com.order.grpc.interceptor;
 import com.order.configuration.security.oauth.OauthAuthorizationConfiguration;
 import com.order.grpc.configuration.GrpcConfiguration;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
+import com.spring6microservices.common.core.util.StringUtil;
 import com.spring6microservices.common.spring.util.HttpUtil;
 import com.spring6microservices.grpc.configuration.GrpcHeader;
 import io.grpc.*;
@@ -10,7 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import static io.grpc.Status.OK;
 import static io.grpc.Status.UNAUTHENTICATED;
@@ -37,7 +37,9 @@ public class AuthenticationInterceptor implements ServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(final ServerCall<ReqT, RespT> serverCall,
                                                                  final Metadata metadata,
                                                                  final ServerCallHandler<ReqT, RespT> serverCallHandler) {
-        String basicAuthentication = metadata.get(GrpcHeader.AUTHORIZATION);
+        String basicAuthentication = metadata.get(
+                GrpcHeader.AUTHORIZATION
+        );
         Status finalStatus = verifyRequest(basicAuthentication);
         if (OK == finalStatus) {
             // Set gRPC Client id into current context
@@ -64,7 +66,7 @@ public class AuthenticationInterceptor implements ServerInterceptor {
 
 
     /**
-     * Verifies the given Basis authentication data, returning the {@link Status} based on required checks.
+     * Verifies the given Basic authentication data, returning the {@link Status} based on required checks.
      *
      * @param basicAuthentication
      *    {@link String} with Basic authentication data, that is, base64-encoded username and password
@@ -72,7 +74,7 @@ public class AuthenticationInterceptor implements ServerInterceptor {
      * @return {@link Status}
      */
     private Status verifyRequest(final String basicAuthentication) {
-        if (!StringUtils.hasText(basicAuthentication)) {
+        if (StringUtil.isBlank(basicAuthentication)) {
             return UNAUTHENTICATED
                     .withDescription("Authentication data is missing");
         }

@@ -46,7 +46,9 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the HQL equivalent. %s",
-                                        getFormattedCurrentAndRootError(e)
+                                        getFormattedCurrentAndRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );
@@ -67,7 +69,9 @@ public class ExtendedQueryDslJpaRepositoryImpl<T, ID extends Serializable> exten
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the native SQL equivalent. %s",
-                                        getFormattedCurrentAndRootError(e)
+                                        getFormattedCurrentAndRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );

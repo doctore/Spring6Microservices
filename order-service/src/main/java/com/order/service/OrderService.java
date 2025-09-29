@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -25,12 +26,16 @@ public class OrderService {
 
     private final OrderLineService orderLineService;
 
+    private final JmsService jmsService;
+
 
     @Autowired
     public OrderService(@Lazy final OrderMapper mapper,
-                        @Lazy final OrderLineService orderLineService) {
+                        @Lazy final OrderLineService orderLineService,
+                        @Lazy final JmsService jmsService) {
         this.mapper = mapper;
         this.orderLineService = orderLineService;
+        this.jmsService = jmsService;
     }
 
 
@@ -146,6 +151,9 @@ public class OrderService {
                         );
                         mapper.insert(
                                 o
+                        );
+                        CompletableFuture.runAsync(() ->
+                            jmsService.send(o)
                         );
                     }
                     else {

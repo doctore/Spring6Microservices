@@ -22,10 +22,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <flywaydb.version>11.12.0</flywaydb.version>
+        <flywaydb.version>11.13.2</flywaydb.version>
         <hazelcast.version>5.5.0</hazelcast.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
-        <springdoc.version>2.8.12</springdoc.version>
+        <springdoc.version>2.8.13</springdoc.version>
 
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
     </properties>

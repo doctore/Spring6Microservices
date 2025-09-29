@@ -70,6 +70,15 @@ spring:
     # Getting the value with POST localhost:8888/encrypt and the password in its body (using config-server)
     # Raw password: spring6
     password: "{cipher}c8e1f3a8e0f5d7246a0dcbe620b97de51b580a1ef16f80ffafd3989920287278"
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # The base amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a host in a tight loop.
+      reconnect-backoff-ms: 30000
+    template:
+      default-topic: orders
   security:
     # Oauth 2.0 configuration
     oauth2:

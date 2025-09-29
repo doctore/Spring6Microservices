@@ -32,7 +32,7 @@ public class OrderLineDto {
 
     @Schema(
             description = "Related order",
-            requiredMode = RequiredMode.REQUIRED
+            requiredMode = RequiredMode.AUTO
     )
     private Integer orderId;
 

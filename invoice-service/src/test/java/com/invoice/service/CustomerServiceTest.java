@@ -1,6 +1,5 @@
 package com.invoice.service;
 
-import com.invoice.TestDataFactory;
 import com.invoice.model.Customer;
 import com.invoice.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.invoice.TestDataFactory.buildCustomer;
 import static com.invoice.TestUtil.compareCustomers;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -283,7 +283,7 @@ public class CustomerServiceTest {
 
     static Stream<Arguments> saveAllTestCases() {
         Customer customer1 = buildCustomer();
-        Customer customer2 = TestDataFactory.buildCustomer(
+        Customer customer2 = buildCustomer(
                 2,
                 "Customer 2",
                 "Address of customer 2",
@@ -337,17 +337,6 @@ public class CustomerServiceTest {
                             customers
                     );
         }
-    }
-
-
-    private static Customer buildCustomer() {
-        return TestDataFactory.buildCustomer(
-                1,
-                "Customer 1",
-                "Address of customer 1",
-                "(+34) 123456789",
-                "customer1@email.es"
-        );
     }
 
 }

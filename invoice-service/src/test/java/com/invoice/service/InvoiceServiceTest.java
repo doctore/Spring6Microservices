@@ -1,9 +1,14 @@
 package com.invoice.service;
 
-import com.invoice.TestDataFactory;
+import com.invoice.configuration.security.configuration.AuthorizationServerConfiguration;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
+import com.invoice.repository.CustomerRepository;
 import com.invoice.repository.InvoiceRepository;
+import com.spring6microservices.common.spring.jms.JmsHeader;
+import com.spring6microservices.common.spring.jms.dto.EventDto;
+import com.spring6microservices.common.spring.jms.dto.OrderEventDto;
+import com.spring6microservices.common.spring.util.HttpUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,16 +23,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
-import static com.invoice.TestDataFactory.buildCustomer;
+import static com.invoice.TestDataFactory.*;
 import static com.invoice.TestUtil.compareInvoices;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,13 +40,21 @@ public class InvoiceServiceTest {
     @Mock
     private InvoiceRepository mockRepository;
 
+    @Mock
+    private AuthorizationServerConfiguration mockAuthorizationConfiguration;
+
+    @Mock
+    private CustomerRepository mockCustomerRepository;
+
     private InvoiceService service;
 
 
     @BeforeEach
     public void init() {
         service = new InvoiceService(
-                mockRepository
+                mockRepository,
+                mockAuthorizationConfiguration,
+                mockCustomerRepository
         );
     }
 
@@ -281,7 +290,7 @@ public class InvoiceServiceTest {
     }
 
 
-    static Stream<Arguments> saveTestCases() {
+    static Stream<Arguments> saveWithInvoiceTestCases() {
         Invoice invoice = buildInvoice();
         return Stream.of(
                 //@formatter:off
@@ -293,11 +302,11 @@ public class InvoiceServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("saveTestCases")
-    @DisplayName("save: test cases")
-    public void save_testCases(Invoice invoice,
-                               Invoice repositoryResult,
-                               Optional<Invoice> expectedResult) {
+    @MethodSource("saveWithInvoiceTestCases")
+    @DisplayName("save: with invoice as parameter test cases")
+    public void saveWithInvoice_testCases(Invoice invoice,
+                                          Invoice repositoryResult,
+                                          Optional<Invoice> expectedResult) {
         when(mockRepository.save(invoice))
                 .thenReturn(
                         repositoryResult
@@ -328,15 +337,92 @@ public class InvoiceServiceTest {
     }
 
 
+    @Test
+    @DisplayName("save: with orderEventDto when provided customer does not exist then RuntimeException is thrown")
+    public void saveWithOrderEventDto_whenProvidedCustomerDoesNotExist_thenRuntimeExceptionIsThrown() {
+        OrderEventDto orderEventDto = buildOrderEventDto();
+
+        when(mockCustomerRepository.findByCode(orderEventDto.getCustomerCode()))
+                .thenReturn(
+                        empty()
+                );
+
+        assertThrows(
+                RuntimeException.class,
+                () -> service.save(orderEventDto)
+        );
+    }
+
+
+    static Stream<Arguments> saveWithOrderEventDtoNoExceptionTestCases() {
+        OrderEventDto orderEventDto = buildOrderEventDto();
+        Customer customer = buildCustomer();
+        Invoice invoice = buildInvoice();
+        return Stream.of(
+                //@formatter:off
+                //            orderEventDto,   customerRepositoryResult,   invoiceRepositoryResult,   expectedResult
+                Arguments.of( null,            null,                       null,                      empty() ),
+                Arguments.of( orderEventDto,   of(customer),               null,                      empty() ),
+                Arguments.of( orderEventDto,   of(customer),               invoice,                   of(invoice) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("saveWithOrderEventDtoNoExceptionTestCases")
+    @DisplayName("save: with orderEventDto as parameter test cases")
+    public void saveWithOrderEventDtoNoException_testCases(OrderEventDto orderEventDto,
+                                                           Optional<Customer> customerRepositoryResult,
+                                                           Invoice invoiceRepositoryResult,
+                                                           Optional<Invoice> expectedResult) {
+        if (null !=  orderEventDto) {
+            when(mockCustomerRepository.findByCode(orderEventDto.getCustomerCode()))
+                    .thenReturn(
+                            customerRepositoryResult
+                    );
+        }
+        when(mockRepository.save(any(Invoice.class)))
+                .thenReturn(
+                        invoiceRepositoryResult
+                );
+
+        Optional<Invoice> result = service.save(
+                orderEventDto
+        );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareInvoices(
+                    expectedResult.get(),
+                    result.get()
+            );
+            verify(mockCustomerRepository, times(1))
+                    .findByCode(
+                            orderEventDto.getCustomerCode()
+                    );
+            verify(mockRepository, times(1))
+                    .save(
+                            any(Invoice.class)
+                    );
+        }
+    }
+
+
     static Stream<Arguments> saveAllTestCases() {
         Invoice invoice1 = buildInvoice();
-        Invoice invoice2 = TestDataFactory.buildInvoice(
+        Invoice invoice2 = buildInvoice(
                 2,
                 "Invoice 2",
                 invoice1.getCustomer(),
                 2,
                 19d
-        );;
+        );
         List<Invoice> allInvoices = List.of(
                 invoice1,
                 invoice2
@@ -387,21 +473,97 @@ public class InvoiceServiceTest {
     }
 
 
-    private static Invoice buildInvoice() {
-        Customer customer = buildCustomer(
-                1,
-                "Customer 1",
-                "Address of customer 1",
-                "(+34) 123456789",
-                "customer1@email.es"
+    static Stream<Arguments> processNewOrderTestCases() {
+        EventDto<OrderEventDto> emptyDto = new EventDto<>();
+        EventDto<OrderEventDto> noMetadataDto = EventDto.<OrderEventDto>builder()
+                .id("1")
+                .body(
+                        buildOrderEventDto()
+                )
+                .build();
+        EventDto<OrderEventDto> noBodyDto = EventDto.<OrderEventDto>builder()
+                .id("1")
+                .metadata(
+                        new HashMap<>() {{
+                            put(
+                                    JmsHeader.AUTHORIZATION.name(),
+                                    HttpUtil.encodeBasicAuthentication(
+                                            "user",
+                                            "password"
+                                    )
+                            );
+                        }}
+                )
+                .build();
+        EventDto<OrderEventDto> completeDto = buildEventDto(
+                HttpUtil.encodeBasicAuthentication(
+                        "user",
+                        "password"
+                ),
+                buildOrderEventDto()
         );
-        return TestDataFactory.buildInvoice(
-                1,
-                "Invoice 1",
-                customer,
-                1,
-                10.1d
+        Invoice invoice = buildInvoice();
+        return Stream.of(
+                //@formatter:off
+                //            eventDto,              invoiceRepositoryResult,   expectedResult
+                Arguments.of( null,            null,                            empty() ),
+                Arguments.of( emptyDto,        null,                            empty() ),
+                Arguments.of( noMetadataDto,   null,                            empty() ),
+                Arguments.of( noBodyDto,       null,                            empty() ),
+                Arguments.of( completeDto,     invoice,                         of(invoice) )
+
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("processNewOrderTestCases")
+    @DisplayName("processNewOrder: test cases")
+    public void processNewOrder_testCases(EventDto<OrderEventDto> eventDto,
+                                          Invoice invoiceRepositoryResult,
+                                          Optional<Invoice> expectedResult) {
+        when(mockAuthorizationConfiguration.getClientId())
+                .thenReturn(
+                        "user"
+                );
+        when(mockAuthorizationConfiguration.getClientPassword())
+                .thenReturn(
+                        "password"
+                );
+        when(mockCustomerRepository.findByCode(anyString()))
+                .thenReturn(
+                        of(buildCustomer())
+                );
+        when(mockRepository.save(any(Invoice.class)))
+                .thenReturn(
+                        invoiceRepositoryResult
+                );
+
+        Optional<Invoice> result = service.processNewOrder(
+                eventDto
         );
+
+        if (expectedResult.isEmpty()) {
+            assertTrue(
+                    result.isEmpty()
+            );
+            verify(mockRepository, never())
+                    .save(
+                            any(Invoice.class)
+                    );
+        }
+        else {
+            assertTrue(
+                    result.isPresent()
+            );
+            compareInvoices(
+                    expectedResult.get(),
+                    result.get()
+            );
+            verify(mockRepository, times(1))
+                    .save(
+                            any(Invoice.class)
+                    );
+        }
     }
 
 }

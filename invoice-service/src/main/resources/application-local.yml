@@ -97,6 +97,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.invoice.util.deserializer.OrderEventDtoJsonDeserializer
+      # The base amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a host in a tight loop.
+      reconnect-backoff-ms: 30000
+      # Package with the objects allowed to be sent through Kafka
+      trusted-package: com.spring6microservices.common.spring.jms.dto
 
 
 # API documentation

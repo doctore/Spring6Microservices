@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.6</version>
         <relativePath/>
     </parent>
 
@@ -21,13 +21,13 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <flywaydb.version>11.12.0</flywaydb.version>
-        <lombok.version>1.18.40</lombok.version>
+        <flywaydb.version>11.13.2</flywaydb.version>
+        <lombok.version>1.18.42</lombok.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <mapstruct-processor.version>1.6.3</mapstruct-processor.version>
         <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
-        <springdoc.version>2.8.12</springdoc.version>
+        <springdoc.version>2.8.13</springdoc.version>
 
         <spring6-microservices-common-spring.version>1.0.0</spring6-microservices-common-spring.version>
         <spring6-microservices-grpc.version>1.0.0</spring6-microservices-grpc.version>

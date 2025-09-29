@@ -23,7 +23,10 @@
 - [gRPC communication](#grpc-communication)
   - [Security in gRPC](#security-in-grpc)
   - [Request identifier in gRPC](#request-identifier-in-grpc)
-  - [gRPC example request](#grpc-example-request) 
+  - [gRPC example request](#grpc-example-request)
+- [JMS communication](#jms-communication)
+  - [Security in JMS](#security-in-jms)
+  - [JMS example request](#jms-example-request)
 - [Native images](#native-images)
   - [Install and configure GraalVM JDK](#install-and-configure-graalvm-jdk) 
   - [security-custom-service native](#security-custom-service-native)
@@ -661,8 +664,10 @@ Configured to use the application [Bruno](https://www.usebruno.com/), several co
 
 Besides the REST API developed in:
 
-* [order-service](#order-service)
 * [invoice-service](#invoice-service)
+* [order-service](#order-service)
+* [security-custom-service](#security-custom-service)
+* [security-oauth-service](#security-oauth-service)
 
 In this project has been added a [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) communication channel between:
 
@@ -728,6 +733,27 @@ So, as I explained you in [security-custom-service endpoints](#security-custom-s
 gRPC channel:
 
 ![Alt text](/documentation/invoice-service/WebServiceWithGRPC.png?raw=true "Example of web service using gRPC channel")
+<br><br>
+
+
+
+## JMS communication
+
+Besides the REST API and the [gRPC communication](#grpc-communication), the project works with [JMS](https://www.oracle.com/java/technologies/java-message-service.html) to send data from
+[order-service](#order-service) to [invoice-service](#invoice-service).
+
+Using [Kafka](https://kafka.apache.org/), everytime a new order is created [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service)
+to create a new invoice based on order's information.
+<br><br>
+
+
+### Security in JMS
+TODO
+<br><br>
+
+
+### JMS example request
+TODO
 <br><br>
 
 
@@ -933,6 +959,14 @@ Once you have created all the Docker images on your local, you should see someth
 
 To manage the Docker containers in an easier way, a [Docker compose](https://docs.docker.com/compose/compose-file) file: [compose.yml](https://github.com/doctore/Spring6Microservices/tree/main/compose.yml)
 has been added. It includes the required commands to up and down the project's containers.
+
+The file [kafka-compose.yml](https://github.com/doctore/Spring6Microservices/tree/main/kafka-compose.yml) adds only the required containers to work with the microservices in local,
+specially:
+
+* [invoice-service](#invoice-service)
+* [order-service](#order-service)
+
+allowing you to debug and work locally without problems. More information in the section [JMS communication](#jms-communication).
 
 
 ### PostgreSQL configuration in localhost

@@ -63,7 +63,7 @@ import java.time.LocalDateTime;
                 )
         }
 )
-public class Invoice implements Serializable {
+public class Invoice implements IModel, Serializable {
 
     @Serial
     private static final long serialVersionUID = -132447389628211311L;
@@ -88,7 +88,12 @@ public class Invoice implements Serializable {
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.INVOICE + "_id_seq"
+            generator = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.INVOICE
+    )
+    @SequenceGenerator(
+            name = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.INVOICE,
+            sequenceName = PersistenceConfiguration.SCHEMA + "." + PersistenceConfiguration.TABLE.INVOICE + "_id_seq",
+            allocationSize = 1
     )
     private Integer id;
 
@@ -133,6 +138,12 @@ public class Invoice implements Serializable {
     @Override
     public int hashCode() {
         return code.hashCode();
+    }
+
+
+    @Override
+    public boolean isNew() {
+        return null == id;
     }
 
 }

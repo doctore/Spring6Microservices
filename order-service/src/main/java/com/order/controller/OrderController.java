@@ -11,6 +11,7 @@ import com.order.service.OrderService;
 import com.order.util.converter.OrderConverter;
 import com.spring6microservices.common.spring.dto.ErrorResponseDto;
 import com.spring6microservices.common.spring.dto.order.OrderDto;
+import com.spring6microservices.common.spring.dto.order.OrderLineDto;
 import com.spring6microservices.common.spring.validator.group.CreateAction;
 import com.spring6microservices.common.spring.validator.group.UpdateAction;
 import io.swagger.v3.oas.annotations.Operation;
@@ -483,7 +484,7 @@ public class OrderController {
                 id
            )
            .map(
-                   converter::fromModelToDto
+                converter::fromModelToDto
            )
            .map(o ->
                    new ResponseEntity<>(

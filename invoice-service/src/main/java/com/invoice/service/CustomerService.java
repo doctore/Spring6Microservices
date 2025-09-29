@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -106,6 +107,14 @@ public class CustomerService {
      */
     public Optional<Customer> save(final Customer customer) {
         return ofNullable(customer)
+                .map(c -> {
+                    if (c.isNew()) {
+                        c.setCreatedAt(
+                                LocalDateTime.now()
+                        );
+                    }
+                    return c;
+                })
                 .map(repository::save);
     }
 

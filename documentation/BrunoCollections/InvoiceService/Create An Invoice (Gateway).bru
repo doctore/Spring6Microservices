@@ -1,15 +1,32 @@
 meta {
-  name: Find By Invoice OrderId (Direct)
+  name: Create An Invoice (Gateway)
   type: http
-  seq: 11
+  seq: 4
 }
 
-get {
-  url: http://localhost:8183/invoice/order-id/1
-  body: none
+post {
+  url: http://localhost:5555/invoice
+  body: json
   auth: bearer
 }
 
 auth:bearer {
   token: qz/crqDugQHWjSnMYCeagBvz6fNSVH9uzv+FGcOWhEP4kUGFlyGX2Ev2SEYR1NsrTkrUBkIxiZOg6QAhOaYbdTTi/8mi4lHliN/aBAyTH6Vqk64BKcU+xmIlJNCTtN1VyNrt02rgV081evL0/6EeW05WhnmcNmhf2Tqn2J8gpid9sH1QoVEsyR0i76dHi3xqgxEUElFiwSlItjpNpadjBA9Y4brqd8asOz0oK3+ugWrsRNqPnhKTQTebcHh7mVVeJ2/nFS1dG8eKouYLbTV8mMRLBYbX9GJ8ovx3WWp66SaJUiVmmnHrAU8A1W2oqakDqv3S6/tMkKsZig9Wq7yD+dVeqVW6laCHE19FbAQcsu9i7Ziy/hktjru0MkcNRA+MrsuZdp7tSTNu36rZuCDIzfvuBbHBNCREfhK3H/qmbySxp3MQsd5iSu6a7CBoqZXjsYY0GJb7rgg0Xmr3DC4EU0Hp/aOYaKKkjxmEMjj2wdg5jIx3SP8WjxRkFcF+lwznHJm+sp8263YrJQkKlxSVctnc8LUf3/T1kGzYEzQjneF5awiLGdUww0noTvj3R0oF8tQhMPV5HmMGlkxKfr5312VFSYUMpoztPfFttFQ6pAqJpNT26SSl3VrGrFZhDLVQihRnx3v6QF90e3ocpSh6pS+jnL0tkbIQ7rKCEWie+rH2ZsqoxJnRMwy5uOw/S7UsJOFanSoa2Vcl7ciA/z81LGtrPx88e8MQfgeeEHYHcdjT8o1MhqIB9DmUJT+Q8Ujcszo1M+wgk8/+BJf8/f45lgWTDv3MLO4eEsUOT+gxiZ/zp4M+aA/rHHXGKE4yB4pc29hKo1o4D5ZIYMct0shJyMMbzut2DAgDKfEEHKzRevRqm+8Lbdw3Ba1TTU1F/6p/NBP/ipblK/XxsDEo2o7BUTYf9DfbZbby4f98x/U20rTBUzPN/DDNxsyKYW14XUDgR7Qifv5PRPVclbx1HXyc/gFDpwk2696mbbqGjCavO2XikS+kbb6oH1QLYQmMoN6J/idWF2XpmxgDIwtd78dmsRiQh+72R01GCZuNe1FlEfoe3CoxdTr1d0ezxI0dDmchFWiO8zXVu+BeiwRfeMXtgPTt64vmi+q1A++dWMr/nvmEuJsxRBXppjXO2Y8pWKOqBrCKAl3Yc1R2+SA/4nQS+u0=
+}
+
+body:json {
+  {
+    "code": "Invoice 3",
+    "customer": {
+      "id": 1,
+      "code": "Customer 1",
+      "address": "Address of customer 1",
+      "phone": "(+34) 123456789",
+      "email": "customer1@email.es"
+    },
+    "order": {
+      "id": 2
+    },
+    "cost": 911.5
+  }
 }

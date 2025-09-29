@@ -38,6 +38,9 @@ public class OrderServiceTest {
     @Mock
     private OrderLineService mockOrderLineService;
 
+    @Mock
+    private JmsService mockJmsService;
+
     private OrderService service;
 
 
@@ -45,7 +48,8 @@ public class OrderServiceTest {
     public void init() {
         service = new OrderService(
                 mockMapper,
-                mockOrderLineService
+                mockOrderLineService,
+                mockJmsService
         );
     }
 
@@ -309,6 +313,10 @@ public class OrderServiceTest {
                 .insert(
                         any(Order.class)
                 );
+        verify(mockJmsService, times(1))
+                .send(
+                        any(Order.class)
+                );
         verify(mockMapper, never())
                 .update(
                         any(Order.class)
@@ -340,6 +348,10 @@ public class OrderServiceTest {
 
         verify(mockMapper, never())
                 .insert(
+                        any(Order.class)
+                );
+        verify(mockJmsService, never())
+                .send(
                         any(Order.class)
                 );
         verify(mockMapper, times(1))

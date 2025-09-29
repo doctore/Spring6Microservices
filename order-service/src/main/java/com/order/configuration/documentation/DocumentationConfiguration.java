@@ -17,18 +17,18 @@ import static org.springdoc.core.utils.Constants.SWAGGER_UI_PREFIX;
 @Getter
 public class DocumentationConfiguration {
 
-    @Value("${springdoc.api-docs.path}")
-    private String apiDocsPath;
-
-    @Value("${springdoc.swagger-ui.path}")
-    private String apiUiUrl;
-
     /**
      *    Required to configure the String Security because SpringDoc does an internal redirection from
      * {@link DocumentationConfiguration#apiUiUrl} to {@code http://server:port/context-path/}
      * {@link org.springdoc.core.utils.Constants#SWAGGER_UI_PREFIX}
      */
     private final String internalApiUiPrefix = RestRoutes.ROOT + SWAGGER_UI_PREFIX;
+
+    @Value("${springdoc.api-docs.path}")
+    private String apiDocsPath;
+
+    @Value("${springdoc.swagger-ui.path}")
+    private String apiUiUrl;
 
     @Value("${springdoc.documentation.apiVersion}")
     private String apiVersion;

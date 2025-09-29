@@ -76,7 +76,9 @@ public class ExtendedJpaRepositoryImpl<T, ID extends Serializable> extends Simpl
                     } catch (Exception e) {
                         log.debug(
                                 format("The was an error getting the HQL equivalent. %s",
-                                        getFormattedCurrentAndRootError(e)
+                                        getFormattedCurrentAndRootError(
+                                                e
+                                        )
                                 ),
                                 e
                         );

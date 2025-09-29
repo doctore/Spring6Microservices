@@ -16,8 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.invoice.TestDataFactory.buildOrderDto;
-import static com.invoice.TestDataFactory.buildOrderResponseGrpc;
+import static com.invoice.TestDataFactory.*;
 import static com.invoice.TestUtil.compareOrderDtos;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class OrderServiceTest {
 
     @Mock
-    private OrderServiceGrpcImpl mockOrderServiceGrpcImpl;
+    private OrderServiceGrpcImpl mockOrderServiceGrpc;
 
     @Mock
     private OrderConverter mockConverter;
@@ -41,7 +40,7 @@ public class OrderServiceTest {
     @BeforeEach
     public void init() {
         service = new OrderService(
-                mockOrderServiceGrpcImpl,
+                mockOrderServiceGrpc,
                 mockConverter
         );
     }
@@ -65,7 +64,7 @@ public class OrderServiceTest {
     public void findById_testCases(Integer id,
                                    Optional<OrderResponseGrpc> grpcServiceResult,
                                    Optional<OrderDto> expectedResult) {
-        when(mockOrderServiceGrpcImpl.findById(id))
+        when(mockOrderServiceGrpc.findById(id))
                 .thenReturn(
                         grpcServiceResult
                 );
@@ -93,7 +92,7 @@ public class OrderServiceTest {
                     expectedResult.get(),
                     result.get()
             );
-            verify(mockOrderServiceGrpcImpl, times(1))
+            verify(mockOrderServiceGrpc, times(1))
                     .findById(
                             id
                     );

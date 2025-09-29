@@ -1,0 +1,29 @@
+meta {
+  name: Create Order (Direct)
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8182/order
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJraWQiOiJsb2NhbC1mNTdmLTQ2YTItYjUwMi04YTI0YzMwOGJlN2YiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImF1ZCI6IlNwcmluZzZNaWNyb3NlcnZpY2VzIiwiYWRkaXRpb25hbEluZm9ybWF0aW9uIjp7ImF1dGhvcml0aWVzIjpbIlVQREFURV9DVVNUT01FUiIsIkNSRUFURV9DVVNUT01FUiIsIkdFVF9PUkRFUiIsIkNSRUFURV9JTlZPSUNFIiwiR0VUX0NVU1RPTUVSIiwiUk9MRV9BRE1JTiIsIlVQREFURV9PUkRFUiIsIkRFTEVURV9PUkRFUiIsIkdFVF9JTlZPSUNFIiwiQ1JFQVRFX09SREVSIl0sInVzZXJuYW1lIjoiYWRtaW4ifSwibmJmIjoxNzU4OTkyNTIyLCJhcHBsaWNhdGlvbiI6IlNwcmluZzZNaWNyb3NlcnZpY2VzIiwic2NvcGUiOlsib3BlbmlkIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODE4MSIsImV4cCI6MTc1ODk5MzEyMiwiaWF0IjoxNzU4OTkyNTIyLCJqdGkiOiIwOWE5Mjk5Ny0xZGQyLTQ2OTMtYTEyYy03NjQ2YmZiNzI5N2UiLCJhdXRob3JpdGllcyI6WyJVUERBVEVfQ1VTVE9NRVIiLCJDUkVBVEVfQ1VTVE9NRVIiLCJHRVRfT1JERVIiLCJDUkVBVEVfSU5WT0lDRSIsIkdFVF9DVVNUT01FUiIsIlJPTEVfQURNSU4iLCJVUERBVEVfT1JERVIiLCJERUxFVEVfT1JERVIiLCJHRVRfSU5WT0lDRSIsIkNSRUFURV9PUkRFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.UsmUbsoPVO0mHVei-oNVjQrRcy6wmL-zac0B72Rk_kqQsL3x-YXmg8O-R9WtrzIfv1ZiBU0cAJuaHENqZhLNWNcG3o7O8s4jr-ayvbt0KF5eGP2HrHQ2Lriks3L9Vajakv95EmeR600tLS-OlqKLjXxIU2cOQSIxE8Q_5HiDn-QOu-cwwIhp7S1XKjz6TiqfoTf2Asu6fYvaRWI3Ma5BW_-WlEO7xt39NyjzzpXHIIqdAIhrFAe5SZzszlFSsvb1W8P94no-Cs5sw-lOeeW27OuphN8NqDqIZTaf13PxbSQojHvlh4X442Mb4B4wZZHKaFCu8-C-5YRNsdicLXBliQ
+}
+
+body:json {
+  {
+    "code": "Order 3",
+    "customerCode": "Customer 2",
+    "orderLines": [
+      {
+        "concept": "Smartphone",
+        "amount": 5,
+        "cost": 3546.12
+      }    
+    ]
+  }
+}
