@@ -232,6 +232,7 @@ of a small one on which I am using the following technologies:
 * **[Spring OAuth 2.0 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)** to handle the security through the microservice [security-oauth-service](#security-oauth-service).
 * **[MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)** a traditional Spring MVC Rest API to manage the included requests.
 * **[gRPC](https://grpc.io/docs/what-is-grpc/introduction/)** server, more information in [gRPC communication](#grpc-communication).
+* **[Kafka](https://kafka.apache.org/)** producer, more information in [JMS communication](#jms-communication).
 
 In this microservice, the layer's division is:
 
@@ -276,6 +277,7 @@ the following technologies:
 * **[SpringDoc-OpenApi](https://springdoc.org/)** to document the endpoints provided by the microservice using [Swagger](https://swagger.io/).
 * **[Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)** creating a reactive REST Api to manage the authentication/authorization requests.
 * **[gRPC](https://grpc.io/docs/what-is-grpc/introduction/)** client, more information in [gRPC communication](#grpc-communication).
+* **[Kafka](https://kafka.apache.org/)** consumer, more information in [JMS communication](#jms-communication).
 
 In this microservice, the layer's division is:
 
@@ -742,8 +744,8 @@ gRPC channel:
 Besides the REST API and the [gRPC communication](#grpc-communication), the project works with [JMS](https://www.oracle.com/java/technologies/java-message-service.html) to send data from
 [order-service](#order-service) to [invoice-service](#invoice-service).
 
-Using [Kafka](https://kafka.apache.org/), everytime a new order is created [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service)
-to create a new invoice based on order's information.
+Using [Kafka](https://kafka.apache.org/), everytime a new order is created in [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service)
+to insert a new invoice based on the order's information.
 <br><br>
 
 
