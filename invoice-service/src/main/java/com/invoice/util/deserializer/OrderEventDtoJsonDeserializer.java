@@ -36,7 +36,7 @@ public class OrderEventDtoJsonDeserializer implements Deserializer<EventDto<Orde
                             StandardCharsets.UTF_8
 
                     ),
-                    new TypeReference<EventDto<OrderEventDto>>() {}
+                    new TypeReference<>() {}
             );
 
         } catch (Throwable t) {

@@ -1,14 +1,10 @@
 package com.invoice.service;
 
-import com.invoice.configuration.security.configuration.AuthorizationServerConfiguration;
 import com.invoice.model.Customer;
 import com.invoice.model.Invoice;
 import com.invoice.repository.CustomerRepository;
 import com.invoice.repository.InvoiceRepository;
-import com.spring6microservices.common.spring.jms.JmsHeader;
-import com.spring6microservices.common.spring.jms.dto.EventDto;
 import com.spring6microservices.common.spring.jms.dto.OrderEventDto;
-import com.spring6microservices.common.spring.util.HttpUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,9 +37,6 @@ public class InvoiceServiceTest {
     private InvoiceRepository mockRepository;
 
     @Mock
-    private AuthorizationServerConfiguration mockAuthorizationConfiguration;
-
-    @Mock
     private CustomerRepository mockCustomerRepository;
 
     private InvoiceService service;
@@ -53,7 +46,6 @@ public class InvoiceServiceTest {
     public void init() {
         service = new InvoiceService(
                 mockRepository,
-                mockAuthorizationConfiguration,
                 mockCustomerRepository
         );
     }
@@ -468,100 +460,6 @@ public class InvoiceServiceTest {
             verify(mockRepository, times(1))
                     .saveAll(
                             invoices
-                    );
-        }
-    }
-
-
-    static Stream<Arguments> processNewOrderTestCases() {
-        EventDto<OrderEventDto> emptyDto = new EventDto<>();
-        EventDto<OrderEventDto> noMetadataDto = EventDto.<OrderEventDto>builder()
-                .id("1")
-                .body(
-                        buildOrderEventDto()
-                )
-                .build();
-        EventDto<OrderEventDto> noBodyDto = EventDto.<OrderEventDto>builder()
-                .id("1")
-                .metadata(
-                        new HashMap<>() {{
-                            put(
-                                    JmsHeader.AUTHORIZATION.name(),
-                                    HttpUtil.encodeBasicAuthentication(
-                                            "user",
-                                            "password"
-                                    )
-                            );
-                        }}
-                )
-                .build();
-        EventDto<OrderEventDto> completeDto = buildEventDto(
-                HttpUtil.encodeBasicAuthentication(
-                        "user",
-                        "password"
-                ),
-                buildOrderEventDto()
-        );
-        Invoice invoice = buildInvoice();
-        return Stream.of(
-                //@formatter:off
-                //            eventDto,              invoiceRepositoryResult,   expectedResult
-                Arguments.of( null,            null,                            empty() ),
-                Arguments.of( emptyDto,        null,                            empty() ),
-                Arguments.of( noMetadataDto,   null,                            empty() ),
-                Arguments.of( noBodyDto,       null,                            empty() ),
-                Arguments.of( completeDto,     invoice,                         of(invoice) )
-
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("processNewOrderTestCases")
-    @DisplayName("processNewOrder: test cases")
-    public void processNewOrder_testCases(EventDto<OrderEventDto> eventDto,
-                                          Invoice invoiceRepositoryResult,
-                                          Optional<Invoice> expectedResult) {
-        when(mockAuthorizationConfiguration.getClientId())
-                .thenReturn(
-                        "user"
-                );
-        when(mockAuthorizationConfiguration.getClientPassword())
-                .thenReturn(
-                        "password"
-                );
-        when(mockCustomerRepository.findByCode(anyString()))
-                .thenReturn(
-                        of(buildCustomer())
-                );
-        when(mockRepository.save(any(Invoice.class)))
-                .thenReturn(
-                        invoiceRepositoryResult
-                );
-
-        Optional<Invoice> result = service.processNewOrder(
-                eventDto
-        );
-
-        if (expectedResult.isEmpty()) {
-            assertTrue(
-                    result.isEmpty()
-            );
-            verify(mockRepository, never())
-                    .save(
-                            any(Invoice.class)
-                    );
-        }
-        else {
-            assertTrue(
-                    result.isPresent()
-            );
-            compareInvoices(
-                    expectedResult.get(),
-                    result.get()
-            );
-            verify(mockRepository, times(1))
-                    .save(
-                            any(Invoice.class)
                     );
         }
     }

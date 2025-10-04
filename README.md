@@ -16,7 +16,7 @@
   - [Communication diagram](#communication-diagram)
 - [Previous steps](#previous-steps)
 - [Security services](#security-services)
-  - [security-oauth-service endpoints](#security-oauth-service-endpoints) 
+  - [security-oauth-service endpoints](#security-oauth-service-endpoints)
   - [security-custom-service endpoints](#security-custom-service-endpoints)
 - [Rest API documentation](#rest-api-documentation)
   - [Endpoint definitions](#endpoint-definitions)
@@ -726,7 +726,7 @@ to simulate the same behaviour two interceptors have been defined:
 Everytime [invoice-service](#invoice-service) returns an invoice details searched by its identifier or code, will send a request to [order-service](#order-service) using a [gRPC](https://grpc.io/docs/what-is-grpc/introduction/)
 communication channel to get its order and order lines data. 
 
-The communication diagram including also the invocation of [security-oauth-service](#security-oauth-service) is the following:
+The communication diagram including also the invocation of [security-custom-service](#security-custom-service) is the following:
 
 ![Alt text](/documentation/GrpcCommunicationDiagram.png?raw=true "gRPC Communication diagram")
 <br>
@@ -742,20 +742,43 @@ gRPC channel:
 ## JMS communication
 
 Besides the REST API and the [gRPC communication](#grpc-communication), the project works with [JMS](https://www.oracle.com/java/technologies/java-message-service.html) to send data from
-[order-service](#order-service) to [invoice-service](#invoice-service).
-
-Using [Kafka](https://kafka.apache.org/), everytime a new order is created in [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service)
-to insert a new invoice based on the order's information.
+[order-service](#order-service) to [invoice-service](#invoice-service). Using [Kafka](https://kafka.apache.org/), everytime a new order is created in [order-service](#order-service) through
+its REST API, a new message is sent to [invoice-service](#invoice-service) to insert a new invoice based on the order's information.
 <br><br>
 
 
 ### Security in JMS
-TODO
+
+The JMS communication channel uses [Basic access authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) with a similar approach to [gRPC](#security-in-grpc). In this case,
+
+* [order-service](#order-service) (*Producer*) adds it in [JmsService](https://github.com/doctore/Spring6Microservices/blob/main/order-service/src/main/java/com/order/service/JmsService.java) (in the method `toEventDto`).
+* [invoice-service](#invoice-service) (*Consumer*) verifies it in [JmsService](https://github.com/doctore/Spring6Microservices/blob/main/invoice-service/src/main/java/com/invoice/service/JmsService.java) (in the method `verifyBasicAuthRequest`).
 <br><br>
 
 
 ### JMS example request
-TODO
+Everytime a new order is created in [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service) to insert a new invoice based on the order's information.
+
+The communication diagram including also the invocation of [security-oauth-service](#security-oauth-service) is the following:
+
+![Alt text](/documentation/JmsCommunicationDiagram.png?raw=true "JMS Communication diagram")
+<br>
+
+So, as I explained you in [security-oauth-service endpoints](#security-oauth-service-endpoints), once you have obtained the required JWT access token, you can use it to invoke the web service that uses
+the developed JMS communication channel:
+
+![Alt text](/documentation/order-service/WebServiceWithJMS.png?raw=true "Example of web service using JMS channel")
+
+If there was no error, you should see 3 new entities in database:
+
+**1.** A new order:
+![Alt text](/documentation/order-service/OrderTable.png?raw=true "New order")
+
+**2.** A new order line:
+![Alt text](/documentation/order-service/OrderLineTable.png?raw=true "New order line")
+
+**3.** A new invoice:
+![Alt text](/documentation/invoice-service/InvoiceTable.png?raw=true "New invoice")
 <br><br>
 
 
