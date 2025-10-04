@@ -757,17 +757,18 @@ The JMS communication channel uses [Basic access authentication](https://en.wiki
 
 
 ### JMS example request
-Everytime a new order is created in [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service) to insert a new invoice based on the order's information.
+
+As I mentioned, everytime a new order is created in [order-service](#order-service) through its REST API, a new message is sent to [invoice-service](#invoice-service) to insert a new invoice based on the order's information.
 
 The communication diagram including also the invocation of [security-oauth-service](#security-oauth-service) is the following:
 
-![Alt text](/documentation/JmsCommunicationDiagram.png?raw=true "JMS Communication diagram")
+![Alt text](/documentation/JmsCommunicationDiagram?raw=true "JMS Communication diagram")
 <br>
 
 So, as I explained you in [security-oauth-service endpoints](#security-oauth-service-endpoints), once you have obtained the required JWT access token, you can use it to invoke the web service that uses
 the developed JMS communication channel:
 
-![Alt text](/documentation/order-service/WebServiceWithJMS.png?raw=true "Example of web service using JMS channel")
+![Alt text](/documentation/order-service/WebServiceWithJms.png?raw=true "Example of web service using JMS channel")
 
 If there was no error, you should see 3 new entities in database:
 
