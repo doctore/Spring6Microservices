@@ -22,7 +22,6 @@ public final class EnumHasInternalStringValueValidator implements ConstraintVali
 
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void initialize(final EnumHasInternalStringValue constraintAnnotation) {
 		enumValidValues = IEnumInternalPropertyValue.getInternalPropertyValues(
                 constraintAnnotation.enumClass()
