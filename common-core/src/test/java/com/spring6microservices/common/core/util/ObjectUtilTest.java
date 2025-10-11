@@ -146,6 +146,7 @@ public class ObjectUtilTest {
                 Arguments.of( null,                     null,             "testDefaultValue",   "testDefaultValue" ),
                 Arguments.of( null,                     GET_PIZZA_NAME,   null,                 null ),
                 Arguments.of( null,                     GET_PIZZA_NAME,   "testDefaultValue",   "testDefaultValue" ),
+                Arguments.of( pizzaWithAllProperties,   null,             "testDefaultValue",   "testDefaultValue" ),
                 Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   null,                 pizzaWithAllProperties.getName() ),
                 Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   "testDefaultValue",   pizzaWithAllProperties.getName() ),
                 Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   null,                 null ),
@@ -167,6 +168,44 @@ public class ObjectUtilTest {
         assertEquals(
                 expectedResult,
                 getOrElse(sourceInstance, mapper, defaultValue)
+        );
+    }
+
+
+    static Stream<Arguments> getOrElseWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParametersTestCases() {
+        PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
+        PizzaDto pizzaWithAllProperties = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+        return Stream.of(
+                //@formatter:off
+                //            sourceInstance,           mapper1,          mapper2,              defaultValue,         expectedResult
+                Arguments.of( null,                     null,             null,                 null,                 null ),
+                Arguments.of( null,                     null,             null,                 "testDefaultValue",   "testDefaultValue" ),
+                Arguments.of( null,                     null,             STRING_LENGTH,        null,                 null ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   null,                 null,                 null ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   TO_STRING,            null,                 null ),
+                Arguments.of( null,                     null,             TO_STRING,            null,                 null ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   TO_STRING,            "testDefaultValue",   "testDefaultValue" ),
+                Arguments.of( pizzaWithAllProperties,   null,             null,                 null,                 null ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   null,                 "testDefaultValue",   "testDefaultValue" ),
+                Arguments.of( pizzaWithAllProperties,   null,             TO_STRING,            "testDefaultValue",   "testDefaultValue" ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   STRING_LENGTH,        null,                 pizzaWithAllProperties.getName().length() ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   STRING_LENGTH,        0,                    pizzaWithAllProperties.getName().length() ),
+                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   STRING_LENGTH,        null,                 null ),
+                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   STRING_LENGTH,        100,                  100 )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOrElseWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParametersTestCases")
+    @DisplayName("getOrElse: using source instance, mapper1, mapper2 and default value parameters test cases")
+    public <T1, T2, R> void getOrElseWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParameters_testCases(T1 sourceInstance,
+                                                                                                               Function<? super T1, ? extends T2> mapper1,
+                                                                                                               Function<? super T2, ? extends R> mapper2,
+                                                                                                               R defaultValue,
+                                                                                                               R expectedResult) {
+        assertEquals(
+                expectedResult,
+                getOrElse(sourceInstance, mapper1, mapper2, defaultValue)
         );
     }
 
@@ -221,8 +260,9 @@ public class ObjectUtilTest {
                 Arguments.of( null,                     null,             alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
                 Arguments.of( null,                     GET_PIZZA_NAME,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
                 Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   null,                     IllegalArgumentException.class,   null ),
-                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
                 Arguments.of( pizzaWithoutProperties,   GET_PIZZA_COST,   null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( pizzaWithoutProperties,   null,             alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
                 Arguments.of( pizzaWithoutProperties,   GET_PIZZA_COST,   always45,                 null,                             always45.get() ),
                 Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   null,                     null,                             pizzaWithAllProperties.getName() ),
                 Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   alwaysTestDefaultValue,   null,                             pizzaWithAllProperties.getName() ),
@@ -233,7 +273,7 @@ public class ObjectUtilTest {
 
     @ParameterizedTest
     @MethodSource("getOrElseGetWithSourceInstanceAndMapperAndDefaultValueParametersTestCases")
-    @DisplayName("getOrElse: using generic source, mapper and default value parameters test cases")
+    @DisplayName("getOrElseGet: using generic source, mapper and default value parameters test cases")
     public <T, E> void getOrElseGetWithSourceInstanceAndMapperAndDefaultValueParameters_testCases(T sourceInstance,
                                                                                                   Function<? super T, ? extends E> mapper,
                                                                                                   Supplier<? extends E> defaultValue,
@@ -255,8 +295,66 @@ public class ObjectUtilTest {
 
 
 
+    static Stream<Arguments> getOrElseGetWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParametersTestCases() {
+        PizzaDto pizzaWithoutProperties = new PizzaDto(null, null);
+        PizzaDto pizzaWithAllProperties = new PizzaDto(CARBONARA.getDatabaseValue(), 5D);
+
+        Supplier<String> alwaysTestDefaultValue = () -> "testDefaultValue";
+        Supplier<Integer> always45 = () -> 45;
+        return Stream.of(
+                //@formatter:off
+                //            sourceInstance,           mapper1,          mapper2,         defaultValue,             expectedException,                expectedResult
+                Arguments.of( null,                     null,             null,            null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   null,            null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                     null,             STRING_LENGTH,   null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   STRING_LENGTH,   null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( null,                     null,             null,            alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   null,            alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( null,                     GET_PIZZA_NAME,   STRING_LENGTH,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( null,                     null,             STRING_LENGTH,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( pizzaWithAllProperties,   null,             null,            null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   null,            null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( pizzaWithAllProperties,   null,             STRING_LENGTH,   null,                     IllegalArgumentException.class,   null ),
+                Arguments.of( pizzaWithoutProperties,   null,             null,            alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   null,            alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( pizzaWithoutProperties,   null,             STRING_LENGTH,   alwaysTestDefaultValue,   null,                             alwaysTestDefaultValue.get() ),
+                Arguments.of( pizzaWithoutProperties,   GET_PIZZA_NAME,   STRING_LENGTH,   always45,                 null,                             always45.get() ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   STRING_LENGTH,   null,                     null,                             pizzaWithAllProperties.getName().length() ),
+                Arguments.of( pizzaWithAllProperties,   GET_PIZZA_NAME,   STRING_LENGTH,   always45,                 null,                             pizzaWithAllProperties.getName().length() )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOrElseGetWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParametersTestCases")
+    @DisplayName("getOrElseGet: using source instance, mapper1, mapper2 and default value parameters test cases")
+    public <T1, T2, R> void getOrElseGetWithSourceInstanceAndMapper1AndMapper2AndDefaultValueParameters_testCases(T1 sourceInstance,
+                                                                                                                  Function<? super T1, ? extends T2> mapper1,
+                                                                                                                  Function<? super T2, ? extends R> mapper2,
+                                                                                                                  Supplier<? extends R> defaultValue,
+                                                                                                                  Class<? extends Exception> expectedException,
+                                                                                                                  R expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> getOrElseGet(sourceInstance, mapper1, mapper2, defaultValue)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    getOrElseGet(sourceInstance, mapper1, mapper2, defaultValue)
+            );
+        }
+    }
+
+
+
     private static final Function<PizzaDto, Double> GET_PIZZA_COST = PizzaDto::getCost;
 
     private static final Function<PizzaDto, String> GET_PIZZA_NAME = PizzaDto::getName;
+
+    private static final Function<String, Integer> STRING_LENGTH = String::length;
+
+    private static final Function<Object, String> TO_STRING = Object::toString;
 
 }
