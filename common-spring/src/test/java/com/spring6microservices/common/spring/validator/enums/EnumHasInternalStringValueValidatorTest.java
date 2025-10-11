@@ -10,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static com.spring6microservices.common.spring.enums.PizzaEnum.CARBONARA;
+import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,17 +38,26 @@ public class EnumHasInternalStringValueValidatorTest {
                 CARBONARA.getInternalPropertyValue() + PizzaEnum.MARGUERITA.getInternalPropertyValue(),
                 5D
         );
+        String expectedValues =
+                Arrays.stream(PizzaEnum.values())
+                        .map(PizzaEnum::getInternalPropertyValue)
+                        .collect(
+                                joining(", ")
+                        );
 
         Set<ConstraintViolation<PizzaDto>> violations = validator.validate(dto);
 
-        assertEquals(1, violations.size());
+        assertEquals(
+                1,
+                violations.size()
+        );
         ConstraintViolation<PizzaDto> error = violations.iterator().next();
         assertEquals(
                 "name",
                 error.getPropertyPath().toString()
         );
         assertEquals(
-                "must be one of the values included in [Margherita, Carbonara]",
+                "must be one of the values included in [" + expectedValues + "]",
                 error.getMessage()
         );
     }

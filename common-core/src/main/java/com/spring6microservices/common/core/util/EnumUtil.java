@@ -18,6 +18,9 @@ public class EnumUtil {
      * {@link Enum} constant which internal property value matches with {@code internalPropertyValueToSearch} after
      * applying {@code mapper}.
      *
+     * @apiNote
+     *    If {@code enumClass} is {@code null} then an {@link Optional#empty()} will be returned.
+     *
      * <pre>
      *    public enum ExtendedHttpStatus {
      *      TOKEN_EXPIRED(440);
@@ -78,7 +81,7 @@ public class EnumUtil {
      * This method performs case-insensitive matching of the name.
      *
      * @apiNote
-     *    If {@code enumClass} or {@code enumClass} are {@code null} then an {@link Optional#empty()} will be returned.
+     *    If {@code enumClass} or {@code enumName} are {@code null} then an {@link Optional#empty()} will be returned.
      *
      * @param enumClass
      *    {@link Class} of the {@link Enum} to query

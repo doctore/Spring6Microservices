@@ -4,11 +4,9 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 
 /**
  *    Validates if the given {@link String} matches with one of the internal {@link String} property belonging to the
@@ -26,15 +24,9 @@ public final class EnumHasInternalStringValueValidator implements ConstraintVali
 	@Override
 	@SuppressWarnings("unchecked")
 	public void initialize(final EnumHasInternalStringValue constraintAnnotation) {
-		enumValidValues = Arrays.stream(
-						constraintAnnotation.enumClass().getEnumConstants()
-				)
-				.map(e ->
-						((IEnumInternalPropertyValue<String>)e).getInternalPropertyValue()
-				)
-				.collect(
-						toList()
-				);
+		enumValidValues = IEnumInternalPropertyValue.getInternalPropertyValues(
+                constraintAnnotation.enumClass()
+        );
 		constraintTemplate = constraintAnnotation.message();
 		isNullAccepted = constraintAnnotation.isNullAccepted();
 	}

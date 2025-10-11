@@ -3,8 +3,10 @@ package com.spring6microservices.common.spring.enums;
 import com.spring6microservices.common.spring.validator.enums.IEnumInternalPropertyValue;
 
 public enum PizzaEnum implements IEnumInternalPropertyValue<String> {
-    MARGUERITA("Margherita"),
-    CARBONARA("Carbonara");
+
+    CARBONARA("Carbonara"),
+    FOUR_CHEESE("Four cheese"),
+    MARGUERITA("Margherita");
 
     private String databaseValue;
 
