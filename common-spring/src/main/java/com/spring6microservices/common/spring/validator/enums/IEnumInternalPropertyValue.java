@@ -21,7 +21,7 @@ public interface IEnumInternalPropertyValue<T> {
      * that provided {@code internalPropertyValue}.
      *
      * @apiNote
-     *    If {@code enumClass} or {@code enumClass} are {@code null} then an {@link Optional#empty()} will be returned.
+     *    If {@code enumClass} or {@code internalPropertyValue} are {@code null} then an {@link Optional#empty()} will be returned.
      *
      * @param enumClass
      *    {@link Class} of the {@link Enum} to query
