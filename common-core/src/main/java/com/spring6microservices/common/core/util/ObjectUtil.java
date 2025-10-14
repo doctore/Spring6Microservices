@@ -180,20 +180,18 @@ public class ObjectUtil {
                                           final Function<? super T1, ? extends T2> mapper1,
                                           final Function<? super T2, ? extends R> mapper2,
                                           final R defaultValue) {
-        if (null == mapper1 || null == mapper2) {
+        if (null == sourceInstance || null == mapper1 || null == mapper2) {
             return defaultValue;
         }
-        if (null != sourceInstance) {
-            T2 mapper1Result = mapper1.apply(
-                    sourceInstance
+        T2 mapper1Result = mapper1.apply(
+                sourceInstance
+        );
+        if (null != mapper1Result) {
+            R mapper2Result = mapper2.apply(
+                    mapper1Result
             );
-            if (null != mapper1Result) {
-                R mapper2Result = mapper2.apply(
-                        mapper1Result
-                );
-                if (null != mapper2Result) {
-                    return mapper2Result;
-                }
+            if (null != mapper2Result) {
+                return mapper2Result;
             }
         }
         return defaultValue;
