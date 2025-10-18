@@ -302,9 +302,6 @@ public class ObjectUtil {
                                              final Function<? super T1, ? extends T2> mapper1,
                                              final Function<? super T2, ? extends R> mapper2,
                                              final Supplier<? extends R> defaultValue) {
-
-
-
         if (null != sourceInstance && null != mapper1 && null != mapper2) {
             final T2 mapper1Result = mapper1.apply(
                     sourceInstance

@@ -2,13 +2,12 @@ package com.spring6microservices.common.core.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.lang.String.format;
 import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
 @UtilityClass
 public class EnumUtil {
@@ -78,7 +77,7 @@ public class EnumUtil {
 
     /**
      *    Gets the {@link Enum} constant included in the given {@code enumClass} that matches with {@code enumName}.
-     * This method performs case-insensitive matching of the name.
+     * This method performs case-insensitive matching of the {@link Enum#name()}.
      *
      * @apiNote
      *    If {@code enumClass} or {@code enumName} are {@code null} then an {@link Optional#empty()} will be returned.
@@ -110,7 +109,7 @@ public class EnumUtil {
 
     /**
      *    Gets the {@link Enum} constant included in the given {@code enumClass} that matches with {@code enumName}.
-     * This method performs case-insensitive matching of the name.
+     * This method performs case-insensitive matching of the {@link Enum#name()}.
      *
      * @param enumClass
      *    {@link Class} of the {@link Enum} to query
@@ -138,6 +137,25 @@ public class EnumUtil {
                         )
                 )
         );
+    }
+
+
+    /**
+     * Gets the {@link List} of {@link Enum}s related with provided {@code enumClass}.
+     *
+     * @param enumClass
+     *    {@link Class} of the {@link Enum} to query
+     *
+     * @return {@link List} of {@link Enum}s
+     */
+    public static <E extends Enum<E>> List<E> getEnumList(final Class<E> enumClass) {
+        return ofNullable(enumClass)
+                .map(ec ->
+                        CollectionUtil.toList(
+                                ec.getEnumConstants()
+                        )
+                )
+                .orElseGet(ArrayList::new);
     }
 
 }

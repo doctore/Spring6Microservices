@@ -6,13 +6,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.util.EnumUtil.getByInternalProperty;
-import static com.spring6microservices.common.core.util.EnumUtil.getByNameIgnoreCase;
-import static com.spring6microservices.common.core.util.EnumUtil.getByNameIgnoreCaseOrThrow;
+import static com.spring6microservices.common.core.util.EnumUtil.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -125,6 +125,30 @@ public class EnumUtilTest {
                     )
             );
         }
+    }
+
+
+    static Stream<Arguments> getEnumListTestCases() {
+        List<PizzaEnum> expectedEnumValues = Arrays.asList(
+                PizzaEnum.values()
+        );
+        return Stream.of(
+                //@formatter:off
+                //            enumClass,         expectedResult
+                Arguments.of( null,              List.of() ),
+                Arguments.of( PizzaEnum.class,   expectedEnumValues )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEnumListTestCases")
+    @DisplayName("getEnumList: test cases")
+    public <E extends Enum<E>> void getEnumList_testCases(Class<E> enumClass,
+                                                          List<E> expectedResult) {
+        assertEquals(
+                expectedResult,
+                getEnumList(enumClass)
+        );
     }
 
 
