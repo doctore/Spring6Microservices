@@ -2,6 +2,8 @@ package com.spring6microservices.common.core.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @UtilityClass
@@ -119,6 +121,221 @@ public class AssertUtil {
     public static <X extends Throwable> void isTrue(final boolean expression,
                                                     final Supplier<? extends X> exceptionSupplier) throws X {
         if (!expression) {
+            AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
+            throw exceptionSupplier.get();
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code array}, throwing an {@link IllegalArgumentException} if {@code array} is {@code null} or
+     * contains any {@code null} element.
+     *
+     * @param array
+     *    The array to check
+     * @param errorMessage
+     *    The exception message to use in the threw {@link IllegalArgumentException} if the assertion fails
+     *
+     * @throws IllegalArgumentException if {@code array} is {@code null} or contains a {@code null} element
+     */
+    public static void noNullElements(final Object[] array,
+                                      final String errorMessage) {
+        AssertUtil.notNull(array, "array must be not null");
+        for (final Object element: array) {
+            if (null == element) {
+                throw new IllegalArgumentException(errorMessage);
+            }
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code array}, throwing an {@link Exception} using provided {@link Supplier} if {@code array}
+     * contains any {@code null} element.
+     *
+     * @param array
+     *    The array to check
+     * @param exceptionSupplier
+     *    An {@link Exception} {@link Supplier}
+     *
+     * @throws IllegalArgumentException {@code array} is {@code null} or {@code exceptionSupplier} is {@code null}
+     * @throws X if {@code array} contains a {@code null} element
+     */
+    public static <X extends Throwable> void noNullElements(final Object[] array,
+                                                            final Supplier<? extends X> exceptionSupplier) throws X {
+        AssertUtil.notNull(array, "array must be not null");
+        AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
+        for (final Object element: array) {
+            if (null == element) {
+                throw exceptionSupplier.get();
+            }
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code collection}, throwing an {@link IllegalArgumentException} if {@code collection} is
+     * {@code null} or contains any {@code null} element.
+     *
+     * @param collection
+     *    The {@link Collection} to check
+     * @param errorMessage
+     *    The exception message to use in the threw {@link IllegalArgumentException} if the assertion fails
+     *
+     * @throws IllegalArgumentException if {@code collection} is {@code null} or contains a {@code null} element
+     */
+    public static void noNullElements(final Collection<?> collection,
+                                      final String errorMessage) {
+        AssertUtil.notNull(collection, "collection must be not null");
+        for (final Object element: collection) {
+            if (null == element) {
+                throw new IllegalArgumentException(errorMessage);
+            }
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code collection}, throwing an {@link Exception} using provided {@link Supplier} if
+     * {@code collection} contains any {@code null} element.
+     *
+     * @param collection
+     *    The {@link Collection} to check
+     * @param exceptionSupplier
+     *    An {@link Exception} {@link Supplier}
+     *
+     * @throws IllegalArgumentException {@code collection} is {@code null} or {@code exceptionSupplier} is {@code null}
+     * @throws X if {@code collection} contains a {@code null} element
+     */
+    public static <X extends Throwable> void noNullElements(final Collection<?> collection,
+                                                            final Supplier<? extends X> exceptionSupplier) throws X {
+        AssertUtil.notNull(collection, "collection must be not null");
+        AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
+        for (final Object element: collection) {
+            if (null == element) {
+                throw exceptionSupplier.get();
+            }
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code array}, throwing an {@link IllegalArgumentException} if {@code array} is {@code null} or
+     * contains no elements.
+     *
+     * @param array
+     *    The array to check
+     * @param errorMessage
+     *    The exception message to use in the threw {@link IllegalArgumentException} if the assertion fails
+     *
+     * @throws IllegalArgumentException if {@code array} is {@code null} or contains no elements
+     */
+    public static void notEmpty(final Object[] array,
+                                final String errorMessage) {
+        if (ObjectUtil.isEmpty(array)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code array}, throwing an {@link Exception} if {@code array} is {@code null} or contains
+     * no elements.
+     *
+     * @param array
+     *    The array to check
+     * @param exceptionSupplier
+     *    An {@link Exception} {@link Supplier}
+     *
+     * @throws IllegalArgumentException if {@code exceptionSupplier} is {@code null} and {@code array} is {@code null}
+     *                                  or contains no elements
+     * @throws X if {@code array} is {@code null} or contains no elements
+     */
+    public static <X extends Throwable> void notEmpty(final Object[] array,
+                                                      final Supplier<? extends X> exceptionSupplier) throws X {
+        if (ObjectUtil.isEmpty(array)) {
+            AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
+            throw exceptionSupplier.get();
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code collection}, throwing an {@link IllegalArgumentException} if {@code collection} is
+     * {@code null} or contains no elements.
+     *
+     * @param collection
+     *    The {@link Collection} to check
+     * @param errorMessage
+     *    The exception message to use in the threw {@link IllegalArgumentException} if the assertion fails
+     *
+     * @throws IllegalArgumentException if {@code collection} is {@code null} or contains no elements
+     */
+    public static void notEmpty(final Collection<?> collection,
+                                final String errorMessage) {
+        if (CollectionUtil.isEmpty(collection)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code collection}, throwing an {@link Exception} if {@code collection} is {@code null} or
+     * contains no elements.
+     *
+     * @param collection
+     *    The {@link Collection} to check
+     * @param exceptionSupplier
+     *    An {@link Exception} {@link Supplier}
+     *
+     * @throws IllegalArgumentException if {@code exceptionSupplier} is {@code null} and {@code collection} is {@code null}
+     *                                  or contains no elements
+     * @throws X if {@code collection} is {@code null} or contains no elements
+     */
+    public static <X extends Throwable> void notEmpty(final Collection<?> collection,
+                                                      final Supplier<? extends X> exceptionSupplier) throws X {
+        if (CollectionUtil.isEmpty(collection)) {
+            AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
+            throw exceptionSupplier.get();
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code map}, throwing an {@link IllegalArgumentException} if {@code map} is {@code null} or
+     * contains no elements.
+     *
+     * @param map
+     *    The {@link Map} to check
+     * @param errorMessage
+     *    The exception message to use in the threw {@link IllegalArgumentException} if the assertion fails
+     *
+     * @throws IllegalArgumentException if {@code map} is {@code null} or contains no elements
+     */
+    public static void notEmpty(final Map<?, ?> map,
+                                final String errorMessage) {
+        if (MapUtil.isEmpty(map)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+
+    /**
+     *    Checks provided {@code map}, throwing an {@link Exception} if {@code map} is {@code null} or
+     * contains no elements.
+     *
+     * @param map
+     *    The {@link Map} to check
+     * @param exceptionSupplier
+     *    An {@link Exception} {@link Supplier}
+     *
+     * @throws IllegalArgumentException if {@code exceptionSupplier} is {@code null} and {@code map} is {@code null}
+     *                                  or contains no elements
+     * @throws X if {@code map} is {@code null} or contains no elements
+     */
+    public static <X extends Throwable> void notEmpty(final Map<?, ?> map,
+                                                      final Supplier<? extends X> exceptionSupplier) throws X {
+        if (MapUtil.isEmpty(map)) {
             AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
             throw exceptionSupplier.get();
         }

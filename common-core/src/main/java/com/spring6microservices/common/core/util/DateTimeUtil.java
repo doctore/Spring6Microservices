@@ -507,23 +507,23 @@ public class DateTimeUtil {
 
         return 0 > difference
                 ? Tuple2.of(
-                minus(
-                        finalSourceLocalDateTime,
-                        Math.abs(difference),
-                        timeUnit,
-                        finalZoneId
-                ),
-                finalSourceLocalDateTime
-        )
+                        minus(
+                                finalSourceLocalDateTime,
+                                Math.abs(difference),
+                                timeUnit,
+                                finalZoneId
+                        ),
+                        finalSourceLocalDateTime
+                  )
                 : Tuple2.of(
-                finalSourceLocalDateTime,
-                plus(
                         finalSourceLocalDateTime,
-                        difference,
-                        timeUnit,
-                        finalZoneId
-                )
-        );
+                        plus(
+                                finalSourceLocalDateTime,
+                                difference,
+                                timeUnit,
+                                finalZoneId
+                        )
+                  );
     }
 
 
@@ -819,7 +819,6 @@ public class DateTimeUtil {
                     .parse(
                             finalSourceDate
                     );
-
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("There was an error trying to convert to a Date value the string: %s using the format: %s",
@@ -879,7 +878,6 @@ public class DateTimeUtil {
                                     finalSourceDate
                             )
             );
-
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("There was an error trying to convert to a LocalDate value the string: %s using the format: %s",
@@ -942,7 +940,6 @@ public class DateTimeUtil {
                                     finalSourceDate
                             )
             );
-
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("There was an error trying to convert to a LocalDateTime value the string: %s using the format: %s",
