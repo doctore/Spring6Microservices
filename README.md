@@ -314,6 +314,7 @@ All the managed SQL files are located in the folder [changelog](https://github.c
 
 Maven project that includes common code used in several microservices, with different useful helper classes like:
 
+* [ArrayUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/ArrayUtil.java)
 * [AssertUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/AssertUtil.java)
 * [CollectionUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/CollectionUtil.java)
 * [CollectorsUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/CollectorsUtil.java)
@@ -333,7 +334,9 @@ Generic interfaces used to provide common conversion functionality using [MapStr
 * [BaseConverter](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/converter/BaseConverter.java)
 * [BaseEnumConverter](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/converter/enums/BaseEnumConverter.java)
 
-And functional programming structures and useful classes like:
+Generic [Cloneable](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Cloneable.java)
+interface improving provided [one](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html). And functional programming structures and useful
+classes like:
 
 * [Either](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/either) as an alternative to [Optional](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html) for dealing with possibly missing values.
 * [Function](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/function) improvements.
