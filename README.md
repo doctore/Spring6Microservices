@@ -329,14 +329,14 @@ Maven project that includes common code used in several microservices, with diff
 * [PredicateUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/PredicateUtil.java)
 * [StringUtil](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/util/StringUtil.java)
 
-Generic interfaces used to provide common conversion functionality using [MapStruct](https://mapstruct.org):
+Generic [Cloneable](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Cloneable.java)
+interface improving provided [one](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html). New generic interfaces used to provide common
+conversion functionality using [MapStruct](https://mapstruct.org):
 
 * [BaseConverter](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/converter/BaseConverter.java)
 * [BaseEnumConverter](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/converter/enums/BaseEnumConverter.java)
 
-Generic [Cloneable](https://github.com/doctore/Spring6Microservices/blob/main/common-core/src/main/java/com/spring6microservices/common/core/functional/Cloneable.java)
-interface improving provided [one](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html). And functional programming structures and useful
-classes like:
+And functional programming structures and useful classes like:
 
 * [Either](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/functional/either) as an alternative to [Optional](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html) for dealing with possibly missing values.
 * [Function](https://github.com/doctore/Spring6Microservices/tree/main/common-core/src/main/java/com/spring6microservices/common/core/function) improvements.
