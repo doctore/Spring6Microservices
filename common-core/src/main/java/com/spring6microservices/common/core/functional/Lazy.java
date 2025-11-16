@@ -110,8 +110,8 @@ public final class Lazy<T> implements Supplier<T> {
     public int hashCode() {
         return isEvaluated()
                 ? Objects.hashCode(
-                get()
-        )
+                        get()
+                  )
                 : Objects.hashCode(null);
     }
 

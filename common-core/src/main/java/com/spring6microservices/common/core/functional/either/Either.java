@@ -6,9 +6,9 @@ import com.spring6microservices.common.core.functional.Try.Try;
 import com.spring6microservices.common.core.functional.validation.Invalid;
 import com.spring6microservices.common.core.functional.validation.Valid;
 import com.spring6microservices.common.core.functional.validation.Validation;
+import com.spring6microservices.common.core.util.ArrayUtil;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.CollectionUtil;
-import com.spring6microservices.common.core.util.ObjectUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -138,7 +138,7 @@ public abstract class Either<L, R> implements Serializable {
     public static <L, R> Either<L, R> combine(final BiFunction<? super L, ? super L, ? extends L> mapperLeft,
                                               final BiFunction<? super R, ? super R, ? extends R> mapperRight,
                                               final Either<L, R>... eithers) {
-        if (ObjectUtil.isEmpty(eithers)) {
+        if (ArrayUtil.isEmpty(eithers)) {
             return Right.empty();
         }
         AssertUtil.notNull(mapperLeft, "mapperLeft must be not null");
@@ -181,7 +181,7 @@ public abstract class Either<L, R> implements Serializable {
     @SafeVarargs
     public static  <L, R> Either<L, R> combineGetFirstLeft(final BiFunction<? super R, ? super R, ? extends R> mapperRight,
                                                            final Supplier<Either<L, R>>... suppliers) {
-        if (ObjectUtil.isEmpty(suppliers)) {
+        if (ArrayUtil.isEmpty(suppliers)) {
             return Right.empty();
         }
         AssertUtil.notNull(mapperRight, "mapperRight must be not null");

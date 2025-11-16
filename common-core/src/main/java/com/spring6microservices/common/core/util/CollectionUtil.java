@@ -2,6 +2,7 @@ package com.spring6microservices.common.core.util;
 
 import com.spring6microservices.common.core.collection.tuple.Tuple;
 import com.spring6microservices.common.core.collection.tuple.Tuple2;
+import com.spring6microservices.common.core.functional.Cloneable;
 import com.spring6microservices.common.core.functional.PartialFunction;
 import lombok.experimental.UtilityClass;
 
@@ -116,9 +117,6 @@ public class CollectionUtil {
      *    Returns a new {@link Collection} using the given {@code sourceCollection}, applying to its elements the
      * composed {@link Function} {@code secondMapper}({@code firstMapper}(x))
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    andThen(                       Result:
      *       [1, 2, 3, 6],                ["2", "3", "4", "7"]
@@ -135,8 +133,8 @@ public class CollectionUtil {
      * @param secondMapper
      *    {@link Function} with the second modification to apply
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link List} applying {@code firstMapper} and {@code secondMapper} to the provided {@code sourceCollection}
      *
@@ -158,7 +156,9 @@ public class CollectionUtil {
         return sourceCollection.stream()
                 .map(finalMapper)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -215,7 +215,7 @@ public class CollectionUtil {
      *
      * @apiNote
      *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be updated using
-     * {@code defaultMapper}. If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
+     * {@code defaultMapper}.
      *
      * <pre>
      *    applyOrElse(                   Result:
@@ -236,8 +236,8 @@ public class CollectionUtil {
      * @param orElseMapper
      *    {@link Function} to transform elements of {@code sourceCollection} do not verify {@code filterPredicate}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Collection} from applying the given {@code defaultMapper} to each element of {@code sourceCollection}
      *         that verifies {@code filterPredicate} and collecting the results or {@code orElseMapper} otherwise
@@ -314,9 +314,6 @@ public class CollectionUtil {
      *    Returns a new {@link Collection} using the given {@code sourceCollection}, applying {@link PartialFunction#apply(Object)}
      * if the current element verifies {@link PartialFunction#isDefinedAt(Object)}, {@code orElseMapper} otherwise.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    applyOrElse(                                Result:
      *       [1, 2, 3, 6],                             [2, 4, 4, 12]
@@ -338,8 +335,8 @@ public class CollectionUtil {
      * @param orElseMapper
      *    {@link Function} to transform elements of {@code sourceCollection} do not verify {@code filterPredicate}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Collection} from applying the given {@link PartialFunction} to each element of {@code sourceCollection}
      *         on which it is defined and collecting the results, {@code orElseMapper} otherwise
@@ -364,7 +361,95 @@ public class CollectionUtil {
                                 : orElseMapper.apply(elto)
                 )
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
+                );
+    }
+
+
+    /**
+     * Clones provided {@code sourceCollection} into a new {@link List} of cloned instances.
+     *
+     * @apiNote
+     *    In this method, ideally, the returned {@link List} contains different objects but with the same information as
+     * included in {@code sourceCollection}; using {@link CollectionUtil#copy} {@code sourceCollection} and the returned
+     * {@link Collection} contain the same objets.
+     *
+     * @param sourceCollection
+     *    Source {@link Collection} with the elements to clone
+     *
+     * @return {@link List} of cloned instances
+     */
+    public static <T> List<T> clone(final Collection<Cloneable<? extends T>> sourceCollection) {
+        return (List<T>) clone(
+                sourceCollection,
+                ArrayList::new
+        );
+    }
+
+
+    /**
+     * Clones provided {@code sourceCollection} into a new {@link Collection} of cloned instances.
+     *
+     * @apiNote
+     *    In this method, ideally, the returned {@link List} contains different objects but with the same information as
+     * included in {@code sourceCollection}; using {@link CollectionUtil#copy} {@code sourceCollection} and the returned
+     * {@link Collection} contain the same objets.
+     *
+     * @param sourceCollection
+     *    Source {@link Collection} with the elements to clone
+     * @param collectionFactory
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
+     *
+     * @return {@link Collection} of cloned instances
+     */
+    public static <T> Collection<T> clone(final Collection<Cloneable<? extends T>> sourceCollection,
+                                          final Supplier<Collection<T>> collectionFactory) {
+        return clone(
+                sourceCollection,
+                alwaysTrue(),
+                collectionFactory
+        );
+    }
+
+
+    /**
+     *    Clones provided {@code sourceCollection} into a new {@link Collection} of cloned instances, if the current
+     * element verifies {@code filterPredicate}.
+     *
+     * @apiNote
+     *    In this method, ideally, the returned {@link List} contains different objects but with the same information as
+     * included in {@code sourceCollection}; using {@link CollectionUtil#copy} {@code sourceCollection} and the returned
+     * {@link Collection} contain the same objets.
+     *
+     * @param sourceCollection
+     *    Source {@link Collection} with the elements to clone
+     * @param filterPredicate
+     *    {@link Predicate} to filter elements of {@code sourceCollection}. If it is {@code null} then all elements will be cloned
+     * @param collectionFactory
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
+     *
+     * @return {@link Collection} of cloned instances
+     */
+    public static <T> Collection<T> clone(final Collection<Cloneable<? extends T>> sourceCollection,
+                                          final Predicate<Cloneable<? extends T>> filterPredicate,
+                                          final Supplier<Collection<T>> collectionFactory) {
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
+        if (isEmpty(sourceCollection)) {
+            return finalCollectionFactory.get();
+        }
+        final Predicate<Cloneable<? extends T>> finalFilterPredicate = getOrAlwaysTrue(filterPredicate);
+        return sourceCollection
+                .stream()
+                .filter(finalFilterPredicate)
+                .map(Cloneable::clone)
+                .collect(
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -377,9 +462,6 @@ public class CollectionUtil {
      *     <li>Transform its filtered elements using {@code mapFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be transformed.
-     *
      * <pre>
      *    collect(                       Result:
      *       [1, 2, 3, 6],                ["1", "3"]
@@ -391,7 +473,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter and transform
      * @param filterPredicate
-     *    {@link Predicate} to filter elements of {@code sourceCollection}
+     *    {@link Predicate} to filter elements of {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be transformed
      * @param mapFunction
      *    {@link Function} to transform filtered elements of {@code sourceCollection}
      *
@@ -421,10 +504,6 @@ public class CollectionUtil {
      *     <li>Transform its filtered elements using {@code mapFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be transformed. If {@code collectionFactory}
-     * is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    collect(                       Result:
      *       [1, 2, 3, 6],                ["1", "3"]
@@ -437,12 +516,13 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter and transform
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be transformed
      * @param mapFunction
      *    {@link Function} to transform filtered elements of the source {@code sourceCollection}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Collection} from applying the given {@link Function} to each element of {@code sourceCollection}
      *         on which {@link Predicate} returns {@code true} and collecting the results
@@ -518,9 +598,6 @@ public class CollectionUtil {
      *     <li>Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    collect(                                    Result:
      *       [1, 2, 3, 6],                             ["1", "3"]
@@ -539,8 +616,8 @@ public class CollectionUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements of {@code sourceCollection}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Collection} from applying the given {@link PartialFunction} to each element of {@code sourceCollection}
      *         on which it is defined and collecting the results
@@ -560,7 +637,9 @@ public class CollectionUtil {
                 .filter(partialFunction::isDefinedAt)
                 .map(partialFunction)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -631,9 +710,6 @@ public class CollectionUtil {
     /**
      * Returns a new {@link Collection} containing the elements of provided {@link Collection}s {@code collections}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    concat(                        Result:
      *       ArrayList::new,              [1, 2, 1, 4]
@@ -643,7 +719,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      * @param collections
      *    {@link Collection}s to concat
      *
@@ -659,7 +736,9 @@ public class CollectionUtil {
                                 .filter(Objects::nonNull)
                                 .flatMap(Collection::stream)
                                 .collect(
-                                        Collectors.toCollection(finalCollectionFactory)
+                                        Collectors.toCollection(
+                                                finalCollectionFactory
+                                        )
                                 )
                 )
                 .orElseGet(finalCollectionFactory);
@@ -668,6 +747,10 @@ public class CollectionUtil {
 
     /**
      * Returns a new {@link List} containing the elements of provided {@code sourceCollection}.
+     *
+     * @apiNote
+     *    In this method the {@code sourceCollection} and the returned {@link List} contain the same objets; using
+     * {@link CollectionUtil#clone}, ideally, the cloned objets are different but with the same information.
      *
      * @param sourceCollection
      *    Source {@link Collection} with the elements to copy
@@ -687,30 +770,63 @@ public class CollectionUtil {
      * Returns a new {@link Collection} containing the elements of provided {@code sourceCollection}.
      *
      * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
-     * <pre>
-     *    copy(                          Result:
-     *       [1, 2, 3, 2],                [1, 2, 3]
-     *       HashSet::new
-     *    )
-     * </pre>
+     *    In this method the {@code sourceCollection} and the returned {@link List} contain the same objets; using
+     * {@link CollectionUtil#clone}, ideally, the cloned objets are different but with the same information.
      *
      * @param sourceCollection
      *    Source {@link Collection} with the elements to copy
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      *
      * @return {@link Collection} containing all elements included in {@code sourceCollection}
      */
     public static <T> Collection<T> copy(final Collection<? extends T> sourceCollection,
                                          final Supplier<Collection<T>> collectionFactory) {
-        final Collection<T> result = getOrDefaultListSupplier(collectionFactory).get();
-        if (!isEmpty(sourceCollection)) {
-            result.addAll(sourceCollection);
-        }
-        return result;
+        return copy(
+                sourceCollection,
+                alwaysTrue(),
+                collectionFactory
+        );
     }
+
+
+    /**
+     * Returns a new {@link Collection} containing the elements of provided {@code sourceCollection}.
+     *
+     * @apiNote
+     *    In this method the {@code sourceCollection} and the returned {@link List} contain the same objets; using
+     * {@link CollectionUtil#clone}, ideally, the cloned objets are different but with the same information.
+     *
+     * @param sourceCollection
+     *    Source {@link Collection} with the elements to copy
+     * @param filterPredicate
+     *    {@link Predicate} to filter elements of {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be copied
+     * @param collectionFactory
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
+     *
+     * @return {@link Collection} containing all elements included in {@code sourceCollection}
+     */
+    public static <T> Collection<T> copy(final Collection<? extends T> sourceCollection,
+                                         final Predicate<? super T> filterPredicate,
+                                         final Supplier<Collection<T>> collectionFactory) {
+        final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
+        if (isEmpty(sourceCollection)) {
+            return finalCollectionFactory.get();
+        }
+        final Predicate<? super T> finalFilterPredicate = getOrAlwaysTrue(filterPredicate);
+        return sourceCollection
+                .stream()
+                .filter(finalFilterPredicate)
+                .collect(
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
+                );
+    }
+
 
 
     /**
@@ -750,9 +866,6 @@ public class CollectionUtil {
      *    Returns a {@link List} removing the longest prefix of elements included in {@code sourceCollection} that satisfy
      * the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
-     *
      * <pre>
      *    dropWhile(                     Result:
      *       [1, 3, 4, 5, 6],             [4, 5, 6]
@@ -763,7 +876,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If {{@code null} then all elements of {@code sourceCollection}
+     *    will be returned.
      *
      * @return the longest suffix of provided {@code sourceCollection} whose first element does not satisfy {@code filterPredicate}
      */
@@ -782,10 +896,6 @@ public class CollectionUtil {
      *    Returns a {@link List} removing the longest prefix of elements included in {@code sourceCollection} that satisfy
      * the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned. If
-     * {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    dropWhile(                     Result:
      *       [1, 3, 4, 5, 6],             [4, 5, 6]
@@ -797,9 +907,11 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return the longest suffix of provided {@code sourceCollection} whose first element does not satisfy {@code filterPredicate}
      */
@@ -817,7 +929,9 @@ public class CollectionUtil {
                 .stream()
                 .dropWhile(filterPredicate)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -825,9 +939,6 @@ public class CollectionUtil {
     /**
      *    Returns a {@link List} with the elements of provided {@code sourceCollection} that satisfy the {@link Predicate}
      * {@code filterPredicate}.
-     *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
      *
      * <pre>
      *    filter(                        Result:
@@ -839,7 +950,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      *
      * @return empty {@link List} if {@code sourceCollection} has no elements or no one verifies provided {@code filterPredicate},
      *         otherwise a new {@link List} with the elements of {@code sourceCollection} which verify {@code filterPredicate}
@@ -859,10 +971,6 @@ public class CollectionUtil {
      *    Returns a {@link Collection} with the elements of provided {@code sourceCollection} that satisfy the {@link Predicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned. If
-     * {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    filter(                        Result:
      *       [1, 2, 3, 6],                [1, 3]
@@ -874,9 +982,11 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return empty {@link Collection} if {@code sourceCollection} has no elements or no one verifies provided {@code filterPredicate},
      *         otherwise a new {@link Collection} with the elements of {@code sourceCollection} which verify {@code filterPredicate}
@@ -895,7 +1005,9 @@ public class CollectionUtil {
                 .stream()
                 .filter(filterPredicate)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -903,9 +1015,6 @@ public class CollectionUtil {
     /**
      *    Returns a {@link List} removing the elements of provided {@code sourceCollection} that satisfy the {@link Predicate}
      * {@code filterPredicate}.
-     *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
      *
      * <pre>
      *    filterNot(                     Result:
@@ -917,7 +1026,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      *
      * @return empty {@link List} if {@code sourceCollection} has no elements,
      *         otherwise a new {@link List} with the elements of {@code sourceCollection} which do not verify {@code filterPredicate}
@@ -937,10 +1047,6 @@ public class CollectionUtil {
      *    Returns a {@link Collection} removing the elements of provided {@code sourceCollection} that satisfy the {@link Predicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned. If
-     * {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    filterNot(                     Result:
      *       [1, 2, 3, 6],                [2, 6]
@@ -952,9 +1058,11 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return empty {@link Collection} if {@code sourceCollection} has no elements,
      *         otherwise a new {@link Collection} with the elements of {@code sourceCollection} which do not verify {@code filterPredicate}
@@ -1061,9 +1169,6 @@ public class CollectionUtil {
     /**
      * Converts given {@code sourceCollection} into a {@link Collection} formed by the elements of these iterable collections.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    flatten(                       Result:
      *       [5, [3, 2], 5],              [5, 3, 2]
@@ -1074,8 +1179,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    {@link Collection} of {@link Object} to concat
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link Collection} resulting from concatenating all element of {@code sourceCollection}
      */
@@ -1147,7 +1252,6 @@ public class CollectionUtil {
      *
      * @apiNote
      *    If {@code sourceCollection} or {@code accumulator} are {@code null} then {@code initialValue} is returned.
-     * If {@code filterPredicate} is {@code null} then all elements will be used to calculate the final value.
      *
      * <pre>
      *    foldLeft(                      Result:
@@ -1161,7 +1265,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    {@link Collection} with elements to combine
      * @param filterPredicate
-     *    {@link Predicate} used to filter elements of {@code sourceCollection}
+     *    {@link Predicate} used to filter elements of {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be used to calculate the final value
      * @param initialValue
      *    The initial value to start with
      * @param accumulator
@@ -1235,7 +1340,6 @@ public class CollectionUtil {
      *
      * @apiNote
      *    If {@code sourceCollection} or {@code accumulator} are {@code null} then {@code initialValue} is returned.
-     * If {@code filterPredicate} is {@code null} then all elements will be used to calculate the final value.
      *
      * <pre>
      *    foldRight(                     Result:
@@ -1249,7 +1353,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    {@link Collection} with elements to combine
      * @param filterPredicate
-     *    {@link Predicate} used to filter elements of {@code sourceCollection}
+     *    {@link Predicate} used to filter elements of {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be used to calculate the final value
      * @param initialValue
      *    The initial value to start with
      * @param accumulator
@@ -1352,13 +1457,11 @@ public class CollectionUtil {
     /**
      * Returns a {@link Collection} with the elements included in the given {@link Iterator}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * @param sourceIterator
      *    {@link Iterator} with the elements to add in the returned {@link List}
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link Collection} containing the elements accessible using {@code sourceIterator}
      */
@@ -1376,7 +1479,9 @@ public class CollectionUtil {
                         false
                 )
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -1430,8 +1535,8 @@ public class CollectionUtil {
      * @param discriminatorKey
      *    The discriminator {@link Function} to get the key values of returned {@link Map}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} to each element of {@code sourceCollection}
      *         to generate the keys of the returned one
@@ -1551,8 +1656,8 @@ public class CollectionUtil {
      * @param discriminatorKey
      *    The discriminator {@link Function} to get the key values of returned {@link Map}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} to each element of {@code sourceCollection}
      *         to generate the keys of the returned one
@@ -1637,9 +1742,6 @@ public class CollectionUtil {
      * only if the current element matches {@code filterPredicate}. Each element in a group is transformed into a value of
      * type V using {@code valueMapper} {@link Function}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be used.
-     *
      * <pre>
      *    groupMap(                      Result:
      *       [1, 2, 3, 6, 11],            [(0, [4, 7])
@@ -1652,7 +1754,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to transform and group
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be used
      * @param discriminatorKey
      *    The discriminator {@link Function} to get the key values of returned {@link Map}
      * @param valueMapper
@@ -1684,10 +1787,6 @@ public class CollectionUtil {
      * only if the current element matches {@code filterPredicate}. Each element in a group is transformed into a value of
      * type V using {@code valueMapper} {@link Function}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be used. If {@code collectionFactory} is
-     * {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    groupMap(                      Result:
      *       [1, 2, 3, 6, 11],            [(0, [4, 7])
@@ -1701,14 +1800,15 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to transform and group
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements
+     *    will be used
      * @param discriminatorKey
      *    The discriminator {@link Function} to get the key values of returned {@link Map}
      * @param valueMapper
      *    {@link Function} to transform elements of {@code sourceCollection}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} and {@code valueMapper} to each element
      *         of {@code sourceCollection} that verifies {@code filterPredicate}
@@ -1782,9 +1882,6 @@ public class CollectionUtil {
      *    Partitions given {@code sourceCollection} into a {@link Map} of {@link List} according to {@code partialFunction}.
      * Each element in the {@link Collection} is transformed into a {@link Map.Entry} using {@code partialFunction}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    groupMap(                                         Result:
      *       [1, 2, 3, 6, 9],                                [(0, [4, 10])
@@ -1806,8 +1903,8 @@ public class CollectionUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements of {@code sourceCollection}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@link PartialFunction} to each element of {@code sourceCollection}
      *         on which it is defined and collecting the results
@@ -1970,8 +2067,6 @@ public class CollectionUtil {
      * @apiNote
      *    This method is similar to {@link CollectionUtil#groupMap(Collection, Predicate, Function, Function, Supplier)} but
      * {@code discriminatorKey} returns a {@link Collection} of related key values.
-     * <p>
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
      *
      * <pre>
      *    groupMapMultiKey(                                 Result:
@@ -2007,8 +2102,8 @@ public class CollectionUtil {
      * @param valueMapper
      *    {@link Function} to transform elements of {@code sourceCollection}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} and {@code valueMapper} to each element
      *         of {@code sourceCollection} that verifies {@code filterPredicate}
@@ -2265,9 +2360,6 @@ public class CollectionUtil {
     /**
      * Returns a {@link Collection} applying provided {@code mapFunction} to every element of the given {@code sourceCollection}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    map(                                                                      Result:
      *       [new PizzaDto("Carbonara", 5D), new PizzaDto("Margherita", 10D)]        ["Carbonara", "Margherita"]
@@ -2281,8 +2373,8 @@ public class CollectionUtil {
      * @param mapFunction
      *    {@link Function} to apply to {@code sourceCollection}'s elements
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link Collection} after applying {@code mapFunction} to {@code sourceCollection}'s elements
      *
@@ -2299,7 +2391,9 @@ public class CollectionUtil {
         return sourceCollection.stream()
                 .map(mapFunction)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -2340,9 +2434,6 @@ public class CollectionUtil {
      *    Returns a {@link Collection} of {@link Tuple} applying provided {@code mapFunction}s to every element of the given
      * {@code sourceCollection}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    mapMulti(                                                                              Result:
      *       [new UserDto(1L, "user1 name", "user1 address", 11, "2011-11-11 13:00:05")],         [Tuple2.of("user1 name", 11)]
@@ -2356,8 +2447,8 @@ public class CollectionUtil {
      * @param mapFunctions
      *    Array of {@link Function} to apply to {@code sourceCollection}'s elements
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link Collection} of {@link Tuple} after applying {@code mapFunction}s to {@code sourceCollection}'s elements
      *
@@ -2390,7 +2481,9 @@ public class CollectionUtil {
                     return result;
                 })
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -2785,7 +2878,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      * @param collections
      *    {@link Collection} to merge
      *
@@ -2838,9 +2932,6 @@ public class CollectionUtil {
      *    Merges provided {@link Collection}s {@code collections} into a single sorted {@link Collection} such that the
      * ordering of the elements according to {@link Comparator} {@code comparator} is retained.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    sort(                                       Result:
      *       Comparator.reverseOrder(),                [4, 2, 1]
@@ -2853,7 +2944,8 @@ public class CollectionUtil {
      * @param comparator
      *    {@link Comparator} to use for the merge
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      * @param collections
      *    {@link Collection} to merge
      *
@@ -2866,7 +2958,7 @@ public class CollectionUtil {
                                          final Supplier<Collection<T>> collectionFactory,
                                          final Collection<? extends T> ...collections) {
         final Supplier<Collection<T>> finalCollectionFactory = getOrDefaultListSupplier(collectionFactory);
-        if (ObjectUtil.isEmpty(collections)) {
+        if (ArrayUtil.isEmpty(collections)) {
             return finalCollectionFactory.get();
         }
         AssertUtil.notNull(comparator, "comparator must be not null");
@@ -2874,7 +2966,9 @@ public class CollectionUtil {
                 .stream()
                 .sorted(comparator)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
@@ -2941,9 +3035,6 @@ public class CollectionUtil {
      *    Returns a {@link List} with the longest prefix of elements included in {@code sourceCollection} that satisfy
      * the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
-     *
      * <pre>
      *    takeWhile(                     Result:
      *       [1, 3, 4, 5, 6],             [1, 3]
@@ -2954,7 +3045,8 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      *
      * @return the longest prefix of provided {@code sourceCollection} whose elements all satisfy {@code filterPredicate}
      */
@@ -2973,10 +3065,6 @@ public class CollectionUtil {
      *    Returns a {@link List} with the longest prefix of elements included in {@code sourceCollection} that satisfy
      * the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned. If
-     * {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    takeWhile(                     Result:
      *       [1, 3, 4, 5, 6],             [1, 3]
@@ -2988,9 +3076,11 @@ public class CollectionUtil {
      * @param sourceCollection
      *    Source {@link Collection} with the elements to filter
      * @param filterPredicate
-     *    {@link Predicate} to filter elements from {@code sourceCollection}
+     *    {@link Predicate} to filter elements from {@code sourceCollection}. If it is {@code null} then all elements of
+     *    {@code sourceCollection} will be returned
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return the longest prefix of provided {@code sourceCollection} whose elements all satisfy {@code filterPredicate}
      */
@@ -3008,16 +3098,15 @@ public class CollectionUtil {
                 .stream()
                 .takeWhile(filterPredicate)
                 .collect(
-                        Collectors.toCollection(finalCollectionFactory)
+                        Collectors.toCollection(
+                                finalCollectionFactory
+                        )
                 );
     }
 
 
     /**
      * Returns a {@link Collection} containing all the given {@code elements}.
-     *
-     * @apiNote
-     *   If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
      *
      * <pre>
      *    toCollection(                  Result:
@@ -3029,7 +3118,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      * @param elements
      *    Items to include in the returned {@link Collection}
      *
@@ -3050,9 +3140,6 @@ public class CollectionUtil {
      *    Returns a {@link Collection} containing the given {@code elements} if the current item verifies
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    toCollection(                  Result:
      *       HashSet::new,                [1]
@@ -3064,7 +3151,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      * @param filterPredicate
      *    {@link Predicate} to filter {@code elements}
      * @param elements
@@ -3085,7 +3173,9 @@ public class CollectionUtil {
 
                     return elementsStream
                             .collect(
-                                    Collectors.toCollection(finalCollectionFactory)
+                                    Collectors.toCollection(
+                                            finalCollectionFactory
+                                    )
                             );
                 })
                 .orElseGet(finalCollectionFactory);
@@ -3114,9 +3204,6 @@ public class CollectionUtil {
      *    Returns a mutable and non-fixed size {@link List} containing the given {@code elements} if the current item
      * verifies {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no one element will be filtered to insert in the returned {@link List}.
-     *
      * <pre>
      *    toList(                        Result:
      *       i -> 1 == i % 2,             [1, 1]
@@ -3127,7 +3214,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param filterPredicate
-     *    {@link Predicate} to filter {@code elements}
+     *    {@link Predicate} to filter {@code elements}. If it is {@code null} then no one element will be filtered
+     *    to insert in the returned {@link List}
      * @param elements
      *    Items to include in the returned {@link List}
      *
@@ -3148,9 +3236,6 @@ public class CollectionUtil {
      *    Returns a {@link List} containing the given {@code elements} if the current item verifies
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link ArrayList} will be used.
-     *
      * <pre>
      *    toList(                        Result:
      *       ArrayList::new,              [1, 1]
@@ -3162,7 +3247,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param listFactory
-     *   {@link Supplier} of the {@link List} used to store the returned elements.
+     *   {@link Supplier} of the {@link List} used to store the returned elements. If it is {@code null} then
+     *   an {@link ArrayList} will be used
      * @param filterPredicate
      *    {@link Predicate} to filter {@code elements}
      * @param elements
@@ -3186,7 +3272,9 @@ public class CollectionUtil {
 
                     return elementsStream
                             .collect(
-                                    Collectors.toCollection(finalListFactory)
+                                    Collectors.toCollection(
+                                            finalListFactory
+                                    )
                             );
                 })
                 .orElseGet(finalListFactory);
@@ -3330,8 +3418,8 @@ public class CollectionUtil {
      *    {@link BinaryOperator} used to resolve collisions between values associated with the same key. If no one is
      *    provided, by default last value will be used
      * @param mapFactory
-     *      {@link Supplier} of the {@link Map} used to store the returned elements.
-     *      If {@code null} then {@link HashMap}
+     *      {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *      is used
      *
      * @return new {@link Map} using provided {@code keyMapper} and {@code valueMapper} to create included keys and values
      *
@@ -3399,8 +3487,8 @@ public class CollectionUtil {
      *    {@link BinaryOperator} used to resolve collisions between values associated with the same key. If no one is
      *    provided, by default last value will be used
      * @param mapFactory
-     *      {@link Supplier} of the {@link Map} used to store the returned elements.
-     *      If {@code null} then {@link HashMap}
+     *      {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *      is used
      *
      * @return new {@link Map} using provided {@code partialFunction} to create included keys and values
      *
@@ -3459,9 +3547,6 @@ public class CollectionUtil {
      *    Returns a mutable and non-fixed size {@link Set} containing not duplicated given {@code elements} if the current
      * item verifies {@code filterPredicate}.
      *
-     * @apiNote
-     *   If {@code filterPredicate} is {@code null} then no one element will be filtered to insert in the returned {@link Set}.
-     *
      * <pre>
      *    toSet(                         Result:
      *       i -> 1 == i % 2,             [1]
@@ -3472,7 +3557,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param filterPredicate
-     *    {@link Predicate} to filter {@code elements}
+     *    {@link Predicate} to filter {@code elements}. If it is {@code null} then no one element will be filtered
+     *    to insert in the returned {@link Set}
      * @param elements
      *    Items to include in the returned {@link Set}
      *
@@ -3493,9 +3579,6 @@ public class CollectionUtil {
      *    Returns a {@link Set} containing not duplicated given {@code elements} if the current item verifies
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then an {@link LinkedHashSet} will be used.
-     *
      * <pre>
      *    toSet(                         Result:
      *       HashSet::new,                [1]
@@ -3507,7 +3590,8 @@ public class CollectionUtil {
      * </pre>
      *
      * @param setFactory
-     *   {@link Supplier} of the {@link Set} used to store the returned elements.
+     *   {@link Supplier} of the {@link Set} used to store the returned elements. If it is {@code null} then an {@link LinkedHashSet}
+     *   will be used
      * @param filterPredicate
      *    {@link Predicate} to filter {@code elements}
      * @param elements
@@ -3531,7 +3615,9 @@ public class CollectionUtil {
 
                     return elementsStream
                             .collect(
-                                    Collectors.toCollection(finalSetFactory)
+                                    Collectors.toCollection(
+                                            finalSetFactory
+                                    )
                             );
                 })
                 .orElseGet(finalSetFactory);

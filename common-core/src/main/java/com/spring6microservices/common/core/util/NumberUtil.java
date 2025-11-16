@@ -71,7 +71,7 @@ public class NumberUtil {
      * @param numberOfDecimals
      *    Number of decimals used for comparison
      * @param roundingMode
-     *    {@link RoundingMode} used in the comparison. {@link RoundingMode#HALF_UP} if {@code null}
+     *    {@link RoundingMode} used in the comparison. If it is {@code null} then {@link RoundingMode#HALF_UP} is used
      *
      * @return {@code one#compareTo(two)} using {@code numberOfDecimals} as precision.
      *
@@ -124,7 +124,7 @@ public class NumberUtil {
      *    {@link BigDecimal} of the "right side" of compare method
      * @param epsilon
      *    Tolerance used to know what is the maximum difference to consider {@code one} and {@code two} as equals values.
-     *    {@link BigDecimal#ZERO} if {@code null}.
+     *    If it is {@code null} then {@link BigDecimal#ZERO} is used
      *
      * @return {@code one#compareTo(two)} using {@code epsilon} as tolerance value.
      *

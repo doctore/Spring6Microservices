@@ -16,9 +16,7 @@ import static com.spring6microservices.common.core.enums.PizzaEnum.CARBONARA;
 import static com.spring6microservices.common.core.util.ObjectUtil.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ObjectUtilTest {
 
@@ -43,30 +41,6 @@ public class ObjectUtilTest {
         assertEquals(
                 expectedResult,
                 coalesce(valueToVerify1, valueToVerify2, valueToVerify3)
-        );
-    }
-
-
-    static Stream<Arguments> isEmptyArrayAsParameterTestCases() {
-        Object[] emptyArray = {};
-        Integer[] notEmptyArray = { 1 };
-        return Stream.of(
-                //@formatter:off
-                //            sourceArray,     expectedResult
-                Arguments.of( null,            true ),
-                Arguments.of( emptyArray,      true ),
-                Arguments.of( notEmptyArray,   false )
-        ); //@formatter:on
-    }
-
-    @ParameterizedTest
-    @MethodSource("isEmptyArrayAsParameterTestCases")
-    @DisplayName("isEmpty: with array as parameter test cases")
-    public void isEmpty_ArrayAsParameter_testCases(Object[] array,
-                                                   boolean expectedResult) {
-        assertEquals(
-                expectedResult,
-                isEmpty(array)
         );
     }
 
@@ -346,7 +320,6 @@ public class ObjectUtilTest {
             );
         }
     }
-
 
 
     private static final Function<PizzaDto, Double> GET_PIZZA_COST = PizzaDto::getCost;

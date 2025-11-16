@@ -58,9 +58,6 @@ public class StringUtil {
      * <p>
      *    If {@code maxLength} is less than the first character of {@code sourceCS} and {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s
      * length, then an {@link IllegalArgumentException} will be thrown.
-     *
-     * @apiNote
-     *    If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -106,10 +103,6 @@ public class StringUtil {
      * <p>
      *    If {@code maxLength} is less than the first character of {@code sourceCS} and {@code abbreviationString}'s
      * length, then an {@link IllegalArgumentException} will be thrown.
-     *
-     * @apiNote
-     *    If {@code abbreviationString} is {@code null} then {@link StringUtil#DEFAULT_ABBREVIATION_STRING} will be used.
-     * If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -177,9 +170,6 @@ public class StringUtil {
      * <p>
      *    If {@code maxLength} is less than the first and last characters of {@code sourceCS} and {@link StringUtil#DEFAULT_ABBREVIATION_STRING}'s
      * length, then an {@link IllegalArgumentException} will be thrown.
-     *
-     * @apiNote
-     *    If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -226,10 +216,6 @@ public class StringUtil {
      * <p>
      *    If {@code maxLength} is less than the first and last characters of {@code sourceCS} and {@code abbreviationString}'s
      * length, then an {@link IllegalArgumentException} will be thrown.
-     *
-     * @apiNote
-     *    If {@code abbreviationString} is {@code null} then {@link StringUtil#DEFAULT_ABBREVIATION_STRING} will be used.
-     * If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -295,10 +281,6 @@ public class StringUtil {
      *     <li>Transform its filtered {@link Character}s using {@code mapFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned. If {@code filterPredicate}
-     * is {@code null} then all {@link Character}s will be transformed.
-     *
      * <pre>
      *    collect(                                         Result:
      *       "abcDEfgIoU12",                                "a2E2I2o2U2"
@@ -308,9 +290,11 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} with the {@link Character}s to filter and transform
+     *    {@link CharSequence} with the {@link Character}s to filter and transform. If it is {@code null} or empty then
+     *    {@link StringUtil#EMPTY_STRING} is returned
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}
+     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}. If it is {@code null} then all
+     *    {@link Character}sº will be transformed
      * @param mapFunction
      *    {@link Function} to transform filtered {@link Character}s of {@code sourceCS}
      *
@@ -344,9 +328,6 @@ public class StringUtil {
      *     <li>Transform its filtered {@link Character}s using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned.
-     *
      * <pre>
      *    collect(                                                        Result:
      *       "abcDEfgIoU12",                                               "a2E2I2o2U2"
@@ -360,7 +341,8 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} with the {@link Character}s to filter and transform
+     *    {@link CharSequence} with the {@link Character}s to filter and transform. If it is {@code null} or empty then
+     *    {@link StringUtil#EMPTY_STRING} is returned
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements of {@code sourceCS}
      *
@@ -465,10 +447,6 @@ public class StringUtil {
      *    Returns a {@link String} removing the longest prefix of {@link Character}s included in {@code sourceCS} that
      * satisfy the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned.
-     * If {@code filterPredicate} is {@code null} then {@link String} conversion of {@code sourceCS} is returned.
-     *
      * <pre>
      *    dropWhile(                                       Result:
      *       "aEibc12",                                     "bc12"
@@ -477,9 +455,11 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} with the {@link Character}s to filter
+     *    {@link CharSequence} with the {@link Character}s to filter. If it is {@code null} or empty then {@link StringUtil#EMPTY_STRING}
+     *    is returned
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}
+     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}. If it is {@code null} then {@link String}
+     *    conversion of {@code sourceCS} is returned
      *
      * @return the longest suffix of provided {@code sourceCS} whose first {@link Character} does not satisfy {@code filterPredicate}
      */
@@ -506,10 +486,6 @@ public class StringUtil {
     /**
      * Selects all {@link Character} of {@code sourceCS} which satisfy the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned. If {@code filterPredicate}
-     * is {@code null} then {@link String} conversion of {@code sourceCS} will be returned.
-     *
      * <pre>
      *    filter(                                          Result:
      *       "abcDEfgIoU12",                                "aEIoU"
@@ -518,9 +494,10 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} to filter
+     *    {@link CharSequence} to filter. If it is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}
+     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}. If it is {@code null} then {@link String}
+     *    conversion of {@code sourceCS} will be returned
      *
      * @return {@link Character}s of {@code sourceCS} which satisfy {@code filterPredicate}
      */
@@ -546,10 +523,6 @@ public class StringUtil {
     /**
      * Selects all {@link Character} of {@code sourceCS} which do not satisfy the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned. If {@code filterPredicate}
-     * is {@code null} then {@link String} conversion of {@code sourceCS} will be returned.
-     *
      * <pre>
      *    filterNot(                                       Result:
      *       "abcDEfgIoU12",                                "bcDfg12"
@@ -558,9 +531,10 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} to filter
+     *    {@link CharSequence} to filter. If it is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned
      * @param filterPredicate
-     *    {@link Predicate} to filter characters from {@code sourceCS}
+     *    {@link Predicate} to filter characters from {@code sourceCS}. If it is {@code null} then {@link String} conversion
+     *    of {@code sourceCS} will be returned
      *
      * @return {@link Character}s of {@code sourceCS} which do not satisfy {@code filterPredicate}
      */
@@ -696,9 +670,6 @@ public class StringUtil {
      *    Return the given {@code sourceCS} if is not {@code null} and verifies {@code filterPredicate}.
      * Otherwise, returns {@code defaultValue}.
      *
-     * @apiNote
-     *   If {@code filterPredicate} is {@code null} then no filter will be applied.
-     *
      * <pre>
      *    getOrElse(                             Result:
      *       "   ",                               "other"
@@ -710,7 +681,8 @@ public class StringUtil {
      * @param sourceCS
      *    {@link CharSequence} returned only if is not {@code null}
      * @param filterPredicate
-     *    {@link Predicate} to apply if {@code sourceCS} is not {@code null}
+     *    {@link Predicate} to apply if {@code sourceCS} is not {@code null}. If it is {@code null} then no filter
+     *    will be applied
      * @param defaultValue
      *    Alternative value to return
      *
@@ -853,9 +825,6 @@ public class StringUtil {
     /**
      * Partitions given {@code sourceCS} into a {@link Map} of {@link String} according to {@code discriminatorKey}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be used.
-     *
      * <pre>
      *    groupBy(                                                   Result:
      *       "essae",                                                 [("e", "ee")
@@ -874,7 +843,8 @@ public class StringUtil {
      * @param discriminatorKey
      *    The discriminator {@link Function} to get the key values of returned {@link Map}
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}
+     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}. If it is {@code null} then all elements
+     *    will be used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} to each element of {@code sourceCS}
      *
@@ -934,9 +904,6 @@ public class StringUtil {
      *    abbreviateMiddle("abcdef", 10) = "abcdef"
      *    hideMiddle("abcdef", 10)       = "ab...f"
      * </pre>
-     *
-     * @apiNote
-     *    If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -993,10 +960,6 @@ public class StringUtil {
      *    abbreviateMiddle("abcdef", 10, "...") = "abcdef"
      *    hideMiddle("abcdef", 10, "...")       = "ab...f"
      * </pre>
-     *
-     * @apiNote
-     *    If {@code abbreviationString} is {@code null} then {@link StringUtil#DEFAULT_ABBREVIATION_STRING} will be used.
-     * If {@code maxLength} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -1262,8 +1225,7 @@ public class StringUtil {
      *
      * @apiNote
      *    If {@code filterPredicate} is {@code null} then all elements will be converted to their equivalent {@link String}
-     * representation and {@code null} elements will be managed as empty {@link String}. If {@code separator} is
-     * {@code null} then empty {@link String} will be used.
+     * representation and {@code null} elements will be managed as empty {@link String}.
      *
      * <pre>
      *    join(                                  Result:
@@ -1329,7 +1291,7 @@ public class StringUtil {
      * @param sourceCS
      *    {@link CharSequence} to pad out
      * @param size
-     *    The size to pad to
+     *    The size to pad to. If it is less than 0 then 0 will be used.
      *
      * @return left padded {@link String} or {@link String} conversion of {@code sourceCS} if no padding is necessary
      */
@@ -1346,9 +1308,6 @@ public class StringUtil {
     /**
      * Left pad the {@link String} {@code sourceCS} with {@code padString} up to the provided {@code size}.
      *
-     * @apiNote
-     *    If {@code size} is less than 0 then 0 will be used. If {@code padString} is {@code null} then
-     * {@link StringUtil#BLANK_SPACE} will be used.
      * <p>
      * Examples:
      * <pre>
@@ -1367,7 +1326,7 @@ public class StringUtil {
      * @param sourceCS
      *    {@link CharSequence} to pad out
      * @param size
-     *    The size to pad to
+     *    The size to pad to. If it is less than 0 then 0 will be used
      * @param padString
      *    {@link String} to pad with, {@code null} or empty treated as {@link StringUtil#BLANK_SPACE}
      *
@@ -1414,10 +1373,6 @@ public class StringUtil {
     /**
      * Builds a new {@link String} by applying a {@link Function} to all {@link Character}s of provided {@code sourceCS}.
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned. If {@code mapFunction}
-     * is {@code null} then {@link String} conversion of {@code sourceCS} is returned.
-     *
      * <pre>
      *    map(                                                                 Result:
      *       "aEibc1U2"                                                         "bc12"
@@ -1426,9 +1381,11 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *     {@link CharSequence} to used as source of the returned {@link String}
+     *     {@link CharSequence} to used as source of the returned {@link String}. If it is {@code null} or empty then
+     *     {@link StringUtil#EMPTY_STRING} is returned
      * @param mapFunction
-     *    {@link Function} to apply to each {@link Character}
+     *    {@link Function} to apply to each {@link Character}. If it is {@code null} then {@link String} conversion of
+     *    {@code sourceCS} is returned
      *
      * @return new {@link String} from applying the given {@link Function} to each {@link Character} of {@code sourceCS}
      */
@@ -1455,8 +1412,6 @@ public class StringUtil {
     /**
      * Right pad the {@link String} {@code sourceCS} with spaces (' ') up to the provided {@code size}.
      *
-     * @apiNote
-     *    If {@code size} is less than 0 then 0 will be used.
      * <p>
      * Examples:
      * <pre>
@@ -1473,7 +1428,7 @@ public class StringUtil {
      * @param sourceCS
      *    {@link CharSequence} to pad out
      * @param size
-     *    The size to pad to
+     *    The size to pad to. If it is less than 0 then 0 will be used
      *
      * @return right padded {@link String} or {@link String} conversion of {@code sourceCS} if no padding is necessary
      */
@@ -1490,9 +1445,6 @@ public class StringUtil {
     /**
      * Right pad the {@link String} {@code sourceCS} with {@code padString} up to the provided {@code size}.
      *
-     * @apiNote
-     *    If {@code size} is less than 0 then 0 will be used. If {@code padString} is {@code null} then
-     * {@link StringUtil#BLANK_SPACE} will be used.
      * <p>
      * Examples:
      * <pre>
@@ -1511,7 +1463,7 @@ public class StringUtil {
      * @param sourceCS
      *    {@link CharSequence} to pad out
      * @param size
-     *    The size to pad to
+     *    The size to pad to. If it is less than 0 then 0 will be used
      * @param padString
      *    {@link String} to pad with, {@code null} or empty treated as {@link StringUtil#BLANK_SPACE}
      *
@@ -1680,8 +1632,7 @@ public class StringUtil {
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
      * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. {@link StringUtil#DEFAULT_SEPARATOR_STRING}
-     * will be used to split the given {@code sourceString}.
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used to split the given {@code sourceString}.
      *
      * <pre>
      *    split(                                 Result:
@@ -1693,7 +1644,7 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter will be applied
      *
      * @return {@link List}
      */
@@ -1711,9 +1662,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
      * to know how to do it.
      *
-     * @apiNote
-     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3",                             ["1", "2", "3"]
@@ -1724,7 +1672,8 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      *
      * @return {@link List}
      */
@@ -1742,10 +1691,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator} to
      * know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;;",                           ["1", "2", "3"]
@@ -1757,7 +1702,11 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter
+     *    will be applied
+     * @param separator
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      *
      * @return {@link List}
      */
@@ -1777,9 +1726,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
      * to know how to do it.
      *
-     * @apiNote
-     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;3",                           ["1", "2", "3"]
@@ -1791,7 +1737,8 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      * @param collectionFactory
      *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
@@ -1813,10 +1760,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code separator}
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;3;;",                         ["1", "2", "3"]
@@ -1829,9 +1772,11 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter
+     *    will be applied
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      * @param collectionFactory
      *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
@@ -1890,8 +1835,7 @@ public class StringUtil {
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
      * @apiNote
-     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used to split the given {@code sourceString}. If {@code filterPredicate}
-     * is {@code null} then no filter will be applied.
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used to split the given {@code sourceString}.
      *
      * <pre>
      *    split(                                 Result:
@@ -1904,7 +1848,8 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter
+     *    will be applied.
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      *
@@ -1929,10 +1874,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3",                             [1, 2, 3]
@@ -1946,7 +1887,8 @@ public class StringUtil {
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      *
      * @return {@link List}
      *
@@ -1971,10 +1913,6 @@ public class StringUtil {
      *    Returns a {@link List} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;;",                           [1, 2, 3]
@@ -1984,17 +1922,16 @@ public class StringUtil {
      *    )
      * </pre>
      *
-     * @apiNote
-     *    If {@code separator} is {@code null} then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter
+     *    will be applied
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      *
      * @return {@link List}
      *
@@ -2020,10 +1957,6 @@ public class StringUtil {
      *    Returns a {@link Collection} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;3;;",                         [1, 2, 3]
@@ -2037,11 +1970,13 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}
+     *    {@link Predicate} to filter {@link String}s from split {@code sourceString}. If it is {@code null} then no filter
+     *    will be applied
      * @param valueExtractor
      *    {@link Function} used to know how to split the provided {@link String}
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      * @param collectionFactory
      *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
@@ -2076,10 +2011,6 @@ public class StringUtil {
      *    Returns a {@link Collection} splitting the given {@code sourceString} in different parts, using {@code valueExtractor}
      * to know how to do it and {@code filterPredicate} to use only the parts that match it.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then no filter will be applied. If {@code separator} is {@code null}
-     * then {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used.
-     *
      * <pre>
      *    split(                                 Result:
      *       "1;2;3;3;;",                         [1, 2, 3]
@@ -2097,7 +2028,8 @@ public class StringUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform the split parts of {@code sourceString}
      * @param separator
-     *    {@link String} used to know how the values are split inside {@code sourceString}
+     *    {@link String} used to know how the values are split inside {@code sourceString}. If it is {@code null} then
+     *    {@link StringUtil#DEFAULT_SEPARATOR_STRING} will be used
      * @param collectionFactory
      *    {@link Supplier} of the {@link Collection} used to store the returned elements
      *
@@ -2189,8 +2121,8 @@ public class StringUtil {
      * @param sourceString
      *    Source {@link String} with the values to extract
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      * @param separators
      *    Array used to know how the values are split inside {@code sourceString}
      *
@@ -2424,10 +2356,6 @@ public class StringUtil {
      *    Returns a {@link String} with the longest prefix of {@link Character}s included in {@code sourceCS} that
      * satisfy the {@link Predicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code sourceCS} is {@code null} or empty then {@link StringUtil#EMPTY_STRING} is returned.
-     * If {@code filterPredicate} is {@code null} then {@link String} conversion of {@code sourceCS} is returned.
-     *
      * <pre>
      *    takeWhile(                                       Result:
      *       "aEibc12",                                     "aEi"
@@ -2436,9 +2364,11 @@ public class StringUtil {
      * </pre>
      *
      * @param sourceCS
-     *    {@link CharSequence} with the {@link Character}s to filter
+     *    {@link CharSequence} with the {@link Character}s to filter. If it is {@code null} or empty then
+     *    {@link StringUtil#EMPTY_STRING} is returned
      * @param filterPredicate
-     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}
+     *    {@link Predicate} to filter {@link Character}s from {@code sourceCS}. If it is {@code null} then {@link String}
+     *    conversion of {@code sourceCS} is returned
      *
      * @return the longest prefix of provided {@code sourceCS} whose {@link Character}s all satisfy {@code filterPredicate}
      */

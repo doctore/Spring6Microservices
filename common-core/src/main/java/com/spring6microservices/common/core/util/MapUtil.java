@@ -78,9 +78,6 @@ public class MapUtil {
      *    Returns a new {@link Map} using the given {@code sourceMap}, applying to its elements the composed
      * {@link BiFunction} {@code secondMapper}({@code firstMapper}(x))
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    andThen(                                                             Result:
      *       [(1, "AGTF"), (3, "CD")],                                          [(2, "4"), (4, "2")]
@@ -97,8 +94,8 @@ public class MapUtil {
      * @param secondMapper
      *    {@link BiFunction} with the second modification to apply
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return {@link Map} applying {@code firstMapper} and {@code secondMapper} to the provided {@code sourceMap}
      *
@@ -183,7 +180,7 @@ public class MapUtil {
      *
      * @apiNote
      *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be updated using
-     * {@code defaultMapper}. If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
+     * {@code defaultMapper}.
      *
      * <pre>
      *    applyOrElse(                                               Result:
@@ -204,8 +201,8 @@ public class MapUtil {
      * @param orElseMapper
      *    {@link BiFunction} to transform elements of {@code sourceMap} do not verify {@code filterPredicate}
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return new {@link Map} from applying the given {@code defaultMapper} to each element of {@code sourceMap} that
      *         verifies {@code filterPredicate} and collecting the results or {@code orElseMapper} otherwise
@@ -287,9 +284,6 @@ public class MapUtil {
      *    Returns a new {@link HashMap} using the given {@code sourceMap}, applying applying {@link PartialFunction#apply(Object)}
      * if the current element verifies {@link PartialFunction#isDefinedAt(Object)}, {@code orElseMapper} otherwise.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    applyOrElse(                                               Result:
      *       [("A", 1), ("B", 2)],                                    [("A", 2), ("B", 4)]
@@ -316,8 +310,8 @@ public class MapUtil {
      * @param orElseMapper
      *    {@link BiFunction} to transform elements of {@code sourceMap} do not verify {@code filterPredicate}
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return new {@link Map} from applying the given {@link PartialFunction} to each element of {@code sourceMap}
      *         on which it is defined and collecting the results, {@code orElseMapper} otherwise
@@ -367,9 +361,6 @@ public class MapUtil {
      *     <li>Transform its filtered elements using {@code mapFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be transformed.
-     *
      * <pre>
      *    collect(                                                             Result:
      *       [(1, "Hi"), (2, "Hello")],                                         [(3, 4)]
@@ -381,7 +372,7 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter and transform
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements of {@code sourceMap}
+     *    {@link BiPredicate} to filter elements of {@code sourceMap}. If it is {@code null} then all elements will be transformed
      * @param mapFunction
      *    {@link BiFunction} to transform filtered elements of {@code sourceMap}
      *
@@ -410,10 +401,6 @@ public class MapUtil {
      *     <li>Transform its filtered elements using {@code mapFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be transformed. If {@code mapFactory} is
-     * {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    collect(                                                             Result:
      *       [(1, "Hi"), (2, "Hello")],                                         [(3, 4)]
@@ -426,12 +413,12 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter and transform
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements of {@code sourceMap}
+     *    {@link BiPredicate} to filter elements of {@code sourceMap}. If it is {@code null} then all elements will be transformed
      * @param mapFunction
      *    {@link BiFunction} to transform filtered elements of {@code sourceMap}
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return new {@link Map} from applying the given {@link BiFunction} to each element of {@code sourceMap}
      *         on which {@link BiPredicate} returns {@code true} and collecting the results
@@ -511,9 +498,6 @@ public class MapUtil {
      *     <li>Transform its filtered elements using {@link PartialFunction#apply(Object)} of {@code partialFunction}.</li>
      * </ul>
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    collect(                                                   Result:
      *       [(1, "Hi"), (2, "Hello")],                               [(1, 2)]
@@ -537,8 +521,8 @@ public class MapUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements from {@code sourceMap}
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return new {@link Map} from applying the given {@link PartialFunction} to each element of {@code sourceMap}
      *         on which it is defined and collecting the results
@@ -670,8 +654,8 @@ public class MapUtil {
      * </pre>
      *
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      * @param maps
      *    {@link Map}s to concat
      *
@@ -691,9 +675,6 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} containing the elements of provided {@link Map}s {@code maps}.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    concat(                                          Result:
      *       HashMap::new,                                  [(1, "Hi"), (2, "Hello"), (5, "World")]
@@ -704,8 +685,8 @@ public class MapUtil {
      * </pre>
      *
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      * @param mergeValueFunction
      *    {@link BinaryOperator} used to resolve collisions between values associated with the same key. If no one is
      *    provided, by default last value will be used
@@ -762,9 +743,6 @@ public class MapUtil {
     /**
      * Returns a new {@link Map} containing the elements of provided {@code sourceMap}.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    copy(                                            Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(1, "Hi"), (2, "Hello")]
@@ -775,8 +753,8 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return {@link Map} containing all elements included in {@code sourceMap}
      */
@@ -803,7 +781,7 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *   {@link Predicate} to filter elements from {@code sourceCollection}
+     *   {@link Predicate} to filter elements from {@code sourceMap}
      *
      * @return the number of elements satisfying the {@link Predicate} {@code filterPredicate}
      */
@@ -832,9 +810,6 @@ public class MapUtil {
      *    Returns a {@link Map} removing the longest prefix of elements included in {@code sourceMap} that satisfy
      * the {@link BiPredicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be returned.
-     *
      * <pre>
      *    dropWhile(                                                 Result:
      *       [(1, "Hi"), (2, "Hello"), (3, "World")],                 [(2, "Hello"), (3, "World")]
@@ -845,7 +820,8 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      *
      * @return the longest suffix of provided {@code sourceMap} whose first element does not satisfy {@code filterPredicate}
      */
@@ -863,10 +839,6 @@ public class MapUtil {
      *    Returns a {@link Map} removing the longest prefix of elements included in {@code sourceMap} that satisfy
      * the {@link BiPredicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be returned. If
-     * {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    dropWhile(                                                 Result:
      *       [(1, "Hi"), (2, "Hello"), (3, "World")],                 [(2, "Hello"), (3, "World")]
@@ -878,10 +850,11 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return the longest suffix of provided {@code sourceMap} whose first element does not satisfy {@code filterPredicate}
      */
@@ -917,9 +890,6 @@ public class MapUtil {
      *    Returns a {@link Map} with the elements of provided {@code sourceMap} that satisfy the {@link BiPredicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be returned.
-     *
      * <pre>
      *    filter(                                          Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(1, "Hi")]
@@ -930,7 +900,8 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      *
      * @return empty {@link Map} if {@code sourceMap} has no elements or no one verifies provided {@code filterPredicate},
      *         otherwise a new {@link Map} with the elements of {@code sourceMap} which verify {@code filterPredicate}
@@ -949,10 +920,6 @@ public class MapUtil {
      *    Returns a {@link Map} with the elements of provided {@code sourceMap} that satisfy the {@link BiPredicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be returned. If
-     * {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    filter(                                          Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(1, "Hi")]
@@ -964,10 +931,11 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return empty {@link Map} if {@code sourceMap} has no elements or no one verifies provided {@code filterPredicate},
      *         otherwise a new {@link Map} with the elements of {@code sourceMap} which verify {@code filterPredicate}
@@ -1004,9 +972,6 @@ public class MapUtil {
      *    Returns a {@link Map} removing the elements of provided {@code sourceMap} that satisfy the {@link BiPredicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
-     *
      * <pre>
      *    filterNot(                                       Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(1, "Hi")]
@@ -1017,7 +982,8 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      *
      * @return empty {@link Map} if {@code sourceMap} has no elements,
      *         otherwise a new {@link Map} with the elements of {@code sourceMap} which do not verify {@code filterPredicate}
@@ -1036,10 +1002,6 @@ public class MapUtil {
      *    Returns a {@link Map} removing the elements of provided {@code sourceMap} that satisfy the {@link BiPredicate}
      * {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceMap} will be returned. If
-     *  {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    filterNot(                                       Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(1, "Hi")]
@@ -1051,10 +1013,11 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      *
      * @return empty {@link Map} if {@code sourceMap} has no elements,
      *         otherwise a new {@link Map} with the elements of {@code sourceMap} which do not verify {@code filterPredicate}
@@ -1151,9 +1114,6 @@ public class MapUtil {
     /**
      * Converts given {@code sourceMap} into a {@link Collection} formed by the elements of these iterable collections.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    flatten(                                                   Result:
      *       [(1, ["Hi"]), (2, ["Hello", "Hello"])],                  [(1, "Hi"), (2, "Hello")]
@@ -1169,8 +1129,8 @@ public class MapUtil {
      * @param flattener
      *    {@link BiFunction} to transform elements of {@code sourceMap}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return {@link List} resulting from concatenating all element of {@code sourceMap}
      *
@@ -1249,7 +1209,6 @@ public class MapUtil {
      *
      * @apiNote
      *    If {@code sourceMap} or {@code accumulator} are {@code null} then {@code initialValue} is returned.
-     * If {@code filterPredicate} is {@code null} then all elements will be used to calculate the final value.
      *
      * <pre>
      *    foldLeft(                                        Result:
@@ -1263,7 +1222,8 @@ public class MapUtil {
      * @param sourceMap
      *    {@link Map} with elements to combine
      * @param filterPredicate
-     *    {@link BiPredicate} used to filter elements of {@code sourceMap}
+     *    {@link BiPredicate} used to filter elements of {@code sourceMap}. If it is {@code null} then all elements
+     *    will be used to calculate the final value
      * @param initialValue
      *    The initial value to start with
      * @param accumulator
@@ -1430,11 +1390,11 @@ public class MapUtil {
      * @param discriminatorKey
      *    {@link BiFunction} used to split the elements of {@code sourceMap}
      * @param mapResultFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If  it is {@code null} then {@link HashMap}
+     *    is used
      * @param mapValuesFactory
-     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}. If it is {@code null} then
+     *    {@link HashMap} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} to each element of {@code sourceMap}
      *         to generate the keys of the returned one
@@ -1555,11 +1515,11 @@ public class MapUtil {
      * @param discriminatorKey
      *    {@link BiFunction} used to split the elements of {@code sourceMap}
      * @param mapResultFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then {@link HashMap}
+     *    is used
      * @param mapValuesFactory
-     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}. If it is {@code null} then
+     *    {@link HashMap} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} to each element of {@code sourceMap}
      *         to generate the keys of the returned one
@@ -1644,9 +1604,6 @@ public class MapUtil {
      * only if the current element matches {@code filterPredicate}. Each element in a group is transformed into a value
      * of type V using {@code valueMapper} {@link BiFunction}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be used.
-     *
      * <pre>
      *    groupMap(                                                                 Result:
      *       [(1, "Hi"), (2, "Hello"), (5, "World"), (6, "!"), (11, "Not")],         [(0,  [1])
@@ -1659,7 +1616,7 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to transform and group
      * @param filterPredicate
-     *    {@link BiPredicate} used to filter elements of {@code sourceMap}
+     *    {@link BiPredicate} used to filter elements of {@code sourceMap}. If it is {@code null} then all elements will be used
      * @param discriminatorKey
      *    The discriminator {@link BiFunction} to get the key values of returned {@link Map}
      * @param valueMapper
@@ -1691,10 +1648,6 @@ public class MapUtil {
      * only if the current element matches {@code filterPredicate}. Each element in a group is transformed into a value
      * of type V using {@code valueMapper} {@link BiFunction}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements will be used. If {@code collectionFactory} is
-     * {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    groupMap(                                                                 Result:
      *       [(1, "Hi"), (2, "Hello"), (5, "World"), (6, "!"), (11, "Not")],         [(0,  [1])
@@ -1708,14 +1661,14 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to transform and group
      * @param filterPredicate
-     *    {@link BiPredicate} used to filter elements of {@code sourceMap}
+     *    {@link BiPredicate} used to filter elements of {@code sourceMap}. If it is {@code null} then all elements will be used
      * @param discriminatorKey
      *    The discriminator {@link BiFunction} to get the key values of returned {@link Map}
      * @param valueMapper
      *    {@link BiFunction} to transform elements of {@code sourceMap}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@code discriminatorKey} and {@code valueMapper} to each element
      *         of {@code sourceMap} that verifies {@code filterPredicate}
@@ -1791,9 +1744,6 @@ public class MapUtil {
      *    Partitions given {@code sourceMap} into a {@link Map} of {@link List} according to {@code partialFunction}.
      * Each element in the {@link Map} is transformed into a {@link Map.Entry} using {@code partialFunction}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    groupMap(                                                            Result:
      *       [(1, "Hi"), (2, "Hello"), (5, "World"), (7, "!")],                 [(1,  [3, 2])
@@ -1817,8 +1767,8 @@ public class MapUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements of {@code sourceMap}
      * @param collectionFactory
-     *    {@link Supplier} of the {@link Collection} used to store the returned elements.
-     *    If {@code null} then {@link ArrayList}
+     *    {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *    {@link ArrayList} is used
      *
      * @return new {@link Map} from applying the given {@link PartialFunction} to each element of {@code sourceMap}
      *         on which it is defined and collecting the results
@@ -2013,9 +1963,6 @@ public class MapUtil {
     /**
      * Builds a new {@link Map} by applying a function to all elements of {@code sourceMap}.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    map(                                                                 Result:
      *       [(1, "AGTF"), (3, "CD")],                                          [(1, 4), (3, 2)]
@@ -2029,8 +1976,8 @@ public class MapUtil {
      * @param mapFunction
      *    {@link BiFunction} used to transform given {@code sourceMap} elements
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then
+     *    {@link HashMap} is used
      *
      * @return new {@link Map} from applying the given {@link BiFunction} to each element of {@code sourceMap}
      *
@@ -2097,9 +2044,6 @@ public class MapUtil {
      *    Builds a new {@link Map} by applying a function to all elements of {@code sourceMap}, adding the results
      * as new values of returned {@link Map}, keeping existing keys.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    mapValues(                                       Result:
      *       [(1, "A"), (3, "C")],                          [(1, 2), (3, 4)]
@@ -2113,8 +2057,8 @@ public class MapUtil {
      * @param mapFunction
      *    {@link BiFunction} used to transform given {@code sourceMap} values
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then
+     *    {@link HashMap} is used
      *
      * @return new {@link Map} from applying the given {@link BiFunction} to each element of {@code sourceMap}, adding
      *         as new values of returned one
@@ -2403,9 +2347,6 @@ public class MapUtil {
      *    Returns a {@link Map} of {@link Boolean} as key, on which {@code true} contains all elements that satisfy given
      * {@code discriminator} and {@code false}, all elements that do not.
      *
-     * @apiNote
-     *    If {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    partition(                                       Result:
      *       [(1, "Hi"), (2, "Hello")],                     [(true,  [(2, "Hello")])
@@ -2419,8 +2360,8 @@ public class MapUtil {
      * @param discriminator
      *    {@link BiPredicate} used to split the elements of {@code sourceMap}
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}.
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the values inside returned {@link Map}. If it is {@code null}
+     *    then {@link HashMap} is used
      *
      * @return new {@link Map} with two keys: {@code true}, {@code false} based on elements in {@code sourceMap} that
      *         satisfy given {@code discriminator}
@@ -2700,7 +2641,7 @@ public class MapUtil {
     public static <T, E> Map<T, E> sort(final Comparator<Map.Entry<? extends T, ? extends E>> comparator,
                                         final BinaryOperator<E> mergeValueFunction,
                                         final Map<? extends T, ? extends E> ...maps) {
-        if (ObjectUtil.isEmpty(maps)) {
+        if (ArrayUtil.isEmpty(maps)) {
             return new LinkedHashMap<>();
         }
         AssertUtil.notNull(comparator, "comparator must be not null");
@@ -2786,9 +2727,6 @@ public class MapUtil {
      *    Returns a {@link Map} with the longest prefix of elements included in {@code sourceMap} that satisfy the
      * {@link BiPredicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned.
-     *
      * <pre>
      *    takeWhile(                                                 Result:
      *       [(2, "Hi"), (4, "Hello"), (5, "World")],                 [(2, "Hi"), (4, "Hello")]
@@ -2799,7 +2737,8 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be returned
      *
      * @return the longest prefix of provided {@code sourceMap} whose first element does not satisfy {@code filterPredicate}
      */
@@ -2817,10 +2756,6 @@ public class MapUtil {
      *    Returns a {@link Map} with the longest prefix of elements included in {@code sourceMap} that satisfy the
      * {@link BiPredicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code filterPredicate} is {@code null} then all elements of {@code sourceCollection} will be returned. If
-     * {@code mapFactory} is {@code null} then {@link HashMap} will be used.
-     *
      * <pre>
      *    takeWhile(                                                 Result:
      *       [(2, "Hi"), (4, "Hello"), (5, "World")],                 [(2, "Hi"), (4, "Hello")]
@@ -2832,10 +2767,11 @@ public class MapUtil {
      * @param sourceMap
      *    Source {@link Map} with the elements to filter
      * @param filterPredicate
-     *    {@link BiPredicate} to filter elements from {@code sourceMap}
+     *    {@link BiPredicate} to filter elements from {@code sourceMap}. If it is {@code null} then all elements of
+     *    {@code sourceMap} will be used
      * @param mapFactory
-     *    {@link Supplier} of the {@link Map} used to store the returned elements
-     *    If {@code null} then {@link HashMap}
+     *    {@link Supplier} of the {@link Map} used to store the returned elements. If it is {@code null} then
+     *    {@link HashMap} is used
      *
      * @return the longest prefix of provided {@code sourceMap} whose first element does not satisfy {@code filterPredicate}
      */
@@ -2902,9 +2838,6 @@ public class MapUtil {
     /**
      * Converts the given {@link Map} in to a {@link Collection} using provided {@code keyValueMapper}
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    toCollection(                                    Result:
      *       [("a", 1), ("b", 2), ("d", 4)],                [2, 3, 5]
@@ -2918,7 +2851,8 @@ public class MapUtil {
      * @param keyValueMapper
      *    {@link BiFunction} to transform elements of {@code sourceMap} into elements of the returned {@link Collection}
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      *
      * @return {@link Collection} applying {@code keyValueMapper} to each element of {@code sourceMap} that verifies
      *         {@code filterPredicate}
@@ -2941,9 +2875,6 @@ public class MapUtil {
      *    Converts the given {@link Map} in to a {@link Collection} using provided {@code keyValueMapper}, only with the
      * elements that satisfy the {@link BiPredicate} {@code filterPredicate}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    toCollection(                                    Result:
      *       [("a", 1), ("b", 2), ("d", 4)],                [3, 5]
@@ -2960,7 +2891,8 @@ public class MapUtil {
      * @param filterPredicate
      *    {@link BiPredicate} used to filter values from {@code sourceMap} that will be added in the returned {@link Collection}
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      *
      * @return {@link Collection} applying {@code keyValueMapper} to each element of {@code sourceMap} that verifies
      *         {@code filterPredicate}
@@ -2996,9 +2928,6 @@ public class MapUtil {
     /**
      * Converts the given {@link Map} in to a {@link Collection} using provided {@code partialFunction}.
      *
-     * @apiNote
-     *    If {@code collectionFactory} is {@code null} then {@link ArrayList} will be used.
-     *
      * <pre>
      *    toCollection(                                              Result:
      *       [("a", 1), ("b", 2), ("d", 4)],                          [3, 5]
@@ -3017,7 +2946,8 @@ public class MapUtil {
      * @param partialFunction
      *    {@link PartialFunction} to filter and transform elements of {@code sourceMap}
      * @param collectionFactory
-     *   {@link Supplier} of the {@link Collection} used to store the returned elements.
+     *   {@link Supplier} of the {@link Collection} used to store the returned elements. If it is {@code null} then
+     *   {@link ArrayList} is used
      *
      * @return {@link Collection} applying {@code partialFunction} to each element of {@code sourceMap}
      *

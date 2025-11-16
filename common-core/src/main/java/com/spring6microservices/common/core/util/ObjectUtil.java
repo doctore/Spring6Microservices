@@ -44,21 +44,6 @@ public class ObjectUtil {
 
 
     /**
-     * Determine whether the given {@code sourceArray} is empty: i.e. {@code null} or of zero length.
-     *
-     * @param sourceArray
-     *    The array to check
-     *
-     * @return {@code true} if given {@code sourceArray} is {@code null} or has no elements,
-     *         {@code false} otherwise.
-     */
-    public static boolean isEmpty(final Object[] sourceArray) {
-        return null == sourceArray ||
-                0 == sourceArray.length;
-    }
-
-
-    /**
      * Return the given {@code sourceInstance} if is not {@code null}. Otherwise, returns {@code defaultValue}.
      *
      * @param sourceInstance
@@ -79,9 +64,6 @@ public class ObjectUtil {
      *    Return the given {@code sourceInstance} if is not {@code null} and verifies {@code filterPredicate}.
      * Otherwise, returns {@code defaultValue}.
      *
-     * @apiNote
-     *   If {@code filterPredicate} is {@code null} then no filter will be applied.
-     *
      * <pre>
      *    getOrElse(                               Result:
      *       "   ",                                 "other"
@@ -93,7 +75,8 @@ public class ObjectUtil {
      * @param sourceInstance
      *    Object returned only if is not {@code null}
      * @param filterPredicate
-     *    {@link Predicate} to apply if {@code sourceInstance} is not {@code null}
+     *    {@link Predicate} to apply if {@code sourceInstance} is not {@code null}. If it is {@code null} then no filter
+     *    will be applied
      * @param defaultValue
      *    Alternative value to return
      *

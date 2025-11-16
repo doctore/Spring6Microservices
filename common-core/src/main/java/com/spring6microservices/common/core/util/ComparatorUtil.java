@@ -60,7 +60,6 @@ public class ComparatorUtil {
                     : areNullsFirst
                         ? -1
                         : 1;
-
         }
         else if (null == t2) {
             return areNullsFirst

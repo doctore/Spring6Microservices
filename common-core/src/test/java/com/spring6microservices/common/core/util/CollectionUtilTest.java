@@ -8,6 +8,7 @@ import com.spring6microservices.common.core.collection.tuple.Tuple2;
 import com.spring6microservices.common.core.collection.tuple.Tuple3;
 import com.spring6microservices.common.core.collection.tuple.Tuple4;
 import com.spring6microservices.common.core.collection.tuple.Tuple6;
+import com.spring6microservices.common.core.functional.Cloneable;
 import com.spring6microservices.common.core.functional.PartialFunction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -415,6 +416,188 @@ public class CollectionUtilTest {
     }
 
 
+    static Stream<Arguments> cloneWithSourceCollectionTestCases() {
+        PizzaDto cloneableObject = new PizzaDto("Carbonara", 15d);
+        List<PizzaDto> cloneableList = List.of(
+                cloneableObject,
+                cloneableObject
+        );
+        Set<PizzaDto> cloneableSet = new LinkedHashSet<>(cloneableList);
+
+        List<PizzaDto> expectedCloneableListResult = new ArrayList<>(cloneableList);
+        List<PizzaDto> expectedCloneableSetResult = new ArrayList<>(cloneableSet);
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,   expectedResult
+                Arguments.of( null,               List.of() ),
+                Arguments.of( List.of(),          List.of() ),
+                Arguments.of( cloneableList,      expectedCloneableListResult ),
+                Arguments.of( cloneableSet,       expectedCloneableSetResult )
+        ); //@formatter:on
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("cloneWithSourceCollectionTestCases")
+    @DisplayName("clone: with sourceCollection test cases")
+    public <T> void cloneWithSourceCollection_testCases(Collection<Cloneable<? extends T>> sourceCollection,
+                                                        List<T> expectedResult) {
+        List<T> result = CollectionUtil.clone(sourceCollection);
+        if (null == sourceCollection) {
+            assertTrue(result.isEmpty());
+        }
+        else {
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            for (int i = 0; i < result.size(); i++) {
+                assertEquals(
+                        expectedResult.get(i),
+                        result.get(i)
+                );
+            }
+            if (null != expectedResult && !expectedResult.isEmpty()) {
+                expectedResult.clear();
+                assertTrue(expectedResult.isEmpty());
+                assertFalse(result.isEmpty());
+            }
+        }
+    }
+
+
+    static Stream<Arguments> cloneWithSourceCollectionAndCollectionFactoryTestCases() {
+        PizzaDto cloneableObject = new PizzaDto("Carbonara", 15d);
+        List<PizzaDto> cloneableList = List.of(
+                cloneableObject,
+                cloneableObject
+        );
+        Set<PizzaDto> cloneableSet = new LinkedHashSet<>(cloneableList);
+        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+
+        List<PizzaDto> expectedCloneableListResultList = new ArrayList<>(cloneableList);
+        Set<PizzaDto> expectedCloneableListResultSet = new LinkedHashSet<>(cloneableList);
+        List<PizzaDto> expectedCloneableSetResultList = new ArrayList<>(cloneableSet);
+        Set<PizzaDto> expectedCloneableSetResultSet = new LinkedHashSet<>(cloneableSet);
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,   collectionFactory,   expectedResult
+                Arguments.of( null,               null,                List.of() ),
+                Arguments.of( null,               setSupplier,         Set.of() ),
+                Arguments.of( List.of(),          null,                List.of() ),
+                Arguments.of( List.of(),          setSupplier,         Set.of() ),
+                Arguments.of( cloneableList,      null,                expectedCloneableListResultList ),
+                Arguments.of( cloneableList,      setSupplier,         expectedCloneableListResultSet ),
+                Arguments.of( cloneableSet,       null,                expectedCloneableSetResultList ),
+                Arguments.of( cloneableSet,       setSupplier,         expectedCloneableSetResultSet )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("cloneWithSourceCollectionAndCollectionFactoryTestCases")
+    @DisplayName("clone: with sourceCollection and collectionFactory test cases")
+    public <T> void cloneWithSourceCollectionAndCollectionFactory_testCases(Collection<Cloneable<? extends T>> sourceCollection,
+                                                                            Supplier<Collection<T>> collectionFactory,
+                                                                            Collection<T> expectedResult) {
+        Collection<T> result = CollectionUtil.clone(sourceCollection, collectionFactory);
+        if (null == sourceCollection) {
+            assertTrue(result.isEmpty());
+        }
+        else {
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            List<T> resultToList = new ArrayList<>(result);
+            List<T> expectedResultToList = new ArrayList<>(expectedResult);
+            for (int i = 0; i < result.size(); i++) {
+                assertEquals(
+                        expectedResultToList.get(i),
+                        resultToList.get(i)
+                );
+            }
+            if (null != expectedResult && !expectedResult.isEmpty()) {
+                expectedResult.clear();
+                assertTrue(expectedResult.isEmpty());
+                assertFalse(result.isEmpty());
+            }
+        }
+    }
+
+
+    static Stream<Arguments> cloneAllParametersTestCases() {
+        PizzaDto cloneableObject1 = new PizzaDto("Carbonara", 15d);
+        PizzaDto cloneableObject2 = new PizzaDto("Margherita", 11d);
+        List<PizzaDto> cloneableList = List.of(
+                cloneableObject1,
+                cloneableObject1,
+                cloneableObject2
+        );
+        Set<PizzaDto> cloneableSet = new LinkedHashSet<>(cloneableList);
+        Predicate<PizzaDto> cheaperThan12 = p -> Double.compare(p.getCost(), 12d) < 0;
+        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+
+        List<PizzaDto> expectedCloneableListResultList = new ArrayList<>(cloneableList);
+        List<PizzaDto> expectedCheaperCloneableListResultList = new ArrayList<>(List.of(cloneableObject2));
+        Set<PizzaDto> expectedCloneableListResultSet = new LinkedHashSet<>(cloneableList);
+        Set<PizzaDto> expectedCheaperCloneableListResultSet = new LinkedHashSet<>(List.of(cloneableObject2));
+        List<PizzaDto> expectedCloneableSetResultList = new ArrayList<>(cloneableSet);
+        List<PizzaDto> expectedCheaperCloneableSetResultList = new ArrayList<>(List.of(cloneableObject2));
+        Set<PizzaDto> expectedCloneableSetResultSet = new LinkedHashSet<>(cloneableList);
+        Set<PizzaDto> expectedCheaperCloneableSetResultSet = new LinkedHashSet<>(List.of(cloneableObject2));
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,   filterPredicate,   collectionFactory,   expectedResult
+                Arguments.of( null,               null,              null,                List.of() ),
+                Arguments.of( null,               null,              setSupplier,         Set.of() ),
+                Arguments.of( List.of(),          null,              null,                List.of() ),
+                Arguments.of( List.of(),          cheaperThan12,    null,                 List.of() ),
+                Arguments.of( List.of(),          null,              setSupplier,         Set.of() ),
+                Arguments.of( List.of(),          cheaperThan12,   setSupplier,           Set.of() ),
+                Arguments.of( cloneableList,      null,              null,                expectedCloneableListResultList ),
+                Arguments.of( cloneableList,      cheaperThan12,    null,                 expectedCheaperCloneableListResultList ),
+                Arguments.of( cloneableList,      null,              setSupplier,         expectedCloneableListResultSet ),
+                Arguments.of( cloneableList,      cheaperThan12,   setSupplier,           expectedCheaperCloneableListResultSet ),
+                Arguments.of( cloneableSet,       null,              null,                expectedCloneableSetResultList ),
+                Arguments.of( cloneableSet,       cheaperThan12,    null,                 expectedCheaperCloneableSetResultList ),
+                Arguments.of( cloneableSet,       null,              setSupplier,         expectedCloneableSetResultSet ),
+                Arguments.of( cloneableSet,       cheaperThan12,   setSupplier,           expectedCheaperCloneableSetResultSet )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("cloneAllParametersTestCases")
+    @DisplayName("clone: with all parameters test cases")
+    public <T> void cloneAllParameters_testCases(Collection<Cloneable<? extends T>> sourceCollection,
+                                                 final Predicate<Cloneable<? extends T>> filterPredicate,
+                                                 Supplier<Collection<T>> collectionFactory,
+                                                 Collection<T> expectedResult) {
+        Collection<T> result = CollectionUtil.clone(sourceCollection, filterPredicate, collectionFactory);
+        if (null == sourceCollection) {
+            assertTrue(result.isEmpty());
+        }
+        else {
+            assertEquals(
+                    expectedResult.size(),
+                    result.size()
+            );
+            List<T> resultToList = new ArrayList<>(result);
+            List<T> expectedResultToList = new ArrayList<>(expectedResult);
+            for (int i = 0; i < result.size(); i++) {
+                assertEquals(
+                        expectedResultToList.get(i),
+                        resultToList.get(i)
+                );
+            }
+            if (null != expectedResult && !expectedResult.isEmpty()) {
+                expectedResult.clear();
+                assertTrue(expectedResult.isEmpty());
+                assertFalse(result.isEmpty());
+            }
+        }
+    }
+
+
     static Stream<Arguments> collectWithPredicateAndFunctionTestCases() {
         Set<Integer> ints = new LinkedHashSet<>(List.of(1, 2, 3, 6));
         return Stream.of(
@@ -724,7 +907,7 @@ public class CollectionUtilTest {
     }
 
 
-    static Stream<Arguments> copyNoCollectionFactoryTestCases() {
+    static Stream<Arguments> copyWithSourceCollectionTestCases() {
         List<Integer> intsList = List.of(1, 2, 3, 6, 2);
         Set<Integer> intsSet = new LinkedHashSet<>(intsList);
 
@@ -742,12 +925,16 @@ public class CollectionUtilTest {
 
 
     @ParameterizedTest
-    @MethodSource("copyNoCollectionFactoryTestCases")
-    @DisplayName("copy: without collection factory test cases")
-    public <T> void copyNoCollectionFactory_testCases(Collection<T> sourceCollection,
-                                                      List<T> expectedResult) {
+    @MethodSource("copyWithSourceCollectionTestCases")
+    @DisplayName("copy: with sourceCollection test cases")
+    public <T> void copyWithSourceCollection_testCases(Collection<T> sourceCollection,
+                                                       List<T> expectedResult) {
         List<T> result = copy(sourceCollection);
-        assertEquals(expectedResult, result);
+
+        assertEquals(
+                expectedResult,
+                result
+        );
         if (null != expectedResult && !expectedResult.isEmpty()) {
             expectedResult.clear();
             assertTrue(expectedResult.isEmpty());
@@ -756,7 +943,7 @@ public class CollectionUtilTest {
     }
 
 
-    static Stream<Arguments> copyAllParametersTestCases() {
+    static Stream<Arguments> copyWithSourceCollectionAndCollectionFactoryTestCases() {
         List<Integer> intsList = List.of(1, 2, 3, 6, 2);
         Set<Integer> intsSet = new LinkedHashSet<>(intsList);
         Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
@@ -780,19 +967,76 @@ public class CollectionUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("copyAllParametersTestCases")
-    @DisplayName("copy: with all parameters test cases")
-    public <T> void copyAllParameters_testCases(Collection<T> sourceCollection,
-                                                Supplier<Collection<T>> collectionFactory,
-                                                Collection<T> expectedResult) {
+    @MethodSource("copyWithSourceCollectionAndCollectionFactoryTestCases")
+    @DisplayName("copy: with sourceCollection and collectionFactory test cases")
+    public <T> void copyWithSourceCollectionAndCollectionFactory_testCases(Collection<T> sourceCollection,
+                                                                           Supplier<Collection<T>> collectionFactory,
+                                                                           Collection<T> expectedResult) {
         Collection<T> result = copy(sourceCollection, collectionFactory);
-        assertEquals(expectedResult, result);
+        assertEquals(
+                expectedResult,
+                result
+        );
         if (null != expectedResult && !expectedResult.isEmpty()) {
             expectedResult.clear();
             assertTrue(expectedResult.isEmpty());
             assertFalse(result.isEmpty());
         }
     }
+
+
+    static Stream<Arguments> copyAllParametersTestCases() {
+        List<Integer> intsList = List.of(1, 2, 3, 6, 2);
+        Set<Integer> intsSet = new LinkedHashSet<>(intsList);
+        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+
+        List<Integer> expectedIntsListResultList = new ArrayList<>(intsList);
+        List<Integer> expectedIsOddIntsListResultList = new ArrayList<>(List.of(1, 3));
+        Set<Integer> expectedIntsListResultSet = new LinkedHashSet<>(intsList);
+        Set<Integer> expectedIsEvenIntsSetResultList = new LinkedHashSet<>(List.of(2, 6));
+        List<Integer> expectedIntsSetResultList = new ArrayList<>(intsSet);
+        List<Integer> expectedIsOddIntsSetResultList = new ArrayList<>(List.of(1, 3));
+        Set<Integer> expectedIntsSetResultSet = new LinkedHashSet<>(intsSet);
+        Set<Integer> expectedIsEvenIntsSetResultSet = new LinkedHashSet<>(List.of(2, 6));
+        return Stream.of(
+                //@formatter:off
+                //            sourceCollection,   filterPredicate,   collectionFactory,   expectedResult
+                Arguments.of( null,               null,              null,                List.of() ),
+                Arguments.of( null,               null,              setSupplier,         Set.of() ),
+                Arguments.of( List.of(),          null,              null,                List.of() ),
+                Arguments.of( List.of(),          IS_INTEGER_ODD,    null,                List.of() ),
+                Arguments.of( List.of(),          null,              setSupplier,         Set.of() ),
+                Arguments.of( List.of(),          IS_INTEGER_EVEN,   setSupplier,         Set.of() ),
+                Arguments.of( intsList,           null,              null,                expectedIntsListResultList ),
+                Arguments.of( intsList,           IS_INTEGER_ODD,    null,                expectedIsOddIntsListResultList ),
+                Arguments.of( intsList,           null,              setSupplier,         expectedIntsListResultSet ),
+                Arguments.of( intsList,           IS_INTEGER_EVEN,   setSupplier,         expectedIsEvenIntsSetResultList ),
+                Arguments.of( intsSet,            null,              null,                expectedIntsSetResultList ),
+                Arguments.of( intsSet,            IS_INTEGER_ODD,    null,                expectedIsOddIntsSetResultList ),
+                Arguments.of( intsSet,            null,              setSupplier,         expectedIntsSetResultSet ),
+                Arguments.of( intsSet,            IS_INTEGER_EVEN,   setSupplier,         expectedIsEvenIntsSetResultSet )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("copyAllParametersTestCases")
+    @DisplayName("copy: with all parameters test cases")
+    public <T> void copyAllParameters_testCases(Collection<T> sourceCollection,
+                                                final Predicate<? super T> filterPredicate,
+                                                Supplier<Collection<T>> collectionFactory,
+                                                Collection<T> expectedResult) {
+        Collection<T> result = copy(sourceCollection, filterPredicate, collectionFactory);
+        assertEquals(
+                expectedResult,
+                result
+        );
+        if (null != expectedResult && !expectedResult.isEmpty()) {
+            expectedResult.clear();
+            assertTrue(expectedResult.isEmpty());
+            assertFalse(result.isEmpty());
+        }
+    }
+
 
 
     static Stream<Arguments> countTestCases() {

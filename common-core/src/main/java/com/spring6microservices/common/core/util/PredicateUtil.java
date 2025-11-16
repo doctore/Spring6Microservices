@@ -44,7 +44,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T> Predicate<T> allOf(final Predicate<? super T>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return alwaysTrue();
         }
         return t ->
@@ -101,7 +101,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T> Predicate<T> anyOf(final Predicate<? super T>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return alwaysFalse();
         }
         return t -> {
@@ -135,7 +135,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2> BiPredicate<T1, T2> biAllOf(final BiPredicate<? super T1, ? super T2>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return biAlwaysTrue();
         }
         return (t1, t2) ->
@@ -192,7 +192,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2> BiPredicate<T1, T2> biAnyOf(final BiPredicate<? super T1, ? super T2>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return biAlwaysFalse();
         }
         return (t1, t2) -> {
@@ -253,7 +253,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3> TriPredicate<T1, T2, T3> triAllOf(final TriPredicate<? super T1, ? super T2, ? super T3>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return triAlwaysTrue();
         }
         return (t1, t2, t3) ->
@@ -313,7 +313,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3> TriPredicate<T1, T2, T3> triAnyOf(final TriPredicate<? super T1, ? super T2, ? super T3>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return triAlwaysFalse();
         }
         return (t1, t2, t3) -> {
@@ -376,7 +376,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4> TetraPredicate<T1, T2, T3, T4> tetraAllOf(final TetraPredicate<? super T1, ? super T2, ? super T3, ? super T4>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return tetraAlwaysTrue();
         }
         return (t1, t2, t3, t4) ->
@@ -436,7 +436,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4> TetraPredicate<T1, T2, T3, T4> tetraAnyOf(final TetraPredicate<? super T1, ? super T2, ? super T3, ? super T4>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return tetraAlwaysFalse();
         }
         return (t1, t2, t3, t4) -> {
@@ -501,7 +501,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5> PentaPredicate<T1, T2, T3, T4, T5> pentaAllOf(final PentaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return pentaAlwaysTrue();
         }
         return (t1, t2, t3, t4, t5) ->
@@ -561,7 +561,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5> PentaPredicate<T1, T2, T3, T4, T5> pentaAnyOf(PentaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return pentaAlwaysFalse();
         }
         return (t1, t2, t3, t4, t5) -> {
@@ -628,7 +628,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6> HexaPredicate<T1, T2, T3, T4, T5, T6> hexaAllOf(final HexaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return hexaAlwaysTrue();
         }
         return (t1, t2, t3, t4, t5, t6) ->
@@ -688,7 +688,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6> HexaPredicate<T1, T2, T3, T4, T5, T6> hexaAnyOf(final HexaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return hexaAlwaysFalse();
         }
         return (t1, t2, t3, t4, t5, t6) -> {
@@ -757,7 +757,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7> HeptaPredicate<T1, T2, T3, T4, T5, T6, T7> heptaAllOf(final HeptaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return heptaAlwaysTrue();
         }
         return (t1, t2, t3, t4, t5, t6, t7) ->
@@ -817,7 +817,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7> HeptaPredicate<T1, T2, T3, T4, T5, T6, T7> heptaAnyOf(final HeptaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return heptaAlwaysFalse();
         }
         return (t1, t2, t3, t4, t5, t6, t7) -> {
@@ -888,7 +888,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7, T8> OctaPredicate<T1, T2, T3, T4, T5, T6, T7, T8> octaAllOf(final OctaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return octaAlwaysTrue();
         }
         return (t1, t2, t3, t4, t5, t6, t7, t8) ->
@@ -948,7 +948,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7, T8> OctaPredicate<T1, T2, T3, T4, T5, T6, T7, T8> octaAnyOf(final OctaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return octaAlwaysFalse();
         }
         return (t1, t2, t3, t4, t5, t6, t7, t8) -> {
@@ -1021,7 +1021,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> NonaPredicate<T1, T2, T3, T4, T5, T6, T7, T8, T9> nonaAllOf(final NonaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? super T9>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return nonaAlwaysTrue();
         }
         return (t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
@@ -1081,7 +1081,7 @@ public class PredicateUtil {
      */
     @SafeVarargs
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> NonaPredicate<T1, T2, T3, T4, T5, T6, T7, T8, T9> nonaAnyOf(final NonaPredicate<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? super T9>... predicates) {
-        if (ObjectUtil.isEmpty(predicates)) {
+        if (ArrayUtil.isEmpty(predicates)) {
             return nonaAlwaysFalse();
         }
         return (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {

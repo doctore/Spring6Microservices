@@ -9,9 +9,9 @@ import com.spring6microservices.common.core.function.TetraFunction;
 import com.spring6microservices.common.core.function.TriFunction;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.validation.Validation;
+import com.spring6microservices.common.core.util.ArrayUtil;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.CollectionUtil;
-import com.spring6microservices.common.core.util.ObjectUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -475,7 +475,7 @@ public abstract class Try<T> implements Serializable {
     public static <T> Try<T> combine(final BiFunction<? super Throwable, ? super Throwable, ? extends Throwable> mapperFailure,
                                      final BiFunction<? super T, ? super T, ? extends T> mapperSuccess,
                                      final Try<T>... tries) {
-        if (ObjectUtil.isEmpty(tries)) {
+        if (ArrayUtil.isEmpty(tries)) {
             return Success.empty();
         }
         AssertUtil.notNull(mapperFailure, "mapperFailure must be not null");
@@ -523,7 +523,7 @@ public abstract class Try<T> implements Serializable {
     @SafeVarargs
     public static <T> Try<T> combineGetFirstFailure(final BiFunction<? super T, ? super T, ? extends T> mapperSuccess,
                                                      final Supplier<Try<T>>... suppliers) {
-        if (ObjectUtil.isEmpty(suppliers)) {
+        if (ArrayUtil.isEmpty(suppliers)) {
             return Success.empty();
         }
         AssertUtil.notNull(mapperSuccess, "mapperSuccess must be not null");

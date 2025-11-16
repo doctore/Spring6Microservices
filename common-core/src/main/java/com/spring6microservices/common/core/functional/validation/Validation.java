@@ -6,9 +6,9 @@ import com.spring6microservices.common.core.functional.Try.Try;
 import com.spring6microservices.common.core.functional.either.Either;
 import com.spring6microservices.common.core.functional.either.Left;
 import com.spring6microservices.common.core.functional.either.Right;
+import com.spring6microservices.common.core.util.ArrayUtil;
 import com.spring6microservices.common.core.util.AssertUtil;
 import com.spring6microservices.common.core.util.CollectionUtil;
-import com.spring6microservices.common.core.util.ObjectUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -171,7 +171,7 @@ public abstract class Validation<E, T> implements Serializable {
     @SafeVarargs
     public static <E, T> Validation<E, T> combine(final Validation<E, T>... validations) {
         Validation<E, T> result = Valid.empty();
-        if (!ObjectUtil.isEmpty(validations)) {
+        if (!ArrayUtil.isEmpty(validations)) {
             for (Validation<E, T> validation : validations) {
                 result = result.ap(validation);
             }
@@ -200,7 +200,7 @@ public abstract class Validation<E, T> implements Serializable {
     @SafeVarargs
     public static <E, T> Validation<E, T> combineGetFirstInvalid(final Supplier<Validation<E, T>>... suppliers) {
         Validation<E, T> result = Valid.empty();
-        if (!ObjectUtil.isEmpty(suppliers)) {
+        if (!ArrayUtil.isEmpty(suppliers)) {
             for (Supplier<Validation<E, T>> supplier : suppliers) {
                 result = result.ap(supplier.get());
                 if (!result.isValid()) {

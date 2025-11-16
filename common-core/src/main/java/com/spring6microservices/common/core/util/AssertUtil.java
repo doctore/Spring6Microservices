@@ -232,7 +232,7 @@ public class AssertUtil {
      */
     public static void notEmpty(final Object[] array,
                                 final String errorMessage) {
-        if (ObjectUtil.isEmpty(array)) {
+        if (ArrayUtil.isEmpty(array)) {
             throw new IllegalArgumentException(errorMessage);
         }
     }
@@ -253,7 +253,7 @@ public class AssertUtil {
      */
     public static <X extends Throwable> void notEmpty(final Object[] array,
                                                       final Supplier<? extends X> exceptionSupplier) throws X {
-        if (ObjectUtil.isEmpty(array)) {
+        if (ArrayUtil.isEmpty(array)) {
             AssertUtil.notNull(exceptionSupplier, "exceptionSupplier must be not null");
             throw exceptionSupplier.get();
         }
