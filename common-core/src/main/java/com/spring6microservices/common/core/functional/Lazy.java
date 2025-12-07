@@ -4,6 +4,7 @@ import com.spring6microservices.common.core.util.AssertUtil;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -26,6 +27,8 @@ import static java.util.Optional.ofNullable;
  * </pre>
  */
 public final class Lazy<T> implements Supplier<T> {
+
+    private final ReentrantLock lock = new ReentrantLock();
 
     private transient volatile Supplier<? extends T> supplier;
     private T value;
@@ -231,10 +234,15 @@ public final class Lazy<T> implements Supplier<T> {
      *
      * @return internal lazy value
      */
-    private synchronized T computeValue() {
-        if (null != supplier) {
-            value = supplier.get();
-            supplier = null;
+    private T computeValue() {
+        lock.lock();
+        try {
+            if (null != supplier) {
+                value = supplier.get();
+                supplier = null;
+            }
+        } finally {
+            lock.unlock();
         }
         return value;
     }
