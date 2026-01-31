@@ -63,10 +63,10 @@ public final class Valid<E, T> extends Validation<E, T> implements Serializable 
 
     /**
      *    Returns a {@link Valid} describing the given {@code value}, if non-null, otherwise returns an empty
-     * {@link Valid}
+     * {@link Valid}.
      *
      * @param value
-     *    The value to store,
+     *    The value to store
      *
      * @return {@link Valid}
      */

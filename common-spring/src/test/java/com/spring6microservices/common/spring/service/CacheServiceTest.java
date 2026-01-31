@@ -28,7 +28,6 @@ public class CacheServiceTest {
     @Mock
     private CacheManager mockCacheManager;
 
-
     private CacheService service;
 
 

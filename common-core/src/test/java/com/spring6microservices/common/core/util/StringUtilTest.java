@@ -1145,7 +1145,7 @@ public class StringUtilTest {
         String expectedStringsWithNullsResult = ",,242,ab,,H";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,       expectedResult
+                //            sourceCollection,   expectedResult
                 Arguments.of( null,               "" ),
                 Arguments.of( List.of(),          "" ),
                 Arguments.of( ints,               expectedIntsResult ),
@@ -1209,7 +1209,7 @@ public class StringUtilTest {
         String expectedStringsWithNullsResultWithFilter = "242";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,       filterPredicate,           expectedResult
+                //            sourceCollection,   filterPredicate,           expectedResult
                 Arguments.of( null,               null,                      "" ),
                 Arguments.of( List.of(),          null,                      "" ),
                 Arguments.of( null,               IS_INTEGER_EVEN,           "" ),
@@ -1246,7 +1246,7 @@ public class StringUtilTest {
         String expectedStringsWithNullsResultWithSeparator = ";;242;ab;;H";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,       separator,   expectedResult
+                //            sourceCollection,   separator,   expectedResult
                 Arguments.of( null,               null,        "" ),
                 Arguments.of( List.of(),          null,        "" ),
                 Arguments.of( null,               separator,   "" ),
@@ -1289,7 +1289,7 @@ public class StringUtilTest {
         String expectedStringsWithNullsResultWithFilterAndSeparator = "242";
         return Stream.of(
                 //@formatter:off
-                //            sourceString,       filterPredicate,           separator,   expectedResult
+                //            sourceCollection,   filterPredicate,           separator,   expectedResult
                 Arguments.of( null,               null,                      null,        "" ),
                 Arguments.of( null,               IS_INTEGER_EVEN,           null,        "" ),
                 Arguments.of( null,               IS_INTEGER_EVEN,           separator,   "" ),

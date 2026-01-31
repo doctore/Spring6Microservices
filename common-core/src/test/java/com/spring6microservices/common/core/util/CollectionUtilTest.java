@@ -988,7 +988,7 @@ public class CollectionUtilTest {
     static Stream<Arguments> copyAllParametersTestCases() {
         List<Integer> intsList = List.of(1, 2, 3, 6, 2);
         Set<Integer> intsSet = new LinkedHashSet<>(intsList);
-        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+        Supplier<Collection<Integer>> setSupplier = LinkedHashSet::new;
 
         List<Integer> expectedIntsListResultList = new ArrayList<>(intsList);
         List<Integer> expectedIsOddIntsListResultList = new ArrayList<>(List.of(1, 3));
@@ -1167,7 +1167,7 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> filterAllParametersTestCases() {
         List<Integer> ints = List.of(1, 2, 3, 6);
-        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+        Supplier<Collection<Integer>> setSupplier = LinkedHashSet::new;
 
         List<Integer> expectedIntsResultList = List.of(2, 6);
         Set<Integer> expectedAllIntsResultSet = new LinkedHashSet<>(ints);
@@ -1230,7 +1230,7 @@ public class CollectionUtilTest {
 
     static Stream<Arguments> filterNotAllParametersTestCases() {
         List<Integer> ints = List.of(1, 2, 3, 6);
-        Supplier<Collection<Tuple>> setSupplier = LinkedHashSet::new;
+        Supplier<Collection<Integer>> setSupplier = LinkedHashSet::new;
 
         List<Integer> expectedIntsResultList = List.of(1, 3);
         Set<Integer> expectedAllIntsResultSet = new LinkedHashSet<>(ints);

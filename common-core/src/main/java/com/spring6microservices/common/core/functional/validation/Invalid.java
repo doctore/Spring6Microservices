@@ -64,7 +64,7 @@ public final class Invalid<E, T> extends Validation<E, T> implements Serializabl
 
     /**
      *    Returns an {@link Invalid} describing the given {@link Collection} of errors, if non-null, otherwise
-     * returns an empty {@link Invalid}
+     * returns an empty {@link Invalid}.
      *
      * @param errors
      *    {@link Collection} of errors to include in the returned {@link Invalid}
