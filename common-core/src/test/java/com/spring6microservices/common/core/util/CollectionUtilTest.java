@@ -416,6 +416,103 @@ public class CollectionUtilTest {
     }
 
 
+    static Stream<Arguments> binarySearchWithSourceArrayAndElementToSearchTestCases() {
+        UserDto emptyUser = new UserDto(null, null, null, null, null, null);
+        UserDto user1 = new UserDto(1L, "user1 name", "user1 address", 11, "2011-11-11 13:00:05", "test1@test.es");
+        UserDto user2 = new UserDto(2L, "user2 name", "user2 address", 12, "2010-01-11 15:10:25", "test2@test.es");
+        UserDto user3 = new UserDto(3L, "user3 name", "user3 address", 16, "2006-11-15 14:10:25", "test3@test.es");
+        UserDto user4 = new UserDto(4L, "user4 name", "user4 address", 19, "2012-12-09 13:10:25", "test4@test.es");
+
+        List<UserDto> orderedList = List.of(
+                emptyUser,
+                user1,
+                user3
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceList,    elementToSearch,   expectedResult
+                Arguments.of( null,           null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( List.of(),      null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedList,    null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedList,    emptyUser,         Tuple2.of(Boolean.TRUE, 0) ),
+                Arguments.of( orderedList,    user1,             Tuple2.of(Boolean.TRUE, 1) ),
+                Arguments.of( orderedList,    user2,             Tuple2.of(Boolean.FALSE, 2) ),
+                Arguments.of( orderedList,    user3,             Tuple2.of(Boolean.TRUE, 2) ),
+                Arguments.of( orderedList,    user4,             Tuple2.of(Boolean.FALSE, 3) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("binarySearchWithSourceArrayAndElementToSearchTestCases")
+    @DisplayName("binarySearch: with sourceArray and elementToSearch test cases")
+    public <T extends Comparable<? super T>> void binarySearchWithSourceArrayAndElementToSearch_testCases(List<? extends T> sourceList,
+                                                                                                          T elementToSearch,
+                                                                                                          Tuple2<Boolean, Integer> expectedResult) {
+        assertEquals(
+                expectedResult,
+                binarySearch(sourceList, elementToSearch)
+        );
+    }
+
+
+    static Stream<Arguments> binarySearchAllParametersTestCases() {
+        PizzaDto emptyPizza = new PizzaDto(null, null);
+        PizzaDto pizza1 = new PizzaDto("Carbonara", 15d);
+        PizzaDto pizza2 = new PizzaDto("Margherita", 16d);
+        PizzaDto pizza3 = new PizzaDto("Hawaiian", 21d);
+        PizzaDto pizza4 = new PizzaDto("Four-Cheese", 25d);
+
+        List<PizzaDto> orderedList = List.of(
+                emptyPizza,
+                pizza1,
+                pizza3
+        );
+        Comparator<PizzaDto> comparator = Comparator.nullsFirst(
+                Comparator.comparing(
+                        PizzaDto::getCost,
+                        Comparator.nullsFirst(Double::compareTo)
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceList,    elementToSearch,   comparator,   expectedException,                expectedResult
+                Arguments.of( null,           null,              null,         IllegalArgumentException.class,   null ),
+                Arguments.of( List.of(),      null,              null,         IllegalArgumentException.class,   null ),
+                Arguments.of( List.of(),      emptyPizza,        null,         IllegalArgumentException.class,   null ),
+                Arguments.of( null,           null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( List.of(),      null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedList,    null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedList,    emptyPizza,        comparator,   null,                             Tuple2.of(Boolean.TRUE, 0) ),
+                Arguments.of( orderedList,    pizza1,            comparator,   null,                             Tuple2.of(Boolean.TRUE, 1) ),
+                Arguments.of( orderedList,    pizza2,            comparator,   null,                             Tuple2.of(Boolean.FALSE, 2) ),
+                Arguments.of( orderedList,    pizza3,            comparator,   null,                             Tuple2.of(Boolean.TRUE, 2) ),
+                Arguments.of( orderedList,    pizza4,            comparator,   null,                             Tuple2.of(Boolean.FALSE, 3) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("binarySearchAllParametersTestCases")
+    @DisplayName("binarySearch: with all parameters test cases")
+    public <T> void binarySearchAllParameters_testCases(List<? extends T> sourceList,
+                                                        T elementToSearch,
+                                                        Comparator<? super T> comparator,
+                                                        Class<? extends Exception> expectedException,
+                                                        Tuple2<Boolean, Integer> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> binarySearch(sourceList, elementToSearch, comparator)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    binarySearch(sourceList, elementToSearch, comparator)
+            );
+        }
+    }
+
+
     static Stream<Arguments> cloneWithSourceCollectionTestCases() {
         PizzaDto cloneableObject = new PizzaDto("Carbonara", 15d);
         List<PizzaDto> cloneableList = List.of(

@@ -1,19 +1,120 @@
 package com.spring6microservices.common.core.util;
 
+import com.spring6microservices.common.core.collection.tuple.Tuple2;
 import com.spring6microservices.common.core.dto.PizzaDto;
+import com.spring6microservices.common.core.dto.UserDto;
 import com.spring6microservices.common.core.functional.Cloneable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.*;
 import java.util.stream.Stream;
 
-import static com.spring6microservices.common.core.util.ArrayUtil.isArray;
-import static com.spring6microservices.common.core.util.ArrayUtil.isEmpty;
+import static com.spring6microservices.common.core.util.ArrayUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArrayUtilTest {
+
+    static Stream<Arguments> binarySearchWithSourceArrayAndElementToSearchTestCases() {
+        UserDto emptyUser = new UserDto(null, null, null, null, null, null);
+        UserDto user1 = new UserDto(1L, "user1 name", "user1 address", 11, "2011-11-11 13:00:05", "test1@test.es");
+        UserDto user2 = new UserDto(2L, "user2 name", "user2 address", 12, "2010-01-11 15:10:25", "test2@test.es");
+        UserDto user3 = new UserDto(3L, "user3 name", "user3 address", 16, "2006-11-15 14:10:25", "test3@test.es");
+        UserDto user4 = new UserDto(4L, "user4 name", "user4 address", 19, "2012-12-09 13:10:25", "test4@test.es");
+
+        UserDto[] emptyArray = {};
+        UserDto[] orderedArray = {
+                emptyUser,
+                user1,
+                user3
+        };
+        return Stream.of(
+                //@formatter:off
+                //            sourceArray,    elementToSearch,   expectedResult
+                Arguments.of( null,           null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( emptyArray,     null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedArray,   null,              Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedArray,   emptyUser,         Tuple2.of(Boolean.TRUE, 0) ),
+                Arguments.of( orderedArray,   user1,             Tuple2.of(Boolean.TRUE, 1) ),
+                Arguments.of( orderedArray,   user2,             Tuple2.of(Boolean.FALSE, 2) ),
+                Arguments.of( orderedArray,   user3,             Tuple2.of(Boolean.TRUE, 2) ),
+                Arguments.of( orderedArray,   user4,             Tuple2.of(Boolean.FALSE, 3) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("binarySearchWithSourceArrayAndElementToSearchTestCases")
+    @DisplayName("binarySearch: with sourceArray and elementToSearch test cases")
+    public <T extends Comparable<? super T>> void binarySearchWithSourceArrayAndElementToSearch_testCases(T[] sourceArray,
+                                                                                                          T elementToSearch,
+                                                                                                          Tuple2<Boolean, Integer> expectedResult) {
+        assertEquals(
+                expectedResult,
+                binarySearch(sourceArray, elementToSearch)
+        );
+    }
+
+
+    static Stream<Arguments> binarySearchAllParametersTestCases() {
+        PizzaDto emptyPizza = new PizzaDto(null, null);
+        PizzaDto pizza1 = new PizzaDto("Carbonara", 15d);
+        PizzaDto pizza2 = new PizzaDto("Margherita", 16d);
+        PizzaDto pizza3 = new PizzaDto("Hawaiian", 21d);
+        PizzaDto pizza4 = new PizzaDto("Four-Cheese", 25d);
+
+        PizzaDto[] emptyArray = {};
+        PizzaDto[] orderedArray = {
+                emptyPizza,
+                pizza1,
+                pizza3
+        };
+        Comparator<PizzaDto> comparator = Comparator.nullsFirst(
+                Comparator.comparing(
+                        PizzaDto::getCost,
+                        Comparator.nullsFirst(Double::compareTo)
+                )
+        );
+        return Stream.of(
+                //@formatter:off
+                //            sourceArray,    elementToSearch,   comparator,   expectedException,                expectedResult
+                Arguments.of( null,           null,              null,         IllegalArgumentException.class,   null ),
+                Arguments.of( emptyArray,     null,              null,         IllegalArgumentException.class,   null ),
+                Arguments.of( emptyArray,     emptyPizza,        null,         IllegalArgumentException.class,   null ),
+                Arguments.of( null,           null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( emptyArray,     null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedArray,   null,              comparator,   null,                             Tuple2.of(Boolean.FALSE, 0) ),
+                Arguments.of( orderedArray,   emptyPizza,        comparator,   null,                             Tuple2.of(Boolean.TRUE, 0) ),
+                Arguments.of( orderedArray,   pizza1,            comparator,   null,                             Tuple2.of(Boolean.TRUE, 1) ),
+                Arguments.of( orderedArray,   pizza2,            comparator,   null,                             Tuple2.of(Boolean.FALSE, 2) ),
+                Arguments.of( orderedArray,   pizza3,            comparator,   null,                             Tuple2.of(Boolean.TRUE, 2) ),
+                Arguments.of( orderedArray,   pizza4,            comparator,   null,                             Tuple2.of(Boolean.FALSE, 3) )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("binarySearchAllParametersTestCases")
+    @DisplayName("binarySearch: with all parameters test cases")
+    public <T> void binarySearchAllParameters_testCases(T[] sourceArray,
+                                                        T elementToSearch,
+                                                        Comparator<? super T> comparator,
+                                                        Class<? extends Exception> expectedException,
+                                                        Tuple2<Boolean, Integer> expectedResult) {
+        if (null != expectedException) {
+            assertThrows(
+                    expectedException,
+                    () -> binarySearch(sourceArray, elementToSearch, comparator)
+            );
+        }
+        else {
+            assertEquals(
+                    expectedResult,
+                    binarySearch(sourceArray, elementToSearch, comparator)
+            );
+        }
+    }
+
 
     static Stream<Arguments> cloneTestCases() {
         PizzaDto[] emptyArray = {};

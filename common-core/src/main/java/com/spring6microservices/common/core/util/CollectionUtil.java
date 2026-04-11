@@ -369,6 +369,128 @@ public class CollectionUtil {
 
 
     /**
+     *    Searches the specified {@code sourceList} for the specified {@code elementToSearch} using the binary search
+     * algorithm. {@code sourceCollection} must be sorted into ascending order according to the developed {@link Comparable}
+     * inside the instances of {@code T} class prior to making this call.
+     * <p>
+     *    If {@code sourceList} contains multiple elements equal to the specified {@code elementToSearch}, there is no
+     * guarantee which one will be found.
+     *
+     * @param sourceList
+     *    The {@link List} to be searched
+     * @param elementToSearch
+     *    The value to be searched for
+     *
+     * @return if {@code elementToSearch} is contained in {@code sourceList} a {@link Tuple2} with {@code true} as first
+     *         element and the index of {@code elementToSearch} as second one. Otherwise, {@link Tuple2} with {@code false}
+     *         as first element and inside the second one, the index of the first element greater than {@code elementToSearch},
+     *         that is, the position inside {@code sourceList} on which {@code elementToSearch} should be inserted
+     */
+    public static <T extends Comparable<? super T>> Tuple2<Boolean, Integer> binarySearch(final List<? extends T> sourceList,
+                                                                                          final T elementToSearch) {
+        if (CollectionUtil.isEmpty(sourceList)) {
+            return Tuple2.of(
+                    Boolean.FALSE,
+                    0
+            );
+        }
+        int low = 0;
+        int high = sourceList.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            T midVal = sourceList.get(mid);
+            int cmp = midVal.compareTo(
+                    elementToSearch
+            );
+            if (cmp < 0) {
+                low = mid + 1;
+            }
+            else if (cmp > 0) {
+                high = mid - 1;
+            }
+            else {
+                // elementToSearch found
+                return Tuple2.of(
+                        Boolean.TRUE,
+                        mid
+                );
+            }
+        }
+        // elementToSearch not found
+        return Tuple2.of(
+                Boolean.FALSE,
+                low
+        );
+    }
+
+
+    /**
+     *    Searches the specified {@code sourceList} for the specified {@code elementToSearch} using the binary search
+     * algorithm. {@code sourceList} must be sorted into ascending order according to the specified {@link Comparator}
+     * prior to making this call.
+     * <p>
+     *    If {@code sourceList} contains multiple elements equal to the specified {@code elementToSearch}, there is no
+     * guarantee which one will be found.
+     *
+     * @param sourceList
+     *    The {@link List} to be searched
+     * @param elementToSearch
+     *    The value to be searched for
+     * @param comparator
+     *   The {@link Comparator} by which {@code sourceList} is ordered.
+     *
+     * @return if {@code elementToSearch} is contained in {@code sourceList} a {@link Tuple2} with {@code true} as first
+     *         element and the index of {@code elementToSearch} as second one. Otherwise, {@link Tuple2} with {@code false}
+     *         as first element and inside the second one, the index of the first element greater than {@code elementToSearch},
+     *         that is, the position inside {@code sourceList} on which {@code elementToSearch} should be inserted
+     *
+     * @throws ClassCastException if {@code sourceList} contains elements that are not <i>mutually comparable</i> using
+     *                            the specified {@link Comparator}, or the search {@code elementToSearch} is not comparable
+     *                            to the elements of the {@link List} using this comparator
+     * @throws IllegalArgumentException if {@code comparator} is {@code null}
+     */
+    public static <T> Tuple2<Boolean, Integer> binarySearch(final List<? extends T> sourceList,
+                                                            final T elementToSearch,
+                                                            final Comparator<? super T> comparator) {
+        AssertUtil.notNull(comparator, "comparator must be not null");
+        if (CollectionUtil.isEmpty(sourceList)) {
+            return Tuple2.of(
+                    Boolean.FALSE,
+                    0
+            );
+        }
+        int low = 0;
+        int high = sourceList.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            T midVal = sourceList.get(mid);
+            int cmp = comparator.compare(
+                    midVal,
+                    elementToSearch
+            );
+            if (cmp < 0) {
+                low = mid + 1;
+            }
+            else if (cmp > 0) {
+                high = mid - 1;
+            }
+            else {
+                // elementToSearch found
+                return Tuple2.of(
+                        Boolean.TRUE,
+                        mid
+                );
+            }
+        }
+        // elementToSearch not found
+        return Tuple2.of(
+                Boolean.FALSE,
+                low
+        );
+    }
+
+
+    /**
      * Clones provided {@code sourceCollection} into a new {@link List} of cloned instances.
      *
      * @apiNote
