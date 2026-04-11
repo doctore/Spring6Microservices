@@ -986,10 +986,10 @@ Once you have created all the Docker images on your local, you should see someth
 
 ### Docker compose
 
-To manage the Docker containers in an easier way, a [Docker compose](https://docs.docker.com/compose/compose-file) file: [compose.yml](https://github.com/doctore/Spring6Microservices/tree/main/compose.yml)
+To manage the Docker containers in an easier way, a [Docker compose](https://docs.docker.com/compose/compose-file) file: [compose.yml](https://github.com/doctore/Spring6Microservices/blob/main/compose.yml)
 has been added. It includes the required commands to up and down the project's containers.
 
-The file [kafka-compose.yml](https://github.com/doctore/Spring6Microservices/tree/main/kafka-compose.yml) adds only the required containers to work with the microservices in local,
+The file [kafka-compose.yml](https://github.com/doctore/Spring6Microservices/blob/main/kafka-compose.yml) adds only the required containers to work with the microservices in local,
 specially:
 
 * [invoice-service](#invoice-service)

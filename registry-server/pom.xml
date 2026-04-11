@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
+        <version>3.5.13</version>
         <relativePath/>
     </parent>
     <groupId>com.registryserver</groupId>
     <artifactId>registry-server</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>registry-server</name>
     <description>Registry server for Spring 6 with microservices</description>
 
@@ -21,7 +21,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-cloud.version>2025.0.1</spring-cloud.version>
+        <spring-cloud.version>2025.0.2</spring-cloud.version>
     </properties>
 
     <dependencies>

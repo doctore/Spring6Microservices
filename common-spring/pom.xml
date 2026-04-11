@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
+        <version>3.5.13</version>
     </parent>
 
     <groupId>com.spring6microservices.common</groupId>
     <artifactId>common-spring</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>Spring6Microservices common spring</name>
     <description>Common functionality related with Spring Framework included in several microservices</description>
@@ -23,7 +23,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring6-microservices-common-core.version>1.0.0</spring6-microservices-common-core.version>
+        <spring6-microservices-common-core.version>1.0.1</spring6-microservices-common-core.version>
         <springdoc.version>1.8.0</springdoc.version>
     </properties>
 
