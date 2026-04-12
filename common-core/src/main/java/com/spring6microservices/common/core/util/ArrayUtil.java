@@ -42,9 +42,13 @@ public class ArrayUtil {
         while (low <= high) {
             int mid = (low + high) >>> 1;
             T midVal = sourceArray[mid];
-            int cmp = midVal.compareTo(
-                    elementToSearch
-            );
+            int cmp = null != midVal
+                    ? midVal.compareTo(
+                            elementToSearch
+                      )
+                    : null == elementToSearch
+                            ? 0
+                            : 1;
             if (cmp < 0) {
                 low = mid + 1;
             }
@@ -80,7 +84,7 @@ public class ArrayUtil {
      * @param elementToSearch
      *    The value to be searched for
      * @param comparator
-     *   The {@link Comparator} by which {@code sourceArray} is ordered.
+     *    The {@link Comparator} by which {@code sourceArray} is ordered.
      *
      * @return if {@code elementToSearch} is contained in {@code sourceArray} a {@link Tuple2} with {@code true} as first
      *         element and the index of {@code elementToSearch} as second one. Otherwise, {@link Tuple2} with {@code false}
