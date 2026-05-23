@@ -3751,7 +3751,11 @@ public class CollectionUtil {
 
 
     /**
-     * Transposes the rows and columns of the given {@code sourceCollection}.
+     * Transposes the rows and columns of the given {@code sourceCollections}.
+     *
+     * @apiNote
+     *    It is similar to {@link CollectionUtil#unzip(Collection)} but in this case the size of internal {@link Collection}s
+     * can be different (which results in slightly worse performance).
      *
      * <pre>
      *    transpose(                                            Result:
@@ -3765,17 +3769,17 @@ public class CollectionUtil {
      *    )
      * </pre>
      *
-     * @param sourceCollection
+     * @param sourceCollections
      *    {@link Collection} of {@link Collection}s to transpose
      *
      * @return {@link List} of {@link List}s
      */
-    public static <T> List<List<T>> transpose(final Collection<? extends Collection<T>> sourceCollection) {
-        if (isEmpty(sourceCollection)) {
+    public static <T> List<List<T>> transpose(final Collection<? extends Collection<T>> sourceCollections) {
+        if (isEmpty(sourceCollections)) {
             return new ArrayList<>();
         }
         final int[] sizeOfLongestSubCollection = { -1 };
-        final List<Iterator<T>> iteratorList = sourceCollection.stream()
+        final List<Iterator<T>> iteratorList = sourceCollections.stream()
                 .filter(Objects::nonNull)
                 .map(c -> {
                     if (sizeOfLongestSubCollection[0] < c.size()) {
@@ -3785,12 +3789,18 @@ public class CollectionUtil {
                 })
                 .toList();
 
-        List<List<T>> result = new ArrayList<>(sizeOfLongestSubCollection[0]);
+        List<List<T>> result = new ArrayList<>(
+                sizeOfLongestSubCollection[0]
+        );
         for (int i = 0; i < sizeOfLongestSubCollection[0]; i++) {
-            List<T> newRow = new ArrayList<>(sourceCollection.size());
+            List<T> newRow = new ArrayList<>(
+                    sourceCollections.size()
+            );
             for (Iterator<T> iterator: iteratorList) {
                 if (iterator.hasNext()) {
-                    newRow.add(iterator.next());
+                    newRow.add(
+                            iterator.next()
+                    );
                 }
             }
             result.add(newRow);
@@ -3800,79 +3810,111 @@ public class CollectionUtil {
 
 
     /**
-     *    Converts given {@code sourceCollection} of {@link Tuple2} into two {@link List} of the first and
-     * second half of each pair.
+     *    Converts given {@code sourceCollections} into another {@link List} of {@link List}s by joining the elements
+     * of the same position up to the minimum length of the {@link Collection}s contained in {@code sourceCollections}.
+     *
+     * @apiNote
+     *    Provided {@code sourceCollections} must be a matrix, that is, a two-dimensional {@link List}s of NxM elements.
+     * It is similar to {@link CollectionUtil#transpose(Collection)} but in this case the size of internal {@link Collection}
+     * must be the same (which results in slightly better performance).
      *
      * <pre>
      *    unzip(                                      Result:
-     *       [("d", 6), ("h", 7), ("y", 11)]           [("d", "h", "y"), (6, 7, 11)]
+     *       [["d", 6], ["h", 7], ["y", 11]]           [["d", "h", "y"], [6, 7, 11]]
      *    )
      * </pre>
      *
-     * @param sourceCollection
-     *    {@link Collection} of {@link Tuple2} to split its elements
+     * @param sourceCollections
+     *    {@link Collection} of {@link Collection}s with the elements to join based on their position
      *
-     * @return {@link Tuple2} of two {@link List}
+     * @return {@link List} of {@link List}s containing internal elements of {@code sourceCollections} based on their position
      */
-    public static <T, E> Tuple2<List<T>, List<E>> unzip(final Collection<Tuple2<T, E>> sourceCollection) {
-        return foldLeft(
-                sourceCollection,
-                Tuple.of(
-                        new ArrayList<>(),
-                        new ArrayList<>()
-                ),
-                (tupleOfLists, currentElto) -> {
-                    tupleOfLists._1.add(currentElto._1);
-                    tupleOfLists._2.add(currentElto._2);
-                    return tupleOfLists;
-                }
+    public static <T> List<List<T>> unzip(final Collection<? extends Collection<T>> sourceCollections) {
+        if (CollectionUtil.isEmpty(sourceCollections)) {
+            return new ArrayList<>();
+        }
+        final int sizeOfSubCollections = sourceCollections.stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(Collection::size)
+                .orElse(0);
+
+        final List<Iterator<T>> iteratorList = sourceCollections.stream()
+                .filter(Objects::nonNull)
+                .map(Collection::iterator)
+                .toList();
+
+        List<List<T>> result = new ArrayList<>(
+                sizeOfSubCollections
         );
+        for (int i = 0; i < sizeOfSubCollections; i++) {
+            List<T> newRow = new ArrayList<>(
+                    sourceCollections.size()
+            );
+            for (Iterator<T> iterator: iteratorList) {
+                if (iterator.hasNext()) {
+                    newRow.add(
+                            iterator.next()
+                    );
+                }
+            }
+            result.add(newRow);
+        }
+        return result;
     }
 
 
     /**
-     *    Returns a {@link List} formed from {@code sourceLeftCollection} and {@code sourceRightCollection}
-     * by combining corresponding elements in {@link Tuple2}. If one of the two collections is longer than
-     * the other, its remaining elements are ignored.
+     *    Converts given {@code sourceCollections} into a {@link List} of {@link List}s where the first element in each
+     * passed {@link List} is paired together, and then the second element in each passed {@link List} are paired together,
+     * etc. up to the minimum length of {@code sourceCollections}.
      *
      * <pre>
      *    zip(                           Result:
-     *       ["d", "h", "y"],             [("d", 6), ("h", 7), ("y", 11)]
+     *       ["d", "h", "y"],             [["d", 6], ["h", 7], ["y", 11]]
      *       [6, 7, 11]
      *    )
      *    zip(                           Result:
-     *       [4, 9, 14],                  [(4, 23), (9, 8)]
+     *       [4, 9, 14],                  [[4, 23], [9, 8]]
      *       [23, 8]
      *    )
      * </pre>
      *
-     * @param sourceLeftCollection
-     *    {@link Collection} with elements to be included as left side of returned {@link Tuple2}
-     * @param sourceRightCollection
-     *    {@link Collection} with elements to be included as right side of returned {@link Tuple2}
+     * @param sourceCollections
+     *    {@link Collection} of {@link Collection}s with the elements to join based on their position
      *
-     * @return {@link List} of {@link Tuple2}
+     * @return {@link List} of {@link List}s containing elements of {@code sourceCollections} based on their position
      */
-    public static <T, E> List<Tuple2<T, E>> zip(final Collection<? extends T> sourceLeftCollection,
-                                                final Collection<? extends E> sourceRightCollection) {
-        if (isEmpty(sourceLeftCollection) ||
-                isEmpty(sourceRightCollection)) {
+    @SafeVarargs
+    public static <T> List<List<T>> zip(final Collection<? extends T>... sourceCollections) {
+        if (ArrayUtil.isEmpty(sourceCollections)) {
             return new ArrayList<>();
         }
-        final int minCollectionsSize = Math.min(
-                sourceLeftCollection.size(),
-                sourceRightCollection.size()
+        int sizeOfShortestCollection = Integer.MAX_VALUE;
+        final List<Iterator<? extends T>> iteratorList = new ArrayList<>();
+        for (Collection<? extends T> collection: sourceCollections) {
+            sizeOfShortestCollection = Math.min(
+                    sizeOfShortestCollection,
+                    collection.size()
+            );
+            iteratorList.add(
+                    collection.iterator()
+            );
+        }
+        List<List<T>> result = new ArrayList<>(
+                sizeOfShortestCollection
         );
-
-        final Iterator<? extends T> leftIterator = sourceLeftCollection.iterator();
-        final Iterator<? extends E> rightIterator = sourceRightCollection.iterator();
-        List<Tuple2<T, E>> result = new ArrayList<>();
-        for (int i = 0; i < minCollectionsSize; i++) {
+        for (int i = 0; i < sizeOfShortestCollection; i++) {
+            List<T> row = new ArrayList<>(
+                    sourceCollections.length
+            );
+            for (Iterator<? extends T> iterator: iteratorList) {
+                row.add(
+                        iterator.next()
+                );
+            }
             result.add(
-                    Tuple.of(
-                            leftIterator.next(),
-                            rightIterator.next()
-                    )
+                    row
             );
         }
         return result;

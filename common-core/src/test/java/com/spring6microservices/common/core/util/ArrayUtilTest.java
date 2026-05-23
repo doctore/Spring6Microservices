@@ -147,16 +147,10 @@ public class ArrayUtilTest {
         }
         else {
             T[] result = ArrayUtil.clone(sourceArray, targetClass);
-            assertEquals(
-                    expectedResult.length,
-                    result.length
+            verifyArrays(
+                    result,
+                    expectedResult
             );
-            for (int i = 0; i < result.length; i++) {
-                assertEquals(
-                        expectedResult[i],
-                        result[i]
-                );
-            }
         }
     }
 
@@ -205,12 +199,119 @@ public class ArrayUtilTest {
     @ParameterizedTest
     @MethodSource("isEmptyTestCases")
     @DisplayName("isEmpty: test cases")
-    public void isEmpty_testCases(Object[] array,
+    public void isEmpty_testCases(Object[] sourceArray,
                                   boolean expectedResult) {
         assertEquals(
                 expectedResult,
-                isEmpty(array)
+                isEmpty(sourceArray)
         );
+    }
+
+
+    static Stream<Arguments> unzipTestCases() {
+        Object[][] emptyMatrix = {};
+        Object[][] notEmptyMatrix = {
+                { "a", 1 },
+                { "b", 2 },
+                { "c", 3 }
+        };
+        Object[][] emptyResult = new Object[0][0];
+        Object[][] notEmptyMatrixResult = {
+                { "a", "b", "c" },
+                { 1, 2, 3 }
+        };
+        return Stream.of(
+                //@formatter:off
+                //            sourceArrays,     expectedResult
+                Arguments.of( null,             emptyResult ),
+                Arguments.of( emptyMatrix,      emptyResult ),
+                Arguments.of( notEmptyMatrix,   notEmptyMatrixResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("unzipTestCases")
+    @DisplayName("unzip: test cases")
+    public void unzip_testCases(Object[][] sourceArrays,
+                                Object[][] expectedResult) {
+        verifyMatrix(
+                expectedResult,
+                unzip(sourceArrays)
+        );
+    }
+
+
+    static Stream<Arguments> zipTestCases() {
+        Object[] letters = { "a", "b", "c" };
+        Object[] numbers = { 1, 2, 3 };
+        Object[] booleans = { true, false };
+        List<Object[]> emptyArray = List.of();
+        List<Object[]> sameLengthArrays = List.of(letters, numbers);
+        List<Object[]> differentLengthArrays = List.of(letters, numbers, booleans);
+
+        Object[][] emptyResult = new Object[0][0];
+        Object[][] sameLengthArraysResult = {
+                { "a", 1 },
+                { "b", 2 },
+                { "c", 3 }
+        };
+        Object[][] differentLengthArraysResult = {
+                { "a", 1, true },
+                { "b", 2, false }
+        };
+        return Stream.of(
+                //@formatter:off
+                //            sourceArrays,            expectedResult
+                Arguments.of( null,                    emptyResult ),
+                Arguments.of( emptyArray,              emptyResult ),
+                Arguments.of( sameLengthArrays,        sameLengthArraysResult ),
+                Arguments.of( differentLengthArrays,   differentLengthArraysResult )
+        ); //@formatter:on
+    }
+
+    @ParameterizedTest
+    @MethodSource("zipTestCases")
+    @DisplayName("zip: test cases")
+    public void zip_testCases(List<Object[]> sourceArrays,
+                              Object[][] expectedResult) {
+        Object[][] finalSourceArrays =
+                null == sourceArrays || sourceArrays.isEmpty()
+                        ? null
+                        : sourceArrays.toArray(Object[][]::new);
+        verifyMatrix(
+                expectedResult,
+                zip(finalSourceArrays)
+        );
+    }
+
+
+    private <T> void verifyArrays(T[] actualArray,
+                                  T[] expectedArray) {
+        assertEquals(
+                expectedArray.length,
+                actualArray.length
+        );
+        for (int i = 0; i < expectedArray.length; i++) {
+            assertEquals(
+                    expectedArray[i],
+                    actualArray[i]
+            );
+        }
+    }
+
+
+    private <T> void verifyMatrix(T[][] actualArray,
+                                  T[][] expectedArray) {
+        assertEquals(
+                expectedArray.length,
+                actualArray.length
+        );
+        for (int i = 0; i < expectedArray.length; i++) {
+            verifyArrays(
+                    actualArray[i],
+                    expectedArray[i]
+            );
+        }
     }
 
 }

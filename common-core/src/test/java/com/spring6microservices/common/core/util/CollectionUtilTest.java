@@ -15,23 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -4212,7 +4196,7 @@ public class CollectionUtilTest {
         );
         return Stream.of(
                 //@formatter:off
-                //            sourceCollection,          expectedResult
+                //            sourceCollections,         expectedResult
                 Arguments.of( null,                      List.of() ),
                 Arguments.of( List.of(),                 List.of() ),
                 Arguments.of( emptyLists,                List.of() ),
@@ -4236,39 +4220,50 @@ public class CollectionUtilTest {
 
 
     static Stream<Arguments> unzipTestCases() {
-        List<Tuple2<String, Integer>> pairList = List.of(Tuple.of("a", 1), Tuple.of("b", 2), Tuple.of("c", 3));
-        Set<Tuple2<String, Boolean>> pairSet = new LinkedHashSet<>() {{
-            add(Tuple.of("true", true));
-            add(Tuple.of("false", false));
+        List<List<Object>> mixedList = List.of(
+                List.of("a", 1),
+                List.of("b", 2),
+                List.of("c", 3)
+        );
+        Set<Set<Object>> mixedSet = new LinkedHashSet<>() {{
+            add(
+                    new LinkedHashSet<>(
+                            List.of("true", true, 2)
+                    )
+            );
+            add(
+                    new LinkedHashSet<>(
+                            List.of("false", false, 1)
+                    )
+            );
         }};
-
-        Tuple2<List<Object>, List<Object>> emptyPairResult = Tuple.of(List.of(), List.of());
-        Tuple2<List<String>, List<Integer>> pairListResult = Tuple.of(
+        List<List<Object>> mixedListResult = List.of(
                 List.of("a", "b", "c"),
                 List.of(1, 2, 3)
         );
-        Tuple2<List<String>, List<Boolean>> pairSetResult = Tuple.of(
+        List<List<Object>> mixedSetResult = List.of(
                 List.of("true", "false"),
-                List.of(true, false)
+                List.of(true, false),
+                List.of(2, 1)
         );
         return Stream.of(
                 //@formatter:off
-                //            sourceCollection,    expectedResult
-                Arguments.of( null,                emptyPairResult ),
-                Arguments.of( new ArrayList<>(),   emptyPairResult ),
-                Arguments.of( pairList,            pairListResult ),
-                Arguments.of( pairSet,             pairSetResult )
+                //            sourceCollections,   expectedResult
+                Arguments.of( null,                List.of() ),
+                Arguments.of( new ArrayList<>(),   List.of() ),
+                Arguments.of( mixedList,           mixedListResult ),
+                Arguments.of( mixedSet,            mixedSetResult )
         ); //@formatter:on
     }
 
     @ParameterizedTest
     @MethodSource("unzipTestCases")
     @DisplayName("unzip: test cases")
-    public <T, E> void unzip_testCases(Collection<Tuple2<T, E>> sourceCollection,
-                                       Tuple2<List<T>, List<E>> expectedResult) {
+    public <T> void unzip_testCases(Collection<? extends Collection<T>> sourceCollections,
+                                    List<List<T>> expectedResult) {
         assertEquals(
                 expectedResult,
-                unzip(sourceCollection)
+                unzip(sourceCollections)
         );
     }
 
@@ -4276,44 +4271,51 @@ public class CollectionUtilTest {
     static Stream<Arguments> zipTestCases() {
         List<Integer> integers = List.of(11, 31, 55);
         List<Boolean> booleans = List.of(true, false);
-        List<String> strings = List.of("h", "o", "p");
+        Set<String> strings = new LinkedHashSet<>(
+                List.of("h", "o", "p")
+        );
+        List<Collection<?>> sameLengthCollections = List.of(
+                integers,
+                strings
+        );
+        List<Collection<?>> differentLengthCollections = List.of(
+                integers,
+                booleans,
+                strings
+        );
 
-        List<Tuple2<Integer, Boolean>> integersBooleansResult = List.of(
-                Tuple.of(11, true),
-                Tuple.of(31, false)
+        List<List<Object>> sameLengthCollectionsResult = List.of(
+                List.of(11, "h"),
+                List.of(31, "o"),
+                List.of(55, "p")
         );
-        List<Tuple2<Integer, String>> integersStringsResult = List.of(
-                Tuple.of(11, "h"),
-                Tuple.of(31, "o"),
-                Tuple.of(55, "p")
-        );
-        List<Tuple2<Boolean, String>> booleansStringsResult = List.of(
-                Tuple.of(true, "h"),
-                Tuple.of(false, "o")
+        List<List<Object>> differentLengthCollectionsResult = List.of(
+                List.of(11, true, "h"),
+                List.of(31, false, "o")
         );
         return Stream.of(
                 //@formatter:off
-                //            sourceLeftCollection,   sourceRightCollection,   expectedResult
-                Arguments.of( null,                   null,                    List.of() ),
-                Arguments.of( null,                   integers,                List.of() ),
-                Arguments.of( integers,               null,                    List.of() ),
-                Arguments.of( List.of(),              integers,                List.of() ),
-                Arguments.of( integers,               List.of(),               List.of() ),
-                Arguments.of( integers,               booleans,                integersBooleansResult ),
-                Arguments.of( integers,               strings,                 integersStringsResult ),
-                Arguments.of( booleans,               strings,                 booleansStringsResult )
+                //            sourceCollections,            expectedResult
+                Arguments.of( null,                         List.of() ),
+                Arguments.of( List.of(),                    List.of() ),
+                Arguments.of( sameLengthCollections,        sameLengthCollectionsResult ),
+                Arguments.of( differentLengthCollections,   differentLengthCollectionsResult )
         ); //@formatter:on
     }
 
     @ParameterizedTest
     @MethodSource("zipTestCases")
     @DisplayName("zip: test cases")
-    public <T, E> void zip_testCases(Collection<T> sourceLeftCollection,
-                                     Collection<E> sourceRightCollection,
-                                     List<Tuple2<T, E>> expectedResult) {
+    public <T> void zip_testCases(List<Collection<T>> sourceCollections,
+                                  List<List<T>> expectedResult) {
+        @SuppressWarnings("unchecked")
+        Collection<? extends T>[] finalSourceCollections =
+                sourceCollections == null || sourceCollections.isEmpty()
+                        ? null
+                        : sourceCollections.toArray(Collection[]::new);
         assertEquals(
                 expectedResult,
-                zip(sourceLeftCollection, sourceRightCollection)
+                zip(finalSourceCollections)
         );
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>com.spring6microservices.common</groupId>
     <artifactId>common-core</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
     <name>Spring6Microservices common core</name>
     <description>Common functionality included in several microservices</description>
@@ -17,8 +17,8 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <junit.version>5.14.3</junit.version>
-        <lombok.version>1.18.44</lombok.version>
+        <junit.version>5.14.4</junit.version>
+        <lombok.version>1.18.46</lombok.version>
         <mapstruct-processor.version>1.6.3</mapstruct-processor.version>
     </properties>
 

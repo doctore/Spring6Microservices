@@ -10,7 +10,6 @@ import java.util.Comparator;
 @UtilityClass
 public class ArrayUtil {
 
-
     /**
      *    Searches the specified {@code sourceArray} for the specified {@code elementToSearch} using the binary search
      * algorithm. {@code sourceArray} must be sorted into ascending order according to the developed {@link Comparable}
@@ -18,6 +17,13 @@ public class ArrayUtil {
      * <p>
      *    If {@code sourceArray} contains multiple elements equal to the specified {@code elementToSearch}, there is no
      * guarantee which one will be found.
+     *
+     * <pre>
+     *    binarySearch(                            Result:
+     *       [1, 2, 6, 7, 11]                       Tuple2.of(true, 2)
+     *       6
+     *    )
+     * </pre>
      *
      * @param sourceArray
      *    The array to be searched
@@ -78,6 +84,19 @@ public class ArrayUtil {
      * <p>
      *    If {@code sourceArray} contains multiple elements equal to the specified {@code elementToSearch}, there is no
      * guarantee which one will be found.
+     *
+     * <pre>
+     *    binarySearch(                                                                   Result:
+     *       [new PizzaDto("Carbonara", 11d), new PizzaDto("Margherita", 16d)],            [Tuple2.of(true, 1)]
+     *       new PizzaDto("Margherita", 16d),
+     *       Comparator.nullsFirst(
+     *          Comparator.comparing(
+     *             PizzaDto::getCost,
+     *                Comparator.nullsFirst(Double::compareTo)
+     *          )
+     *       )
+     *    )
+     * </pre>
      *
      * @param sourceArray
      *    The array to be searched
@@ -196,6 +215,83 @@ public class ArrayUtil {
     public static boolean isEmpty(final Object[] sourceArray) {
         return null == sourceArray ||
                 0 == sourceArray.length;
+    }
+
+
+    /**
+     *    Converts given {@code sourceArrays} into another matrix by joining the elements of the same position up to the
+     * minimum length of the arrays contained in {@code sourceArrays}.
+     *
+     * @apiNote
+     *    Provided {@code sourceArrays} must be a matrix, that is, a two-dimensional array of NxM elements.
+     *
+     * <pre>
+     *    unzip(                                      Result:
+     *       [["d", 6], ["h", 7], ["y", 11]]           [["d", "h", "y"], [6, 7, 11]]
+     *    )
+     * </pre>
+     *
+     * @param sourceArrays
+     *    Matrix with the elements to join based on their position
+     *
+     * @return matrix containing internal elements of {@code sourceArrays} based on their position
+     */
+    public static Object[][] unzip(final Object[][] sourceArrays) {
+        if (ArrayUtil.isEmpty(sourceArrays)) {
+            return new Object[0][0];
+        }
+        int rows = sourceArrays.length;
+        int cols = sourceArrays[0].length;
+
+        Object[][] result = new Object[cols][rows];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[j][i] = sourceArrays[i][j];
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     *    Converts given {@code sourceArrays} into a matrix where the first element in each passed array is paired together,
+     * and then the second element in each passed array are paired together, etc. up to the minimum length of {@code sourceArrays}.
+     *
+     * <pre>
+     *    zip(                           Result:
+     *       ["d", "h", "y"],             [["d", 6], ["h", 7], ["y", 11]]
+     *       [6, 7, 11]
+     *    )
+     *    zip(                           Result:
+     *       [4, 9, 14],                  [[4, 23], [9, 8]]
+     *       [23, 8]
+     *    )
+     * </pre>
+     *
+     * @param sourceArrays
+     *    Arrays with the elements to join based on their position
+     *
+     * @return matrix containing elements of {@code sourceArrays} based on their position
+     */
+    public static Object[][] zip(final Object[]... sourceArrays) {
+        if (ArrayUtil.isEmpty(sourceArrays)) {
+            return new Object[0][0];
+        }
+        int rows = sourceArrays.length;
+        int cols = Integer.MAX_VALUE;
+        for (Object[] array: sourceArrays) {
+            cols = Math.min(
+                    cols,
+                    array.length
+            );
+        }
+        Object[][] result = new Object[cols][rows];
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                result[i][j] = sourceArrays[j][i];
+            }
+        }
+        return result;
     }
 
 }
